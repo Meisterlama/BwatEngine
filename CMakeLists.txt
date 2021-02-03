@@ -19,4 +19,5 @@ include_directories(Math/include)
 #include_directories(Engine)
 add_subdirectory(Editor)
 
-target_link_libraries(Editor Engine ${BWATLIBS_LIBS})
+target_link_libraries(Editor ${BWATLIBS_LIBS})
+#target_link_libraries(Editor Engine)
