@@ -49,7 +49,8 @@ set(GLFW_INSTALL OFF CACHE BOOL "" FORCE)
 set(BUILD_SHARED_LIBS OFF CACHE BOOL "" FORCE)
 
 add_subdirectory(glfw)
-target_compile_definitions(glfw PRIVATE -DGLFW_INCLUDE_NONE)
+#For some reasons the next line breaks everything
+#target_compile_definitions(glfw PRIVATE -DGLFW_INCLUDE_NONE)
 list(APPEND BWATLIBS_HEADERS_INTERNAL "${CMAKE_CURRENT_SOURCE_DIR}/glfw/include")
 list(APPEND BWATLIBS_LIBS_INTERNAL glfw)
 
