@@ -12,6 +12,8 @@ include_directories(${BWATLIBS_HEADERS})
 
 add_subdirectory(docs)
 
+#TODO: Add game building target and ability to switch between editor and game
+
 add_subdirectory(Engine)
 include_directories(Engine)
 add_subdirectory(Editor)
