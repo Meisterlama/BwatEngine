@@ -1,17 +1,19 @@
 cmake_minimum_required(VERSION 3.17)
 
-project(BwatEngine)
+project(BwatEngine LANGUAGES C CXX)
 
 set(CMAKE_CXX_STANDARD 14)
+
+set(EXECUTABLE_OUTPUT_PATH "${CMAKE_BINARY_DIR}")
+set(LIBRARY_OUTPUT_PATH "${CMAKE_BINARY_DIR}")
 
 add_subdirectory(lib)
 include_directories(${BWATLIBS_HEADERS})
 
 add_subdirectory(docs)
 
-file(GLOB_RECURSE BWAT_ENGINE_SRC
-        src/*.cpp)
+add_subdirectory(Engine)
+include_directories(Engine)
+add_subdirectory(Editor)
 
-add_executable(BwatEngine ${BWAT_ENGINE_SRC})
-message(STATUS "${BWATLIBS_LIBS}")
-target_link_libraries(BwatEngine PUBLIC ${BWATLIBS_LIBS})
+target_link_libraries(Editor Engine ${BWATLIBS_LIBS})
