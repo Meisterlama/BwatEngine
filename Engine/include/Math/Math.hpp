@@ -1,8 +1,9 @@
-#ifndef MATH
-#define MATH
+#ifndef MATH_HPP
+#define MATH_HPP
 
 #include "Meta.hpp"
+#include "Common.hpp"
 #include "Misc/Misc.hpp"
 #include "Vector/Vectors.hpp"
 
-#endif //MATH
+#endif //MATH_HPP

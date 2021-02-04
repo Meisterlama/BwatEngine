@@ -1,7 +1,11 @@
+//
+// Created by lama on 16/12/2020.
+//
+
 #ifndef MATH_VECTOR4_HPP
 #define MATH_VECTOR4_HPP
 
-#include "Meta.hpp"
+#include "Math/Meta.hpp"
 
 namespace Math
 {
@@ -101,5 +105,6 @@ namespace Math
     template<typename T>
     [[nodiscard]] ML_FUNC_DECL Vector4<T> Lerp(Vector4<T> begin, Vector4<T> end, float ratio);
 
+    #include "inl/Vector4.inl.hpp"
 }
 #endif //MATH_VECTOR4_HPP

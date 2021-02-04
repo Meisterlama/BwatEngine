@@ -1,7 +1,11 @@
+//
+// Created by lama on 16/12/2020.
+//
+
 #ifndef MATH_VECTOR3_HPP
 #define MATH_VECTOR3_HPP
 
-#include "Meta.hpp"
+#include "Math/Meta.hpp"
 
 namespace Math
 {
@@ -21,11 +25,11 @@ namespace Math
         };
 
         ML_FUNC_DECL Vector3(T x = 0)
-                : X(x), Y(x), Z(x)
+            : X(x), Y(x), Z(x)
         {}
 
         ML_FUNC_DECL Vector3(T x, T y, T z)
-                : X(x), Y(y), Z(z)
+            : X(x), Y(y), Z(z)
         {}
 
         ML_FUNC_DECL Vector3(const Vector3& vec) = default;
@@ -100,5 +104,6 @@ namespace Math
     template<typename T>
     [[nodiscard]] ML_FUNC_DECL Vector3<T> Lerp(Vector3<T> begin, Vector3<T> end, float ratio);
 
+    #include "inl/Vector3.inl.hpp"
 }
 #endif //MATH_VECTOR3_HPP

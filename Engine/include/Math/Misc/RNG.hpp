@@ -1,7 +1,7 @@
 #ifndef MATH_RNG_HPP
 #define MATH_RNG_HPP
 
-#include "Meta.hpp"
+#include "Math/Meta.hpp"
 
 namespace Math
 {
@@ -29,5 +29,7 @@ namespace Math
         unsigned int m_seed;
         int m_position;
     };
+
+    #include "inl/RNG.inl.hpp"
 }
 #endif //MATH_RNG_HPP
