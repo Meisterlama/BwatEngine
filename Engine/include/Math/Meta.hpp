@@ -9,7 +9,7 @@
 #endif
 
 // Concatenate constexpr and eventual inline
-#define ML_FUNC_DECL constexpr ML_INLINE
+#define ML_FUNC_DECL ML_INLINE
 
 namespace Math
 {
