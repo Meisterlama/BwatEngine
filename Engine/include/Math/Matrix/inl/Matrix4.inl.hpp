@@ -27,6 +27,8 @@ ML_FUNC_DECL Matrix4<T>& Matrix4<T>::Transpose()
     tmp = v11;
     v11 = v14;
     v14 = tmp;
+
+    return *this;
 }
 
 template<typename T>
@@ -36,91 +38,174 @@ template<typename T>
 }
 
 template<typename T>
-[[nodiscard]] ML_FUNC_DECL T Matrix4<T>::GetDeterminant();
+[[nodiscard]] ML_FUNC_DECL T Matrix4<T>::GetDeterminant()
+{
+    T af = v0  * v5;  T ag = v0  * v9;  T ah = v0  * v13; T be = v1  * v1;
+    T bg = v4  * v9;  T bh = v4  * v13;  T ce = v8  * v1;  T cf = v8  * v5;
+    T ch = v8  * v13;  T de = v12  * v1;  T df = v12  * v5;  T dg = v12  * v9;
+    T in = v2  * v7; T io = v2  * v11; T ip = v2  * v15; T jm = v6  * v3;
+    T jo = v6  * v11; T jp = v6  * v15; T km = v10 * v3; T kn = v10 * v7;
+    T kp = v10 * v15; T lm = v14 * v3; T ln = v14 * v7; T lo = v14 * v11;
+
+    return (af*kp - af*lo - ag*jp + ag*ln + ah*jo - ah*kn - be*kp + be*lo +
+            bg*ip - bg*lm - bh*io + bh*km + ce*jp - ce*ln - cf*ip + cf*lm +
+            ch*in - ch*jm - de*jo + de*kn + df*io - df*km - dg*in + dg*jm);
+}
 
 template<typename T>
-ML_FUNC_DECL Matrix4<T>& Matrix4<T>::Invert();
+ML_FUNC_DECL Matrix4<T>& Matrix4<T>::Invert()
+{
+    T a00 = v0;  T a01 = v1;  T a02 = v2;  T a03 = v3;
+    T a10 = v4;  T a11 = v5;  T a12 = v6;  T a13 = v7;
+    T a20 = v8;  T a21 = v9;  T a22 = v10; T a23 = v11;
+    T a30 = v12; T a31 = v13; T a32 = v14; T a33 = v15;
+
+    T b00 = a00*a11 - a01*a10;
+    T b01 = a00*a12 - a02*a10;
+    T b02 = a00*a13 - a03*a10;
+    T b03 = a01*a12 - a02*a11;
+    T b04 = a01*a13 - a03*a11;
+    T b05 = a02*a13 - a03*a12;
+    T b06 = a20*a31 - a21*a30;
+    T b07 = a20*a32 - a22*a30;
+    T b08 = a20*a33 - a23*a30;
+    T b09 = a21*a32 - a22*a31;
+    T b10 = a21*a33 - a23*a31;
+    T b11 = a22*a33 - a23*a32;
+
+    // Calculate the invert determinant (inlined to avoid double-caching)
+    T invDet = 1.0f/(b00*b11 - b01*b10 + b02*b09 + b03*b08 - b04*b07 + b05*b06);
+
+    v0 = (a11*b11 - a12*b10 + a13*b09)*invDet;
+    v1 = (-a01*b11 + a02*b10 - a03*b09)*invDet;
+    v2 = (a31*b05 - a32*b04 + a33*b03)*invDet;
+    v3 = (-a21*b05 + a22*b04 - a23*b03)*invDet;
+    v4 = (-a10*b11 + a12*b08 - a13*b07)*invDet;
+    v5 = (a00*b11 - a02*b08 + a03*b07)*invDet;
+    v6 = (-a30*b05 + a32*b02 - a33*b01)*invDet;
+    v7 = (a20*b05 - a22*b02 + a23*b01)*invDet;
+    v8 = (a10*b10 - a11*b08 + a13*b06)*invDet;
+    v9 = (-a00*b10 + a01*b08 - a03*b06)*invDet;
+    v10 = (a30*b04 - a31*b02 + a33*b00)*invDet;
+    v11 = (-a20*b04 + a21*b02 - a23*b00)*invDet;
+    v12 = (-a10*b09 + a11*b07 - a12*b06)*invDet;
+    v13 = (a00*b09 - a01*b07 + a02*b06)*invDet;
+    v14 = (-a30*b03 + a31*b01 - a32*b00)*invDet;
+    v15 = (a20*b03 - a21*b01 + a22*b00)*invDet;
+
+    return *this;
+}
 
 template<typename T>
-[[nodiscard]] ML_FUNC_DECL Matrix4<T> Matrix4<T>::Invert() const;
+[[nodiscard]] ML_FUNC_DECL Matrix4<T> Matrix4<T>::GetInverted() const
+{
+    return Matrix4<T>{*this}.Invert();
+}
 
 template<typename T>
-ML_FUNC_DECL Matrix4<T>& Matrix4<T>::Scale(float scaleX, float scaleY, float scaleZ);
+ML_FUNC_DECL Matrix4<T>& Matrix4<T>::Normalize()
+{
+    T det = GetDeterminant();
+    v0  /= det;
+    v1  /= det;
+    v2  /= det;
+    v3  /= det;
+    v4  /= det;
+    v5  /= det;
+    v6  /= det;
+    v7  /= det;
+    v8  /= det;
+    v9  /= det;
+    v10 /= det;
+    v11 /= det;
+    v12 /= det;
+    v13 /= det;
+    v14 /= det;
+    v15 /= det;
+
+    return *this;
+}
 
 template<typename T>
-[[nodiscard]] ML_FUNC_DECL Matrix4<T> Matrix4<T>::Scale(float scaleX, float scaleY, float scaleZ) const;
+[[nodiscard]] ML_FUNC_DECL Matrix4<T> Matrix4<T>::GetNormalized() const
+{
+    return Matrix4<T>{*this}.Normalize();
+}
 
 template<typename T>
-ML_FUNC_DECL Matrix4<T>& Matrix4<T>::ScaleX(float scale);
+ML_FUNC_DECL Matrix4<T>&& Matrix4<T>::CreatePerspective(T fovy, T aspect, T near, T far)
+{
+    T top = near*tan(fovy*0.5);
+    T right = top*aspect;
+
+    return Matrix4<T>{near/right, 0.0     , 0.0                        , 0.0,
+                       0.0      , near/top, 0.0                        , 0.0,
+                       0.0      , 0.0     ,-(far + near)/(far - near)  ,-(far*near*2.0)/(far - near),
+                       0.0      , 0.0     ,-1.0                        , 0.0};
+}
 
 template<typename T>
-[[nodiscard]] ML_FUNC_DECL Matrix4<T> Matrix4<T>::ScaleX(float scale) const;
+ML_FUNC_DECL Matrix4<T>&& Matrix4<T>::CreateOrtho(T left, T right, T bottom, T top, T near, T far)
+{
+    return Matrix4<T>{1/right, 0.0  , 0.0             , 0.0,
+                      0.0    , 1/top, 0.0             , 0.0,
+                      0.0    , 0.0  ,-2.0/(far - near),-(far + near)/(far - near),
+                      0.0    , 0.0  ,-1.0             , 0.0};
+}
 
 template<typename T>
-ML_FUNC_DECL Matrix4<T>& Matrix4<T>::ScaleY(float scale);
+ML_FUNC_DECL Matrix4<T>&& Matrix4<T>::CreateTranslationMat(Vector3<T> translation)
+{
+    return Matrix4<T>{1, 0, 0, translation.X,
+                      0, 1, 0, translation.Y,
+                      0, 0, 1, translation.Z,
+                      0, 0, 0, 1};
+}
 
 template<typename T>
-[[nodiscard]] ML_FUNC_DECL Matrix4<T> Matrix4<T>::ScaleY(float scale) const;
+ML_FUNC_DECL Matrix4<T>&& Matrix4<T>::CreateRotationMat(Vector3<T> axis, T angle);
 
 template<typename T>
-ML_FUNC_DECL Matrix4<T>& Matrix4<T>::ScaleZ(float scale);
+ML_FUNC_DECL Matrix4<T>&& Matrix4<T>::CreateXRotationMat(T angle)
+{
+    T c = Cos(angle);
+    T s = Sin(angle);
+    return Matrix4<T>{1, 0, 0, 0,
+                      0, c, s, 0,
+                      0,-s, c, 0,
+                      0, 0, 0, 1};
+}
 
 template<typename T>
-[[nodiscard]] ML_FUNC_DECL Matrix4<T> Matrix4<T>::ScaleZ(float scale) const;
+ML_FUNC_DECL Matrix4<T>&& Matrix4<T>::CreateYRotationMat(T angle)
+{
+    T c = Cos(angle);
+    T s = Sin(angle);
+    return Matrix4<T>{ c, 0,-s, 0,
+                       0, 1, 0, 0,
+                       s, 0, c, 0,
+                       0, 0, 0, 1};
+}
 
 template<typename T>
-ML_FUNC_DECL Matrix4<T>& Matrix4<T>::Rotate(float axisX, float axisY, float axisZ, float angle);
+ML_FUNC_DECL Matrix4<T>&& Matrix4<T>::CreateZRotationMat(T angle)
+{
+    T c = Cos(angle);
+    T s = Sin(angle);
+    return Matrix4<T>{ c, s, 0, 0,
+                      -s, c, 0, 0,
+                       0, 0, 1, 0,
+                       0, 0, 0, 1};
+}
 
 template<typename T>
-[[nodiscard]] ML_FUNC_DECL Matrix4<T> Matrix4<T>::Rotate(float axisX, float axisY, float axisZ, float angle) const;
+ML_FUNC_DECL Matrix4<T>&& Matrix4<T>::CreateXYZRotationMat(Vector3<T> angles);
 
 template<typename T>
-ML_FUNC_DECL Matrix4<T>& Matrix4<T>::RotateX(float angle);
+ML_FUNC_DECL Matrix4<T>&& Matrix4<T>::CreateScaleMat(Vector3<T> scale);
 
 template<typename T>
-[[nodiscard]] ML_FUNC_DECL Matrix4<T> Matrix4<T>::RotateX(float angle) const;
-
-template<typename T>
-ML_FUNC_DECL Matrix4<T>& Matrix4<T>::RotateY(float angle);
-
-template<typename T>
-[[nodiscard]] ML_FUNC_DECL Matrix4<T> Matrix4<T>::RotateY(float angle) const;
-
-template<typename T>
-ML_FUNC_DECL Matrix4<T>& Matrix4<T>::RotateZ(float angle);
-
-template<typename T>
-[[nodiscard]] ML_FUNC_DECL Matrix4<T> Matrix4<T>::RotateZ(float angle) const;
-
-template<typename T>
-ML_FUNC_DECL Matrix4<T>& Matrix4<T>::Translate(float X, float Y, float Z);
-
-template<typename T>
-[[nodiscard]] ML_FUNC_DECL Matrix4<T> Matrix4<T>::Translate(float X, float Y, float Z) const;
-
-template<typename T>
-ML_FUNC_DECL Matrix4<T>& Matrix4<T>::TranslateX(float X);
-
-template<typename T>
-[[nodiscard]] ML_FUNC_DECL Matrix4<T> Matrix4<T>::TranslateX(float X) const;
-
-template<typename T>
-ML_FUNC_DECL Matrix4<T>& Matrix4<T>::TranslateY(float Y);
-
-template<typename T>
-[[nodiscard]] ML_FUNC_DECL Matrix4<T> Matrix4<T>::TranslateY(float Y) const;
-
-template<typename T>
-ML_FUNC_DECL Matrix4<T>& Matrix4<T>::TranslateZ(float Y);
-
-template<typename T>
-[[nodiscard]] ML_FUNC_DECL Matrix4<T> Matrix4<T>::TranslateZ(float Y) const;
-
-template<typename T>
-ML_FUNC_DECL Matrix4<T> Matrix4<T>::GetPerspective(float fovy, float aspect, float near, float far);
-
-template<typename T>
-ML_FUNC_DECL Matrix4<T> Matrix4<T>::GetOrtho(float left, float right, float bottom, float top, float near, float far);
+ML_FUNC_DECL Matrix4<T>&& Matrix4<T>::CreateTRSMat(Vector3<T> translation, Vector3<T> rotation, Vector3<T> scale);
 
 template<typename T>
 [[nodiscard]] ML_FUNC_DECL bool Matrix4<T>::Equals(const Matrix4<T>& rhs) const
@@ -395,7 +480,7 @@ ML_FUNC_DECL Matrix4<T>& Matrix4<T>::operator*=(const Matrix4<T>& other)
 }
 
 template<typename T>
-[[nodiscard]] ML_FUNC_DECL Matrix4<T> Matrix4<T>::operator*(const float& scalar) const
+[[nodiscard]] ML_FUNC_DECL Matrix4<T> Matrix4<T>::operator*(const T& scalar) const
 {
     return  Matrix4<T> {v0  * scalar,
                         v1  * scalar,
@@ -416,7 +501,7 @@ template<typename T>
 }
 
 template<typename T>
-ML_FUNC_DECL Matrix4<T>& Matrix4<T>::operator*=(const float& scalar)
+ML_FUNC_DECL Matrix4<T>& Matrix4<T>::operator*=(const T& scalar)
 {
     v0  *= scalar;
     v1  *= scalar;
@@ -439,7 +524,7 @@ ML_FUNC_DECL Matrix4<T>& Matrix4<T>::operator*=(const float& scalar)
 }
 
 template<typename T>
-[[nodiscard]] ML_FUNC_DECL Matrix4<T> Matrix4<T>::operator/(const float& scalar) const
+[[nodiscard]] ML_FUNC_DECL Matrix4<T> Matrix4<T>::operator/(const T& scalar) const
 {
     return  Matrix4<T> {v0  / scalar,
                         v1  / scalar,
@@ -460,7 +545,7 @@ template<typename T>
 }
 
 template<typename T>
-ML_FUNC_DECL Matrix4<T>& Matrix4<T>::operator/=(const float& scalar)
+ML_FUNC_DECL Matrix4<T>& Matrix4<T>::operator/=(const T& scalar)
 {
     v0  /= scalar;
     v1  /= scalar;
@@ -504,13 +589,13 @@ template<typename T>
 }
 
 template<typename T>
-[[nodiscard]] ML_FUNC_DECL Matrix4<T> operator*(const float& scalar, Matrix4<T> rhs)
+[[nodiscard]] ML_FUNC_DECL Matrix4<T> operator*(const T& scalar, Matrix4<T> rhs)
 {
     return rhs * scalar;
 }
 
 template<typename T>
-[[nodiscard]] ML_FUNC_DECL Matrix4<T> Lerp(Matrix4<T> begin, Matrix4<T> end, float ratio)
+[[nodiscard]] ML_FUNC_DECL Matrix4<T> Lerp(Matrix4<T> begin, Matrix4<T> end, T ratio)
 {
     ratio = (ratio > 1) ? 1 : (ratio < 0) ?  0 : ratio;
     return (1 - ratio) * begin + ratio * end;

@@ -2,19 +2,23 @@
 #define MATH_MATRIX3_HPP
 
 #include "Math/Meta.hpp"
+#include "Math/Vector/Vector3.hpp"
 
 namespace Math
 {
+    template<typename T>
+    class Vector3;
     template<typename T>
     class Matrix4
     {
     public:
         union{
+            // Column Major
             struct {
-                T v0;  T v1;  T v2;  T v3;
-                T v4;  T v5;  T v6;  T v7;
-                T v8;  T v9;  T v10; T v11;
-                T v12; T v13; T v14; T v15;
+                T v0;  T v4;  T v8;  T v12; // a, b, c, d
+                T v1;  T v5;  T v9;  T v13; // e, f, g, h
+                T v2;  T v6;  T v10; T v14; // i, j, k, l
+                T v3;  T v7;  T v11; T v15; // m, n, o, p
             };
             T values[4*4];
         };
@@ -37,10 +41,10 @@ namespace Math
             v15 = x15;
         }
 
-        ML_FUNC_DECL Matrix4(T x0 , T x1 , T x2 , T x3,
-                             T x4 , T x5 , T x6 , T x7,
-                             T x8 , T x9 , T x10, T x11,
-                             T x12, T x13, T x14, T x15)
+        ML_FUNC_DECL Matrix4(T x0 , T x4 , T x8 , T x12,
+                             T x1 , T x5 , T x9 , T x13,
+                             T x2 , T x6 , T x10, T x14,
+                             T x3,  T x7, T x11, T x15)
         {
             v0  = x0;
             v1  = x1;
@@ -70,46 +74,21 @@ namespace Math
         [[nodiscard]] ML_FUNC_DECL T GetDeterminant();
 
         ML_FUNC_DECL Matrix4& Invert();
-        [[nodiscard]] ML_FUNC_DECL Matrix4 Invert() const;
+        [[nodiscard]] ML_FUNC_DECL Matrix4 GetInverted() const;
 
-        ML_FUNC_DECL Matrix4& Scale(float scaleX, float scaleY, float scaleZ);
-        [[nodiscard]] ML_FUNC_DECL Matrix4 Scale(float scaleX, float scaleY, float scaleZ) const;
+        ML_FUNC_DECL Matrix4& Normalize();
+        [[nodiscard]] ML_FUNC_DECL Matrix4 GetNormalized() const;
 
-        ML_FUNC_DECL Matrix4& ScaleX(float scale);
-        [[nodiscard]] ML_FUNC_DECL Matrix4 ScaleX(float scale) const;
-
-        ML_FUNC_DECL Matrix4& ScaleY(float scale);
-        [[nodiscard]] ML_FUNC_DECL Matrix4 ScaleY(float scale) const;
-
-        ML_FUNC_DECL Matrix4& ScaleZ(float scale);
-        [[nodiscard]] ML_FUNC_DECL Matrix4 ScaleZ(float scale) const;
-
-        ML_FUNC_DECL Matrix4& Rotate(float axisX, float axisY, float axisZ, float angle);
-        [[nodiscard]] ML_FUNC_DECL Matrix4 Rotate(float axisX, float axisY, float axisZ, float angle) const;
-
-        ML_FUNC_DECL Matrix4& RotateX(float angle);
-        [[nodiscard]] ML_FUNC_DECL Matrix4 RotateX(float angle) const;
-
-        ML_FUNC_DECL Matrix4& RotateY(float angle);
-        [[nodiscard]] ML_FUNC_DECL Matrix4 RotateY(float angle) const;
-
-        ML_FUNC_DECL Matrix4& RotateZ(float angle);
-        [[nodiscard]] ML_FUNC_DECL Matrix4 RotateZ(float angle) const;
-
-        ML_FUNC_DECL Matrix4& Translate(float X, float Y, float Z);
-        [[nodiscard]] ML_FUNC_DECL Matrix4 Translate(float X, float Y, float Z) const;
-
-        ML_FUNC_DECL Matrix4& TranslateX(float X);
-        [[nodiscard]] ML_FUNC_DECL Matrix4 TranslateX(float X) const;
-
-        ML_FUNC_DECL Matrix4& TranslateY(float Y);
-        [[nodiscard]] ML_FUNC_DECL Matrix4 TranslateY(float Y) const;
-
-        ML_FUNC_DECL Matrix4& TranslateZ(float Y);
-        [[nodiscard]] ML_FUNC_DECL Matrix4 TranslateZ(float Y) const;
-
-        static ML_FUNC_DECL Matrix4 GetPerspective(float fovy, float aspect, float near, float far);
-        static ML_FUNC_DECL Matrix4 GetOrtho(float left, float right, float bottom, float top, float near, float far);
+        static ML_FUNC_DECL Matrix4&& CreatePerspective(T fovy, T aspect, T near, T far);
+        static ML_FUNC_DECL Matrix4&& CreateOrtho(T left, T right, T bottom, T top, T near, T far);
+        static ML_FUNC_DECL Matrix4&& CreateTranslationMat(Vector3<T> translation);
+        static ML_FUNC_DECL Matrix4&& CreateRotationMat(Vector3<T> axis, T angle);
+        static ML_FUNC_DECL Matrix4&& CreateXRotationMat(T angle);
+        static ML_FUNC_DECL Matrix4&& CreateYRotationMat(T angle);
+        static ML_FUNC_DECL Matrix4&& CreateZRotationMat(T angle);
+        static ML_FUNC_DECL Matrix4&& CreateXYZRotationMat(Vector3<T> angles);
+        static ML_FUNC_DECL Matrix4&& CreateScaleMat(Vector3<T> scale);
+        static ML_FUNC_DECL Matrix4&& CreateTRSMat(Vector3<T> translation, Vector3<T> rotation, Vector3<T> scale);
 
         [[nodiscard]] ML_FUNC_DECL bool Equals(const Matrix4& rhs) const;
         [[nodiscard]] ML_FUNC_DECL bool IsZero() const;
@@ -137,21 +116,21 @@ namespace Math
         [[nodiscard]] ML_FUNC_DECL Matrix4 operator*(const Matrix4& other) const;
         ML_FUNC_DECL Matrix4& operator*=(const Matrix4& other);
 
-        [[nodiscard]] ML_FUNC_DECL Matrix4 operator*(const float& scalar) const;
-        ML_FUNC_DECL Matrix4& operator*=(const float& scalar);
+        [[nodiscard]] ML_FUNC_DECL Matrix4 operator*(const T& scalar) const;
+        ML_FUNC_DECL Matrix4& operator*=(const T& scalar);
 
-        [[nodiscard]] ML_FUNC_DECL Matrix4 operator/(const float& scalar) const;
-        ML_FUNC_DECL Matrix4& operator/=(const float& scalar);
+        [[nodiscard]] ML_FUNC_DECL Matrix4 operator/(const T& scalar) const;
+        ML_FUNC_DECL Matrix4& operator/=(const T& scalar);
     };
 
     template<typename T>
     [[nodiscard]] ML_FUNC_DECL Matrix4<T> operator-(Matrix4<T> mat);
 
     template<typename T>
-    [[nodiscard]] ML_FUNC_DECL Matrix4<T> operator*(const float& scalar, Matrix4<T> rhs);
+    [[nodiscard]] ML_FUNC_DECL Matrix4<T> operator*(const T& scalar, Matrix4<T> rhs);
 
     template<typename T>
-    [[nodiscard]] ML_FUNC_DECL Matrix4<T> Lerp(Matrix4<T> begin, Matrix4<T> end, float ratio);
+    [[nodiscard]] ML_FUNC_DECL Matrix4<T> Lerp(Matrix4<T> begin, Matrix4<T> end, T ratio);
 
 #include "inl/Matrix4.inl.hpp"
 }
