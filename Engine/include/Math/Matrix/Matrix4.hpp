@@ -92,6 +92,7 @@ namespace BMath
         static ML_FUNC_DECL Matrix4&& CreateXYZRotationMat(Vector3<T> angles);
         static ML_FUNC_DECL Matrix4&& CreateScaleMat(Vector3<T> scale);
         static ML_FUNC_DECL Matrix4&& CreateTRSMat(Vector3<T> translation, Vector3<T> rotation, Vector3<T> scale);
+        static ML_FUNC_DECL Matrix4&& LookAt(Vector3<T> origin, Vector3<T> target, Vector3<T> upDir);
 
         [[nodiscard]] ML_FUNC_DECL bool Equals(const Matrix4& rhs) const;
         [[nodiscard]] ML_FUNC_DECL bool IsZero() const;
@@ -379,6 +380,27 @@ namespace BMath
     ML_FUNC_DECL Matrix4<T>&& Matrix4<T>::CreateTRSMat(Vector3<T> translation, Vector3<T> rotation, Vector3<T> scale)
     {
         return CreateTranslationMat(translation) * CreateXYZRotationMat(rotation) * CreateScaleMat(scale);
+    }
+
+    template<typename T>
+    ML_FUNC_DECL Matrix4<T>&& Matrix4<T>::LookAt(Vector3<T> origin, Vector3<T> target, Vector3<T> upDir)
+    {
+        Vector3<T> forward{origin - target};
+        forward.SafeNormalize();
+
+        Vector3<T> left{upDir.CrossProduct(forward)};
+        left.Normalize();
+
+        Vector3<T> up = forward.CrossProduct(left);
+
+        T m12 = -left.x * origin.X - left.Y * origin.Y - left.Z * origin.Z;
+        T m13 = -up.X * origin.X - up.Y * origin.Y - up.Z * origin.Z;
+        T m14 = -forward.X * origin.X - forward.Y * origin.Y - forward.Z * origin.Z;
+
+        return Matrix4<T>{left.X   , left.Y   , left.Z   , m12,
+                          up.X     , up.Y     , up.Z     , m13,
+                          forward.X, forward.Y, forward.Z, m14,
+                          0        , 0        ,0         , 1   };
     }
 
     template<typename T>
