@@ -4,6 +4,8 @@ project(BwatEngine LANGUAGES C CXX)
 
 set(CMAKE_CXX_STANDARD 14)
 
+set(BWAT_ENGINE_TEST_ENABLED ON CACHE BOOL "" FORCE)
+
 add_subdirectory(lib)
 include_directories(${BWATLIBS_HEADERS})
 
