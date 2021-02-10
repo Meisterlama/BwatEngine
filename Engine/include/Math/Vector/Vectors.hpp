@@ -7,7 +7,7 @@
 #include "Vector3.hpp"
 #include "Vector4.hpp"
 
-namespace Math
+namespace BMath
 {
     typedef Vector2<float> vec2f;
     typedef Vector2<signed int> vec2i;
