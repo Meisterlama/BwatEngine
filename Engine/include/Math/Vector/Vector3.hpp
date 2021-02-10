@@ -41,6 +41,8 @@ namespace BMath
 
         [[nodiscard]] ML_FUNC_DECL float DotProduct(const Vector3& v) const;
 
+        [[nodiscard]] ML_FUNC_DECL Vector3 CrossProduct(const Vector3& other) const;
+
         // Compute the amplitude without computing the sqrt
         // Valid for comparisons, but actually equals to length squared
         [[nodiscard]] ML_FUNC_DECL float Amplitude() const;
@@ -115,6 +117,14 @@ namespace BMath
     ML_FUNC_DECL float Vector3<T>::DotProduct(const Vector3& v) const
     {
         return (X * v.X + Y * v.Y + Z * v.Z);
+    }
+
+    template<typename T>
+    ML_FUNC_DECL Vector3<T> Vector3<T>::CrossProduct(const Vector3<T>& other) const
+    {
+        return Vector3<T>{Y * other.Z - other.Y * Z,
+                          Z * other.X - other.Z * X,
+                          X * other.Y - other.X * Y};
     }
 
     template<typename T>
