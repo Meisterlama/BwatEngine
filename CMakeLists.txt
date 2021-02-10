@@ -13,7 +13,7 @@ add_subdirectory(docs)
 
 #TODO: Uncomment this when some source code for Engine is available
 #add_subdirectory(Engine)
-include_directories(Engine)
+include_directories(Engine/include)
 add_subdirectory(Editor)
 
 target_link_libraries(Editor ${BWATLIBS_LIBS})
