@@ -1,5 +1,6 @@
 #include "Rendering/shader.hpp"
 #include <imgui.h>
+#include <filesystem>
 
 using namespace Rendering;
 
@@ -49,8 +50,9 @@ Shader::Shader(const char *vertexPath, const char *fragmentPath)
     fShaderFile.exceptions(std::ifstream::failbit | std::ifstream::badbit);
     try
     {
-        vShaderFile.open(vertexPath);
-        fShaderFile.open(fragmentPath);
+        
+        vShaderFile.open(std::filesystem::relative(vertexPath ));
+        fShaderFile.open(std::filesystem::relative(fragmentPath ));
         std::stringstream vShaderStream, fShaderStream;
 
         vShaderStream << vShaderFile.rdbuf();

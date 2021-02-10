@@ -5,6 +5,11 @@
 
 using namespace Rendering;
 
+Model::Model(std::string& path)
+{
+    LoadModel(path);
+};
+
 void Model::LoadModel(std::string path)
 {
     Assimp::Importer import;
@@ -45,7 +50,7 @@ Rendering::Mesh Model::ProcessMesh(aiMesh* mesh, const aiScene* scene)
     for (unsigned int i = 0; i < mesh->mNumVertices; i++)
     {
         Rendering::Vertex vertex;
-        Math::vec3f vector; // we declare a placeholder vector since assimp uses its own vector class that doesn't directly convert to glm's vec3 class so we transfer the data to this placeholder glm::vec3 first.
+        BMath::vec3f vector; // we declare a placeholder vector since assimp uses its own vector class that doesn't directly convert to glm's vec3 class so we transfer the data to this placeholder glm::vec3 first.
         // positions
         vector.X = mesh->mVertices[i].x;
         vector.Y = mesh->mVertices[i].y;
@@ -62,23 +67,27 @@ Rendering::Mesh Model::ProcessMesh(aiMesh* mesh, const aiScene* scene)
         // texture coordinates
         if (mesh->mTextureCoords[0]) // does the mesh contain texture coordinates?
         {
-            Math::vec2f vec;
+            BMath::vec2f vec;
             vec.X = mesh->mTextureCoords[0][i].x;
             vec.Y = mesh->mTextureCoords[0][i].y;
             vertex.texCoords = vec;
             // tangent
-            vector.X = mesh->mTangents[i].x;
-            vector.Y = mesh->mTangents[i].y;
-            vector.Z = mesh->mTangents[i].z;
-            vertex.tangent = vector;
-            // bitangent
-            vector.X = mesh->mBitangents[i].x;
-            vector.Y = mesh->mBitangents[i].y;
-            vector.Z = mesh->mBitangents[i].z;
-            vertex.bitangent = vector;
+            if (mesh->HasTangentsAndBitangents())
+            {
+                vector.X = mesh->mTangents[i].x;
+                vector.Y = mesh->mTangents[i].y;
+                vector.Z = mesh->mTangents[i].z;
+                vertex.tangent = vector;
+
+                // bitangent
+                vector.X = mesh->mBitangents[i].x;
+                vector.Y = mesh->mBitangents[i].y;
+                vector.Z = mesh->mBitangents[i].z;
+                vertex.bitangent = vector;
+            }
         }
         else
-            vertex.texCoords = Math::vec2f(0.0f, 0.0f);
+            vertex.texCoords = BMath::vec2f(0.0f, 0.0f);
 
         vertices.push_back(vertex);
     }

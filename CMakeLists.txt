@@ -2,9 +2,7 @@ cmake_minimum_required(VERSION 3.17)
 
 project(BwatEngine LANGUAGES C CXX)
 
-set(CMAKE_CXX_STANDARD 14)
-
-set(BWAT_ENGINE_TEST_ENABLED ON CACHE BOOL "" FORCE)
+set(CMAKE_CXX_STANDARD 17)
 
 add_subdirectory(lib)
 include_directories(${BWATLIBS_HEADERS})
@@ -14,9 +12,9 @@ add_subdirectory(docs)
 #TODO: Add game building target and ability to switch between editor and game
 
 #TODO: Uncomment this when some source code for Engine is available
-#add_subdirectory(Engine)
-include_directories(Engine/include)
+add_subdirectory(Engine)
+include_directories(${CMAKE_CURRENT_SOURCE_DIR}/Engine/include)
 add_subdirectory(Editor)
 
 target_link_libraries(Editor ${BWATLIBS_LIBS})
-#target_link_libraries(Editor Engine)
+target_link_libraries(Editor Engine)

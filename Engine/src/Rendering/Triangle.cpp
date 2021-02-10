@@ -56,11 +56,11 @@ Triangle::Triangle()
 
 	//vertex buffer
 	{
-		Vertex triangleA[] =
+		VertexTriangle triangleA[] =
 		{
-			{	Math::vec3f{ 0.5f, -0.5f, 0.0f}, Math::vec4f{ 1.f, 0.f, 0.f, 1.f} },
-			{	Math::vec3f{-0.5f, -0.5f, 0.0f}, Math::vec4f{ 0.f, 1.f, 0.f, 1.f} },
-			{	Math::vec3f{ 0.0f,  0.5f, 0.0f}, Math::vec4f{ 0.f, 0.f, 1.f, 1.f} },
+			{	BMath::vec3f{ 0.5f, -0.5f, 0.0f}, BMath::vec4f{ 1.f, 0.f, 0.f, 1.f} },
+			{	BMath::vec3f{-0.5f, -0.5f, 0.0f}, BMath::vec4f{ 0.f, 1.f, 0.f, 1.f} },
+			{	BMath::vec3f{ 0.0f,  0.5f, 0.0f}, BMath::vec4f{ 0.f, 0.f, 1.f, 1.f} },
 		};
 
 		glGenBuffers(1, &vertexbuffer);
@@ -78,7 +78,7 @@ Triangle::Triangle()
 		glBindBuffer(GL_ARRAY_BUFFER, vertexbuffer);
 
 		glEnableVertexAttribArray(0);
-		glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, sizeof(Vertex), (const GLvoid*)offsetof(Vertex, position));
+		glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, sizeof(VertexTriangle), (const GLvoid*)offsetof(VertexTriangle, position));
 	}
 
 	//compile shader

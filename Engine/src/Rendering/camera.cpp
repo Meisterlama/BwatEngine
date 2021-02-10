@@ -32,11 +32,11 @@ void Camera::usefreefly(Bwat::Window* win,float deltaTime)
     yaw += xdelta_pos;
     pitch += -ydelta_pos;
 
-    if (pitch >= Math::PI/2)
-        pitch = Math::PI / 2;
+    if (pitch >= BMath::PI/2)
+        pitch = BMath::PI / 2;
 
-    else if (pitch <= -Math::PI / 2)
-        pitch = -Math::PI / 2;
+    else if (pitch <= -BMath::PI / 2)
+        pitch = -BMath::PI / 2;
         
     glfwSetCursorPos(win->window, win->GetWidth() /2, win->GetHeight()/2);
 

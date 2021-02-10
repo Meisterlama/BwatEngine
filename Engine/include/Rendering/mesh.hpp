@@ -7,20 +7,20 @@
 
 namespace Rendering
 {
-    struct Vertex
-    {
-        Math::vec3f postion;
-        Math::vec3f normal;
-        Math::vec2f texCoords;
-        Math::vec3f tangent;
-        Math::vec3f bitangent;
-    };
-
 
 struct Texture
 {
     unsigned int id;
     std::string type;
+};
+
+struct Vertex
+{
+    BMath::vec3f postion;
+    BMath::vec3f normal;
+    BMath::vec2f texCoords;
+    BMath::vec3f tangent;
+    BMath::vec3f bitangent;
 };
 
 class Mesh

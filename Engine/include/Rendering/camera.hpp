@@ -11,9 +11,9 @@ namespace Rendering
     public:
 
         float yaw = 0;
-        float pitch = Math::PI / 2;
-        Math::vec3f cameraPos;
-        Math::vec3f cameraRot;
+        float pitch = BMath::PI / 2;
+        BMath::vec3f cameraPos;
+        BMath::vec3f cameraRot;
         double xpos = 0, ypos = 0;
 
         // constructor

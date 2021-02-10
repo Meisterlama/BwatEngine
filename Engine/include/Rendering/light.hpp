@@ -11,13 +11,13 @@ namespace Rendering
     private:
 
     public:
-        Math::vec3f position{ 0,0,0 };
-        Math::vec3f direction{ 0,0,0 };
+        BMath::vec3f position{ 0,0,0 };
+        BMath::vec3f direction{ 0,0,0 };
 
         // classic
-        Math::vec3f ambient{ 0,0,0 };
-        Math::vec3f diffuse{ 0,0,0 };
-        Math::vec3f specular{ 0,0,0 };
+        BMath::vec3f ambient{ 0,0,0 };
+        BMath::vec3f diffuse{ 0,0,0 };
+        BMath::vec3f specular{ 0,0,0 };
 
 
         Light();

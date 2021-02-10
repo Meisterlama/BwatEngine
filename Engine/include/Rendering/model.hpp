@@ -34,11 +34,7 @@ namespace Rendering
 
 	public:
 
-		Model(std::string& path)
-		{
-			LoadModel(path);
-		};
-
+		Model(std::string& path);
 		void Draw(Shader& shader);
 
 	};
