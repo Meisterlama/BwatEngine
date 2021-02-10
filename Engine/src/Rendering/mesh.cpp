@@ -1,13 +1,11 @@
-#include "../Math/vec3.h"
-#include "../Math/vec2.h"
-#include "mesh.hpp"
+#include "Rendering/mesh.hpp"
 
 #include <cstring>
 #include <stdio.h>
 #include <iostream>
 #include <fstream>
 
-using namespace BwatRendering;
+using namespace Rendering;
 
 Mesh::Mesh(std::vector<Vertex> mVertices, std::vector<unsigned int> mIndices, std::vector<Texture> mTextures)
 {

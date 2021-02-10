@@ -1,7 +1,9 @@
-#include "camera.hpp"
+#include "Rendering/camera.hpp"
 #include <math.h>
-#include <iostream>
+#include <glad/glad.h>
+#include <GLFW/glfw3.h>
 
+using namespace Rendering;
 
 Camera::Camera()
 {
@@ -13,14 +15,14 @@ Camera::~Camera()
 
 }
 
-/*
-void Camera::usefreefly(GLFWwindow* win,float deltaTime)
+
+void Camera::usefreefly(Bwat::Window* win,float deltaTime)
 {
     // ===================================== Mouse ===================================== // 
 
-    glfwGetCursorPos(win, &xpos, &ypos);
-    float xdelta_pos = xpos - win.width/2;
-    float ydelta_pos = ypos - win.height/2 ;
+    glfwGetCursorPos(win->window, &xpos, &ypos);
+    float xdelta_pos = xpos - win->GetWidth()/2;
+    float ydelta_pos = ypos - win->GetHeight()/2 ;
 
     float sensitivity_mouse = 0.1f;
 
@@ -30,13 +32,13 @@ void Camera::usefreefly(GLFWwindow* win,float deltaTime)
     yaw += xdelta_pos;
     pitch += -ydelta_pos;
 
-    if (pitch >= M_PI_2)
-        pitch = M_PI_2 ;
+    if (pitch >= Math::PI/2)
+        pitch = Math::PI / 2;
 
-    else if (pitch <= -M_PI_2)
-        pitch = -M_PI_2;
+    else if (pitch <= -Math::PI / 2)
+        pitch = -Math::PI / 2;
         
-    glfwSetCursorPos(win.window,win.width/2,win.height/2);
+    glfwSetCursorPos(win->window, win->GetWidth() /2, win->GetHeight()/2);
 
     // ===================================== Movement ===================================== // 
 
@@ -44,35 +46,37 @@ void Camera::usefreefly(GLFWwindow* win,float deltaTime)
     float FrameSpeed = (float)(Speed * deltaTime);
 
 
-    if(glfwGetKey(win.window, GLFW_KEY_Q))
+    if(glfwGetKey(win->window, GLFW_KEY_Q))
         FrameSpeed *= 3.f;
 
     float ForwardVelocity = 0.f;
-    if(glfwGetKey(win.window, GLFW_KEY_W))
+    if(glfwGetKey(win->window, GLFW_KEY_W))
         ForwardVelocity = -FrameSpeed;
-    if(glfwGetKey(win.window, GLFW_KEY_S))
+    if(glfwGetKey(win->window, GLFW_KEY_S))
         ForwardVelocity = FrameSpeed;
 
 
     float StrafeVelocity = 0.f;
-    if(glfwGetKey(win.window, GLFW_KEY_A))
+    if(glfwGetKey(win->window, GLFW_KEY_A))
         StrafeVelocity = -FrameSpeed;
-    if(glfwGetKey(win.window, GLFW_KEY_D))
+    if(glfwGetKey(win->window, GLFW_KEY_D))
         StrafeVelocity = FrameSpeed;
 
     
-    cameraPos.z += cos(yaw) * cos(pitch) * ForwardVelocity;
-    cameraPos.x += sin(-yaw) * cos(-pitch) * ForwardVelocity;
-    cameraPos.y -= sin(pitch) * ForwardVelocity ;
+    cameraPos.Z += cos(yaw) * cos(pitch) * ForwardVelocity;
+    cameraPos.X += sin(-yaw) * cos(-pitch) * ForwardVelocity;
+    cameraPos.Y -= sin(pitch) * ForwardVelocity ;
 
-    cameraPos.z += sin(yaw)  * StrafeVelocity;
-    cameraPos.x += cos(yaw)  * StrafeVelocity;
+    cameraPos.Z += sin(yaw)  * StrafeVelocity;
+    cameraPos.X += cos(yaw)  * StrafeVelocity;
+    
 
-    glfwSetInputMode(win.window,GLFW_CURSOR,GLFW_CURSOR_HIDDEN);
+    glfwSetInputMode(win->window,GLFW_CURSOR,GLFW_CURSOR_HIDDEN);
 
         
-}*/
+}
 
+/*
 Mat4 Camera::view_of_camera(Camera cam)
 {
     Mat4 View;
@@ -85,3 +89,4 @@ Mat4 Camera::view_of_camera(Camera cam)
     return View;
 }
 
+*/

@@ -1,28 +1,30 @@
 #pragma once
 
-#include "../Math/vec3.h"
-#include "../Math/mat4.h"
-
+#include "../Math/Math.hpp"
+#include "Window.hpp"
 #include <imgui_impl_glfw.h>
 
-
-class Camera
+namespace Rendering
 {
-    public :
-    
+    class Camera
+    {
+    public:
+
         float yaw = 0;
-        float pitch = M_PI / 2;
-        Vec3 cameraPos;
-        Vec3 cameraRot;
-        double xpos,ypos;
+        float pitch = Math::PI / 2;
+        Math::vec3f cameraPos;
+        Math::vec3f cameraRot;
+        double xpos = 0, ypos = 0;
 
         // constructor
         Camera();
         ~Camera();
 
         //method
-        void usefreefly(GLFWwindow*,float);
-        Mat4 view_of_camera(Camera cam);
+        void usefreefly(Bwat::Window*, float);
+        //Mat4 view_of_camera(Camera cam);
 
 
-};
+    };
+
+}

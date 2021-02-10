@@ -1,10 +1,9 @@
 #include <cmath>
 #include <stb_image.h>
 
-#include "model.hpp"
-#include "../Math/vec3.h"
-#include "../Math/vec4.h"
-#include "../Math/vec2.h"
+#include "Rendering/model.hpp"
+
+using namespace Rendering;
 
 void Model::LoadModel(std::string path)
 {
@@ -35,51 +34,51 @@ void Model::ProcessNode(aiNode* node, const aiScene* scene)
     }
 }
 
-BwatRendering::Mesh Model::ProcessMesh(aiMesh* mesh, const aiScene* scene)
+Rendering::Mesh Model::ProcessMesh(aiMesh* mesh, const aiScene* scene)
 {
     // data to fill
-    std::vector<BwatRendering::Vertex> vertices;
+    std::vector<Rendering::Vertex> vertices;
     std::vector<unsigned int> indices;
-    std::vector<BwatRendering::Texture> textures;
+    std::vector<Rendering::Texture> textures;
 
     // walk through each of the mesh's vertices
     for (unsigned int i = 0; i < mesh->mNumVertices; i++)
     {
-        BwatRendering::Vertex vertex;
-        Vec3 vector; // we declare a placeholder vector since assimp uses its own vector class that doesn't directly convert to glm's vec3 class so we transfer the data to this placeholder glm::vec3 first.
+        Rendering::Vertex vertex;
+        Math::vec3f vector; // we declare a placeholder vector since assimp uses its own vector class that doesn't directly convert to glm's vec3 class so we transfer the data to this placeholder glm::vec3 first.
         // positions
-        vector.x = mesh->mVertices[i].x;
-        vector.y = mesh->mVertices[i].y;
-        vector.z = mesh->mVertices[i].z;
+        vector.X = mesh->mVertices[i].x;
+        vector.Y = mesh->mVertices[i].y;
+        vector.Z = mesh->mVertices[i].z;
         vertex.postion = vector;
         // normals
         if (mesh->HasNormals())
         {
-            vector.x = mesh->mNormals[i].x;
-            vector.y = mesh->mNormals[i].y;
-            vector.z = mesh->mNormals[i].z;
+            vector.X = mesh->mNormals[i].x;
+            vector.Y = mesh->mNormals[i].y;
+            vector.Z = mesh->mNormals[i].z;
             vertex.normal = vector;
         }
         // texture coordinates
         if (mesh->mTextureCoords[0]) // does the mesh contain texture coordinates?
         {
-            Vec2 vec;
-            vec.x = mesh->mTextureCoords[0][i].x;
-            vec.y = mesh->mTextureCoords[0][i].y;
+            Math::vec2f vec;
+            vec.X = mesh->mTextureCoords[0][i].x;
+            vec.Y = mesh->mTextureCoords[0][i].y;
             vertex.texCoords = vec;
             // tangent
-            vector.x = mesh->mTangents[i].x;
-            vector.y = mesh->mTangents[i].y;
-            vector.z = mesh->mTangents[i].z;
+            vector.X = mesh->mTangents[i].x;
+            vector.Y = mesh->mTangents[i].y;
+            vector.Z = mesh->mTangents[i].z;
             vertex.tangent = vector;
             // bitangent
-            vector.x = mesh->mBitangents[i].x;
-            vector.y = mesh->mBitangents[i].y;
-            vector.z = mesh->mBitangents[i].z;
+            vector.X = mesh->mBitangents[i].x;
+            vector.Y = mesh->mBitangents[i].y;
+            vector.Z = mesh->mBitangents[i].z;
             vertex.bitangent = vector;
         }
         else
-            vertex.texCoords = Vec2(0.0f, 0.0f);
+            vertex.texCoords = Math::vec2f(0.0f, 0.0f);
 
         vertices.push_back(vertex);
     }
@@ -95,20 +94,20 @@ BwatRendering::Mesh Model::ProcessMesh(aiMesh* mesh, const aiScene* scene)
     aiMaterial* material = scene->mMaterials[mesh->mMaterialIndex];
 
     // 1. diffuse maps
-    std::vector<BwatRendering::Texture> diffuseMaps = LoadMaterialTextures(material, aiTextureType_DIFFUSE, "texture_diffuse");
+    std::vector<Rendering::Texture> diffuseMaps = LoadMaterialTextures(material, aiTextureType_DIFFUSE, "texture_diffuse");
     textures.insert(textures.end(), diffuseMaps.begin(), diffuseMaps.end());
     // 2. specular maps
-    std::vector<BwatRendering::Texture> specularMaps = LoadMaterialTextures(material, aiTextureType_SPECULAR, "texture_specular");
+    std::vector<Rendering::Texture> specularMaps = LoadMaterialTextures(material, aiTextureType_SPECULAR, "texture_specular");
     textures.insert(textures.end(), specularMaps.begin(), specularMaps.end());
     // 3. normal maps
-    std::vector<BwatRendering::Texture> normalMaps = LoadMaterialTextures(material, aiTextureType_HEIGHT, "texture_normal");
+    std::vector<Rendering::Texture> normalMaps = LoadMaterialTextures(material, aiTextureType_HEIGHT, "texture_normal");
     textures.insert(textures.end(), normalMaps.begin(), normalMaps.end());
     // 4. height maps
-    std::vector<BwatRendering::Texture> heightMaps = LoadMaterialTextures(material, aiTextureType_AMBIENT, "texture_height");
+    std::vector<Rendering::Texture> heightMaps = LoadMaterialTextures(material, aiTextureType_AMBIENT, "texture_height");
     textures.insert(textures.end(), heightMaps.begin(), heightMaps.end());
 
     // return a mesh object created from the extracted mesh data
-    return BwatRendering::Mesh(vertices, indices, textures);
+    return Rendering::Mesh(vertices, indices, textures);
 }
 
 
@@ -152,14 +151,14 @@ unsigned int TextureFromFile(const char* path, const std::string& directory)
     return textureID;
 }
 
-std::vector<BwatRendering::Texture> Model::LoadMaterialTextures(aiMaterial* mat, aiTextureType type, std::string typeName)
+std::vector<Rendering::Texture> Model::LoadMaterialTextures(aiMaterial* mat, aiTextureType type, std::string typeName)
 {
-    std::vector<BwatRendering::Texture> textures;
+    std::vector<Rendering::Texture> textures;
     for (unsigned int i = 0; i < mat->GetTextureCount(type); i++)
     {
         aiString str;
         mat->GetTexture(type, i, &str);
-        BwatRendering::Texture texture;
+        Rendering::Texture texture;
         texture.id = TextureFromFile(str.C_Str(), directory);
         texture.type = typeName;
         textures.push_back(texture);
@@ -167,7 +166,7 @@ std::vector<BwatRendering::Texture> Model::LoadMaterialTextures(aiMaterial* mat,
     return textures;
 }
 
-void Model::Draw(Shader& shader)
+void Model::Draw(Rendering::Shader& shader)
 {
 	for (unsigned int i = 0; i < meshes.size(); i++)
 		meshes[i].Draw(shader);

@@ -1,31 +1,32 @@
 #pragma once
 
-#include "Math/vec3.h"
-#include "Math/vec4.h"
+#include "Math/Math.hpp"
 
 #include <glad/glad.h>
 #include <GLFW/glfw3.h>
 
-
-struct Vertex
+namespace Rendering
 {
-	Vec3 position;
-	Vec4 color;
-};
+	struct Vertex
+	{
+		Math::vec3f position;
+		Math::vec4f color;
+	};
 
-class Triangle
-{
-public:
-	Triangle();
-	~Triangle();
+	class Triangle
+	{
+	public:
+		Triangle();
+		~Triangle();
 
-	void Update();
+		void Update();
 
-private: 
+	private:
 
-	GLuint vertexbuffer;
-	GLuint vertexArray;
-	GLuint program;
+		GLuint vertexbuffer;
+		GLuint vertexArray;
+		GLuint program;
 
-	Vec3 colorTriangle;
-};
+		Math::vec3f colorTriangle;
+	};
+}

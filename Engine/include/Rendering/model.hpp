@@ -1,47 +1,47 @@
 #pragma once
 
 #include <vector>
-#include "../Math/mat4.h"
-#include "../Math/vec3.h"
 #include "mesh.hpp"
 #include "glad/glad.h"
 #include "GLFW/glfw3.h"
 #include "shader.hpp"
-
 #include "light.hpp"
+
+#include "Math/Math.hpp"
 
 //import assimp
 #include <assimp/Importer.hpp>
 #include <assimp/scene.h>
 #include <assimp/postprocess.h>
 
-
-
-class Model
+namespace Rendering
 {
-private:
+
+	class Model
+	{
+	private:
 
 		//Data
-		
-	std::vector<BwatRendering::Mesh> meshes;
-	std::string directory;
+
+		std::vector<Mesh> meshes;
+		std::string directory;
 
 
-	void LoadModel(std::string path);
-	void ProcessNode(aiNode* node, const aiScene* scene);
-	BwatRendering::Mesh ProcessMesh(aiMesh* mesh, const aiScene* scene);
-	std::vector<BwatRendering::Texture> LoadMaterialTextures(aiMaterial* mat, aiTextureType type,
-		std::string typeName);
+		void LoadModel(std::string path);
+		void ProcessNode(aiNode* node, const aiScene* scene);
+		Mesh ProcessMesh(aiMesh* mesh, const aiScene* scene);
+		std::vector<Texture> LoadMaterialTextures(aiMaterial* mat, aiTextureType type, std::string typeName);
 
-public:
-	
-	Model(std::string &path)
-	{ 
-		LoadModel(path);
+	public:
+
+		Model(std::string& path)
+		{
+			LoadModel(path);
+		};
+
+		void Draw(Shader& shader);
+
 	};
 
-	void Draw(Shader& shader);
-
-};
-
+}
 

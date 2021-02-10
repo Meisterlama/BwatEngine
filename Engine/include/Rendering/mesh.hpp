@@ -3,18 +3,17 @@
 #include <vector>
 #include <string>
 #include "shader.hpp"
-#include "../Math/vec2.h"
-#include "../Math/vec3.h"
+#include "Math/Math.hpp"
 
-namespace BwatRendering
+namespace Rendering
 {
     struct Vertex
     {
-        Vec3 postion;
-        Vec3 normal;
-        Vec2 texCoords;
-        Vec3 tangent;
-        Vec3 bitangent;
+        Math::vec3f postion;
+        Math::vec3f normal;
+        Math::vec2f texCoords;
+        Math::vec3f tangent;
+        Math::vec3f bitangent;
     };
 
 

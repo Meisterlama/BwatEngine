@@ -1,8 +1,7 @@
-#include "light.hpp"
+#include "Rendering/light.hpp"
 #include <iostream>
 
-
-
+using namespace Rendering;
 
 Light::Light() : 
 ambient(0),diffuse(0),specular(0)

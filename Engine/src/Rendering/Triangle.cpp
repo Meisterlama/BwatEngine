@@ -1,6 +1,10 @@
-#include "Triangle.hpp"
-#include <imgui.h>
 
+#include <imgui.h>
+#include <cstdio>
+
+#include "Triangle.hpp"
+
+using namespace Rendering;
 // Vertex
 
 const char* vertexshaderStr = R"GLSL(
@@ -54,9 +58,9 @@ Triangle::Triangle()
 	{
 		Vertex triangleA[] =
 		{
-			{	Vec3{ 0.5f, -0.5f, 0.0f}, Vec4{( 1.f, 0.f, 0.f), 1.f} },
-			{	Vec3{-0.5f, -0.5f, 0.0f}, Vec4{( 0.f, 1.f, 0.f), 1.f} },
-			{	Vec3{ 0.0f,  0.5f, 0.0f}, Vec4{( 0.f, 0.f, 1.f), 1.f} },
+			{	Math::vec3f{ 0.5f, -0.5f, 0.0f}, Math::vec4f{ 1.f, 0.f, 0.f, 1.f} },
+			{	Math::vec3f{-0.5f, -0.5f, 0.0f}, Math::vec4f{ 0.f, 1.f, 0.f, 1.f} },
+			{	Math::vec3f{ 0.0f,  0.5f, 0.0f}, Math::vec4f{ 0.f, 0.f, 1.f, 1.f} },
 		};
 
 		glGenBuffers(1, &vertexbuffer);
@@ -125,10 +129,8 @@ Triangle::~Triangle()
 
 void Triangle::Update()
 {
-
 	//ImgUI
-
-	float newcolor[3] = { colorTriangle.x, colorTriangle.y, colorTriangle.z };
+	float newcolor[3] = { colorTriangle.X, colorTriangle.Y, colorTriangle.Z };
 	ImGui::ColorEdit3("Triangle color", newcolor);
 	colorTriangle = { newcolor[0], newcolor[1], newcolor[2] };
 

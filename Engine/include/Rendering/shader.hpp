@@ -7,41 +7,38 @@
 #include <fstream>
 #include <sstream>
 #include <iostream>
-#include "../Math/vec3.h"
-#include "../Math/vec2.h"
-#include "../Math/mat4.h"
 
-
-class Shader
+namespace Rendering
 {
-    private :
+    class Shader
+    {
+    private:
 
-    void checkCompileErrors(unsigned int shader);
+        void checkCompileErrors(unsigned int shader);
 
-    public :
+    public:
 
-    // the program ID
-    unsigned int ID;
-  
-    // constructor 
-    Shader(){};
-    ~Shader(){};
-    Shader(const char* vertexPath, const char* fragmentPath);
+        // the program ID
+        unsigned int ID;
 
-    //create Shader
-    GLuint createShader(GLenum type, int sourceCount, const char** sources);
+        // constructor 
+        Shader() {};
+        ~Shader() {};
+        Shader(const char* vertexPath, const char* fragmentPath);
 
-    // use/activate the shader
-    void use();
+        //create Shader
+        GLuint createShader(GLenum type, int sourceCount, const char** sources);
 
-    // utility uniform functions
-    void setBool(const std::string &name, bool value) const;  
-    void setInt(const std::string &name, int value) const;   
-    void setFloat(const std::string &name, float value) const;
-    void setVec2(const std::string &name, float x, float y) const;
-    void setVec3(const std::string &name, float x, float y, float z) const;
-    void setMat4(const std::string &name, const Mat4 &mat) const;
+        // use/activate the shader
+        void use();
 
-    
+        // utility uniform functions
+        void setBool(const std::string& name, bool value) const;
+        void setInt(const std::string& name, int value) const;
+        void setFloat(const std::string& name, float value) const;
+        void setVec2(const std::string& name, float x, float y) const;
+        void setVec3(const std::string& name, float x, float y, float z) const;
+        //void setMat4(const std::string &name, const Mat4 &mat) const;
 
-};
+    };
+}

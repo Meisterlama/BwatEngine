@@ -1,27 +1,30 @@
 #pragma once
 
-#include "../Math/Vec3.h"
+#include "Math/Math.hpp"
 #include "shader.hpp"
 
-
-class Light
+namespace Rendering
 {
-private:
-    
-public:
-    Vec3 position{0,0,0};
-    Vec3 direction{0,0,0};
 
-    // classic
-    Vec3 ambient{0,0,0};
-    Vec3 diffuse{0,0,0};
-    Vec3 specular{ 0,0,0 };
+    class Light
+    {
+    private:
 
-   
-    Light();
-    ~Light();
+    public:
+        Math::vec3f position{ 0,0,0 };
+        Math::vec3f direction{ 0,0,0 };
 
-    //Methods
+        // classic
+        Math::vec3f ambient{ 0,0,0 };
+        Math::vec3f diffuse{ 0,0,0 };
+        Math::vec3f specular{ 0,0,0 };
 
-};
 
+        Light();
+        ~Light();
+
+        //Methods
+
+    };
+
+}
