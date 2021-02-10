@@ -3,7 +3,7 @@
 
 #include "Math/Meta.hpp"
 
-namespace Math
+namespace BMath
 {
     class RNG {
     public:

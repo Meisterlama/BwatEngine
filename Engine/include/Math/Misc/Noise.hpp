@@ -3,7 +3,7 @@
 
 #include "Math/Meta.hpp"
 
-namespace Math {
+namespace BMath {
     // Based on Math for Game Programmers: Noise-Based RNG from GDC 2017
 
     [[nodiscard]] ML_FUNC_DECL

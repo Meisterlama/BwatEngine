@@ -4,7 +4,7 @@
 #include "Math/Meta.hpp"
 #include "Math/Vector/Vector3.hpp"
 
-namespace Math
+namespace BMath
 {
     template<typename T>
     class Vector3;

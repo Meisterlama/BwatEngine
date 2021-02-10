@@ -4,7 +4,7 @@
 #include "Math/Meta.hpp"
 
 // Currently only wrapping std functions
-namespace Math
+namespace BMath
 {
     [[nodiscard]] ML_FUNC_DECL float ToRads(float x);
 
