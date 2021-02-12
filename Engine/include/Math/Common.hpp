@@ -92,6 +92,11 @@ namespace BMath
         return std::atan(x);
     }
 
+    [[nodiscard]] ML_FUNC_DECL float Atan2(float x, float y)
+    {
+        return std::atan2(x, y);
+    }
+
     [[nodiscard]] ML_FUNC_DECL float Abs(float x)
     {
         return (x < 0) ? -x : x;
