@@ -6,3 +6,4 @@ file(GLOB_RECURSE BWAT_ENGINE_SRC
         *.cpp)
 
 add_library(Engine STATIC ${BWAT_ENGINE_SRC})
+target_include_directories(Engine PUBLIC include)

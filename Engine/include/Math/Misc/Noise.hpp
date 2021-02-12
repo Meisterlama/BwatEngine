@@ -2,6 +2,7 @@
 #define MATH_NOISE_HPP
 
 #include "Math/Meta.hpp"
+#include <limits>
 
 namespace BMath {
     // Based on Math for Game Programmers: Noise-Based RNG from GDC 2017
@@ -49,6 +50,7 @@ namespace BMath {
 
 #pragma endregion
 
+#ifdef BMATH_IMPLEMENTATION
 #pragma region Definitions
 
     [[nodiscard]] ML_FUNC_DECL unsigned int Get1dNoiseUint(unsigned int posX, unsigned int seed)
@@ -124,6 +126,7 @@ namespace BMath {
     }
 
 #pragma endregion
+#endif //BMATH_IMPLEMENTATION
 
 }
 #endif //MATH_NOISE_HPP
