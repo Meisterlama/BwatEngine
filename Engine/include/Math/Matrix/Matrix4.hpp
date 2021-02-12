@@ -82,6 +82,12 @@ namespace BMath
         ML_FUNC_DECL Matrix4& Normalize();
         [[nodiscard]] ML_FUNC_DECL Matrix4 GetNormalized() const;
 
+        ML_FUNC_DECL Vector4<T>& RotateVector(Vector4<T>& vec) const;
+        [[nodiscard]] ML_FUNC_DECL Vector4<T> GetRotatedVector(const Vector4<T>& vec) const;
+
+        ML_FUNC_DECL Vector4<T>& RotateVector(Vector3<T>& vec) const;
+        [[nodiscard]] ML_FUNC_DECL Vector4<T> GetRotatedVector(const Vector3<T>& vec) const;
+
         static ML_FUNC_DECL Matrix4&& CreatePerspective(T fovy, T aspect, T near, T far);
         static ML_FUNC_DECL Matrix4&& CreateOrtho(T left, T right, T bottom, T top, T near, T far);
         static ML_FUNC_DECL Matrix4&& CreateTranslationMat(Vector3<T> translation);
@@ -119,6 +125,12 @@ namespace BMath
         ML_FUNC_DECL Matrix4& Mult(const Matrix4& other);
         [[nodiscard]] ML_FUNC_DECL Matrix4 operator*(const Matrix4& other) const;
         ML_FUNC_DECL Matrix4& operator*=(const Matrix4& other);
+
+        ML_FUNC_DECL Vector4<T>& Mult(const Vector4<T>& other);
+        [[nodiscard]] ML_FUNC_DECL Vector4<T> operator*(const Vector4<T>& other) const;
+
+        ML_FUNC_DECL Vector4<T>& Mult(const Vector3<T>& other);
+        [[nodiscard]] ML_FUNC_DECL Vector4<T> operator*(const Vector3<T>& other) const;
 
         [[nodiscard]] ML_FUNC_DECL Matrix4 operator*(const T& scalar) const;
         ML_FUNC_DECL Matrix4& operator*=(const T& scalar);
@@ -269,6 +281,48 @@ namespace BMath
     [[nodiscard]] ML_FUNC_DECL Matrix4<T> Matrix4<T>::GetNormalized() const
     {
         return Matrix4<T>{*this}.Normalize();
+    }
+
+    template<typename T>
+    ML_FUNC_DECL Vector4<T>& Matrix4<T>::RotateVector(Vector4<T>& vec) const
+    {
+        vec = Vector4<T>{
+            vec.X * v0 + vec.Y * v4 + vec.Z * v8  + vec.W * v12,
+            vec.X * v1 + vec.Y * v5 + vec.Z * v9  + vec.W * v13,
+            vec.X * v2 + vec.Y * v6 + vec.Z * v10 + vec.W * v14,
+            vec.X * v3 + vec.Y * v7 + vec.Z * v11 + vec.W * v15,};
+
+        return vec;
+    }
+
+    template<typename T>
+    [[nodiscard]] ML_FUNC_DECL Vector4<T> Matrix4<T>::GetRotatedVector(const Vector4<T>& vec) const
+    {
+        return Vector4<T>{
+                vec.X * v0 + vec.Y * v4 + vec.Z * v8  + vec.W * v12,
+                vec.X * v1 + vec.Y * v5 + vec.Z * v9  + vec.W * v13,
+                vec.X * v2 + vec.Y * v6 + vec.Z * v10 + vec.W * v14,
+                vec.X * v3 + vec.Y * v7 + vec.Z * v11 + vec.W * v15,};
+    }
+
+    template<typename T>
+    ML_FUNC_DECL Vector4<T>& Matrix4<T>::RotateVector(Vector3<T>& vec) const
+    {
+        vec = Vector3<T>{
+                vec.X * v0 + vec.Y * v4 + vec.Z * v8  + vec.W * v12,
+                vec.X * v1 + vec.Y * v5 + vec.Z * v9  + vec.W * v13,
+                vec.X * v2 + vec.Y * v6 + vec.Z * v10 + vec.W * v14};
+
+        return vec;
+    }
+
+    template<typename T>
+    [[nodiscard]] ML_FUNC_DECL Vector4<T> Matrix4<T>::GetRotatedVector(const Vector3<T>& vec) const
+    {
+        return Vector3<T>{
+                vec.X * v0 + vec.Y * v4 + vec.Z * v8  + vec.W * v12,
+                vec.X * v1 + vec.Y * v5 + vec.Z * v9  + vec.W * v13,
+                vec.X * v2 + vec.Y * v6 + vec.Z * v10 + vec.W * v14};
     }
 
     template<typename T>
