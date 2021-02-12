@@ -50,6 +50,7 @@ namespace BMath
 
 #pragma endregion
 
+#ifdef BMATH_IMPLEMENTATION
 #pragma region Definitions
 
     [[nodiscard]] ML_FUNC_DECL float ToRads(float x)
@@ -153,7 +154,7 @@ namespace BMath
     }
 
 #pragma endregion
-
+#endif //BMATH_IMPLEMENTATION
 }
 
 #endif //MATH_COMMON_HPP

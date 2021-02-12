@@ -1,5 +1,5 @@
-#ifndef MATH_HPP
-#define MATH_HPP
+#ifndef BMATH_HPP
+#define BMATH_HPP
 
 #include "Meta.hpp"
 #include "Common.hpp"
@@ -8,4 +8,4 @@
 #include "Matrix/Matrix4.hpp"
 #include "Quaternion.hpp"
 
-#endif //MATH_HPP
+#endif //BMATH_HPP

@@ -35,6 +35,7 @@ namespace BMath
 
 #pragma endregion
 
+#ifdef BMATH_IMPLEMENTATION
 #pragma region Definitions
 
     ML_FUNC_DECL unsigned int RNG::RollRandomUint32()
@@ -71,6 +72,7 @@ namespace BMath
     }
 
 #pragma endregion
+#endif //BMATH_IMPLEMENTATION
 
 }
 #endif //MATH_RNG_HPP
