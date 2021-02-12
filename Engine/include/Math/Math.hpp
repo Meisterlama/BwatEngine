@@ -6,5 +6,6 @@
 #include "Misc/Misc.hpp"
 #include "Vector/Vectors.hpp"
 #include "Matrix/Matrix4.hpp"
+#include "Quaternion.hpp"
 
 #endif //MATH_HPP
