@@ -3,6 +3,8 @@
 
 #include "Logger.hpp"
 
+
+#if 0
 namespace BLogger
 {
     class LoggerSingleton
@@ -25,5 +27,6 @@ namespace BLogger
 
     };
 }
+#endif
 
 #endif
