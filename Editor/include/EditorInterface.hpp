@@ -12,6 +12,9 @@ void CreateFrame();
 void RenderImGui();
 void DrawInterface(float color[3], GLuint f_tex);
 void DestroyEditor();
+static void MenuFile();
+static void MainMenuBar();
+static void MenuOption();
 
 
 #endif //BWATENGINE_EDITORINTERFACE_HPP
