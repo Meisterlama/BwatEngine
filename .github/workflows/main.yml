@@ -40,10 +40,10 @@ jobs:
       - name: Extracting doc
         uses: mattnotmitt/doxygen-action@v1.2.3
         with:
-          doxyfile: docs/Doxyfile
-          working-directory: docs/.
+          doxyfile: ./Doxyfile
+          working-directory: ./docs
       
       - name: Building html
-        working-directory: docs/.
+        working-directory: ./docs
         run: make html
         
