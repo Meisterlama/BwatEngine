@@ -1,3 +1,4 @@
+
 #ifndef MATH_QUATERNION_HPP
 #define MATH_QUATERNION_HPP
 
@@ -464,6 +465,39 @@ namespace BMath
     {
         ratio = (ratio > 1) ? 1 : (ratio < 0) ? 0 : ratio;
         return (1 - ratio) * begin + ratio * end;
+    }
+
+    template<typename T>
+    ML_FUNC_DECL Quaternion<T> NLerp(Quaternion<T> begin, Quaternion<T> end, float ratio)
+    {
+        ratio = (ratio > 1) ? 1 : (ratio < 0) ? 0 : ratio;
+        return Quaternion<T>{(1 - ratio) * begin + ratio * end}.Normalize();
+    }
+
+    template<typename T>
+    ML_FUNC_DECL Quaternion<T> SLerp(Quaternion<T> begin, Quaternion<T> end, float ratio)
+    {
+        float cosHalfTheta = begin.X * end.X + begin.Y * end.Y + begin.Z * end.Z + begin.W * end.W;
+
+        if (Abs(cosHalfTheta) >= 1.0) return begin;
+        if (cosHalfTheta > 0.95) return NLerp(begin, end, ratio);
+
+        float halfTheta = Acos(cosHalfTheta);
+        float sinHalfTheta = Sqrt(1.0 - cosHalfTheta * cosHalfTheta);
+
+        if (Abs(sinHalfTheta) < 0.001)
+            return Quaternion<T>{
+                    begin.X * 0.5 + end.X * 0.5,
+                    begin.Y * 0.5 + end.Y * 0.5,
+                    begin.Z * 0.5 + end.Z * 0.5,
+                    begin.W * 0.5 + end.W * 0.5};
+        float ratioA = Sin((1 - ratio) * halfTheta) / sinHalfTheta;
+        float ratioB = Sin(ratio * halfTheta) / sinHalfTheta;
+
+        return Quaternion<T>{(begin.X * ratioA + end.X * ratioB),
+                             (begin.Y * ratioA + end.Y * ratioB),
+                             (begin.Z * ratioA + end.Z * ratioB),
+                             (begin.W * ratioA + end.W * ratioB)};
     }
 
 #pragma endregion

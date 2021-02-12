@@ -26,6 +26,8 @@ namespace BMath
 
     [[nodiscard]] ML_FUNC_DECL float Atan(float x);
 
+    [[nodiscard]] ML_FUNC_DECL float Abs(float x);
+
     [[nodiscard]] ML_FUNC_DECL float Pow(float x, float y);
 
     [[nodiscard]] ML_FUNC_DECL float Sqrt(float x);
@@ -88,6 +90,11 @@ namespace BMath
     [[nodiscard]] ML_FUNC_DECL float Atan(float x)
     {
         return std::atan(x);
+    }
+
+    [[nodiscard]] ML_FUNC_DECL float Abs(float x)
+    {
+        return (x < 0) ? -x : x;
     }
 
     [[nodiscard]] ML_FUNC_DECL float Pow(float x, float y)
