@@ -12,6 +12,22 @@ namespace BMath
     template<typename T>
     class Quaternion
     {
+    private:
+        T old_values[4];
+        Matrix4<T> rotation{1};
+
+        bool isDirty()
+        {
+            if(*this != Quaternion<T>{old_values[0], old_values[1], old_values[2], old_values[3]})
+            {
+                old_values[0] = values[0];
+                old_values[1] = values[1];
+                old_values[2] = values[2];
+                old_values[3] = values[3];
+                return true;
+            }
+            return false;
+        }
     public:
         union
         {
@@ -50,6 +66,19 @@ namespace BMath
             Y = x0 * y1 * z0 - x1 * y0 * z1;
             Z = x0 * y0 * z1 - x1 * y1 * z0;
             W = x0 * y0 * z0 - x1 * y1 * z1;
+        }
+
+        ML_FUNC_DECL Quaternion(Vector3<T> axis, T angle)
+        {
+            if (Vector3Length(axis) != 0.0f) return Quaternion<T>{0};
+
+            angle *= 0.5;
+            axis.Normalize();
+
+            float s = Sin(angle);
+            float c = Cos(angle);
+
+            return Quaternion<T>(axis.X * s, axis.Y * s, axis.Z * s, axis.W * c);
         }
 
         ML_FUNC_DECL Quaternion(const Quaternion &quat) = default;
@@ -98,7 +127,11 @@ namespace BMath
 
         [[nodiscard]] ML_FUNC_DECL Quaternion GetInverted() const;
 
-        [[nodiscard]] ML_FUNC_DECL Matrix4 <T> GetRotationMatrix();
+        [[nodiscard]] ML_FUNC_DECL Matrix4<T> GetRotationMatrix();
+
+        [[nodiscard]] ML_FUNC_DECL Vector3<T> GetEulerAngles();
+
+        [[nodiscard]] ML_FUNC_DECL Vector3<T> Rotate(Vector3<T> vec);
 
         [[nodiscard]] ML_FUNC_DECL bool Equals(const Quaternion &rhs) const;
 
@@ -277,15 +310,49 @@ namespace BMath
     template<typename T>
     ML_FUNC_DECL Matrix4 <T> Quaternion<T>::GetRotationMatrix()
     {
-        float x2 = 2 * (X * X), y2 = 2 * (Y * Y), z2 = 2 * (Z * Z);
+        if (isDirty())
+        {
+            float x2 = 2 * (X * X), y2 = 2 * (Y * Y), z2 = 2 * (Z * Z);
 
-        float xy = 2 * (X * Y), xz = 2 * (X * Z), yz = 2 * (Y * Z);
-        float xw = 2 * (X * W), yw = 2 * (Y * W), zw = 2 * (Z * W);
+            float xy = 2 * (X * Y), xz = 2 * (X * Z), yz = 2 * (Y * Z);
+            float xw = 2 * (X * W), yw = 2 * (Y * W), zw = 2 * (Z * W);
 
-        return Matrix4<T>{1 - y2 - z2, xy + zw    , xz - yw    , 0,
-                          xy - zw    , 1 - x2 - z2, yz + xw    , 0,
-                          xz + yw    , yz - xw    , 1 - x2 - y2, 0,
-                          0          , 0          , 0          , 1};
+            rotation = Matrix4<T>{1 - y2 - z2, xy + zw    , xz - yw    , 0,
+                              xy - zw    , 1 - x2 - z2, yz + xw    , 0,
+                              xz + yw    , yz - xw    , 1 - x2 - y2, 0,
+                              0          , 0          , 0          , 1};
+
+        }
+
+        return rotation;
+    }
+
+
+
+    template <typename T>
+    [[nodiscard]] ML_FUNC_DECL Vector3<T> Quaternion<T>::GetEulerAngles()
+    {
+        // roll (x-axis rotation)
+        float x0 = 2.0*(W*X + Y*Z);
+        float x1 = 1.0 - 2.0*(X*X + Y*Y);
+
+        // pitch (y-axis rotation)
+        float y0 = 2.0*(W*Y - Z*X);
+        y0 = y0 > 1.0 ? 1.0 : y0;
+        y0 = y0 < -1.0 ? -1.0 : y0;
+
+        // yaw (z-axis rotation)
+        float z0 = 2.0*(W*Z + X*Y);
+        float z1 = 1.0 - 2.0*(Y*Y + Z*Z);
+
+        return Vector3<T>{ToDegs(Atan2(x0, x1)), ToDegs(Asin(y0)), ToDegs(Atan2(z0, z1))};
+    }
+    template <typename T>
+    [[nodiscard]] ML_FUNC_DECL Vector3<T> Quaternion<T>::Rotate(Vector3<T> v)
+    {
+        return Vector3<T>{v.X*(X*X + W*W - Y*Y - Z*Z) + v.y*(2*X*Y - 2*W*Z) + v.z*(2*X*Z + 2*W*Y),
+                          v.X*(2*W*Z + 2*X*Y) + v.y*(W*W - X*X + Y*Y - Z*Z) + v.z*(-2*W*X + 2*Y*Z),
+                          v.X*(-2*W*Y + 2*X*Z) + v.y*(2*W*X + 2*Y*Z)+ v.z*(W*W - X*X - Y*Y + Z*Z)};
     }
 
     template<typename T>
