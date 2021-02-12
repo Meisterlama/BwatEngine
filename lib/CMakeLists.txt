@@ -1,13 +1,11 @@
 cmake_minimum_required(VERSION 3.17)
-set(CMAKE_CXX_STANDARD 14)
+set(CMAKE_CXX_STANDARD 17)
 
 project(BwatLibs LANGUAGES CXX C)
 
 option(BWAT_ENGINE_TEST_ENABLED "Whether or not we are running the test of BwatEngine" OFF)
 
 # ASSIMP BUILD
-include_directories(PRIVATE assimp/include)
-
 set(ASSIMP_BUILD_ALL_IMPORTERS_BY_DEFAULT OFF CACHE BOOL "" FORCE)
 set(ASSIMP_BUILD_GLTF_IMPORTER ON CACHE BOOL "" FORCE)
 set(ASSIMP_BUILD_FBX_IMPORTER ON CACHE BOOL "" FORCE)
@@ -17,35 +15,23 @@ set(ASSIMP_BUILD_TESTS OFF CACHE BOOL "" FORCE)
 set(ASSIMP_INSTALL OFF CACHE BOOL "" FORCE)
 
 add_subdirectory(assimp)
-get_property(ASSIMP_INCLUDES DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}/assimp PROPERTY INCLUDE_DIRECTORIES)
-list(APPEND BWATLIBS_HEADERS_INTERNAL "${ASSIMP_INCLUDES}")
-list(APPEND BWATLIBS_LIBS_INTERNAL assimp)
 
 # FLATBUFFERS BUILD
-include_directories(PRIVATE flatbuffers/include)
 set(FLATBUFFERS_BUILD_TESTS OFF CACHE BOOL "" FORCE)
 set(FLATBUFFERS_STATIC_FLATC ON CACHE BOOL "" FORCE)
 set(FLATBUFFERS_INSTALL OFF CACHE BOOL "" FORCE)
 
 add_subdirectory(flatbuffers)
-get_property(FLATBUFFERS_INCLUDES DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}/flatbuffers PROPERTY INCLUDE_DIRECTORIES)
-list(APPEND BWATLIBS_HEADERS_INTERNAL "${FLATBUFFERS_INCLUDES}")
-list(APPEND BWATLIBS_LIBS_INTERNAL flatbuffers)
-
 
 # GLAD BUILD
 include_directories(PRIVATE gladlib)
-
 set(GLAD_SRC
         gladlib/glad/glad.c)
 
 add_library(glad STATIC ${GLAD_SRC})
-list(APPEND BWATLIBS_HEADERS_INTERNAL "${CMAKE_CURRENT_SOURCE_DIR}/gladlib")
-list(APPEND BWATLIBS_LIBS_INTERNAL glad)
+target_include_directories(glad PUBLIC gladlib)
 
 # GLFW BUILD
-include_directories(PRIVATE glfw/include)
-
 set(GLFW_BUILD_DOCS OFF CACHE BOOL "" FORCE)
 set(GLFW_BUILD_TESTS OFF CACHE BOOL "" FORCE)
 set(GLFW_BUILD_EXAMPLES OFF CACHE BOOL "" FORCE)
@@ -55,9 +41,6 @@ set(BUILD_SHARED_LIBS OFF CACHE BOOL "" FORCE)
 add_subdirectory(glfw)
 #For some reasons the next line breaks everything
 #target_compile_definitions(glfw PRIVATE -DGLFW_INCLUDE_NONE)
-get_property(GLFW_INCLUDES DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}/glfw PROPERTY INCLUDE_DIRECTORIES)
-list(APPEND BWATLIBS_HEADERS_INTERNAL "${GLFW_INCLUDES}")
-list(APPEND BWATLIBS_LIBS_INTERNAL glfw)
 
 # GTEST BUILD
 if (BWAT_ENGINE_TEST_ENABLED)
@@ -66,14 +49,9 @@ if (BWAT_ENGINE_TEST_ENABLED)
     set(INSTALL_GTEST OFF CACHE BOOL "" FORCE)
 
     add_subdirectory(googletest)
-    get_property(GTEST_INCLUDES DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}/googletest PROPERTY INCLUDE_DIRECTORIES)
-    list(APPEND BWATLIBS_HEADERS_INTERNAL "${GTEST_INCLUDES}")
-    list(APPEND BWATLIBS_LIBS_INTERNAL gtest)
 endif()
 
 # IMGUI BUILD
-include_directories(PRIVATE imgui/include)
-
 set(IMGUI_SRC
         imgui/src/imgui.cpp
         imgui/src/imgui_demo.cpp
@@ -84,12 +62,10 @@ set(IMGUI_SRC
         imgui/src/imgui_widgets.cpp)
 
 add_library(imgui STATIC ${IMGUI_SRC})
-list(APPEND BWATLIBS_HEADERS_INTERNAL  "${CMAKE_CURRENT_SOURCE_DIR}/imgui/include")
-list(APPEND BWATLIBS_LIBS_INTERNAL imgui)
+target_include_directories(imgui PUBLIC imgui/include)
+target_link_libraries(imgui PUBLIC glfw glad)
 
 # OPENAL_SOFT BUILD
-include_directories(PRIVATE openal-soft/include)
-
 set(ALSOFT_UTILS OFF CACHE BOOL "" FORCE)
 set(ALSOFT_EXAMPLES OFF CACHE BOOL "" FORCE)
 set(ALSOFT_INSTALL  OFF CACHE BOOL "" FORCE)
@@ -101,23 +77,12 @@ set(ALSOFT_INSTALL_UTILS  OFF CACHE BOOL "" FORCE)
 set(ALSOFT_UPDATE_BUILD_VERSION  OFF CACHE BOOL "" FORCE)
 
 add_subdirectory(openal-soft)
-get_property(OPENAL_INCLUDES DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}/openal-soft PROPERTY INCLUDE_DIRECTORIES)
-list(APPEND BWATLIBS_HEADERS_INTERNAL "${OPENAL_INCLUDES}")
-list(APPEND BWATLIBS_LIBS_INTERNAL OpenAL)
 
 # STB BUILD
-include_directories(PRIVATE stb/include)
-
 set(STB_SRC
         stb/src/stb_image.cpp
         stb/src/stb_perlin.cpp
         )
 
 add_library(stb STATIC ${STB_SRC})
-list(APPEND BWATLIBS_HEADERS_INTERNAL "${CMAKE_CURRENT_SOURCE_DIR}/stb/include")
-list(APPEND BWATLIBS_LIBS_INTERNAL stb)
-
-# Sending headers to parent scope
-
-set(BWATLIBS_HEADERS ${BWATLIBS_HEADERS_INTERNAL} PARENT_SCOPE)
-set(BWATLIBS_LIBS ${BWATLIBS_LIBS_INTERNAL} PARENT_SCOPE)
+target_include_directories(stb PUBLIC stb/include)
