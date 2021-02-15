@@ -11,8 +11,7 @@ add_subdirectory(docs)
 
 #TODO: Add game building target and ability to switch between editor and game
 
-#TODO: Uncomment this when some source code for Engine is available
-#add_subdirectory(Engine)
+add_subdirectory(Engine)
+target_link_libraries(Engine PUBLIC glad glfw assimp flatbuffers imgui OpenAL stb)
 add_subdirectory(Editor)
-target_link_libraries(Editor PUBLIC glad glfw assimp flatbuffers imgui OpenAL stb)
-#target_link_libraries(Editor Engine)
+target_link_libraries(Editor PUBLIC Engine)
