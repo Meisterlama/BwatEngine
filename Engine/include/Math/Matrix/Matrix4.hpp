@@ -18,12 +18,12 @@ namespace BMath
         union{
             // Column Major
             struct {
-                T v0;  T v4;  T v8;  T v12; // a, b, c, d
-                T v1;  T v5;  T v9;  T v13; // e, f, g, h
-                T v2;  T v6;  T v10; T v14; // i, j, k, l
-                T v3;  T v7;  T v11; T v15; // m, n, o, p
+                T v0;  T v1;  T v2;  T v3; // a, b, c, d
+                T v4;  T v5;  T v6;  T v7; // e, f, g, h
+                T v8;  T v9;  T v10; T v11; // i, j, k, l
+                T v12; T v13; T v14; T v15; // m, n, o, p
             };
-            T values[4*4];
+            T values[4*4]{0};
         };
 
         // Initialize the diagonal of the matrix
@@ -44,10 +44,10 @@ namespace BMath
             v15 = x15;
         }
 
-        ML_FUNC_DECL Matrix4(T x0 , T x4 , T x8 , T x12,
-                             T x1 , T x5 , T x9 , T x13,
-                             T x2 , T x6 , T x10, T x14,
-                             T x3,  T x7, T x11, T x15)
+        ML_FUNC_DECL Matrix4(T x0,  T x1,  T x2,  T x3,
+                             T x4,  T x5,  T x6,  T x7,
+                             T x8,  T x9,  T x10, T x11,
+                             T x12, T x13, T x14, T x15)
         {
             v0  = x0;
             v1  = x1;
@@ -88,17 +88,18 @@ namespace BMath
         ML_FUNC_DECL Vector4<T>& RotateVector(Vector3<T>& vec) const;
         [[nodiscard]] ML_FUNC_DECL Vector4<T> GetRotatedVector(const Vector3<T>& vec) const;
 
-        static ML_FUNC_DECL Matrix4&& CreatePerspective(T fovy, T aspect, T near, T far);
-        static ML_FUNC_DECL Matrix4&& CreateOrtho(T left, T right, T bottom, T top, T near, T far);
-        static ML_FUNC_DECL Matrix4&& CreateTranslationMat(Vector3<T> translation);
-        static ML_FUNC_DECL Matrix4&& CreateRotationMat(Vector3<T> axis, T angle);
-        static ML_FUNC_DECL Matrix4&& CreateXRotationMat(T angle);
-        static ML_FUNC_DECL Matrix4&& CreateYRotationMat(T angle);
-        static ML_FUNC_DECL Matrix4&& CreateZRotationMat(T angle);
-        static ML_FUNC_DECL Matrix4&& CreateXYZRotationMat(Vector3<T> angles);
-        static ML_FUNC_DECL Matrix4&& CreateScaleMat(Vector3<T> scale);
-        static ML_FUNC_DECL Matrix4&& CreateTRSMat(Vector3<T> translation, Vector3<T> rotation, Vector3<T> scale);
-        static ML_FUNC_DECL Matrix4&& LookAt(Vector3<T> origin, Vector3<T> target, Vector3<T> upDir);
+        static ML_FUNC_DECL Matrix4 CreatePerspective(T left, T right, T bottom, T top, T near, T far);
+        static ML_FUNC_DECL Matrix4 CreatePerspective(T fovy, T aspect, T near, T far);
+        static ML_FUNC_DECL Matrix4 CreateOrtho(T left, T right, T bottom, T top, T near, T far);
+        static ML_FUNC_DECL Matrix4 CreateTranslationMat(Vector3<T> translation);
+        static ML_FUNC_DECL Matrix4 CreateRotationMat(Vector3<T> axis, T angle);
+        static ML_FUNC_DECL Matrix4 CreateXRotationMat(T angle);
+        static ML_FUNC_DECL Matrix4 CreateYRotationMat(T angle);
+        static ML_FUNC_DECL Matrix4 CreateZRotationMat(T angle);
+        static ML_FUNC_DECL Matrix4 CreateXYZRotationMat(Vector3<T> angles);
+        static ML_FUNC_DECL Matrix4 CreateScaleMat(Vector3<T> scale);
+        static ML_FUNC_DECL Matrix4 CreateTRSMat(Vector3<T> translation, Vector3<T> rotation, Vector3<T> scale);
+        static ML_FUNC_DECL Matrix4 LookAt(Vector3<T> origin, Vector3<T> target, Vector3<T> upDir);
 
         [[nodiscard]] ML_FUNC_DECL bool Equals(const Matrix4& rhs) const;
         [[nodiscard]] ML_FUNC_DECL bool IsZero() const;
@@ -326,28 +327,34 @@ namespace BMath
     }
 
     template<typename T>
-    ML_FUNC_DECL Matrix4<T>&& Matrix4<T>::CreatePerspective(T fovy, T aspect, T near, T far)
+    ML_FUNC_DECL Matrix4<T> Matrix4<T>::CreatePerspective(T left, T right, T bottom, T top, T near, T far)
+    {
+        return Matrix4<T>{(near*2)/(right-left), 0                    , (right+left)/(right-left), 0,
+                          0                    , (near*2)/(top-bottom), (top+bottom)/(top-bottom), 0,
+                          0                    , 0                    ,-(far+near)/(far-near)    ,-(far * near*2)/(far - near),
+                          0                    , 0                    ,-1                        , 0};
+    }
+
+    template<typename T>
+    ML_FUNC_DECL Matrix4<T> Matrix4<T>::CreatePerspective(T fovy, T aspect, T near, T far)
     {
         T top = near*tan(fovy*0.5);
         T right = top*aspect;
 
-        return Matrix4<T>{near/right, 0       , 0                          , 0,
-                          0        , near/top, 0                          , 0,
-                          0        , 0       ,-(far + near)/(far - near)  ,-(far*near*2)/(far - near),
-                          0        , 0       ,-1                          , 0};
+        return CreatePerspective(-right, right, -top, top, near, far);
     }
 
     template<typename T>
-    ML_FUNC_DECL Matrix4<T>&& Matrix4<T>::CreateOrtho(T left, T right, T bottom, T top, T near, T far)
+    ML_FUNC_DECL Matrix4<T> Matrix4<T>::CreateOrtho(T left, T right, T bottom, T top, T near, T far)
     {
-        return Matrix4<T>{1/right, 0    , 0             , 0,
-                          0      , 1/top, 0             , 0,
-                          0      , 0    ,-2/(far - near),-(far + near)/(far - near),
-                          0      , 0    ,-1             , 0};
+        return Matrix4<T>{2/(right-left), 0             , 0             , -(right+left)/(right-left),
+                          0             , 2/(top-bottom), 0             , -(top+bottom)/(top-bottom),
+                          0             , 0             ,-2/(far-near)  , -(far+near)/(far-near),
+                          0             , 0             , 0             , 1};
     }
 
     template<typename T>
-    ML_FUNC_DECL Matrix4<T>&& Matrix4<T>::CreateTranslationMat(Vector3<T> translation)
+    ML_FUNC_DECL Matrix4<T> Matrix4<T>::CreateTranslationMat(Vector3<T> translation)
     {
         return Matrix4<T>{1, 0, 0, translation.X,
                           0, 1, 0, translation.Y,
@@ -356,7 +363,7 @@ namespace BMath
     }
 
     template<typename T>
-    ML_FUNC_DECL Matrix4<T>&& Matrix4<T>::CreateRotationMat(Vector3<T> axis, T angle)
+    ML_FUNC_DECL Matrix4<T> Matrix4<T>::CreateRotationMat(Vector3<T> axis, T angle)
     {
         axis.Normalize();
         T sa = Sin(angle);
@@ -374,7 +381,7 @@ namespace BMath
     }
 
     template<typename T>
-    ML_FUNC_DECL Matrix4<T>&& Matrix4<T>::CreateXRotationMat(T angle)
+    ML_FUNC_DECL Matrix4<T> Matrix4<T>::CreateXRotationMat(T angle)
     {
         T c = Cos(angle);
         T s = Sin(angle);
@@ -385,7 +392,7 @@ namespace BMath
     }
 
     template<typename T>
-    ML_FUNC_DECL Matrix4<T>&& Matrix4<T>::CreateYRotationMat(T angle)
+    ML_FUNC_DECL Matrix4<T> Matrix4<T>::CreateYRotationMat(T angle)
     {
         T c = Cos(angle);
         T s = Sin(angle);
@@ -396,7 +403,7 @@ namespace BMath
     }
 
     template<typename T>
-    ML_FUNC_DECL Matrix4<T>&& Matrix4<T>::CreateZRotationMat(T angle)
+    ML_FUNC_DECL Matrix4<T> Matrix4<T>::CreateZRotationMat(T angle)
     {
         T c = Cos(angle);
         T s = Sin(angle);
@@ -407,7 +414,7 @@ namespace BMath
     }
 
     template<typename T>
-    ML_FUNC_DECL Matrix4<T>&& Matrix4<T>::CreateXYZRotationMat(Vector3<T> angles)
+    ML_FUNC_DECL Matrix4<T> Matrix4<T>::CreateXYZRotationMat(Vector3<T> angles)
     {
         float cz = Cos(-angles.Z);
         float sz = Sin(-angles.Z);
@@ -418,11 +425,12 @@ namespace BMath
 
         return Matrix4<T>{cz * cy, (cz * sy * sx) - (sz * cx), (cz * sy * cx) + (sz * sx), 0,
                           sz * cy, (sz * sy * sx) + (cz * cx), (sz * sy * cx) - (cz * sx), 0,
-                          -sy    , cy * sx                   , cy * cx                   , 1};
+                          -sy    , cy * sx                   , cy * cx                   , 0,
+                          0      , 0                         , 0                          , 1};
     }
 
     template<typename T>
-    ML_FUNC_DECL Matrix4<T>&& Matrix4<T>::CreateScaleMat(Vector3<T> scale)
+    ML_FUNC_DECL Matrix4<T> Matrix4<T>::CreateScaleMat(Vector3<T> scale)
     {
         return Matrix4<T>{scale.X, 0      , 0      , 0,
                           0      , scale.Y, 0      , 0,
@@ -431,13 +439,13 @@ namespace BMath
     }
 
     template<typename T>
-    ML_FUNC_DECL Matrix4<T>&& Matrix4<T>::CreateTRSMat(Vector3<T> translation, Vector3<T> rotation, Vector3<T> scale)
+    ML_FUNC_DECL Matrix4<T> Matrix4<T>::CreateTRSMat(Vector3<T> translation, Vector3<T> rotation, Vector3<T> scale)
     {
         return CreateTranslationMat(translation) * CreateXYZRotationMat(rotation) * CreateScaleMat(scale);
     }
 
     template<typename T>
-    ML_FUNC_DECL Matrix4<T>&& Matrix4<T>::LookAt(Vector3<T> origin, Vector3<T> target, Vector3<T> upDir)
+    ML_FUNC_DECL Matrix4<T> Matrix4<T>::LookAt(Vector3<T> origin, Vector3<T> target, Vector3<T> upDir)
     {
         Vector3<T> forward{origin - target};
         forward.SafeNormalize();
@@ -488,6 +496,8 @@ namespace BMath
         v13 = other.v13;
         v14 = other.v14;
         v15 = other.v15;
+
+        return *this;
     }
 
     template<typename T>
