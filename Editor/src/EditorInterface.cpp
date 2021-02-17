@@ -1,7 +1,30 @@
 #include "../include/EditorInterface.hpp"
 
+EditorInterface::EditorInterface()
+{
+    glGenFramebuffers(1, &fbo);
 
-void InitImGui(GLFWwindow* window)
+    glGenTextures(1, &tex);
+    glBindTexture(GL_TEXTURE_2D, tex);
+    glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, 800, 600, 0, GL_RGB, GL_UNSIGNED_BYTE, NULL);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+    glBindTexture(GL_TEXTURE_2D, 0);
+
+    glGenRenderbuffers(1, &rbo);
+    glBindRenderbuffer(GL_RENDERBUFFER, rbo);
+    glRenderbufferStorage(GL_RENDERBUFFER, GL_DEPTH24_STENCIL8, 800, 600);
+    glBindRenderbuffer(GL_RENDERBUFFER, 0);
+}
+
+void EditorInterface::DestroyImGui()
+{
+    ImGui_ImplGlfw_Shutdown();
+    ImGui_ImplOpenGL3_Shutdown();
+    ImGui::DestroyContext();
+}
+
+void EditorInterface::InitImGui(GLFWwindow* window)
 {
     IMGUI_CHECKVERSION();
     ImGui::CreateContext();
@@ -15,14 +38,14 @@ void InitImGui(GLFWwindow* window)
     ImGui_ImplOpenGL3_Init("#version 330");
 }
 
-void CreateFrame()
+void EditorInterface::CreateFrame()
 {
     ImGui_ImplOpenGL3_NewFrame();
     ImGui_ImplGlfw_NewFrame();
     ImGui::NewFrame();
 }
 
-void RenderImGui()
+void EditorInterface::RenderImGui()
 {
     ImGui::Render();
     ImGui_ImplOpenGL3_RenderDrawData(ImGui::GetDrawData());
@@ -33,8 +56,19 @@ void RenderImGui()
     glfwMakeContextCurrent(backup_current_context);
 }
 
-void DrawInterface(float color[3], GLuint tex)
+void EditorInterface::DrawInterface(float color[3])
 {
+    CreateFrame();
+
+    glBindFramebuffer(GL_FRAMEBUFFER, fbo);
+    glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_2D, tex, 0);
+    glFramebufferRenderbuffer(GL_FRAMEBUFFER, GL_DEPTH_STENCIL_ATTACHMENT, GL_RENDERBUFFER, rbo);
+
+    glClearColor(color[0], color[1], color[2], 1.f);
+    glClear(GL_COLOR_BUFFER_BIT);
+
+    glBindFramebuffer(GL_FRAMEBUFFER, 0);
+
     ImGui::DockSpaceOverViewport(ImGui::GetMainViewport(), ImGuiDockNodeFlags_PassthruCentralNode);
     MainMenuBar();
 
@@ -46,6 +80,14 @@ void DrawInterface(float color[3], GLuint tex)
     ImGui::Text("First Project");
     ImGui::End();
 
+    ImGui::Begin("Hierarchy");
+    ImGui::Text("Objects");
+    ImGui::End();
+
+    ImGui::Begin("Inspector");
+    ImGui::Text("Transform of object");
+    ImGui::End();
+
     ImGui::Begin("Scene Window");
 
     ImGui::GetWindowDrawList()->AddImage(
@@ -53,16 +95,11 @@ void DrawInterface(float color[3], GLuint tex)
             ImVec2(ImGui::GetCursorScreenPos().x + ImGui::GetWindowWidth(), ImGui::GetCursorScreenPos().y + ImGui::GetWindowHeight()), ImVec2(0, 1), ImVec2(1, 0));
 
     ImGui::End();
+
+    RenderImGui();
 }
 
-void DestroyEditor()
-{
-    ImGui_ImplGlfw_Shutdown();
-    ImGui_ImplOpenGL3_Shutdown();
-    ImGui::DestroyContext();
-}
-
-static void MainMenuBar()
+void EditorInterface::MainMenuBar()
 {
     if (ImGui::BeginMainMenuBar())
     {
@@ -90,7 +127,7 @@ static void MainMenuBar()
     }
 }
 
-static void MenuFile()
+void EditorInterface::MenuFile()
 {
     ImGui::MenuItem("(demo menu)", NULL, false, false);
     if (ImGui::MenuItem("New")) {}
@@ -126,7 +163,7 @@ static void MenuFile()
     if (ImGui::MenuItem("Quit", "Alt+F4")) {}
 }
 
-static void MenuOption()
+void EditorInterface::MenuOption()
 {
 
     if (ImGui::BeginMenu("Themes"))
