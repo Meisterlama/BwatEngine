@@ -22,7 +22,7 @@ namespace Rendering
 	private:
 
 		//Data
-
+		std::vector<Texture> textures_loaded;
 		std::vector<Mesh> meshes;
 		std::string directory;
 

@@ -58,9 +58,9 @@ Triangle::Triangle()
 	{
 		VertexTriangle triangleA[] =
 		{
-			{	BMath::vec3f{ 0.5f, -0.5f, 0.0f}, BMath::vec4f{ 1.f, 0.f, 0.f, 1.f} },
-			{	BMath::vec3f{-0.5f, -0.5f, 0.0f}, BMath::vec4f{ 0.f, 1.f, 0.f, 1.f} },
-			{	BMath::vec3f{ 0.0f,  0.5f, 0.0f}, BMath::vec4f{ 0.f, 0.f, 1.f, 1.f} },
+			{	BMath::vec3f{ 0.5f, -0.5f, -1.0f}, BMath::vec4f{ 1.f, 0.f, 0.f, 1.f} },
+			{	BMath::vec3f{-0.5f, -0.5f, -1.0f}, BMath::vec4f{ 0.f, 1.f, 0.f, 1.f} },
+			{	BMath::vec3f{ 0.0f,  0.5f, -1.0f}, BMath::vec4f{ 0.f, 0.f, 1.f, 1.f} },
 		};
 
 		glGenBuffers(1, &vertexbuffer);
@@ -136,8 +136,8 @@ void Triangle::Update()
 
 
 	//use shader 
-	glUseProgram(program);
-	glUniform3f(glGetUniformLocation(program, "color"), newcolor[0], newcolor[1], newcolor[2]);
+	//glUseProgram(program);
+	//glUniform3f(glGetUniformLocation(program, "color"), newcolor[0], newcolor[1], newcolor[2]);
 
 	//draw
 	glBindVertexArray(vertexArray);

@@ -2,6 +2,7 @@
 #include <math.h>
 #include <glad/glad.h>
 #include <GLFW/glfw3.h>
+#include <iostream>
 
 using namespace Rendering;
 
@@ -18,75 +19,88 @@ Camera::~Camera()
 
 void Camera::usefreefly(Bwat::Window* win,float deltaTime)
 {
-    // ===================================== Mouse ===================================== // 
+    if (glfwGetKey(win->window, GLFW_KEY_L))
+        lockMouse = !lockMouse;
 
-    glfwGetCursorPos(win->window, &xpos, &ypos);
-    float xdelta_pos = xpos - win->GetWidth()/2;
-    float ydelta_pos = ypos - win->GetHeight()/2 ;
+    if (lockMouse)
+    {
+        // ===================================== Mouse ===================================== // 
 
-    float sensitivity_mouse = 0.1f;
+        glfwGetCursorPos(win->window, &xpos, &ypos);
+        float xdelta_pos = xpos - win->GetWidth() / 2;
+        float ydelta_pos = ypos - win->GetHeight() / 2;
 
-    xdelta_pos *= sensitivity_mouse * deltaTime;
-    ydelta_pos *= sensitivity_mouse * deltaTime;
+        float sensitivity_mouse = 0.1f;
 
-    yaw += xdelta_pos;
-    pitch += -ydelta_pos;
+        xdelta_pos *= sensitivity_mouse * deltaTime;
+        ydelta_pos *= sensitivity_mouse * deltaTime;
 
-    if (pitch >= BMath::PI/2)
-        pitch = BMath::PI / 2;
+        yaw -= xdelta_pos;
+        pitch += -ydelta_pos;
 
-    else if (pitch <= -BMath::PI / 2)
-        pitch = -BMath::PI / 2;
-        
-    glfwSetCursorPos(win->window, win->GetWidth() /2, win->GetHeight()/2);
+        if (pitch >= BMath::PI / 2)
+            pitch = BMath::PI / 2;
 
-    // ===================================== Movement ===================================== // 
-
-    float Speed = 4.f;
-    float FrameSpeed = (float)(Speed * deltaTime);
+        else if (pitch <= -BMath::PI / 2)
+            pitch = -BMath::PI / 2;
 
 
-    if(glfwGetKey(win->window, GLFW_KEY_Q))
-        FrameSpeed *= 3.f;
+        glfwSetCursorPos(win->window, win->GetWidth() / 2, win->GetHeight() / 2);
 
-    float ForwardVelocity = 0.f;
-    if(glfwGetKey(win->window, GLFW_KEY_W))
-        ForwardVelocity = -FrameSpeed;
-    if(glfwGetKey(win->window, GLFW_KEY_S))
-        ForwardVelocity = FrameSpeed;
+        // ===================================== Movement ===================================== // 
+
+        float Speed = 4.f;
+        float FrameSpeed = Speed * deltaTime;
 
 
-    float StrafeVelocity = 0.f;
-    if(glfwGetKey(win->window, GLFW_KEY_A))
-        StrafeVelocity = -FrameSpeed;
-    if(glfwGetKey(win->window, GLFW_KEY_D))
-        StrafeVelocity = FrameSpeed;
+        if (glfwGetKey(win->window, GLFW_KEY_Q))
+        {
+            FrameSpeed *= 3.f;
+        }
 
-    
-    cameraPos.Z += cos(yaw) * cos(pitch) * ForwardVelocity;
-    cameraPos.X += sin(-yaw) * cos(-pitch) * ForwardVelocity;
-    cameraPos.Y -= sin(pitch) * ForwardVelocity ;
+        float ForwardVelocity = 0.f;
+        if (glfwGetKey(win->window, GLFW_KEY_W))
+            ForwardVelocity = -FrameSpeed;
+        if (glfwGetKey(win->window, GLFW_KEY_S))
+            ForwardVelocity = FrameSpeed;
 
-    cameraPos.Z += sin(yaw)  * StrafeVelocity;
-    cameraPos.X += cos(yaw)  * StrafeVelocity;
-    
 
-    glfwSetInputMode(win->window,GLFW_CURSOR,GLFW_CURSOR_HIDDEN);
+        float StrafeVelocity = 0.f;
+        if (glfwGetKey(win->window, GLFW_KEY_A))
+            StrafeVelocity = -FrameSpeed;
+        if (glfwGetKey(win->window, GLFW_KEY_D))
+            StrafeVelocity = FrameSpeed;
 
-        
+        if (glfwGetKey(win->window, GLFW_KEY_SPACE))
+            cameraPos.Y += Speed * deltaTime;
+
+        if (glfwGetKey(win->window, GLFW_KEY_Z))
+            cameraPos.Y -= Speed * deltaTime;
+
+        cameraPos.Z += cos(-yaw) * cos(pitch) * ForwardVelocity;
+        cameraPos.X += sin(yaw) * cos(-pitch) * ForwardVelocity;
+        cameraPos.Y -= sin(pitch) * ForwardVelocity;
+
+        cameraPos.Z += sin(-yaw) * StrafeVelocity;
+        cameraPos.X += cos(-yaw) * StrafeVelocity;
+
+        //std::cout << cameraPos.X << " | y : " << cameraPos.Y << "  | z  :" << cameraPos.Z << std::endl;
+
+        glfwSetInputMode(win->window,GLFW_CURSOR,GLFW_CURSOR_HIDDEN);
+
+    }
 }
 
-/*
-Mat4 Camera::view_of_camera(Camera cam)
+
+BMath::Matrix4<float> Camera::ViewOfCamera()
 {
-    Mat4 View;
-    View.identity();
+    BMath::Matrix4<float> View{1};
     
-    View = View * Mat4::create_translation_matrix({-cam.cameraPos.x, -cam.cameraPos.y, -cam.cameraPos.z});
-    View = View * Mat4::create_y_rotation_matrix(cam.yaw);
-    View = View * Mat4::create_x_rotation_matrix(-cam.pitch);
+    //View = View * BMath::Matrix4<float>::CreateTranslationMat(-cameraPos).Transpose();
+    //View = View * BMath::Matrix4<float>::CreateYRotationMat(yaw);
+    //View = View * BMath::Matrix4<float>::CreateXRotationMat(-pitch);
+    View = BMath::Matrix4<float>::CreateTRSMat(-cameraPos, {pitch,yaw,0 }, { 1,1,1 });
 
     return View;
 }
 
-*/
