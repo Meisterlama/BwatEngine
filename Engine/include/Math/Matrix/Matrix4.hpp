@@ -18,10 +18,10 @@ namespace BMath
         union{
             // Column Major
             struct {
-                T v0;  T v1;  T v2;  T v3; // a, b, c, d
-                T v4;  T v5;  T v6;  T v7; // e, f, g, h
-                T v8;  T v9;  T v10; T v11; // i, j, k, l
-                T v12; T v13; T v14; T v15; // m, n, o, p
+                T v0; T v4; T v8;  T v12; // a, b, c, d
+                T v1; T v5; T v9;  T v13; // e, f, g, h
+                T v2; T v6; T v10; T v14; // i, j, k, l
+                T v3; T v7; T v11; T v15; // m, n, o, p
             };
             T values[4*4]{0};
         };
@@ -29,19 +29,19 @@ namespace BMath
         // Initialize the diagonal of the matrix
         ML_FUNC_DECL Matrix4(T x = 0)
         {
-            v0  = x;
-            v5  = x;
-            v10 = x;
-            v15 = x;
+            values[0*4 + 0] = x;
+            values[1*4 + 1] = x;
+            values[2*4 + 2] = x;
+            values[3*4 + 3] = x;
         }
 
         // Initialize the diagonal of the matrix
         ML_FUNC_DECL Matrix4(T x0, T x5, T x10, T x15)
         {
-            v0  = x0;
-            v5  = x5;
-            v10 = x10;
-            v15 = x15;
+            values[0*4 + 0]  = x0;
+            values[1*4 + 1]  = x5;
+            values[2*4 + 2] = x10;
+            values[3*4 + 3] = x15;
         }
 
         ML_FUNC_DECL Matrix4(T x0,  T x1,  T x2,  T x3,
@@ -156,29 +156,29 @@ namespace BMath
     template<typename T>
     ML_FUNC_DECL Matrix4<T>& Matrix4<T>::Transpose()
     {
-        T tmp = v1;
-        v1 = v4;
-        v4 = tmp;
+        T tmp = values[0*4 + 1];
+        values[0*4 + 1] = values[1*4 + 0];
+        values[1*4 + 0] = tmp;
 
-        tmp = v2;
-        v2 = v8;
-        v8 = tmp;
+        tmp = values[0*4 + 2];
+        values[0*4 + 2] = values[2*4 + 0];
+        values[2*4 + 0] = tmp;
 
-        tmp = v3;
-        v3 = v12;
-        v12 = tmp;
+        tmp = values[0*4 + 3];
+        values[0*4 + 3] = values[3*4 + 0];
+        values[3*4 + 0] = tmp;
 
-        tmp = v6;
-        v6 = v9;
-        v9 = tmp;
+        tmp = values[1*4 + 2];
+        values[1*4 + 2] = values[2*4 + 1];
+        values[2*4 + 1] = tmp;
 
-        tmp = v7;
-        v7 = v13;
-        v13 = tmp;
+        tmp = values[1*4 + 3];
+        values[1*4 + 3] = values[3*4 + 1];
+        values[3*4 + 1] = tmp;
 
-        tmp = v11;
-        v11 = v14;
-        v14 = tmp;
+        tmp = values[2*4 + 3];
+        values[2*4 + 3] = values[3*4 + 2];
+        values[3*4 + 2] = tmp;
 
         return *this;
     }
@@ -192,12 +192,12 @@ namespace BMath
     template<typename T>
     [[nodiscard]] ML_FUNC_DECL T Matrix4<T>::GetDeterminant()
     {
-        T af = v0  * v5;  T ag = v0  * v9;  T ah = v0  * v13; T be = v1  * v1;
-        T bg = v4  * v9;  T bh = v4  * v13;  T ce = v8  * v1;  T cf = v8  * v5;
-        T ch = v8  * v13;  T de = v12  * v1;  T df = v12  * v5;  T dg = v12  * v9;
-        T in = v2  * v7; T io = v2  * v11; T ip = v2  * v15; T jm = v6  * v3;
-        T jo = v6  * v11; T jp = v6  * v15; T km = v10 * v3; T kn = v10 * v7;
-        T kp = v10 * v15; T lm = v14 * v3; T ln = v14 * v7; T lo = v14 * v11;
+        T af = values[0*4 + 0]  * values[1*4 + 1];  T ag = values[0*4 + 0]  * values[2*4 + 1];  T ah = values[0*4 + 0]  * values[3*4 + 1]; T be = values[0*4 + 1]  * values[0*4 + 1];
+        T bg = values[1*4 + 0]  * values[2*4 + 1];  T bh = values[1*4 + 0]  * values[3*4 + 1];  T ce = values[2*4 + 0]  * values[0*4 + 1];  T cf = values[2*4 + 0]  * values[1*4 + 1];
+        T ch = values[2*4 + 0]  * values[3*4 + 1];  T de = values[3*4 + 0]  * values[0*4 + 1];  T df = values[3*4 + 0]  * values[1*4 + 1];  T dg = values[3*4 + 0]  * values[2*4 + 1];
+        T in = values[0*4 + 2]  * values[1*4 + 3]; T io = values[0*4 + 2]  * values[2*4 + 3]; T ip = values[0*4 + 2]  * values[3*4 + 3]; T jm = values[1*4 + 2]  * values[0*4 + 3];
+        T jo = values[1*4 + 2]  * values[2*4 + 3]; T jp = values[1*4 + 2]  * values[3*4 + 3]; T km = values[2*4 + 2] * values[0*4 + 3]; T kn = values[2*4 + 2] * values[1*4 + 3];
+        T kp = values[2*4 + 2] * values[3*4 + 3]; T lm = values[3*4 + 2] * values[0*4 + 3]; T ln = values[3*4 + 2] * values[1*4 + 3]; T lo = values[3*4 + 2] * values[2*4 + 3];
 
         return (af*kp - af*lo - ag*jp + ag*ln + ah*jo - ah*kn - be*kp + be*lo +
                 bg*ip - bg*lm - bh*io + bh*km + ce*jp - ce*ln - cf*ip + cf*lm +
@@ -207,10 +207,10 @@ namespace BMath
     template<typename T>
     ML_FUNC_DECL Matrix4<T>& Matrix4<T>::Invert()
     {
-        T a00 = v0;  T a01 = v1;  T a02 = v2;  T a03 = v3;
-        T a10 = v4;  T a11 = v5;  T a12 = v6;  T a13 = v7;
-        T a20 = v8;  T a21 = v9;  T a22 = v10; T a23 = v11;
-        T a30 = v12; T a31 = v13; T a32 = v14; T a33 = v15;
+        T a00 = values[0*4 + 0];  T a01 = values[0*4 + 1];  T a02 = values[0*4 + 2];  T a03 = values[0*4 + 3];
+        T a10 = values[1*4 + 0];  T a11 = values[1*4 + 1];  T a12 = values[1*4 + 2];  T a13 = values[1*4 + 3];
+        T a20 = values[2*4 + 0];  T a21 = values[2*4 + 1];  T a22 = values[2*4 + 2]; T a23 = values[2*4 + 3];
+        T a30 = values[3*4 + 0]; T a31 = values[3*4 + 1]; T a32 = values[3*4 + 2]; T a33 = values[3*4 + 3];
 
         T b00 = a00*a11 - a01*a10;
         T b01 = a00*a12 - a02*a10;
@@ -228,22 +228,22 @@ namespace BMath
         // Calculate the invert determinant (inlined to avoid double-caching)
         T invDet = 1.0f/(b00*b11 - b01*b10 + b02*b09 + b03*b08 - b04*b07 + b05*b06);
 
-        v0 = (a11*b11 - a12*b10 + a13*b09)*invDet;
-        v1 = (-a01*b11 + a02*b10 - a03*b09)*invDet;
-        v2 = (a31*b05 - a32*b04 + a33*b03)*invDet;
-        v3 = (-a21*b05 + a22*b04 - a23*b03)*invDet;
-        v4 = (-a10*b11 + a12*b08 - a13*b07)*invDet;
-        v5 = (a00*b11 - a02*b08 + a03*b07)*invDet;
-        v6 = (-a30*b05 + a32*b02 - a33*b01)*invDet;
-        v7 = (a20*b05 - a22*b02 + a23*b01)*invDet;
-        v8 = (a10*b10 - a11*b08 + a13*b06)*invDet;
-        v9 = (-a00*b10 + a01*b08 - a03*b06)*invDet;
-        v10 = (a30*b04 - a31*b02 + a33*b00)*invDet;
-        v11 = (-a20*b04 + a21*b02 - a23*b00)*invDet;
-        v12 = (-a10*b09 + a11*b07 - a12*b06)*invDet;
-        v13 = (a00*b09 - a01*b07 + a02*b06)*invDet;
-        v14 = (-a30*b03 + a31*b01 - a32*b00)*invDet;
-        v15 = (a20*b03 - a21*b01 + a22*b00)*invDet;
+        values[0*4 + 0] = (a11*b11 - a12*b10 + a13*b09)*invDet;
+        values[0*4 + 1] = (-a01*b11 + a02*b10 - a03*b09)*invDet;
+        values[0*4 + 2] = (a31*b05 - a32*b04 + a33*b03)*invDet;
+        values[0*4 + 3] = (-a21*b05 + a22*b04 - a23*b03)*invDet;
+        values[1*4 + 0] = (-a10*b11 + a12*b08 - a13*b07)*invDet;
+        values[1*4 + 1] = (a00*b11 - a02*b08 + a03*b07)*invDet;
+        values[1*4 + 2] = (-a30*b05 + a32*b02 - a33*b01)*invDet;
+        values[1*4 + 3] = (a20*b05 - a22*b02 + a23*b01)*invDet;
+        values[2*4 + 0] = (a10*b10 - a11*b08 + a13*b06)*invDet;
+        values[2*4 + 1] = (-a00*b10 + a01*b08 - a03*b06)*invDet;
+        values[2*4 + 2] = (a30*b04 - a31*b02 + a33*b00)*invDet;
+        values[2*4 + 3] = (-a20*b04 + a21*b02 - a23*b00)*invDet;
+        values[3*4 + 0] = (-a10*b09 + a11*b07 - a12*b06)*invDet;
+        values[3*4 + 1] = (a00*b09 - a01*b07 + a02*b06)*invDet;
+        values[3*4 + 2] = (-a30*b03 + a31*b01 - a32*b00)*invDet;
+        values[3*4 + 3] = (a20*b03 - a21*b01 + a22*b00)*invDet;
 
         return *this;
     }
@@ -258,22 +258,22 @@ namespace BMath
     ML_FUNC_DECL Matrix4<T>& Matrix4<T>::Normalize()
     {
         T det = GetDeterminant();
-        v0  /= det;
-        v1  /= det;
-        v2  /= det;
-        v3  /= det;
-        v4  /= det;
-        v5  /= det;
-        v6  /= det;
-        v7  /= det;
-        v8  /= det;
-        v9  /= det;
-        v10 /= det;
-        v11 /= det;
-        v12 /= det;
-        v13 /= det;
-        v14 /= det;
-        v15 /= det;
+        values[0*4 + 0]  /= det;
+        values[0*4 + 1]  /= det;
+        values[0*4 + 2]  /= det;
+        values[0*4 + 3]  /= det;
+        values[1*4 + 0]  /= det;
+        values[1*4 + 1]  /= det;
+        values[1*4 + 2]  /= det;
+        values[1*4 + 3]  /= det;
+        values[2*4 + 0]  /= det;
+        values[2*4 + 1]  /= det;
+        values[2*4 + 2] /= det;
+        values[2*4 + 3] /= det;
+        values[3*4 + 0] /= det;
+        values[3*4 + 1] /= det;
+        values[3*4 + 2] /= det;
+        values[3*4 + 3] /= det;
 
         return *this;
     }
@@ -288,10 +288,10 @@ namespace BMath
     ML_FUNC_DECL Vector4<T>& Matrix4<T>::RotateVector(Vector4<T>& vec) const
     {
         vec = Vector4<T>{
-            vec.X * v0 + vec.Y * v4 + vec.Z * v8  + vec.W * v12,
-            vec.X * v1 + vec.Y * v5 + vec.Z * v9  + vec.W * v13,
-            vec.X * v2 + vec.Y * v6 + vec.Z * v10 + vec.W * v14,
-            vec.X * v3 + vec.Y * v7 + vec.Z * v11 + vec.W * v15,};
+            vec.X * values[0*4 + 0] + vec.Y * values[1*4 + 0] + vec.Z * values[2*4 + 0]  + vec.W * values[3*4 + 0],
+            vec.X * values[0*4 + 1] + vec.Y * values[1*4 + 1] + vec.Z * values[2*4 + 1]  + vec.W * values[3*4 + 1],
+            vec.X * values[0*4 + 2] + vec.Y * values[1*4 + 2] + vec.Z * values[2*4 + 2] + vec.W * values[3*4 + 2],
+            vec.X * values[0*4 + 3] + vec.Y * values[1*4 + 3] + vec.Z * values[2*4 + 3] + vec.W * values[3*4 + 3],};
 
         return vec;
     }
@@ -300,19 +300,19 @@ namespace BMath
     [[nodiscard]] ML_FUNC_DECL Vector4<T> Matrix4<T>::GetRotatedVector(const Vector4<T>& vec) const
     {
         return Vector4<T>{
-                vec.X * v0 + vec.Y * v4 + vec.Z * v8  + vec.W * v12,
-                vec.X * v1 + vec.Y * v5 + vec.Z * v9  + vec.W * v13,
-                vec.X * v2 + vec.Y * v6 + vec.Z * v10 + vec.W * v14,
-                vec.X * v3 + vec.Y * v7 + vec.Z * v11 + vec.W * v15,};
+                vec.X * values[0*4 + 0] + vec.Y * values[1*4 + 0] + vec.Z * values[2*4 + 0]  + vec.W * values[3*4 + 0],
+                vec.X * values[0*4 + 1] + vec.Y * values[1*4 + 1] + vec.Z * values[2*4 + 1]  + vec.W * values[3*4 + 1],
+                vec.X * values[0*4 + 2] + vec.Y * values[1*4 + 2] + vec.Z * values[2*4 + 2] + vec.W * values[3*4 + 2],
+                vec.X * values[0*4 + 3] + vec.Y * values[1*4 + 3] + vec.Z * values[2*4 + 3] + vec.W * values[3*4 + 3],};
     }
 
     template<typename T>
     ML_FUNC_DECL Vector4<T>& Matrix4<T>::RotateVector(Vector3<T>& vec) const
     {
         vec = Vector3<T>{
-                vec.X * v0 + vec.Y * v4 + vec.Z * v8  + vec.W * v12,
-                vec.X * v1 + vec.Y * v5 + vec.Z * v9  + vec.W * v13,
-                vec.X * v2 + vec.Y * v6 + vec.Z * v10 + vec.W * v14};
+                vec.X * values[0*4 + 0] + vec.Y * values[1*4 + 0] + vec.Z * values[2*4 + 0]  + vec.W * values[3*4 + 0],
+                vec.X * values[0*4 + 1] + vec.Y * values[1*4 + 1] + vec.Z * values[2*4 + 1]  + vec.W * values[3*4 + 1],
+                vec.X * values[0*4 + 2] + vec.Y * values[1*4 + 2] + vec.Z * values[2*4 + 2] + vec.W * values[3*4 + 2]};
 
         return vec;
     }
@@ -321,24 +321,24 @@ namespace BMath
     [[nodiscard]] ML_FUNC_DECL Vector4<T> Matrix4<T>::GetRotatedVector(const Vector3<T>& vec) const
     {
         return Vector3<T>{
-                vec.X * v0 + vec.Y * v4 + vec.Z * v8  + vec.W * v12,
-                vec.X * v1 + vec.Y * v5 + vec.Z * v9  + vec.W * v13,
-                vec.X * v2 + vec.Y * v6 + vec.Z * v10 + vec.W * v14};
+                vec.X * values[0*4 + 0] + vec.Y * values[1*4 + 0] + vec.Z * values[2*4 + 0]  + vec.W * values[3*4 + 0],
+                vec.X * values[0*4 + 1] + vec.Y * values[1*4 + 1] + vec.Z * values[2*4 + 1]  + vec.W * values[3*4 + 1],
+                vec.X * values[0*4 + 2] + vec.Y * values[1*4 + 2] + vec.Z * values[2*4 + 2] + vec.W * values[3*4 + 2]};
     }
 
     template<typename T>
     ML_FUNC_DECL Matrix4<T> Matrix4<T>::CreatePerspective(T left, T right, T bottom, T top, T near, T far)
     {
-        return Matrix4<T>{(near*2)/(right-left), 0                        , 0                           , 0,
-                          0                    , (near*2)/(top-bottom)    , 0                           , 0,
-                          0                    , (top+bottom)/(top-bottom), -(far+near)/(far-near)      ,-1,
-                          0                    , (right+left)/(right-left), -(far * near*2)/(far - near), 0};
+        return Matrix4<T>{(near*2)/(right-left), 0                    , (right+left)/(right-left) , 0,
+                          0                    , (near*2)/(top-bottom), (top+bottom)/(top-bottom) , 0,
+                          0                    , 0                    , -(far+near)/(far-near)    ,-(far * near*2)/(far - near),
+                          0                    , 0                    , -1                        , 0};
     }
 
     template<typename T>
     ML_FUNC_DECL Matrix4<T> Matrix4<T>::CreatePerspective(T fovy, T aspect, T near, T far)
     {
-        T top = near*tan(ToRads(fovy)*0.5);
+        T top = near*tan(fovy*0.5);
         T right = top*aspect;
 
         return CreatePerspective(-right, right, -top, top, near, far);
@@ -480,22 +480,22 @@ namespace BMath
     template<typename T>
     ML_FUNC_DECL Matrix4<T>& Matrix4<T>::operator=(const Matrix4<T>& other)
     {
-        v0  = other.v0;
-        v1  = other.v1;
-        v2  = other.v2;
-        v3  = other.v3;
-        v4  = other.v4;
-        v5  = other.v5;
-        v6  = other.v6;
-        v7  = other.v7;
-        v8  = other.v8;
-        v9  = other.v9;
-        v10 = other.v10;
-        v11 = other.v11;
-        v12 = other.v12;
-        v13 = other.v13;
-        v14 = other.v14;
-        v15 = other.v15;
+        values[0*4 + 0] = other.values[0*4 + 0];
+        values[0*4 + 1] = other.values[0*4 + 1];
+        values[0*4 + 2] = other.values[0*4 + 2];
+        values[0*4 + 3] = other.values[0*4 + 3];
+        values[1*4 + 0] = other.values[1*4 + 0];
+        values[1*4 + 1] = other.values[1*4 + 1];
+        values[1*4 + 2] = other.values[1*4 + 2];
+        values[1*4 + 3] = other.values[1*4 + 3];
+        values[2*4 + 0] = other.values[2*4 + 0];
+        values[2*4 + 1] = other.values[2*4 + 1];
+        values[2*4 + 2] = other.values[2*4 + 2];
+        values[2*4 + 3] = other.values[2*4 + 3];
+        values[3*4 + 0] = other.values[3*4 + 0];
+        values[3*4 + 1] = other.values[3*4 + 1];
+        values[3*4 + 2] = other.values[3*4 + 2];
+        values[3*4 + 3] = other.values[3*4 + 3];
 
         return *this;
     }
@@ -503,22 +503,22 @@ namespace BMath
     template<typename T>
     [[nodiscard]] ML_FUNC_DECL bool Matrix4<T>::operator==(const Matrix4<T>& other) const
     {
-        return (v0  == other.v0  &&
-                v1  == other.v1  &&
-                v2  == other.v2  &&
-                v3  == other.v3  &&
-                v4  == other.v4  &&
-                v5  == other.v5  &&
-                v6  == other.v6  &&
-                v7  == other.v7  &&
-                v8  == other.v8  &&
-                v9  == other.v9  &&
-                v10 == other.v10 &&
-                v11 == other.v11 &&
-                v12 == other.v12 &&
-                v13 == other.v13 &&
-                v14 == other.v14 &&
-                v15 == other.v15);
+        return (values[0*4 + 0] == other.values[0*4 + 0] &&
+                values[0*4 + 1] == other.values[0*4 + 1] &&
+                values[0*4 + 2] == other.values[0*4 + 2] &&
+                values[0*4 + 3] == other.values[0*4 + 3] &&
+                values[1*4 + 0] == other.values[1*4 + 0] &&
+                values[1*4 + 1] == other.values[1*4 + 1] &&
+                values[1*4 + 2] == other.values[1*4 + 2] &&
+                values[1*4 + 3] == other.values[1*4 + 3] &&
+                values[2*4 + 0] == other.values[2*4 + 0] &&
+                values[2*4 + 1] == other.values[2*4 + 1] &&
+                values[2*4 + 2] == other.values[2*4 + 2] &&
+                values[2*4 + 3] == other.values[2*4 + 3] &&
+                values[3*4 + 0] == other.values[3*4 + 0] &&
+                values[3*4 + 1] == other.values[3*4 + 1] &&
+                values[3*4 + 2] == other.values[3*4 + 2] &&
+                values[3*4 + 3] == other.values[3*4 + 3]);
     }
 
     template<typename T>
@@ -549,43 +549,43 @@ namespace BMath
     template<typename T>
     [[nodiscard]] ML_FUNC_DECL Matrix4<T> Matrix4<T>::operator+(const Matrix4<T>& other) const
     {
-        return  Matrix4<T> {v0  + other.v0,
-                            v1  + other.v1,
-                            v2  + other.v2,
-                            v3  + other.v3,
-                            v4  + other.v4,
-                            v5  + other.v5,
-                            v6  + other.v6,
-                            v7  + other.v7,
-                            v8  + other.v8,
-                            v9  + other.v9,
-                            v10 + other.v10,
-                            v11 + other.v11,
-                            v12 + other.v12,
-                            v13 + other.v13,
-                            v14 + other.v14,
-                            v15 + other.v15};
+        return  Matrix4<T> {values[0*4 + 0] + other.values[0*4 + 0],
+                            values[0*4 + 1] + other.values[0*4 + 1],
+                            values[0*4 + 2] + other.values[0*4 + 2],
+                            values[0*4 + 3] + other.values[0*4 + 3],
+                            values[1*4 + 0] + other.values[1*4 + 0],
+                            values[1*4 + 1] + other.values[1*4 + 1],
+                            values[1*4 + 2] + other.values[1*4 + 2],
+                            values[1*4 + 3] + other.values[1*4 + 3],
+                            values[2*4 + 0] + other.values[2*4 + 0],
+                            values[2*4 + 1] + other.values[2*4 + 1],
+                            values[2*4 + 2] + other.values[2*4 + 2],
+                            values[2*4 + 3] + other.values[2*4 + 3],
+                            values[3*4 + 0] + other.values[3*4 + 0],
+                            values[3*4 + 1] + other.values[3*4 + 1],
+                            values[3*4 + 2] + other.values[3*4 + 2],
+                            values[3*4 + 3] + other.values[3*4 + 3]};
     }
 
     template<typename T>
     ML_FUNC_DECL Matrix4<T>& Matrix4<T>::operator+=(const Matrix4<T>& other)
     {
-        v0  += other.v0;
-        v1  += other.v1;
-        v2  += other.v2;
-        v3  += other.v3;
-        v4  += other.v4;
-        v5  += other.v5;
-        v6  += other.v6;
-        v7  += other.v7;
-        v8  += other.v8;
-        v9  += other.v9;
-        v10 += other.v10;
-        v11 += other.v11;
-        v12 += other.v12;
-        v13 += other.v13;
-        v14 += other.v14;
-        v15 += other.v15;
+        values[0*4 + 0] += other.values[0*4 + 0];
+        values[0*4 + 1] += other.values[0*4 + 1];
+        values[0*4 + 2] += other.values[0*4 + 2];
+        values[0*4 + 3] += other.values[0*4 + 3];
+        values[1*4 + 0] += other.values[1*4 + 0];
+        values[1*4 + 1] += other.values[1*4 + 1];
+        values[1*4 + 2] += other.values[1*4 + 2];
+        values[1*4 + 3] += other.values[1*4 + 3];
+        values[2*4 + 0] += other.values[2*4 + 0];
+        values[2*4 + 1] += other.values[2*4 + 1];
+        values[2*4 + 2] += other.values[2*4 + 2];
+        values[2*4 + 3] += other.values[2*4 + 3];
+        values[3*4 + 0] += other.values[3*4 + 0];
+        values[3*4 + 1] += other.values[3*4 + 1];
+        values[3*4 + 2] += other.values[3*4 + 2];
+        values[3*4 + 3] += other.values[3*4 + 3];
 
         return *this;
     }
@@ -593,22 +593,22 @@ namespace BMath
     template<typename T>
     ML_FUNC_DECL Matrix4<T>& Matrix4<T>::operator++()
     {
-        v0++;
-        v1++;
-        v2++;
-        v3++;
-        v4++;
-        v5++;
-        v6++;
-        v7++;
-        v8++;
-        v9++;
-        v10++;
-        v11++;
-        v12++;
-        v13++;
-        v14++;
-        v15++;
+        values[0*4 + 0]++;
+        values[0*4 + 1]++;
+        values[0*4 + 2]++;
+        values[0*4 + 3]++;
+        values[1*4 + 0]++;
+        values[1*4 + 1]++;
+        values[1*4 + 2]++;
+        values[1*4 + 3]++;
+        values[2*4 + 0]++;
+        values[2*4 + 1]++;
+        values[2*4 + 2]++;
+        values[2*4 + 3]++;
+        values[3*4 + 0]++;
+        values[3*4 + 1]++;
+        values[3*4 + 2]++;
+        values[3*4 + 3]++;
 
         return *this;
     }
@@ -623,43 +623,43 @@ namespace BMath
     template<typename T>
     [[nodiscard]] ML_FUNC_DECL Matrix4<T> Matrix4<T>::operator-(const Matrix4<T>& other) const
     {
-        return  Matrix4<T> {v0  - other.v0,
-                            v1  - other.v1,
-                            v2  - other.v2,
-                            v3  - other.v3,
-                            v4  - other.v4,
-                            v5  - other.v5,
-                            v6  - other.v6,
-                            v7  - other.v7,
-                            v8  - other.v8,
-                            v9  - other.v9,
-                            v10 - other.v10,
-                            v11 - other.v11,
-                            v12 - other.v12,
-                            v13 - other.v13,
-                            v14 - other.v14,
-                            v15 - other.v15};
+        return  Matrix4<T> {values[0*4 + 0] - other.values[0*4 + 0],
+                            values[0*4 + 1] - other.values[0*4 + 1],
+                            values[0*4 + 2] - other.values[0*4 + 2],
+                            values[0*4 + 3] - other.values[0*4 + 3],
+                            values[1*4 + 0] - other.values[1*4 + 0],
+                            values[1*4 + 1] - other.values[1*4 + 1],
+                            values[1*4 + 2] - other.values[1*4 + 2],
+                            values[1*4 + 3] - other.values[1*4 + 3],
+                            values[2*4 + 0] - other.values[2*4 + 0],
+                            values[2*4 + 1] - other.values[2*4 + 1],
+                            values[2*4 + 2] - other.values[2*4 + 2],
+                            values[2*4 + 3] - other.values[2*4 + 3],
+                            values[3*4 + 0] - other.values[3*4 + 0],
+                            values[3*4 + 1] - other.values[3*4 + 1],
+                            values[3*4 + 2] - other.values[3*4 + 2],
+                            values[3*4 + 3] - other.values[3*4 + 3]};
     }
 
     template<typename T>
     ML_FUNC_DECL Matrix4<T>& Matrix4<T>::operator-=(const Matrix4<T>& other)
     {
-        v0  -= other.v0;
-        v1  -= other.v1;
-        v2  -= other.v2;
-        v3  -= other.v3;
-        v4  -= other.v4;
-        v5  -= other.v5;
-        v6  -= other.v6;
-        v7  -= other.v7;
-        v8  -= other.v8;
-        v9  -= other.v9;
-        v10 -= other.v10;
-        v11 -= other.v11;
-        v12 -= other.v12;
-        v13 -= other.v13;
-        v14 -= other.v14;
-        v15 -= other.v15;
+        values[0*4 + 0] -= other.values[0*4 + 0];
+        values[0*4 + 1] -= other.values[0*4 + 1];
+        values[0*4 + 2] -= other.values[0*4 + 2];
+        values[0*4 + 3] -= other.values[0*4 + 3];
+        values[1*4 + 0] -= other.values[1*4 + 0];
+        values[1*4 + 1] -= other.values[1*4 + 1];
+        values[1*4 + 2] -= other.values[1*4 + 2];
+        values[1*4 + 3] -= other.values[1*4 + 3];
+        values[2*4 + 0] -= other.values[2*4 + 0];
+        values[2*4 + 1] -= other.values[2*4 + 1];
+        values[2*4 + 2] -= other.values[2*4 + 2];
+        values[2*4 + 3] -= other.values[2*4 + 3];
+        values[3*4 + 0] -= other.values[3*4 + 0];
+        values[3*4 + 1] -= other.values[3*4 + 1];
+        values[3*4 + 2] -= other.values[3*4 + 2];
+        values[3*4 + 3] -= other.values[3*4 + 3];
 
         return *this;
     }
@@ -667,22 +667,22 @@ namespace BMath
     template<typename T>
     ML_FUNC_DECL Matrix4<T>& Matrix4<T>::operator--()
     {
-        v0--;
-        v1--;
-        v2--;
-        v3--;
-        v4--;
-        v5--;
-        v6--;
-        v7--;
-        v8--;
-        v9--;
-        v10--;
-        v11--;
-        v12--;
-        v13--;
-        v14--;
-        v15--;
+        values[0*4 + 0]--;
+        values[0*4 + 1]--;
+        values[0*4 + 2]--;
+        values[0*4 + 3]--;
+        values[1*4 + 0]--;
+        values[1*4 + 1]--;
+        values[1*4 + 2]--;
+        values[1*4 + 3]--;
+        values[2*4 + 0]--;
+        values[2*4 + 1]--;
+        values[2*4 + 2]--;
+        values[2*4 + 3]--;
+        values[3*4 + 0]--;
+        values[3*4 + 1]--;
+        values[3*4 + 2]--;
+        values[3*4 + 3]--;
 
         return *this;
     }
@@ -697,61 +697,61 @@ namespace BMath
     template<typename T>
     [[nodiscard]] ML_FUNC_DECL Matrix4<T> Matrix4<T>::operator*(const Matrix4<T>& other) const
     {
-        return Matrix4<T> {v0  * other.v0 + v1  * other.v4  + v2  * other.v8  + v3  * other.v12,
-                           v0  * other.v1 + v1  * other.v5  + v2  * other.v9  + v3  * other.v13,
-                           v0  * other.v2 + v1  * other.v6  + v2  * other.v10 + v3  * other.v14,
-                           v0  * other.v3 + v1  * other.v7  + v2  * other.v11 + v3  * other.v15,
-                           v4  * other.v0 + v5  * other.v4  + v6  * other.v8  + v7  * other.v12,
-                           v4  * other.v1 + v5  * other.v5  + v6  * other.v9  + v7  * other.v13,
-                           v4  * other.v2 + v5  * other.v6  + v6  * other.v10 + v7  * other.v14,
-                           v4  * other.v3 + v5  * other.v7  + v6  * other.v11 + v7  * other.v15,
-                           v8  * other.v0 + v9  * other.v4  + v10 * other.v8  + v11 * other.v12,
-                           v8  * other.v1 + v9  * other.v5  + v10 * other.v9  + v11 * other.v13,
-                           v8  * other.v2 + v9  * other.v6  + v10 * other.v10 + v11 * other.v14,
-                           v8  * other.v3 + v9  * other.v7  + v10 * other.v11 + v11 * other.v15,
-                           v12 * other.v0 + v13 * other.v4  + v14 * other.v8  + v15 * other.v12,
-                           v12 * other.v1 + v13 * other.v5  + v14 * other.v9  + v15 * other.v13,
-                           v12 * other.v2 + v13 * other.v6  + v14 * other.v10 + v15 * other.v14,
-                           v12 * other.v3 + v13 * other.v7  + v14 * other.v11 + v15 * other.v15
+        return Matrix4<T> {values[0*4 + 0] * other.values[0*4 + 0] + values[0*4 + 1] * other.values[1*4 + 0]  + values[0*4 + 2] * other.values[2*4 + 0] + values[0*4 + 3] * other.values[3*4 + 0],
+                           values[0*4 + 0] * other.values[0*4 + 1] + values[0*4 + 1] * other.values[1*4 + 1]  + values[0*4 + 2] * other.values[2*4 + 1] + values[0*4 + 3] * other.values[3*4 + 1],
+                           values[0*4 + 0] * other.values[0*4 + 2] + values[0*4 + 1] * other.values[1*4 + 2]  + values[0*4 + 2] * other.values[2*4 + 2] + values[0*4 + 3] * other.values[3*4 + 2],
+                           values[0*4 + 0] * other.values[0*4 + 3] + values[0*4 + 1] * other.values[1*4 + 3]  + values[0*4 + 2] * other.values[2*4 + 3] + values[0*4 + 3] * other.values[3*4 + 3],
+                           values[1*4 + 0] * other.values[0*4 + 0] + values[1*4 + 1] * other.values[1*4 + 0]  + values[1*4 + 2] * other.values[2*4 + 0] + values[1*4 + 3] * other.values[3*4 + 0],
+                           values[1*4 + 0] * other.values[0*4 + 1] + values[1*4 + 1] * other.values[1*4 + 1]  + values[1*4 + 2] * other.values[2*4 + 1] + values[1*4 + 3] * other.values[3*4 + 1],
+                           values[1*4 + 0] * other.values[0*4 + 2] + values[1*4 + 1] * other.values[1*4 + 2]  + values[1*4 + 2] * other.values[2*4 + 2] + values[1*4 + 3] * other.values[3*4 + 2],
+                           values[1*4 + 0] * other.values[0*4 + 3] + values[1*4 + 1] * other.values[1*4 + 3]  + values[1*4 + 2] * other.values[2*4 + 3] + values[1*4 + 3] * other.values[3*4 + 3],
+                           values[2*4 + 0] * other.values[0*4 + 0] + values[2*4 + 1] * other.values[1*4 + 0]  + values[2*4 + 2] * other.values[2*4 + 0] + values[2*4 + 3] * other.values[3*4 + 0],
+                           values[2*4 + 0] * other.values[0*4 + 1] + values[2*4 + 1] * other.values[1*4 + 1]  + values[2*4 + 2] * other.values[2*4 + 1] + values[2*4 + 3] * other.values[3*4 + 1],
+                           values[2*4 + 0] * other.values[0*4 + 2] + values[2*4 + 1] * other.values[1*4 + 2]  + values[2*4 + 2] * other.values[2*4 + 2] + values[2*4 + 3] * other.values[3*4 + 2],
+                           values[2*4 + 0] * other.values[0*4 + 3] + values[2*4 + 1] * other.values[1*4 + 3]  + values[2*4 + 2] * other.values[2*4 + 3] + values[2*4 + 3] * other.values[3*4 + 3],
+                           values[3*4 + 0] * other.values[0*4 + 0] + values[3*4 + 1] * other.values[1*4 + 0]  + values[3*4 + 2] * other.values[2*4 + 0] + values[3*4 + 3] * other.values[3*4 + 0],
+                           values[3*4 + 0] * other.values[0*4 + 1] + values[3*4 + 1] * other.values[1*4 + 1]  + values[3*4 + 2] * other.values[2*4 + 1] + values[3*4 + 3] * other.values[3*4 + 1],
+                           values[3*4 + 0] * other.values[0*4 + 2] + values[3*4 + 1] * other.values[1*4 + 2]  + values[3*4 + 2] * other.values[2*4 + 2] + values[3*4 + 3] * other.values[3*4 + 2],
+                           values[3*4 + 0] * other.values[0*4 + 3] + values[3*4 + 1] * other.values[1*4 + 3]  + values[3*4 + 2] * other.values[2*4 + 3] + values[3*4 + 3] * other.values[3*4 + 3]
         };
     }
 
     template<typename T>
     ML_FUNC_DECL Matrix4<T>& Matrix4<T>::operator*=(const Matrix4<T>& other)
     {
-        T tmpV0  = v0  * other.v0 + v1  * other.v4  + v2  * other.v8  + v3  * other.v12;
-        T tmpV1  = v0  * other.v1 + v1  * other.v5  + v2  * other.v9  + v3  * other.v13;
-        T tmpV2  = v0  * other.v2 + v1  * other.v6  + v2  * other.v10 + v3  * other.v14;
-        T tmpV3  = v0  * other.v3 + v1  * other.v7  + v2  * other.v11 + v3  * other.v15;
-        T tmpV4  = v4  * other.v0 + v5  * other.v4  + v6  * other.v8  + v7  * other.v12;
-        T tmpV5  = v4  * other.v1 + v5  * other.v5  + v6  * other.v9  + v7  * other.v13;
-        T tmpV6  = v4  * other.v2 + v5  * other.v6  + v6  * other.v10 + v7  * other.v14;
-        T tmpV7  = v4  * other.v3 + v5  * other.v7  + v6  * other.v11 + v7  * other.v15;
-        T tmpV8  = v8  * other.v0 + v9  * other.v4  + v10 * other.v8  + v11 * other.v12;
-        T tmpV9  = v8  * other.v1 + v9  * other.v5  + v10 * other.v9  + v11 * other.v13;
-        T tmpV10 = v8  * other.v2 + v9  * other.v6  + v10 * other.v10 + v11 * other.v14;
-        T tmpV11 = v8  * other.v3 + v9  * other.v7  + v10 * other.v11 + v11 * other.v15;
-        T tmpV12 = v12 * other.v0 + v13 * other.v4  + v14 * other.v8  + v15 * other.v12;
-        T tmpV13 = v12 * other.v1 + v13 * other.v5  + v14 * other.v9  + v15 * other.v13;
-        T tmpV14 = v12 * other.v2 + v13 * other.v6  + v14 * other.v10 + v15 * other.v14;
-        T tmpV15 = v12 * other.v3 + v13 * other.v7  + v14 * other.v11 + v15 * other.v15;
+        T tmpV0  = values[0*4 + 0] * other.values[0*4 + 0] + values[0*4 + 1] * other.values[1*4 + 0]  + values[0*4 + 2] * other.values[2*4 + 0] + values[0*4 + 3] * other.values[3*4 + 0];
+        T tmpV1  = values[0*4 + 0] * other.values[0*4 + 1] + values[0*4 + 1] * other.values[1*4 + 1]  + values[0*4 + 2] * other.values[2*4 + 1] + values[0*4 + 3] * other.values[3*4 + 1];
+        T tmpV2  = values[0*4 + 0] * other.values[0*4 + 2] + values[0*4 + 1] * other.values[1*4 + 2]  + values[0*4 + 2] * other.values[2*4 + 2] + values[0*4 + 3] * other.values[3*4 + 2];
+        T tmpV3  = values[0*4 + 0] * other.values[0*4 + 3] + values[0*4 + 1] * other.values[1*4 + 3]  + values[0*4 + 2] * other.values[2*4 + 3] + values[0*4 + 3] * other.values[3*4 + 3];
+        T tmpV4  = values[1*4 + 0] * other.values[0*4 + 0] + values[1*4 + 1] * other.values[1*4 + 0]  + values[1*4 + 2] * other.values[2*4 + 0] + values[1*4 + 3] * other.values[3*4 + 0];
+        T tmpV5  = values[1*4 + 0] * other.values[0*4 + 1] + values[1*4 + 1] * other.values[1*4 + 1]  + values[1*4 + 2] * other.values[2*4 + 1] + values[1*4 + 3] * other.values[3*4 + 1];
+        T tmpV6  = values[1*4 + 0] * other.values[0*4 + 2] + values[1*4 + 1] * other.values[1*4 + 2]  + values[1*4 + 2] * other.values[2*4 + 2] + values[1*4 + 3] * other.values[3*4 + 2];
+        T tmpV7  = values[1*4 + 0] * other.values[0*4 + 3] + values[1*4 + 1] * other.values[1*4 + 3]  + values[1*4 + 2] * other.values[2*4 + 3] + values[1*4 + 3] * other.values[3*4 + 3];
+        T tmpV8  = values[2*4 + 0] * other.values[0*4 + 0] + values[2*4 + 1] * other.values[1*4 + 0]  + values[2*4 + 2] * other.values[2*4 + 0] + values[2*4 + 3] * other.values[3*4 + 0];
+        T tmpV9  = values[2*4 + 0] * other.values[0*4 + 1] + values[2*4 + 1] * other.values[1*4 + 1]  + values[2*4 + 2] * other.values[2*4 + 1] + values[2*4 + 3] * other.values[3*4 + 1];
+        T tmpV10 = values[2*4 + 0] * other.values[0*4 + 2] + values[2*4 + 1] * other.values[1*4 + 2]  + values[2*4 + 2] * other.values[2*4 + 2] + values[2*4 + 3] * other.values[3*4 + 2];
+        T tmpV11 = values[2*4 + 0] * other.values[0*4 + 3] + values[2*4 + 1] * other.values[1*4 + 3]  + values[2*4 + 2] * other.values[2*4 + 3] + values[2*4 + 3] * other.values[3*4 + 3];
+        T tmpV12 = values[3*4 + 0] * other.values[0*4 + 0] + values[3*4 + 1] * other.values[1*4 + 0]  + values[3*4 + 2] * other.values[2*4 + 0] + values[3*4 + 3] * other.values[3*4 + 0];
+        T tmpV13 = values[3*4 + 0] * other.values[0*4 + 1] + values[3*4 + 1] * other.values[1*4 + 1]  + values[3*4 + 2] * other.values[2*4 + 1] + values[3*4 + 3] * other.values[3*4 + 1];
+        T tmpV14 = values[3*4 + 0] * other.values[0*4 + 2] + values[3*4 + 1] * other.values[1*4 + 2]  + values[3*4 + 2] * other.values[2*4 + 2] + values[3*4 + 3] * other.values[3*4 + 2];
+        T tmpV15 = values[3*4 + 0] * other.values[0*4 + 3] + values[3*4 + 1] * other.values[1*4 + 3]  + values[3*4 + 2] * other.values[2*4 + 3] + values[3*4 + 3] * other.values[3*4 + 3];
 
-        v0  = tmpV0;
-        v1  = tmpV1;
-        v2  = tmpV2;
-        v3  = tmpV3;
-        v4  = tmpV4;
-        v5  = tmpV5;
-        v6  = tmpV6;
-        v7  = tmpV7;
-        v8  = tmpV8;
-        v9  = tmpV9;
-        v10 = tmpV10;
-        v11 = tmpV11;
-        v12 = tmpV12;
-        v13 = tmpV13;
-        v14 = tmpV14;
-        v15 = tmpV15;
+        values[0*4 + 0]  = tmpV0;
+        values[0*4 + 1]  = tmpV1;
+        values[0*4 + 2]  = tmpV2;
+        values[0*4 + 3]  = tmpV3;
+        values[1*4 + 0]  = tmpV4;
+        values[1*4 + 1]  = tmpV5;
+        values[1*4 + 2]  = tmpV6;
+        values[1*4 + 3]  = tmpV7;
+        values[2*4 + 0]  = tmpV8;
+        values[2*4 + 1]  = tmpV9;
+        values[2*4 + 2] = tmpV10;
+        values[2*4 + 3] = tmpV11;
+        values[3*4 + 0] = tmpV12;
+        values[3*4 + 1] = tmpV13;
+        values[3*4 + 2] = tmpV14;
+        values[3*4 + 3] = tmpV15;
 
         return *this;
     }
@@ -759,43 +759,43 @@ namespace BMath
     template<typename T>
     [[nodiscard]] ML_FUNC_DECL Matrix4<T> Matrix4<T>::operator*(const T& scalar) const
     {
-        return  Matrix4<T> {v0  * scalar,
-                            v1  * scalar,
-                            v2  * scalar,
-                            v3  * scalar,
-                            v4  * scalar,
-                            v5  * scalar,
-                            v6  * scalar,
-                            v7  * scalar,
-                            v8  * scalar,
-                            v9  * scalar,
-                            v10 * scalar,
-                            v11 * scalar,
-                            v12 * scalar,
-                            v13 * scalar,
-                            v14 * scalar,
-                            v15 * scalar};
+        return  Matrix4<T> {values[0*4 + 0]  * scalar,
+                            values[0*4 + 1]  * scalar,
+                            values[0*4 + 2]  * scalar,
+                            values[0*4 + 3]  * scalar,
+                            values[1*4 + 0]  * scalar,
+                            values[1*4 + 1]  * scalar,
+                            values[1*4 + 2]  * scalar,
+                            values[1*4 + 3]  * scalar,
+                            values[2*4 + 0]  * scalar,
+                            values[2*4 + 1]  * scalar,
+                            values[2*4 + 2] * scalar,
+                            values[2*4 + 3] * scalar,
+                            values[3*4 + 0] * scalar,
+                            values[3*4 + 1] * scalar,
+                            values[3*4 + 2] * scalar,
+                            values[3*4 + 3] * scalar};
     }
 
     template<typename T>
     ML_FUNC_DECL Matrix4<T>& Matrix4<T>::operator*=(const T& scalar)
     {
-        v0  *= scalar;
-        v1  *= scalar;
-        v2  *= scalar;
-        v3  *= scalar;
-        v4  *= scalar;
-        v5  *= scalar;
-        v6  *= scalar;
-        v7  *= scalar;
-        v8  *= scalar;
-        v9  *= scalar;
-        v10 *= scalar;
-        v11 *= scalar;
-        v12 *= scalar;
-        v13 *= scalar;
-        v14 *= scalar;
-        v15 *= scalar;
+        values[0*4 + 0]  *= scalar;
+        values[0*4 + 1]  *= scalar;
+        values[0*4 + 2]  *= scalar;
+        values[0*4 + 3]  *= scalar;
+        values[1*4 + 0]  *= scalar;
+        values[1*4 + 1]  *= scalar;
+        values[1*4 + 2]  *= scalar;
+        values[1*4 + 3]  *= scalar;
+        values[2*4 + 0]  *= scalar;
+        values[2*4 + 1]  *= scalar;
+        values[2*4 + 2] *= scalar;
+        values[2*4 + 3] *= scalar;
+        values[3*4 + 0] *= scalar;
+        values[3*4 + 1] *= scalar;
+        values[3*4 + 2] *= scalar;
+        values[3*4 + 3] *= scalar;
 
         return *this;
     }
@@ -803,43 +803,43 @@ namespace BMath
     template<typename T>
     [[nodiscard]] ML_FUNC_DECL Matrix4<T> Matrix4<T>::operator/(const T& scalar) const
     {
-        return  Matrix4<T> {v0  / scalar,
-                            v1  / scalar,
-                            v2  / scalar,
-                            v3  / scalar,
-                            v4  / scalar,
-                            v5  / scalar,
-                            v6  / scalar,
-                            v7  / scalar,
-                            v8  / scalar,
-                            v9  / scalar,
-                            v10 / scalar,
-                            v11 / scalar,
-                            v12 / scalar,
-                            v13 / scalar,
-                            v14 / scalar,
-                            v15 / scalar};
+        return  Matrix4<T> {values[0*4 + 0]  / scalar,
+                            values[0*4 + 1]  / scalar,
+                            values[0*4 + 2]  / scalar,
+                            values[0*4 + 3]  / scalar,
+                            values[1*4 + 0]  / scalar,
+                            values[1*4 + 1]  / scalar,
+                            values[1*4 + 2]  / scalar,
+                            values[1*4 + 3]  / scalar,
+                            values[2*4 + 0]  / scalar,
+                            values[2*4 + 1]  / scalar,
+                            values[2*4 + 2] / scalar,
+                            values[2*4 + 3] / scalar,
+                            values[3*4 + 0] / scalar,
+                            values[3*4 + 1] / scalar,
+                            values[3*4 + 2] / scalar,
+                            values[3*4 + 3] / scalar};
     }
 
     template<typename T>
     ML_FUNC_DECL Matrix4<T>& Matrix4<T>::operator/=(const T& scalar)
     {
-        v0  /= scalar;
-        v1  /= scalar;
-        v2  /= scalar;
-        v3  /= scalar;
-        v4  /= scalar;
-        v5  /= scalar;
-        v6  /= scalar;
-        v7  /= scalar;
-        v8  /= scalar;
-        v9  /= scalar;
-        v10 /= scalar;
-        v11 /= scalar;
-        v12 /= scalar;
-        v13 /= scalar;
-        v14 /= scalar;
-        v15 /= scalar;
+        values[0*4 + 0]  /= scalar;
+        values[0*4 + 1]  /= scalar;
+        values[0*4 + 2]  /= scalar;
+        values[0*4 + 3]  /= scalar;
+        values[1*4 + 0]  /= scalar;
+        values[1*4 + 1]  /= scalar;
+        values[1*4 + 2]  /= scalar;
+        values[1*4 + 3]  /= scalar;
+        values[2*4 + 0]  /= scalar;
+        values[2*4 + 1]  /= scalar;
+        values[2*4 + 2] /= scalar;
+        values[2*4 + 3] /= scalar;
+        values[3*4 + 0] /= scalar;
+        values[3*4 + 1] /= scalar;
+        values[3*4 + 2] /= scalar;
+        values[3*4 + 3] /= scalar;
 
         return *this;
     }
@@ -847,22 +847,22 @@ namespace BMath
     template<typename T>
     [[nodiscard]] ML_FUNC_DECL Matrix4<T> operator-(Matrix4<T> mat)
     {
-        return  Matrix4<T> {-mat.v0,
-                            -mat.v1,
-                            -mat.v2,
-                            -mat.v3,
-                            -mat.v4,
-                            -mat.v5,
-                            -mat.v6,
-                            -mat.v7,
-                            -mat.v8,
-                            -mat.v9,
-                            -mat.v10,
-                            -mat.v11,
-                            -mat.v12,
-                            -mat.v13,
-                            -mat.v14,
-                            -mat.v15};
+        return  Matrix4<T> {-mat.values[0*4 + 0],
+                            -mat.values[0*4 + 1],
+                            -mat.values[0*4 + 2],
+                            -mat.values[0*4 + 3],
+                            -mat.values[1*4 + 0],
+                            -mat.values[1*4 + 1],
+                            -mat.values[1*4 + 2],
+                            -mat.values[1*4 + 3],
+                            -mat.values[2*4 + 0],
+                            -mat.values[2*4 + 1],
+                            -mat.values[2*4 + 2],
+                            -mat.values[2*4 + 3],
+                            -mat.values[3*4 + 0],
+                            -mat.values[3*4 + 1],
+                            -mat.values[3*4 + 2],
+                            -mat.values[3*4 + 3]};
     }
 
     template<typename T>
