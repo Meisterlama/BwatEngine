@@ -4,6 +4,8 @@
 #include <glad/glad.h>
 #include <GLFW/glfw3.h>
 
+#ifdef BWATEDITOR
+
 #include <imgui.h>
 #include <imgui_impl_glfw.h>
 #include <imgui_impl_opengl3.h>
@@ -12,6 +14,10 @@
 //#define DEBUG
 
 #include "Debug/Logger.hpp"
+
+#endif //BWATEDITOR
+
+#include "Math/Math.hpp"
 
 #include <assimp/Importer.hpp>      // C++ importer interface
 #include <assimp/scene.h>           // Output data structure
@@ -79,7 +85,7 @@ int main()
 
 	// init glad
 	InitGlad();
-
+#ifdef BWATEDITOR
 	// Init ImGui
 	IMGUI_CHECKVERSION();
 	ImGui::CreateContext();
@@ -90,6 +96,7 @@ int main()
 
 	ImGui_ImplGlfw_InitForOpenGL(window, true);
 	ImGui_ImplOpenGL3_Init("#version 330");
+#endif
 
 	float color[3] = { 0.8f, 0.2f, 0.2f };
 
@@ -97,34 +104,41 @@ int main()
 	FILE *file;
 	errno_t err;
 	err = fopen_s(&file,"Log.txt", "w");
+
+#ifdef BWATEDITOR
     BLogger::LogAddFp(file, 0);
     BLogger::LogDebug("test1");
+#endif //BWATEDITOR
 
 	while (!glfwWindowShouldClose(window))
 	{
 		glfwPollEvents();
 
+#ifdef BWATEDITOR
 		ImGui_ImplOpenGL3_NewFrame();
 		ImGui_ImplGlfw_NewFrame();
 		ImGui::NewFrame();
 
 		ImGui::ColorEdit3("Clear color", color);
+#endif
 
 		glClearColor(color[0], color[1], color[2], 1.f);
 		glClear(GL_COLOR_BUFFER_BIT);
 
+#ifdef BWATEDITOR
 		ImGui::Render();
 		ImGui_ImplOpenGL3_RenderDrawData(ImGui::GetDrawData());
-
+#endif
 		glfwSwapBuffers(window);
 	}
-
+#ifdef BWATEDITOR
 	ImGui_ImplGlfw_Shutdown();
 	ImGui_ImplOpenGL3_Shutdown();
 	ImGui::DestroyContext();
+#endif //BWATEDITOR
+
 	glfwDestroyWindow(window);
 	glfwTerminate();
 
 	return 0;
 }
-

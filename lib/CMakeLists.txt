@@ -87,7 +87,7 @@ set(STB_SRC
 add_library(stb STATIC ${STB_SRC})
 target_include_directories(stb PUBLIC stb/include)
 
-# GLM BUILD
-if(BWAT_ENGINE_TEST_ENABLED)
+# GLM BUILD (TEST-ONLY)
+if (BWAT_ENGINE_TEST_ENABLED)
     add_subdirectory(glm)
 endif()
