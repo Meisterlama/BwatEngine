@@ -14,10 +14,6 @@ if(BWAT_ENGINE_TEST_ENABLED)
     add_subdirectory(tests)
 endif()
 
-#TODO: Add game building target and ability to switch between editor and game
-
-add_subdirectory(tests)
-
 add_subdirectory(Engine)
 set(ENGINE_LIBRARY glad glfw assimp flatbuffers imgui OpenAL stb)
 
