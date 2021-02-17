@@ -13,3 +13,6 @@
 [submodule "lib/openal-soft"]
 	path = lib/openal-soft
 	url = git@github.com:kcat/openal-soft.git
+[submodule "lib/glm"]
+	path = lib/glm
+	url = https://github.com/g-truc/glm/tree/0.9.9.8
