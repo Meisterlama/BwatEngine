@@ -137,7 +137,7 @@ void Triangle::Update()
 
 	//use shader 
 	//glUseProgram(program);
-	glUniform3f(glGetUniformLocation(program, "color"), newcolor[0], newcolor[1], newcolor[2]);
+	//glUniform3f(glGetUniformLocation(program, "color"), newcolor[0], newcolor[1], newcolor[2]);
 
 	//draw
 	glBindVertexArray(vertexArray);

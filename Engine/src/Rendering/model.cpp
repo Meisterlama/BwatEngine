@@ -64,6 +64,21 @@ Rendering::Mesh Model::ProcessMesh(aiMesh* mesh, const aiScene* scene)
             vector.Z = mesh->mNormals[i].z;
             vertex.normal = vector;
         }
+        // tangent
+        if (mesh->HasTangentsAndBitangents())
+        {
+            vector.X = mesh->mTangents[i].x;
+            vector.Y = mesh->mTangents[i].y;
+            vector.Z = mesh->mTangents[i].z;
+            vertex.tangent = vector;
+
+            // bitangent
+            vector.X = mesh->mBitangents[i].x;
+            vector.Y = mesh->mBitangents[i].y;
+            vector.Z = mesh->mBitangents[i].z;
+            vertex.bitangent = vector;
+        }
+
         // texture coordinates
         if (mesh->mTextureCoords[0]) // does the mesh contain texture coordinates?
         {
@@ -71,20 +86,7 @@ Rendering::Mesh Model::ProcessMesh(aiMesh* mesh, const aiScene* scene)
             vec.X = mesh->mTextureCoords[0][i].x;
             vec.Y = mesh->mTextureCoords[0][i].y;
             vertex.texCoords = vec;
-            // tangent
-            if (mesh->HasTangentsAndBitangents())
-            {
-                vector.X = mesh->mTangents[i].x;
-                vector.Y = mesh->mTangents[i].y;
-                vector.Z = mesh->mTangents[i].z;
-                vertex.tangent = vector;
-
-                // bitangent
-                vector.X = mesh->mBitangents[i].x;
-                vector.Y = mesh->mBitangents[i].y;
-                vector.Z = mesh->mBitangents[i].z;
-                vertex.bitangent = vector;
-            }
+           
         }
         else
             vertex.texCoords = BMath::vec2f(0.0f, 0.0f);
@@ -119,7 +121,6 @@ Rendering::Mesh Model::ProcessMesh(aiMesh* mesh, const aiScene* scene)
     return Rendering::Mesh(vertices, indices, textures);
 }
 
-
 unsigned int TextureFromFile(const char* path, const std::string& directory)
 {
     std::string filename = std::string(path);
@@ -129,6 +130,7 @@ unsigned int TextureFromFile(const char* path, const std::string& directory)
     glGenTextures(1, &textureID);
 
     int width, height, nrComponents;
+    stbi_set_flip_vertically_on_load(1);
     unsigned char* data = stbi_load(filename.c_str(), &width, &height, &nrComponents, 0);
     if (data)
     {
@@ -157,6 +159,7 @@ unsigned int TextureFromFile(const char* path, const std::string& directory)
         stbi_image_free(data);
     }
 
+
     return textureID;
 }
 
@@ -167,10 +170,27 @@ std::vector<Rendering::Texture> Model::LoadMaterialTextures(aiMaterial* mat, aiT
     {
         aiString str;
         mat->GetTexture(type, i, &str);
-        Rendering::Texture texture;
-        texture.id = TextureFromFile(str.C_Str(), directory);
-        texture.type = typeName;
-        textures.push_back(texture);
+
+        bool skip = false;
+        for (unsigned int j = 0; j < textures_loaded.size(); j++)
+        {
+            if (std::strcmp(textures_loaded[j].path.data(), str.C_Str()) == 0)
+            {
+                textures.push_back(textures_loaded[j]);
+                skip = true; // a texture with the same filepath has already been loaded, continue to next one. (optimization)
+                break;
+            }
+        }
+
+        if (!skip)
+        {
+            Rendering::Texture texture;
+            texture.id = TextureFromFile(str.C_Str(), directory);
+            texture.type = typeName;
+            texture.path = str.C_Str();
+            textures.push_back(texture);
+            textures_loaded.push_back(texture);
+        }
     }
     return textures;
 }

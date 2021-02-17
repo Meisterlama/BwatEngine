@@ -84,9 +84,9 @@ void Camera::usefreefly(Bwat::Window* win,float deltaTime)
         cameraPos.Z += sin(-yaw) * StrafeVelocity;
         cameraPos.X += cos(-yaw) * StrafeVelocity;
 
-        std::cout << cameraPos.X << " | y : " << cameraPos.Y << "  | z  :" << cameraPos.Z << std::endl;
+        //std::cout << cameraPos.X << " | y : " << cameraPos.Y << "  | z  :" << cameraPos.Z << std::endl;
 
-        //glfwSetInputMode(win->window,GLFW_CURSOR,GLFW_CURSOR_HIDDEN);
+        glfwSetInputMode(win->window,GLFW_CURSOR,GLFW_CURSOR_HIDDEN);
 
     }
 }

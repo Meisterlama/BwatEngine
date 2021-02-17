@@ -11,8 +11,8 @@ namespace Rendering
     public:
 
         float yaw = 0;
-        float pitch = 0;// BMath::PI / 2;
-        BMath::vec3f cameraPos{0,0,50};
+        float pitch = 0;
+        BMath::vec3f cameraPos{0,0,5};
         BMath::vec3f cameraRot{0,0,0};
         double xpos = 0, ypos = 0;
         bool lockMouse = false;
