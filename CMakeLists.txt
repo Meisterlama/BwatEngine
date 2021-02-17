@@ -10,6 +10,9 @@ set(BWAT_EDITOR_ENABLED ON)
 
 add_subdirectory(lib)
 add_subdirectory(docs)
+if(BWAT_ENGINE_TEST_ENABLED)
+    add_subdirectory(tests)
+endif()
 
 #TODO: Add game building target and ability to switch between editor and game
 

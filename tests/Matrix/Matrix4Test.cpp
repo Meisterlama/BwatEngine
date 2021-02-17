@@ -1,76 +1,54 @@
 #include <gtest/gtest.h>
+#include <glm/glm.hpp>
+#include <glm/mat4x4.hpp>
+#include <glm/gtc/matrix_transform.hpp>
 #include "Math/Math.hpp"
 
 using BMath::Matrix4;
 
 typedef BMath::Matrix4<float> Mat4f;
 
+bool operator==(Mat4f Bmat, glm::mat4 Gmat)
+{
+    for (int i = 0; i < 16; i++)
+    {
+        if (Bmat[i] != Gmat[i/4][i%4])
+            return false;
+    }
+    return true;
+}
+
+glm::mat4 BMatToGMat(Mat4f bmat)
+{
+    return glm::mat4(
+            bmat.v0, bmat.v4, bmat.v8,bmat.v12,
+            bmat.v1, bmat.v5, bmat.v9,bmat.v13,
+            bmat.v2, bmat.v6, bmat.v10,bmat.v14,
+            bmat.v3, bmat.v7, bmat.v11,bmat.v15
+            );
+}
+
 TEST(Matrix4, Constructors)
 {
-Mat4f testMat{0};
+ASSERT_TRUE(Mat4f{0} == glm::mat4(0));
+ASSERT_TRUE(Mat4f{1} == glm::mat4(1));
 
-ASSERT_EQ(testMat.v0 , 0);
-ASSERT_EQ(testMat.v1 , 0);
-ASSERT_EQ(testMat.v2 , 0);
-ASSERT_EQ(testMat.v3 , 0);
-ASSERT_EQ(testMat.v4 , 0);
-ASSERT_EQ(testMat.v5 , 0);
-ASSERT_EQ(testMat.v6 , 0);
-ASSERT_EQ(testMat.v7 , 0);
-ASSERT_EQ(testMat.v8 , 0);
-ASSERT_EQ(testMat.v9 , 0);
-ASSERT_EQ(testMat.v10, 0);
-ASSERT_EQ(testMat.v11, 0);
-ASSERT_EQ(testMat.v12, 0);
-ASSERT_EQ(testMat.v13, 0);
-ASSERT_EQ(testMat.v14, 0);
-ASSERT_EQ(testMat.v15, 0);
+ASSERT_TRUE( Mat4f(1, 2, 3, 4) == glm::mat4(1, 0, 0, 0,
+                                            0, 2, 0, 0,
+                                            0, 0, 3, 0,
+                                            0, 0, 0, 4));
 
-Mat4f mat{1};
+Mat4f testMat{1, 2, 3, 4};
+Mat4f mat = testMat;
 
-testMat.v0 = 1;
-testMat.v5 = 1;
-testMat.v10 = 1;
-testMat.v15 = 1;
+ASSERT_TRUE(testMat == mat);
 
-ASSERT_EQ(mat, testMat);
+testMat = {1, 2, 3, 4,
+           5, 6, 7, 8,
+           9, 10, 11, 12,
+           13, 14, 15, 16};
 
-mat = {1, 2, 3, 4};
-
-testMat.v0 = 1;
-testMat.v5 = 2;
-testMat.v10 = 3;
-testMat.v15 = 4;
-
-ASSERT_EQ(mat, testMat);
-
-Mat4f mat2 = mat;
-
-ASSERT_EQ(mat2, testMat);
-
-Mat4f mat3 {1, 2, 3, 4,
-            5, 6, 7, 8,
-            9, 10, 11, 12,
-            13, 14, 15, 16};
-
-testMat.v0  = 1;
-testMat.v1  = 2;
-testMat.v2  = 3;
-testMat.v3  = 4;
-testMat.v4  = 5;
-testMat.v5  = 6;
-testMat.v6  = 7;
-testMat.v7  = 8;
-testMat.v8  = 9;
-testMat.v9  = 10;
-testMat.v10 = 11;
-testMat.v11 = 12;
-testMat.v12 = 13;
-testMat.v13 = 14;
-testMat.v14 = 15;
-testMat.v15 = 16;
-
-ASSERT_EQ(mat3, testMat);
+ASSERT_TRUE(testMat == BMatToGMat(testMat));
 }
 
 TEST(Matrix4, Mult)
@@ -95,13 +73,22 @@ Mat4f mat3 {6, 3, 3, 4,
             2, 2, 6, 12,
             1, 3, 4, 8};
 
+glm::mat4 gmat2 {1, 2, 3, 4,
+                 5, 6, 7, 8,
+                 9, 10, 11, 12,
+                 13, 14, 15, 16};
+
+glm::mat4 gmat3 {6, 3, 3, 4,
+                 5, 2, 2, 7,
+                 2, 2, 6, 12,
+                 1, 3, 4, 8};
+
 ASSERT_NE(mat2 * mat3, mat3 * mat2);
 
-testMat = {26, 25, 41, 86,
-           82, 65, 101, 210,
-           138, 105, 161, 334,
-           194, 145, 221, 458};
-ASSERT_EQ(mat2 * mat3, testMat);
+gmat3 = gmat2 * gmat3;
+mat3 = mat2 * mat3;
+
+ASSERT_TRUE(mat3 == gmat3);
 }
 
 
@@ -113,11 +100,20 @@ Mat4f testMat{1};
 ASSERT_EQ(mat, testMat);
 
 Mat4f mat2 = Mat4f::CreateTRSMat({1, 2, 3}, {0}, {1});
-testMat = {1, 0, 0, 1,
-           0, 1, 0, 2,
-           0, 0, 1, 3,
-           0, 0, 0, 1};
+testMat = {1, 0, 0, 0,
+           0, 1, 0, 0,
+           0, 0, 1, 0,
+           1, 2, 3, 1};
 
 ASSERT_EQ(mat2, testMat);
 
+}
+
+
+TEST(Matrix4, Perspective)
+{
+    Mat4f mat = Mat4f::CreatePerspective(BMath::ToRads(60), 800.f/600.f, 0.01f, 100.f);
+    glm::mat4 gmat = glm::perspective(BMath::ToRads(60), 800.f/600.f, 0.01f, 100.f);
+
+    ASSERT_TRUE(mat == gmat);
 }
