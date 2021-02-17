@@ -329,16 +329,16 @@ namespace BMath
     template<typename T>
     ML_FUNC_DECL Matrix4<T> Matrix4<T>::CreatePerspective(T left, T right, T bottom, T top, T near, T far)
     {
-        return Matrix4<T>{(near*2)/(right-left), 0                    , (right+left)/(right-left), 0,
-                          0                    , (near*2)/(top-bottom), (top+bottom)/(top-bottom), 0,
-                          0                    , 0                    ,-(far+near)/(far-near)    ,-(far * near*2)/(far - near),
-                          0                    , 0                    ,-1                        , 0};
+        return Matrix4<T>{(near*2)/(right-left), 0                        , 0                           , 0,
+                          0                    , (near*2)/(top-bottom)    , 0                           , 0,
+                          0                    , (top+bottom)/(top-bottom), -(far+near)/(far-near)      ,-1,
+                          0                    , (right+left)/(right-left), -(far * near*2)/(far - near), 0};
     }
 
     template<typename T>
     ML_FUNC_DECL Matrix4<T> Matrix4<T>::CreatePerspective(T fovy, T aspect, T near, T far)
     {
-        T top = near*tan(fovy*0.5);
+        T top = near*tan(ToRads(fovy)*0.5);
         T right = top*aspect;
 
         return CreatePerspective(-right, right, -top, top, near, far);
@@ -356,10 +356,10 @@ namespace BMath
     template<typename T>
     ML_FUNC_DECL Matrix4<T> Matrix4<T>::CreateTranslationMat(Vector3<T> translation)
     {
-        return Matrix4<T>{1, 0, 0, translation.X,
-                          0, 1, 0, translation.Y,
-                          0, 0, 1, translation.Z,
-                          0, 0, 0, 1};
+        return Matrix4<T>{1            , 0            , 0            , 0,
+                          0            , 1            , 0            , 0,
+                          0            , 0            , 1            , 0,
+                          translation.X, translation.Y, translation.Z, 1};
     }
 
     template<typename T>
@@ -396,9 +396,9 @@ namespace BMath
     {
         T c = Cos(angle);
         T s = Sin(angle);
-        return Matrix4<T>{ c, 0,-s, 0,
+        return Matrix4<T>{ c, 0,s, 0,
                            0, 1, 0, 0,
-                           s, 0, c, 0,
+                           -s, 0, c, 0,
                            0, 0, 0, 1};
     }
 
@@ -416,12 +416,12 @@ namespace BMath
     template<typename T>
     ML_FUNC_DECL Matrix4<T> Matrix4<T>::CreateXYZRotationMat(Vector3<T> angles)
     {
-        float cz = Cos(-angles.Z);
-        float sz = Sin(-angles.Z);
-        float cy = Cos(-angles.Y);
-        float sy = Sin(-angles.Y);
-        float cx = Cos(-angles.X);
-        float sx = Sin(-angles.X);
+        float cz = Cos(angles.Z);
+        float sz = Sin(angles.Z);
+        float cy = Cos(angles.Y);
+        float sy = Sin(angles.Y);
+        float cx = Cos(angles.X);
+        float sx = Sin(angles.X);
 
         return Matrix4<T>{cz * cy, (cz * sy * sx) - (sz * cx), (cz * sy * cx) + (sz * sx), 0,
                           sz * cy, (sz * sy * sx) + (cz * cx), (sz * sy * cx) - (cz * sx), 0,
@@ -719,22 +719,39 @@ namespace BMath
     template<typename T>
     ML_FUNC_DECL Matrix4<T>& Matrix4<T>::operator*=(const Matrix4<T>& other)
     {
-        v0  = v0  * other.v0 + v1  * other.v4  + v2  * other.v8  + v3  * other.v12;
-        v1  = v0  * other.v1 + v1  * other.v5  + v2  * other.v9  + v3  * other.v13;
-        v2  = v0  * other.v2 + v1  * other.v6  + v2  * other.v10 + v3  * other.v14;
-        v3  = v0  * other.v3 + v1  * other.v7  + v2  * other.v11 + v3  * other.v15;
-        v4  = v4  * other.v0 + v5  * other.v4  + v6  * other.v8  + v7  * other.v12;
-        v5  = v4  * other.v1 + v5  * other.v5  + v6  * other.v9  + v7  * other.v13;
-        v6  = v4  * other.v2 + v5  * other.v6  + v6  * other.v10 + v7  * other.v14;
-        v7  = v4  * other.v3 + v5  * other.v7  + v6  * other.v11 + v7  * other.v15;
-        v8  = v8  * other.v0 + v9  * other.v4  + v10 * other.v8  + v11 * other.v12;
-        v9  = v8  * other.v1 + v9  * other.v5  + v10 * other.v9  + v11 * other.v13;
-        v10 = v8  * other.v2 + v9  * other.v6  + v10 * other.v10 + v11 * other.v14;
-        v11 = v8  * other.v3 + v9  * other.v7  + v10 * other.v11 + v11 * other.v15;
-        v12 = v12 * other.v0 + v13 * other.v4  + v14 * other.v8  + v15 * other.v12;
-        v13 = v12 * other.v1 + v13 * other.v5  + v14 * other.v9  + v15 * other.v13;
-        v14 = v12 * other.v2 + v13 * other.v6  + v14 * other.v10 + v15 * other.v14;
-        v15 = v12 * other.v3 + v13 * other.v7  + v14 * other.v11 + v15 * other.v15;
+        T tmpV0  = v0  * other.v0 + v1  * other.v4  + v2  * other.v8  + v3  * other.v12;
+        T tmpV1  = v0  * other.v1 + v1  * other.v5  + v2  * other.v9  + v3  * other.v13;
+        T tmpV2  = v0  * other.v2 + v1  * other.v6  + v2  * other.v10 + v3  * other.v14;
+        T tmpV3  = v0  * other.v3 + v1  * other.v7  + v2  * other.v11 + v3  * other.v15;
+        T tmpV4  = v4  * other.v0 + v5  * other.v4  + v6  * other.v8  + v7  * other.v12;
+        T tmpV5  = v4  * other.v1 + v5  * other.v5  + v6  * other.v9  + v7  * other.v13;
+        T tmpV6  = v4  * other.v2 + v5  * other.v6  + v6  * other.v10 + v7  * other.v14;
+        T tmpV7  = v4  * other.v3 + v5  * other.v7  + v6  * other.v11 + v7  * other.v15;
+        T tmpV8  = v8  * other.v0 + v9  * other.v4  + v10 * other.v8  + v11 * other.v12;
+        T tmpV9  = v8  * other.v1 + v9  * other.v5  + v10 * other.v9  + v11 * other.v13;
+        T tmpV10 = v8  * other.v2 + v9  * other.v6  + v10 * other.v10 + v11 * other.v14;
+        T tmpV11 = v8  * other.v3 + v9  * other.v7  + v10 * other.v11 + v11 * other.v15;
+        T tmpV12 = v12 * other.v0 + v13 * other.v4  + v14 * other.v8  + v15 * other.v12;
+        T tmpV13 = v12 * other.v1 + v13 * other.v5  + v14 * other.v9  + v15 * other.v13;
+        T tmpV14 = v12 * other.v2 + v13 * other.v6  + v14 * other.v10 + v15 * other.v14;
+        T tmpV15 = v12 * other.v3 + v13 * other.v7  + v14 * other.v11 + v15 * other.v15;
+
+        v0  = tmpV0;
+        v1  = tmpV1;
+        v2  = tmpV2;
+        v3  = tmpV3;
+        v4  = tmpV4;
+        v5  = tmpV5;
+        v6  = tmpV6;
+        v7  = tmpV7;
+        v8  = tmpV8;
+        v9  = tmpV9;
+        v10 = tmpV10;
+        v11 = tmpV11;
+        v12 = tmpV12;
+        v13 = tmpV13;
+        v14 = tmpV14;
+        v15 = tmpV15;
 
         return *this;
     }
