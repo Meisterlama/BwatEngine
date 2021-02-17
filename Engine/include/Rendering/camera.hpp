@@ -11,10 +11,11 @@ namespace Rendering
     public:
 
         float yaw = 0;
-        float pitch = BMath::PI / 2;
-        BMath::vec3f cameraPos;
-        BMath::vec3f cameraRot;
+        float pitch = 0;// BMath::PI / 2;
+        BMath::vec3f cameraPos{0,0,50};
+        BMath::vec3f cameraRot{0,0,0};
         double xpos = 0, ypos = 0;
+        bool lockMouse = false;
 
         // constructor
         Camera();
@@ -22,8 +23,7 @@ namespace Rendering
 
         //method
         void usefreefly(Bwat::Window*, float);
-        //Mat4 view_of_camera(Camera cam);
-
+        BMath::Matrix4<float> ViewOfCamera();
 
     };
 

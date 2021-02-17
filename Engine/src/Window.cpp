@@ -65,6 +65,8 @@ void Window::SetUp()
 {
 	this->window = InitGLFW();
 	InitGlad();
+	this->width = 800;
+	this->height = 600;
 }
 
 void Window::Close()
