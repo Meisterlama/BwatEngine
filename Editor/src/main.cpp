@@ -8,9 +8,15 @@
 #include <imgui_impl_glfw.h>
 #include <imgui_impl_opengl3.h>
 
+// flag for the debug option allow to use logger if define.
+//#define DEBUG
+
+#include "Debug/Logger.hpp"
+
 #include <assimp/Importer.hpp>      // C++ importer interface
 #include <assimp/scene.h>           // Output data structure
 #include <assimp/postprocess.h>     // Post processing flags
+
 
 typedef const char* (*glGetStringFunc)(int);
 
@@ -86,6 +92,13 @@ int main()
 	ImGui_ImplOpenGL3_Init("#version 330");
 
 	float color[3] = { 0.8f, 0.2f, 0.2f };
+
+
+	FILE *file;
+	errno_t err;
+	err = fopen_s(&file,"Log.txt", "w");
+    BLogger::LogAddFp(file, 0);
+    BLogger::LogDebug("test1");
 
 	while (!glfwWindowShouldClose(window))
 	{
