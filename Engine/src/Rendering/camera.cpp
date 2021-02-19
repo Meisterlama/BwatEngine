@@ -36,7 +36,7 @@ void Camera::usefreefly(Bwat::Window* win,float deltaTime)
         ydelta_pos *= sensitivity_mouse * deltaTime;
 
         yaw -= xdelta_pos;
-        pitch += -ydelta_pos;
+        pitch -= ydelta_pos;
 
         if (pitch >= BMath::PI / 2)
             pitch = BMath::PI / 2;
@@ -95,12 +95,9 @@ void Camera::usefreefly(Bwat::Window* win,float deltaTime)
 BMath::Matrix4<float> Camera::ViewOfCamera()
 {
     BMath::Matrix4<float> View{1};
-    
-    //View = View * BMath::Matrix4<float>::CreateTranslationMat(-cameraPos).Transpose();
-    //View = View * BMath::Matrix4<float>::CreateYRotationMat(yaw);
-    //View = View * BMath::Matrix4<float>::CreateXRotationMat(-pitch);
-    View = BMath::Matrix4<float>::CreateTRSMat(-cameraPos, {pitch,yaw,0 }, { 1,1,1 });
-
+    View *= BMath::Matrix4<float>::CreateTranslationMat(-cameraPos);
+    View *= BMath::Matrix4<float>::CreateYRotationMat(yaw);
+    View *= BMath::Matrix4<float>::CreateXRotationMat(pitch);
     return View;
 }
 
