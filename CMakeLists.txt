@@ -4,12 +4,11 @@ project(BwatEngine LANGUAGES C CXX)
 
 set(CMAKE_CXX_STANDARD 17)
 
-set(BWAT_ENGINE_TEST_ENABLED ON)
+set(BWAT_ENGINE_TEST_ENABLED OFF)
 set(BWAT_EDITOR_ENABLED ON)
 
 
 add_subdirectory(lib)
-add_subdirectory(docs)
 if(BWAT_ENGINE_TEST_ENABLED)
     add_subdirectory(tests)
 endif()
