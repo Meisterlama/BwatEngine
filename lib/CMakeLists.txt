@@ -43,13 +43,14 @@ add_subdirectory(glfw)
 #For some reasons the next line breaks everything
 #target_compile_definitions(glfw PRIVATE -DGLFW_INCLUDE_NONE)
 
-# GTEST BUILD
+# GTEST AND GLM BUILD (TEST ONLY)
 if (BWAT_ENGINE_TEST_ENABLED)
     include_directories(PRIVATE googletest/googletest/include)
 
     set(INSTALL_GTEST OFF CACHE BOOL "" FORCE)
 
     add_subdirectory(googletest)
+    add_subdirectory(glm)
 endif()
 
 # IMGUI BUILD
@@ -87,8 +88,3 @@ set(STB_SRC
 
 add_library(stb STATIC ${STB_SRC})
 target_include_directories(stb PUBLIC stb/include)
-
-# GLM BUILD (TEST-ONLY)
-if (BWAT_ENGINE_TEST_ENABLED)
-    add_subdirectory(glm)
-endif()
