@@ -5,26 +5,29 @@
 #include <imgui_impl_glfw.h>
 #include <imgui_impl_opengl3.h>
 
+#include "../../Engine/include/Window.hpp"
+
 #include <glad/glad.h>
 #include <GLFW/glfw3.h>
 
 class  EditorInterface
 {
 public:
-    unsigned int fbo;
-    unsigned int tex;
-    unsigned int rbo;
-
     EditorInterface();
+    ~EditorInterface();
 
-    void InitImGui(GLFWwindow* window);
+    void InitImGui(Bwat::Window mainWindow);
     void CreateFrame();
     void RenderImGui();
+    void ShowScene();
     void DrawInterface(float color[3]);
     void DestroyImGui();
     static void MenuFile();
     static void MainMenuBar();
     static void MenuOption();
+
+private:
+    unsigned int fbo;
 };
 
 

@@ -15,21 +15,15 @@
 #include "Rendering/model.hpp"
 #include "Rendering/camera.hpp"
 
+#include "Editor/include/EditorInterface.hpp"
+
 
 int main()
 {
 	Bwat::Window mainWindow;
+	EditorInterface editor;
 
-	// Init ImGui
-	IMGUI_CHECKVERSION();
-	ImGui::CreateContext();
-	ImGuiIO& io = ImGui::GetIO(); (void)io;
-	io.ConfigFlags |= ImGuiConfigFlags_NavEnableKeyboard;       // Enable Keyboard Controls
-	io.ConfigFlags |= ImGuiConfigFlags_DockingEnable;           // Enable Docking
-	ImGui::StyleColorsDark();
-
-	ImGui_ImplGlfw_InitForOpenGL(mainWindow.window, true);
-	ImGui_ImplOpenGL3_Init("#version 330");
+	editor.InitImGui(mainWindow);
 #endif
 
 	// Shader
@@ -54,9 +48,7 @@ int main()
 		lastFrame = currentFrame;
 
 		//ImGui
-		ImGui_ImplOpenGL3_NewFrame();
-		ImGui_ImplGlfw_NewFrame();
-		ImGui::NewFrame();
+		editor.CreateFrame()
 
 		ImGui::ColorEdit3("Clear color", color);
 #endif
@@ -85,16 +77,13 @@ int main()
 		myModel.Draw(myShader);
 
 #ifdef BWATEDITOR
-		ImGui::Render();
-		ImGui_ImplOpenGL3_RenderDrawData(ImGui::GetDrawData());
+		editor.RenderImGui();
 
 		glfwSwapBuffers(mainWindow.window);
 		glfwPollEvents();
 	}
 #ifdef BWATEDITOR
-	ImGui_ImplGlfw_Shutdown();
-	ImGui_ImplOpenGL3_Shutdown();
-	ImGui::DestroyContext();
+	editor.DestroyImGui();
 
 	mainWindow.Close();
 

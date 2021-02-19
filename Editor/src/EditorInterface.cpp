@@ -4,17 +4,26 @@ EditorInterface::EditorInterface()
 {
     glGenFramebuffers(1, &fbo);
 
+    unsigned int tex;
     glGenTextures(1, &tex);
     glBindTexture(GL_TEXTURE_2D, tex);
     glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, 800, 600, 0, GL_RGB, GL_UNSIGNED_BYTE, NULL);
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
     glBindTexture(GL_TEXTURE_2D, 0);
+    glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_2D, tex, 0);
 
+    unsigned int rbo;
     glGenRenderbuffers(1, &rbo);
     glBindRenderbuffer(GL_RENDERBUFFER, rbo);
     glRenderbufferStorage(GL_RENDERBUFFER, GL_DEPTH24_STENCIL8, 800, 600);
     glBindRenderbuffer(GL_RENDERBUFFER, 0);
+    glFramebufferRenderbuffer(GL_FRAMEBUFFER, GL_DEPTH_STENCIL_ATTACHMENT, GL_RENDERBUFFER, rbo);
+}
+
+EditorInterface::~EditorInterface()
+{
+
 }
 
 void EditorInterface::DestroyImGui()
@@ -24,17 +33,16 @@ void EditorInterface::DestroyImGui()
     ImGui::DestroyContext();
 }
 
-void EditorInterface::InitImGui(GLFWwindow* window)
+void EditorInterface::InitImGui(Bwat::Window mainWindow)
 {
     IMGUI_CHECKVERSION();
     ImGui::CreateContext();
     ImGuiIO& io = ImGui::GetIO(); (void)io;
     io.ConfigFlags |= ImGuiConfigFlags_NavEnableKeyboard;       // Enable Keyboard Controls
     io.ConfigFlags |= ImGuiConfigFlags_DockingEnable;           // Enable Docking
-    io.ConfigFlags |= ImGuiConfigFlags_ViewportsEnable;
-    ImGui::StyleColorsClassic();
+    ImGui::StyleColorsDark();
 
-    ImGui_ImplGlfw_InitForOpenGL(window, true);
+    ImGui_ImplGlfw_InitForOpenGL(mainWindow.window, true);
     ImGui_ImplOpenGL3_Init("#version 330");
 }
 
@@ -56,18 +64,27 @@ void EditorInterface::RenderImGui()
     glfwMakeContextCurrent(backup_current_context);
 }
 
-void EditorInterface::DrawInterface(float color[3])
+void EditorInterface::ShowScene()
 {
-    CreateFrame();
-
     glBindFramebuffer(GL_FRAMEBUFFER, fbo);
-    glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_2D, tex, 0);
-    glFramebufferRenderbuffer(GL_FRAMEBUFFER, GL_DEPTH_STENCIL_ATTACHMENT, GL_RENDERBUFFER, rbo);
 
     glClearColor(color[0], color[1], color[2], 1.f);
     glClear(GL_COLOR_BUFFER_BIT);
 
     glBindFramebuffer(GL_FRAMEBUFFER, 0);
+
+    ImGui::Begin("Scene Window");
+
+    ImGui::GetWindowDrawList()->AddImage(
+            (void *)fbo, ImVec2(ImGui::GetCursorScreenPos()),
+            ImVec2(ImGui::GetCursorScreenPos().x + ImGui::GetWindowWidth(), ImGui::GetCursorScreenPos().y + ImGui::GetWindowHeight()), ImVec2(0, 1), ImVec2(1, 0));
+
+    ImGui::End();
+}
+
+void EditorInterface::DrawInterface(float color[3])
+{
+    CreateFrame();
 
     ImGui::DockSpaceOverViewport(ImGui::GetMainViewport(), ImGuiDockNodeFlags_PassthruCentralNode);
     MainMenuBar();
@@ -88,13 +105,7 @@ void EditorInterface::DrawInterface(float color[3])
     ImGui::Text("Transform of object");
     ImGui::End();
 
-    ImGui::Begin("Scene Window");
-
-    ImGui::GetWindowDrawList()->AddImage(
-            (void *)tex, ImVec2(ImGui::GetCursorScreenPos()),
-            ImVec2(ImGui::GetCursorScreenPos().x + ImGui::GetWindowWidth(), ImGui::GetCursorScreenPos().y + ImGui::GetWindowHeight()), ImVec2(0, 1), ImVec2(1, 0));
-
-    ImGui::End();
+    ShowScene();
 
     RenderImGui();
 }
