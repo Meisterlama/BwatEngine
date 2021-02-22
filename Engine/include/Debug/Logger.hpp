@@ -25,7 +25,7 @@ namespace BLogger
 
     enum { E_LOG_TRACE, E_LOG_DEBUG, E_LOG_INFO, E_LOG_WARN, E_LOG_ERROR, E_LOG_FATAL };
 
-#ifdef DEBUG
+#ifdef BWATDEBUG
 
 #define LogTrace(...) LogLog(BLogger::E_LOG_TRACE, __FILE__, __LINE__, __VA_ARGS__ )
 #define LogDebug(...) LogLog(BLogger::E_LOG_DEBUG, __FILE__, __LINE__, __VA_ARGS__ )
@@ -36,12 +36,12 @@ namespace BLogger
 
 #else
 
-#define LogTrace(...) LogNull()
-#define LogDebug(...) LogNull()
-#define LogInfo(...) LogNull()
-#define LogWarn(...) LogNull()
-#define LogError(...) LogNull()
-#define LogFatal(...) LogNull()
+#define LogTrace(...)
+#define LogDebug(...)
+#define LogInfo(...)
+#define LogWarn(...)
+#define LogError(...)
+#define LogFatal(...)
 
 #endif
 
