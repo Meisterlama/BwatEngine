@@ -28,6 +28,10 @@ target_link_libraries(Engine PUBLIC Game ${ENGINE_LIBRARY})
 
 add_executable(Launcher launcher.cpp)
 target_link_libraries(Launcher PUBLIC Engine)
+add_custom_command(TARGET Launcher PRE_BUILD
+        COMMAND ${CMAKE_COMMAND} -E copy_directory
+        ${CMAKE_SOURCE_DIR}/Assets/ $<TARGET_FILE_DIR:Launcher>/Assets/)
+
 if(BWAT_EDITOR_ENABLED)
     target_link_libraries(Engine PUBLIC Editor)
     target_link_libraries(Launcher PUBLIC Editor)
