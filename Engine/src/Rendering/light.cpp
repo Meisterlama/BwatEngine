@@ -1,5 +1,4 @@
 #include "Rendering/light.hpp"
-#include <iostream>
 
 using namespace Rendering;
 
@@ -8,26 +7,58 @@ ambient(0),diffuse(0),specular(0)
 {
 }
 
-/*
-Light::Light(Vec3 pos, Core::Maths::Vec3 ambi, Core::Maths::Vec3 diffu, Core::Maths::Vec3 spec) : position(pos),
-ambient(ambi), diffuse(diffu), specular(spec)
+
+Light::Light(TYPE_LIGHT myType, BMath::vec3f tmpAmbient, BMath::vec3f tmpDiffuse, BMath::vec3f tmpSpecular) 
 {
-    
+    typeoflight = myType;
+    ambient = tmpAmbient;
+    diffuse = tmpDiffuse;
+    specular = tmpSpecular;
 }
 
-Light::Light(Core::Maths::Vec3 pos, Core::Maths::Vec3 ambi, Core::Maths::Vec3 diffu, Core::Maths::Vec3 spec, int type) : position(pos),
-ambient(ambi), diffuse(diffu), specular(spec) ,typeoflight(type)
+void Light::SetAmbient(BMath::vec3f tmpAmbient)
 {
-    
+    ambient = tmpAmbient;
 }
 
-void Light::apply_value_shader(Shader* shader , const std::string& i) const
+void Light::SetDiffuse(BMath::vec3f tmpDiffuse)
+{
+    diffuse = tmpDiffuse;
+}
+
+void Light::SetSpecular(BMath::vec3f tmpSpecular)
+{
+    specular = tmpSpecular;
+}
+
+void Light::SetAttenuation(float tmpConstant, float tmpLinear, float tmpQuadratic)
+{
+    constant = tmpConstant;
+    linear = tmpLinear;
+    quadratic = tmpQuadratic;
+}
+
+void Light::SetMaterialLight(int tmpMatDiffuse, int tmpMatSpecular, float tmpMatShininess)
+{
+    matDiffuse = tmpMatDiffuse;
+    matSpecular = tmpMatSpecular;
+    matShininess = tmpMatShininess;
+}
+
+void Light::SetSpotLightValues(float tmpCutOff, float tmpOuterCutOff)
+{
+    cutoff = tmpCutOff;
+    outerCutoff = tmpOuterCutOff;
+}
+
+
+void Light::ApplyOnShader(Shader* shader , const std::string& i) const
 {
     shader->use();
 
-    shader->setVec3("lights[" + i + "].ambient", ambient.x, ambient.y, ambient.z);
-    shader->setVec3("lights[" + i + "].diffuse", diffuse.x, diffuse.y, diffuse.z);
-    shader->setVec3("lights[" + i + "].specular", specular.x, specular.y, specular.z);
+    shader->setVec3("lights[" + i + "].ambient", ambient.X, ambient.Y, ambient.Z);
+    shader->setVec3("lights[" + i + "].diffuse", diffuse.X, diffuse.Y, diffuse.Z);
+    shader->setVec3("lights[" + i + "].specular", specular.X, specular.Y, specular.Z);
 
     shader->setFloat("material.shininess", matShininess);
     shader->setInt("material.diffuse", matDiffuse);
@@ -40,39 +71,8 @@ void Light::apply_value_shader(Shader* shader , const std::string& i) const
     shader->setFloat("lights[" + i + "].cutOff", cutoff);
     shader->setFloat("lights[" + i + "].outerCutOff", outerCutoff);
 
-    shader->setVec3("lights[" + i + "].position", position.x, position.y, position.z);
-    shader->setVec3("lights[" + i + "].direction", direction.x, direction.y, direction.z);
+    shader->setVec3("lights[" + i + "].position", position.X, position.Y, position.Z);
+    shader->setVec3("lights[" + i + "].direction", direction.X, direction.Y, direction.Z);
     shader->setInt("lights[" + i + "].typeoflight", typeoflight);
 }
 
-void Light::set_value_material(int diffu, int spec, float shine)
-{
-    matDiffuse = diffu;
-    matSpecular = spec;
-    matShininess = shine;
-
-}
-
-void Light::value_of_attenuation(float cons, float line, float quad)
-{
-    constant = cons;
-    linear = line;
-    quadratic = quad;
-}
-
-void Light::position_and_direction(Core::Maths::Vec3 pos,Core::Maths::Vec3 dir)
-{
-    position = pos;
-    direction =dir;
-}
-
-void Light::value_of_spotlight(float cut, float outer)
-{
-    cutoff = cos(cut * M_PI / 180) ;
-    outerCutoff = cos(outer * M_PI / 180);
-}
-
-void Light::set_nbr_of_light(int nbr)
-{
-    nbrlights = nbr;
-}*/

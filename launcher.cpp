@@ -14,6 +14,8 @@
 #include "Rendering/shader.hpp"
 #include "Rendering/model.hpp"
 #include "Rendering/camera.hpp"
+#include "Editor/include/EditorInterface.hpp"
+#include "Rendering/light.hpp"
 
 
 int main()
@@ -24,8 +26,8 @@ int main()
 	IMGUI_CHECKVERSION();
 	ImGui::CreateContext();
 	ImGuiIO& io = ImGui::GetIO(); (void)io;
-	io.ConfigFlags |= ImGuiConfigFlags_NavEnableKeyboard;       // Enable Keyboard Controls
-	io.ConfigFlags |= ImGuiConfigFlags_DockingEnable;           // Enable Docking
+	io.ConfigFlags |= ImGuiConfigFlags_NavEnableKeyboard;       
+	io.ConfigFlags |= ImGuiConfigFlags_DockingEnable;           
 	ImGui::StyleColorsDark();
 
 	ImGui_ImplGlfw_InitForOpenGL(mainWindow.window, true);
@@ -33,6 +35,7 @@ int main()
 
 	// Shader
 	Rendering::Shader myShader("media/basic.vs", "media/basic.fs");
+	Rendering::Shader myShaderLight("media/basic.vs", "media/multilight.fs");
 	Rendering::Model myModel((std::string)"media/bag/backpack.obj");
 
 	// time init var
@@ -45,8 +48,16 @@ int main()
 	float color[3] = { 0.5f, 0.5f, 0.5f };
 	Rendering::Triangle myTri;
 
+	// Light, Next we need manage light on a lights manager or on scene graph ... WIP
+	std::vector<Rendering::Light*> lights;
+
+	Rendering::Light mylight(Rendering::TYPE_LIGHT::Point, { 0.1f,0.1f,0.5f }, { 0.1f,0.1f,0.5f }, { 0.1f,0.1f,0.5f });
+
+	lights.push_back(&mylight);
+	
+
 	while (mainWindow.IsWorking())
-	{
+	{	
 		//Time
 		float currentFrame = glfwGetTime();
 		deltaTime = currentFrame - lastFrame;
@@ -58,6 +69,12 @@ int main()
 		ImGui::NewFrame();
 
 		ImGui::ColorEdit3("Clear color", color);
+		//debug Light
+		ImGui::ColorEdit3("light ambient", lights[0]->ambient.values);
+		ImGui::DragFloat3("posLight", lights[0]->position.values);
+		ImGui::DragFloat3("dirLight", lights[0]->direction.values);
+		ImGui::DragFloat("cutOff", &lights[0]->cutoff);
+		ImGui::DragFloat("outerCutOff", &lights[0]->outerCutoff);
 
 		// Depth Test and buffer
 		glEnable(GL_DEPTH_TEST);
@@ -74,13 +91,14 @@ int main()
 		BMath::Matrix4<float> model = BMath::Matrix4<float>::CreateScaleMat(1.f);
 
 		//use shader 
-		glUseProgram(myShader.ID);
-		myShader.setMat4("proj", projection);
-		myShader.setMat4("model", model);
-		myShader.setMat4("view", view);
+		myShaderLight.use();
+		myShaderLight.setMat4("proj", projection);
+		myShaderLight.setMat4("model", model);
+		myShaderLight.setMat4("view", view);
+		myShaderLight.setVec3("viewPos", cam.cameraPos.X, cam.cameraPos.Y, cam.cameraPos.Z);
 
 		//myTri.Update();
-		myModel.Draw(myShader);
+		myModel.Draw(myShaderLight,lights);
 
 		ImGui::Render();
 		ImGui_ImplOpenGL3_RenderDrawData(ImGui::GetDrawData());
