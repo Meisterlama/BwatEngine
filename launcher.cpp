@@ -30,10 +30,9 @@ int main()
 
 	ImGui_ImplGlfw_InitForOpenGL(mainWindow.window, true);
 	ImGui_ImplOpenGL3_Init("#version 330");
-#endif
 
 	// Shader
-	Rendering::Shader myShader("basic.vs", "basic.fs");
+	Rendering::Shader myShader("media/basic.vs", "media/basic.fs");
 	Rendering::Model myModel((std::string)"media/bag/backpack.obj");
 
 	// time init var
@@ -43,7 +42,7 @@ int main()
 	// Camera init
 	Rendering::Camera cam;
 
-	float color[3] = { 0.5f, 0.2f, 0.5f };
+	float color[3] = { 0.5f, 0.5f, 0.5f };
 	Rendering::Triangle myTri;
 
 	while (mainWindow.IsWorking())
@@ -59,7 +58,6 @@ int main()
 		ImGui::NewFrame();
 
 		ImGui::ColorEdit3("Clear color", color);
-#endif
 
 		// Depth Test and buffer
 		glEnable(GL_DEPTH_TEST);
@@ -68,11 +66,11 @@ int main()
 		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
 		//Camera 
-		cam.usefreefly(&mainWindow, deltaTime);
+		cam.UseFreeFly(&mainWindow, deltaTime);
 
 		// projection, view and model 
 		BMath::Matrix4<float> projection = BMath::Matrix4<float>::CreatePerspective(60.f, mainWindow.GetWidth() / mainWindow.GetHeight(), 0.1f, 100.0f);
-		BMath::Matrix4<float> view = cam.ViewOfCamera();
+		BMath::Matrix4<float> view = cam.GetViewMatrix();
 		BMath::Matrix4<float> model = BMath::Matrix4<float>::CreateScaleMat(1.f);
 
 		//use shader 
@@ -84,14 +82,13 @@ int main()
 		//myTri.Update();
 		myModel.Draw(myShader);
 
-#ifdef BWATEDITOR
 		ImGui::Render();
 		ImGui_ImplOpenGL3_RenderDrawData(ImGui::GetDrawData());
 
 		glfwSwapBuffers(mainWindow.window);
 		glfwPollEvents();
 	}
-#ifdef BWATEDITOR
+
 	ImGui_ImplGlfw_Shutdown();
 	ImGui_ImplOpenGL3_Shutdown();
 	ImGui::DestroyContext();

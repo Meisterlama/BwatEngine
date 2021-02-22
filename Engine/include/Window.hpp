@@ -12,8 +12,9 @@ namespace Bwat
 		Window();
 		~Window();
 
-		void SetUp();
 		void Close();
+		GLFWwindow* InitGLFW();
+		void InitGlad();
 
 		GLFWwindow* window = nullptr;
 

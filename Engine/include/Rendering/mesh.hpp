@@ -4,16 +4,10 @@
 #include <string>
 #include "shader.hpp"
 #include "Math/Math.hpp"
+#include "Rendering/texture.hpp"
 
 namespace Rendering
 {
-
-struct Texture
-{
-    unsigned int id;
-    std::string type;
-    std::string path;
-};
 
 struct Vertex
 {
