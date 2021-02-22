@@ -13,7 +13,7 @@ namespace Rendering
         float yaw = 0;
         float pitch = 0;
         BMath::vec3f cameraPos{0,0,5};
-        BMath::vec3f cameraRot{0,0,0};
+
         double xpos = 0, ypos = 0;
         bool lockMouse = false;
 
@@ -22,8 +22,10 @@ namespace Rendering
         ~Camera();
 
         //method
-        void usefreefly(Bwat::Window*, float);
-        BMath::Matrix4<float> ViewOfCamera();
+        void UseFreeFly(Bwat::Window*, float);
+        void MouseMovement(Bwat::Window* win, float deltaTime);
+        void CameraMovementFF(Bwat::Window* win, float deltaTime);
+        BMath::Matrix4<float> GetViewMatrix();
 
     };
 

@@ -35,7 +35,7 @@ namespace Rendering
 	public:
 
 		Model(std::string& path);
-		void Draw(Shader& shader);
+		void Draw(Shader& shader, const std::vector<Light*> lights);
 
 	};
 

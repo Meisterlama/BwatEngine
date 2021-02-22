@@ -16,15 +16,22 @@ Mesh::Mesh(std::vector<Vertex> mVertices, std::vector<unsigned int> mIndices, st
 	initMesh();
 }
 
-void Mesh::Draw(Shader& shader)
+void Mesh::Draw(Shader& shader, const std::vector<Light*> lights)
 {
+    shader.setInt("nbrlights", (int)lights.size());
+    for (unsigned int i = 0; i < lights.size(); i++)
+    {
+        std::string index = std::to_string(i);
+        lights[i]->ApplyOnShader(&shader, index);
+    }
+
     unsigned int diffuseNr = 1;
     unsigned int specularNr = 1;
 
     for (unsigned int i = 0; i < textures.size(); i++)
     {
-        glActiveTexture(GL_TEXTURE0 + i); // activate proper texture unit before binding
-        // retrieve texture number (the N in diffuse_textureN)
+        glActiveTexture(GL_TEXTURE0 + i); 
+
         std::string number;
         std::string name = textures[i].type;
 
@@ -41,7 +48,6 @@ void Mesh::Draw(Shader& shader)
     glBindVertexArray(VAO);
     glDrawElements(GL_TRIANGLES, indices.size(), GL_UNSIGNED_INT, 0);
     glBindVertexArray(0);
-
 
     glActiveTexture(GL_TEXTURE0);
 }
@@ -75,7 +81,6 @@ void Mesh::initMesh()
     // vertex bitangent
     glEnableVertexAttribArray(4);
     glVertexAttribPointer(4, 3, GL_FLOAT, GL_FALSE, sizeof(Vertex), (void*)offsetof(Vertex, bitangent));
-
 
     glBindVertexArray(0);
 }

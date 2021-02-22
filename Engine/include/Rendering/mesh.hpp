@@ -4,16 +4,11 @@
 #include <string>
 #include "shader.hpp"
 #include "Math/Math.hpp"
+#include "texture.hpp"
+#include "light.hpp"
 
 namespace Rendering
 {
-
-struct Texture
-{
-    unsigned int id;
-    std::string type;
-    std::string path;
-};
 
 struct Vertex
 {
@@ -42,7 +37,7 @@ public :
     // Constructor 
     Mesh(std::vector<Vertex> vertices, std::vector<unsigned int> indices, std::vector<Texture> textures);
 
-    void Draw(Shader& shader);
+    void Draw(Shader& shader, const std::vector<Light*> lights);
 
 
 };
