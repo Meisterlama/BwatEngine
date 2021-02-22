@@ -3,7 +3,7 @@ VSProject
 .idea
 cmake-build-debug
 cmake-build-release
-imgui.ini
+
 
 docs/build
 docs/env

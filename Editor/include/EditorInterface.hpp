@@ -19,7 +19,7 @@ public:
     void InitImGui(Bwat::Window mainWindow);
     void CreateFrame();
     void RenderImGui();
-    void ShowScene();
+    void ShowScene(float color[3]);
     void DrawInterface(float color[3]);
     void DestroyImGui();
     static void MenuFile();
@@ -28,6 +28,8 @@ public:
 
 private:
     unsigned int fbo;
+    unsigned int tex;
+    unsigned int rbo;
 };
 
 

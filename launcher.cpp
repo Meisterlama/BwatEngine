@@ -21,14 +21,14 @@
 int main()
 {
 	Bwat::Window mainWindow;
-	EditorInterface editor;
 
+	EditorInterface editor;
 	editor.InitImGui(mainWindow);
-#endif
+//#endif
 
 	// Shader
 	Rendering::Shader myShader("basic.vs", "basic.fs");
-	Rendering::Model myModel((std::string)"media/bag/backpack.obj");
+	//Rendering::Model myModel((std::string)"media/bag/backpack.obj");
 
 	// time init var
 	float deltaTime = 0.0f;
@@ -42,16 +42,16 @@ int main()
 
 	while (mainWindow.IsWorking())
 	{
+	    glfwPollEvents();
+
 		//Time
 		float currentFrame = glfwGetTime();
 		deltaTime = currentFrame - lastFrame;
 		lastFrame = currentFrame;
 
 		//ImGui
-		editor.CreateFrame()
-
-		ImGui::ColorEdit3("Clear color", color);
-#endif
+		editor.DrawInterface(color);
+//#endif
 
 		// Depth Test and buffer
 		glEnable(GL_DEPTH_TEST);
@@ -73,16 +73,14 @@ int main()
 		myShader.setMat4("model", model);
 		myShader.setMat4("view", view);
 
-		//myTri.Update();
-		myModel.Draw(myShader);
+		myTri.Update();
+		//myModel.Draw(myShader);
 
-#ifdef BWATEDITOR
-		editor.RenderImGui();
-
+//#ifdef BWATEDITOR
 		glfwSwapBuffers(mainWindow.window);
-		glfwPollEvents();
+
 	}
-#ifdef BWATEDITOR
+//#ifdef BWATEDITOR
 	editor.DestroyImGui();
 
 	mainWindow.Close();
