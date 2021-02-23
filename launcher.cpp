@@ -27,7 +27,7 @@ int main()
 //#endif
 
 	// Shader
-	Rendering::Shader myShader("basic.vs", "basic.fs");
+	//Rendering::Shader myShader("basic.vs", "basic.fs");
 	//Rendering::Model myModel((std::string)"media/bag/backpack.obj");
 
 	// time init var
@@ -54,7 +54,7 @@ int main()
 //#endif
 
 		// Depth Test and buffer
-		glEnable(GL_DEPTH_TEST);
+		/*glEnable(GL_DEPTH_TEST);
 		glViewport(0, 0, mainWindow.GetWidth(), mainWindow.GetHeight());
 		glClearColor(color[0], color[1], color[2], 1.f);
 		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
@@ -71,9 +71,9 @@ int main()
 		glUseProgram(myShader.ID);
 		myShader.setMat4("proj", projection);
 		myShader.setMat4("model", model);
-		myShader.setMat4("view", view);
+		myShader.setMat4("view", view);*/
 
-		myTri.Update();
+		//myTri.Update();
 		//myModel.Draw(myShader);
 
 //#ifdef BWATEDITOR

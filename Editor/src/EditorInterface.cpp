@@ -1,6 +1,126 @@
 #include "../include/EditorInterface.hpp"
 
-EditorInterface::EditorInterface()
+#include <imgui_impl_glfw.h>
+#include <imgui_impl_opengl3.h>
+
+#include "../../lib/imgui/include/imgui_internal.h"
+
+EditorInterface::~EditorInterface()
+{
+    widgets.clear();
+    widgets.shrink_to_fit();
+
+    if (ImGui::GetCurrentContext())
+    {
+        ImGui_ImplGlfw_Shutdown();
+        ImGui_ImplOpenGL3_Shutdown();
+        ImGui::DestroyContext();
+    }
+}
+
+void EditorInterface::OnTick()
+{
+    ImGui_ImplOpenGL3_NewFrame();
+    ImGui_ImplGlfw_NewFrame();
+    ImGui::NewFrame();
+
+    BeginWindow();
+
+    for (std::shared_ptr<Widget>& widget : widgets)
+    {
+        widget->Tick();
+    }
+
+    ImGui::End();
+
+    ImGui::Render();
+    ImGui_ImplOpenGL3_RenderDrawData(ImGui::GetDrawData());
+
+    GLFWwindow* backup_current_context = glfwGetCurrentContext();
+    ImGui::UpdatePlatformWindows();
+    ImGui::RenderPlatformWindowsDefault();
+    glfwMakeContextCurrent(backup_current_context);
+}
+
+void EditorInterface::Initialise(Bwat::Window mainWindow)
+{
+    IMGUI_CHECKVERSION();
+    ImGui::CreateContext();
+    ImGuiIO& io = ImGui::GetIO(); (void)io;
+    io.ConfigFlags |= ImGuiConfigFlags_NavEnableKeyboard;       // Enable Keyboard Controls
+    io.ConfigFlags |= ImGuiConfigFlags_DockingEnable;           // Enable Docking
+    ApplyStyle();
+
+    ImGui_ImplGlfw_InitForOpenGL(mainWindow.window, true);
+    ImGui_ImplOpenGL3_Init("#version 330");
+
+    //Push widget here
+}
+
+void EditorInterface::ApplyStyle() const
+{
+    //Future BWAT style here
+}
+
+void EditorInterface::BeginWindow()
+{
+    const auto windowFlags =    ImGuiWindowFlags_MenuBar                |
+                                ImGuiWindowFlags_NoTitleBar             |
+                                ImGuiWindowFlags_NoDocking              |
+                                ImGuiWindowFlags_NoCollapse             |
+                                ImGuiWindowFlags_NoResize               |
+                                ImGuiWindowFlags_NoMove                 |
+                                ImGuiWindowFlags_NoBringToFrontOnFocus  |
+                                ImGuiWindowFlags_NoNavFocus;
+
+    const ImGuiViewport* viewport = ImGui::GetMainViewport();
+    ImGui::SetNextWindowPos(ImVec2(viewport->Pos.x, viewport->Pos.y));
+    ImGui::SetNextWindowSize(ImVec2(viewport->Size.x, viewport->Size.y));
+    ImGui::SetNextWindowViewport(viewport->ID);
+
+    bool open = true;
+    editorBegun = ImGui::Begin("Bwat Engine", &open, windowFlags);
+
+    if (ImGui::GetIO().ConfigFlags & ImGuiConfigFlags_DockingEnable && editorBegun)
+    {
+        //Dock space
+        const auto windowID = ImGui::GetID("Bwat Engine");
+
+        if (!ImGui::DockBuilderGetNode(windowID))
+        {
+            ImGui::DockBuilderRemoveNode(windowID);
+            ImGui::DockBuilderAddNode(windowID, ImGuiDockNodeFlags_None);
+            ImGui::DockBuilderSetNodeSize(windowID, ImGui::GetMainViewport()->Size);
+
+            ImGuiID dockMainID = windowID;
+            ImGuiID dockRightID =
+        }
+
+    }
+
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+/*EditorInterface::EditorInterface()
 {
     glGenFramebuffers(1, &fbo);
 
@@ -21,13 +141,6 @@ EditorInterface::EditorInterface()
 EditorInterface::~EditorInterface()
 {
 
-}
-
-void EditorInterface::DestroyImGui()
-{
-    ImGui_ImplGlfw_Shutdown();
-    ImGui_ImplOpenGL3_Shutdown();
-    ImGui::DestroyContext();
 }
 
 void EditorInterface::InitImGui(Bwat::Window mainWindow)
@@ -200,4 +313,4 @@ void EditorInterface::MenuOption()
         }
         ImGui::EndMenu();
     }
-}
+}*/
