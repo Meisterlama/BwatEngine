@@ -2,11 +2,9 @@
 
 using namespace BSceneNode;
 
-SceneNode::SceneNode( BMath::Vector4<int> _colour)
+SceneNode::SceneNode( )
 {
-    colour = _colour;
     parent = nullptr;
-    modelScale = BMath::Vector3<float>(1, 1, 1);
 }
 
 SceneNode::~SceneNode()
@@ -31,26 +29,6 @@ void SceneNode::SetTransform (const BMath::Matrix4<float> &matrix)
     transform = matrix;
 }
 
-BMath::Vector3<float> SceneNode::GetScale() const
-{
-    return modelScale;
-}
-
-void SceneNode::SetScale(BMath::Vector3<float> _scale)
-{
-    modelScale = _scale;
-}
-
-BMath::Vector4<int> SceneNode::GetColour() const
-{
-    return colour;
-}
-
-void SceneNode::SetColour(BMath::Vector4<int> _colour)
-{
-    colour = _colour;
-}
-
 void SceneNode::AddChild(SceneNode *_child)
 {
     children.push_back(_child);
@@ -68,3 +46,19 @@ void SceneNode::Update(float DeltaTime)
         i->Update(DeltaTime);
 }
 
+void SceneNode::Draw()
+{
+
+}
+
+/*
+std::Vector<SceneNode*>::const_iterator SceneNode::GetChildIteratorStart()
+{
+    return children.begin();
+}
+
+std::Vector<SceneNode*>::const_iterator GetChildIteratorEnd()
+{
+    return children.end();
+}
+*/
