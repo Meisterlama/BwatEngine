@@ -1,29 +1,57 @@
 #include "Inputs/InputHandler.hpp"
 #include "Debug/Logger.hpp"
-#include <GLFW/glfw3.h>
+
 namespace BwatEngine
 {
     InputHandler* InputHandler::inputHandler= nullptr;;
 
     void InputHandler::KeyCallback(GLFWwindow *window, int key, int scancode, int action, int mods)
     {
-        auto* handler = GetInstance();
-        bool oldPress = handler->keyboard[(Keyboard)key].pressed;
-        handler->keyboard[(Keyboard)key].pressed = (action == GLFW_PRESS) || (action == GLFW_REPEAT);
-        handler->keyboard[(Keyboard)key].down = !oldPress && (action == GLFW_PRESS);
-        handler->keyboard[(Keyboard)key].up = oldPress && (action == GLFW_RELEASE);
+        bool oldPress = inputHandler->keyboard[(Keyboard)key].pressed;
+        inputHandler->keyboard[(Keyboard)key].pressed = (action == GLFW_PRESS) || (action == GLFW_REPEAT);
+        inputHandler->keyboard[(Keyboard)key].down = !oldPress && (action == GLFW_PRESS);
+        inputHandler->keyboard[(Keyboard)key].up = oldPress && (action == GLFW_RELEASE);
 
 
-        LogTrace("Mod: %i; Key: %s(%i) %s", mods, glfwGetKeyName(key, 0), key, (action == 0) ? "released" : ((action == 1) ? "pressed" : "repeated"));
+//        LogTrace("Mod: %i; Key: %s(%i) %s",
+//                 mods, glfwGetKeyName(key, 0), key, (action == 0) ? "released" : ((action == 1) ? "pressed" : "repeated"));
     }
     void InputHandler::MouseButtonCallback(GLFWwindow *window, int button, int action, int mods)
     {
-        LogTrace("MouseButton : (%i) %s", button, (action == GLFW_PRESS)? "pressed." : "released");
+        bool oldPress = inputHandler->mouse[(Mouse)button].pressed;
+        inputHandler->mouse[(Mouse)button].pressed = (action == GLFW_PRESS) || (action == GLFW_REPEAT);
+        inputHandler->mouse[(Mouse)button].down = !oldPress && (action == GLFW_PRESS);
+        inputHandler->mouse[(Mouse)button].up = oldPress && (action == GLFW_RELEASE);
+
+//        LogTrace("Mouse button %i(mod %i) %s",
+//                 button, mods, (action == 0) ? "released" : ((action == 1) ? "pressed" : "repeated"));
     }
+
+    void InputHandler::MouseMovementCallback(GLFWwindow* window, double xpos, double ypos)
+    {
+        inputHandler->mousePos = {xpos, ypos};
+
+        BMath::vec2d mouseDelta = inputHandler->mousePos - inputHandler->mouseOldPos;
+
+//        LogDebug("\nOldPos X:%f;Y:%f,\nNewPos X:%f;Y:%f,\nDelta X:%f;Y:%f",
+//                 inputHandler->mouseOldPos.X, inputHandler->mouseOldPos.Y,
+//                 xpos, ypos,
+//                 mouseDelta.X, mouseDelta.Y);
+    }
+
+    void InputHandler::ScrollCallback(GLFWwindow* window, double xoffset, double yoffset)
+    {
+        inputHandler->scrollDelta = {xoffset, yoffset};
+//        LogDebug("\nScroll Delta: X:%f;Y:%f",
+//                 xoffset, yoffset);
+    }
+
     void InputHandler::Initialize(GLFWwindow *_window)
     {
         glfwSetKeyCallback(_window, InputHandler::KeyCallback);
         glfwSetMouseButtonCallback(_window, InputHandler::MouseButtonCallback);
+        glfwSetCursorPosCallback(_window, InputHandler::MouseMovementCallback);
+        glfwSetScrollCallback(_window, InputHandler::ScrollCallback);
 
         GetInstance()->window = _window;
     }
@@ -37,25 +65,29 @@ namespace BwatEngine
 
     void InputHandler::Update()
     {
-        InputHandler* handler = GetInstance();
-        for (auto keyState : (handler->keyboard))
+        for (auto keyState : (inputHandler->keyboard))
         {
-            handler->keyboard[keyState.first].down = false;
-            handler->keyboard[keyState.first].up = false;
+            inputHandler->keyboard[keyState.first].down = false;
+            inputHandler->keyboard[keyState.first].up = false;
         }
 
-        for (auto buttonState : handler->mouse)
+        for (auto buttonState : (inputHandler->mouse))
         {
-            buttonState.second.down = false;
-            buttonState.second.up = false;
+            inputHandler->mouse[buttonState.first].down = false;
+            inputHandler->mouse[buttonState.first].up = false;
         }
+        inputHandler->mouseDelta = inputHandler->mousePos - inputHandler->mouseOldPos;
+        inputHandler->mouseOldPos = inputHandler->mousePos;
     }
 
-    bool InputHandler::GetKeyboardDown(Keyboard key) {return GetInstance()->keyboard[key].down;}
-    bool InputHandler::GetKeyboardUp(Keyboard key) {return GetInstance()->keyboard[key].up;}
-    bool InputHandler::GetKeyboard(Keyboard key) {return GetInstance()->keyboard[key].pressed;}
-    bool InputHandler::GetMouseButtonDown(Mouse button) {return GetInstance()->mouse[button].down;}
-    bool InputHandler::GetMouseButtonUp(Mouse button) {return GetInstance()->mouse[button].up;}
-    bool InputHandler::GetMouseButton(Mouse button) {return GetInstance()->mouse[button].pressed;}
+    bool InputHandler::GetKeyboardDown(Keyboard key) {return inputHandler->keyboard[key].down;}
+    bool InputHandler::GetKeyboardUp(Keyboard key) {return inputHandler->keyboard[key].up;}
+    bool InputHandler::GetKeyboard(Keyboard key) {return inputHandler->keyboard[key].pressed;}
+    bool InputHandler::GetMouseButtonDown(Mouse button) {return inputHandler->mouse[button].down;}
+    bool InputHandler::GetMouseButtonUp(Mouse button) {return inputHandler->mouse[button].up;}
+    bool InputHandler::GetMouseButton(Mouse button) {return inputHandler->mouse[button].pressed;}
+    BMath::vec2d InputHandler::GetMousePos() {return inputHandler->mousePos;}
+    BMath::vec2d InputHandler::GetMouseDelta() {return inputHandler->mouseDelta;}
+    BMath::vec2d InputHandler::GetScrollDelta() {return inputHandler->scrollDelta;}
 }
 

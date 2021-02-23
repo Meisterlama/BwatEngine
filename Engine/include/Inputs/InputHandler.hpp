@@ -3,6 +3,7 @@
 
 #include <map>
 #include "InputEnums.hpp"
+#include "Math/Vector/Vectors.hpp"
 namespace BwatEngine
 {
     struct InputState
@@ -14,8 +15,15 @@ namespace BwatEngine
     class InputHandler
     {
     private:
-        std::map<Keyboard, InputState> keyboard;
-        std::map<Mouse, InputState> mouse;
+        std::map<Keyboard, InputState> keyboard{};
+        std::map<Mouse, InputState> mouse{};
+
+        BMath::vec2d mouseDelta{};
+        BMath::vec2d mousePos{};
+        BMath::vec2d mouseOldPos{};
+
+        BMath::vec2d scrollDelta{};
+
         InputHandler() = default;
         ~InputHandler() { if (inputHandler) delete inputHandler;}
 
@@ -25,6 +33,9 @@ namespace BwatEngine
 
         static void KeyCallback(GLFWwindow* window, int key, int scancode, int action, int mods);
         static void MouseButtonCallback(GLFWwindow* window, int button, int action, int mods);
+        static void MouseMovementCallback(GLFWwindow* window, double xpos, double ypos);
+        static void ScrollCallback(GLFWwindow* window, double xoffset, double yoffset);
+
 
     protected:
         static InputHandler* inputHandler;
@@ -40,8 +51,9 @@ namespace BwatEngine
         static bool GetMouseButtonDown(Mouse button);
         static bool GetMouseButtonUp(Mouse button);
         static bool GetMouseButton(Mouse button);
-
-
+        static BMath::vec2d GetMousePos();
+        static BMath::vec2d GetMouseDelta();
+        static BMath::vec2d GetScrollDelta();
     };
 }
 
