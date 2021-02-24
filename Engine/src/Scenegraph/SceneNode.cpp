@@ -2,54 +2,28 @@
 
 using namespace BSceneNode;
 
-SceneNode::SceneNode( )
+SceneNode::SceneNode(Entity& _entity): entity(_entity)
 {
-    parent = nullptr;
+
 }
 
 SceneNode::~SceneNode()
 {
-    for(auto & i : children)
-        delete i;
-
 }
 
-BMath::Matrix4<float> SceneNode::GetWorldTransform() const
+SceneNode& SceneNode::AddChild(Entity& _child)
 {
-    return worldTransform;
+    children.push_back(std::make_unique<SceneNode>(_child));
+    return *children.back();
 }
 
-const BMath::Matrix4<float>& SceneNode::GetTransform() const
+void SceneNode::UpdateGraph(const BMath::Matrix4<float>& parentWorldTransform)
 {
-    return transform;
+    entity.worldTransform = parentWorldTransform * entity.transform;
+    for (auto& child : children)
+        child->UpdateGraph(entity.worldTransform);
 }
 
-void SceneNode::SetTransform (const BMath::Matrix4<float> &matrix)
-{
-    transform = matrix;
-}
-
-void SceneNode::AddChild(SceneNode *_child)
-{
-    children.push_back(_child);
-    _child->parent = this;
-}
-
-void SceneNode::Update(float DeltaTime)
-{
-    if (parent)
-        worldTransform = parent->worldTransform * transform;
-    else
-        worldTransform = transform;
-
-    for(auto & i : children)
-        i->Update(DeltaTime);
-}
-
-void SceneNode::Draw()
-{
-
-}
 
 /*
 std::Vector<SceneNode*>::const_iterator SceneNode::GetChildIteratorStart()
