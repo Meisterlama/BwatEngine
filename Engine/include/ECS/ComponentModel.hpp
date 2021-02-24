@@ -15,6 +15,9 @@ private:
 
 public:
 
+	ComponentModel(Rendering::Model* tmpmodel);
+
+	//link with ressource manager later ... WIP
 	ComponentModel(std::string& pathFile);
 	void UpdateComponent() override;
 

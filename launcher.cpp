@@ -60,7 +60,8 @@ int main()
 	// myWorld
 	World  myWorld(&myShaderLight);
 
-	ComponentModel myNewModel((std::string)"Assets/bag/backpack.obj");
+
+	ComponentModel myNewModel(&myModel);
 
 	Entity myEntity;
 	myEntity.AddComponent(&myNewModel);

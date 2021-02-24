@@ -18,6 +18,8 @@ Mesh::Mesh(std::vector<Vertex> mVertices, std::vector<unsigned int> mIndices, st
 
 void Mesh::Draw(Shader& shader, const std::vector<Light*> lights)
 {
+    shader.use();
+
     shader.setInt("nbrlights", (int)lights.size());
     for (unsigned int i = 0; i < lights.size(); i++)
     {

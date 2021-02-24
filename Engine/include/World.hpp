@@ -24,7 +24,7 @@ public:
 	void UpdateEntities();
 
 	static Rendering::Shader* GetDefaultShader();
-	static std::vector<Rendering::Light*> GetWorldLights();
+	static std::vector<Rendering::Light*>& GetWorldLights();
 };
 
 #endif // !WORLD_HPP
