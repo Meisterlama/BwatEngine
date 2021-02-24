@@ -16,6 +16,8 @@
 #include "Rendering/camera.hpp"
 #include "Editor/include/EditorInterface.hpp"
 #include "Rendering/light.hpp"
+#include "World.hpp"
+#include "ECS/ComponentModel.hpp"
 
 
 int main()
@@ -34,9 +36,9 @@ int main()
 	ImGui_ImplOpenGL3_Init("#version 330");
 
 	// Shader
-	Rendering::Shader myShader("media/basic.vs", "media/basic.fs");
-	Rendering::Shader myShaderLight("media/basic.vs", "media/multilight.fs");
-	Rendering::Model myModel((std::string)"media/bag/backpack.obj");
+	Rendering::Shader myShader("Assets/basic.vs", "Assets/basic.fs");
+	Rendering::Shader myShaderLight("Assets/basic.vs", "Assets/multilight.fs");
+	Rendering::Model myModel((std::string)"Assets/bag/backpack.obj");
 
 	// time init var
 	float deltaTime = 0.0f;
@@ -51,10 +53,20 @@ int main()
 	// Light, Next we need manage light on a lights manager or on scene graph ... WIP
 	std::vector<Rendering::Light*> lights;
 
-	Rendering::Light mylight(Rendering::TYPE_LIGHT::Point, { 0.1f,0.1f,0.5f }, { 0.1f,0.1f,0.5f }, { 0.1f,0.1f,0.5f });
+	Rendering::Light mylight(Rendering::TYPE_LIGHT::Directional, { 0.1f,0.1f,0.5f }, { 0.1f,0.1f,0.5f }, { 0.1f,0.1f,0.5f });
 
 	lights.push_back(&mylight);
 	
+	// myWorld
+	World  myWorld(&myShaderLight);
+
+	ComponentModel myNewModel((std::string)"Assets/bag/backpack.obj");
+
+	Entity myEntity;
+	myEntity.AddComponent(&myNewModel);
+
+	myWorld.AddEntity(&myEntity);
+	myWorld.AddLight(&mylight);
 
 	while (mainWindow.IsWorking())
 	{	
@@ -97,8 +109,9 @@ int main()
 		myShaderLight.setMat4("view", view);
 		myShaderLight.setVec3("viewPos", cam.cameraPos.X, cam.cameraPos.Y, cam.cameraPos.Z);
 
+		myWorld.UpdateEntities();
 		//myTri.Update();
-		myModel.Draw(myShaderLight,lights);
+		//myModel.Draw(myShaderLight,lights);
 
 		ImGui::Render();
 		ImGui_ImplOpenGL3_RenderDrawData(ImGui::GetDrawData());
