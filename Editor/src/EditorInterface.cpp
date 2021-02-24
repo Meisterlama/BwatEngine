@@ -1,21 +1,23 @@
-#include "../include/EditorInterface.hpp"
-
 #include <imgui_impl_glfw.h>
 #include <imgui_impl_opengl3.h>
 
+#include "../include/EditorInterface.hpp"
+#include "../include/WidgetMenuBar.hpp"
+#include "../include/WidgetHierarchy.hpp"
+#include "../include/WidgetAsset.hpp"
 #include "../../lib/imgui/include/imgui_internal.h"
 
 EditorInterface::~EditorInterface()
 {
     widgets.clear();
     widgets.shrink_to_fit();
+}
 
-    if (ImGui::GetCurrentContext())
-    {
-        ImGui_ImplGlfw_Shutdown();
-        ImGui_ImplOpenGL3_Shutdown();
-        ImGui::DestroyContext();
-    }
+void EditorInterface::DestroyImGui()
+{
+    ImGui_ImplGlfw_Shutdown();
+    ImGui_ImplOpenGL3_Shutdown();
+    ImGui::DestroyContext();
 }
 
 void EditorInterface::OnTick()
@@ -55,6 +57,9 @@ void EditorInterface::Initialise(Bwat::Window mainWindow)
     ImGui_ImplOpenGL3_Init("#version 330");
 
     //Push widget here
+    widgets.emplace_back(std::make_shared<WidgetMenuBar>(this));
+    widgets.emplace_back(std::make_shared<WidgetHierarchy>(this));
+    widgets.emplace_back(std::make_shared<WidgetAsset>(this));
 }
 
 void EditorInterface::ApplyStyle() const
@@ -93,11 +98,18 @@ void EditorInterface::BeginWindow()
             ImGui::DockBuilderSetNodeSize(windowID, ImGui::GetMainViewport()->Size);
 
             ImGuiID dockMainID = windowID;
-            ImGuiID dockRightID =
+            ImGuiID dockRightID = ImGui::DockBuilderSplitNode(dockMainID, ImGuiDir_Right, 0.2f, nullptr, &dockMainID);
+            ImGuiID dockDownID = ImGui::DockBuilderSplitNode(dockMainID, ImGuiDir_Down, 0.25f, nullptr, &dockMainID);
+
+            //Docks widgets here
+            ImGui::DockBuilderDockWindow("Hierarchy", dockRightID);
+            ImGui::DockBuilderDockWindow("Assets", dockDownID);
+
+            ImGui::DockBuilderFinish(dockMainID);
         }
 
+        ImGui::DockSpace(windowID, ImVec2(0.0f, 0.0f), ImGuiDockNodeFlags_PassthruCentralNode);
     }
-
 }
 
 
@@ -138,42 +150,6 @@ void EditorInterface::BeginWindow()
 
 }
 
-EditorInterface::~EditorInterface()
-{
-
-}
-
-void EditorInterface::InitImGui(Bwat::Window mainWindow)
-{
-    IMGUI_CHECKVERSION();
-    ImGui::CreateContext();
-    ImGuiIO& io = ImGui::GetIO(); (void)io;
-    io.ConfigFlags |= ImGuiConfigFlags_NavEnableKeyboard;       // Enable Keyboard Controls
-    io.ConfigFlags |= ImGuiConfigFlags_DockingEnable;           // Enable Docking
-    ImGui::StyleColorsDark();
-
-    ImGui_ImplGlfw_InitForOpenGL(mainWindow.window, true);
-    ImGui_ImplOpenGL3_Init("#version 330");
-}
-
-void EditorInterface::CreateFrame()
-{
-    ImGui_ImplOpenGL3_NewFrame();
-    ImGui_ImplGlfw_NewFrame();
-    ImGui::NewFrame();
-}
-
-void EditorInterface::RenderImGui()
-{
-    ImGui::Render();
-    ImGui_ImplOpenGL3_RenderDrawData(ImGui::GetDrawData());
-
-    GLFWwindow* backup_current_context = glfwGetCurrentContext();
-    ImGui::UpdatePlatformWindows();
-    ImGui::RenderPlatformWindowsDefault();
-    glfwMakeContextCurrent(backup_current_context);
-}
-
 void EditorInterface::ShowScene(float color[3])
 {
     glBindFramebuffer(GL_FRAMEBUFFER, fbo);
@@ -204,21 +180,12 @@ void EditorInterface::ShowScene(float color[3])
 
 void EditorInterface::DrawInterface(float color[3])
 {
-    CreateFrame();
-
-    ImGui::DockSpaceOverViewport(ImGui::GetMainViewport(), ImGuiDockNodeFlags_PassthruCentralNode);
-    MainMenuBar();
-
     ImGui::Begin("Color");
     ImGui::ColorEdit3("Clear color", color);
     ImGui::End();
 
     ImGui::Begin("Project");
     ImGui::Text("First Project");
-    ImGui::End();
-
-    ImGui::Begin("Hierarchy");
-    ImGui::Text("Objects");
     ImGui::End();
 
     ImGui::Begin("Inspector");
@@ -228,89 +195,4 @@ void EditorInterface::DrawInterface(float color[3])
     ShowScene(color);
 
     RenderImGui();
-}
-
-void EditorInterface::MainMenuBar()
-{
-    if (ImGui::BeginMainMenuBar())
-    {
-        if (ImGui::BeginMenu("File"))
-        {
-            MenuFile();
-            ImGui::EndMenu();
-        }
-        if (ImGui::BeginMenu("Edit"))
-        {
-            if (ImGui::MenuItem("Undo", "CTRL+Z")) {}
-            if (ImGui::MenuItem("Redo", "CTRL+Y", false, false)) {}  // Disabled item
-            ImGui::Separator();
-            if (ImGui::MenuItem("Cut", "CTRL+X")) {}
-            if (ImGui::MenuItem("Copy", "CTRL+C")) {}
-            if (ImGui::MenuItem("Paste", "CTRL+V")) {}
-            ImGui::EndMenu();
-        }
-        if (ImGui::BeginMenu("Options"))
-        {
-            MenuOption();
-            ImGui::EndMenu();
-        }
-        ImGui::EndMainMenuBar();
-    }
-}
-
-void EditorInterface::MenuFile()
-{
-    ImGui::MenuItem("(demo menu)", NULL, false, false);
-    if (ImGui::MenuItem("New")) {}
-    if (ImGui::MenuItem("Open", "Ctrl+O")) {}
-    if (ImGui::BeginMenu("Open Recent"))
-    {
-        ImGui::MenuItem("fish_hat.c");
-        ImGui::MenuItem("fish_hat.inl");
-        ImGui::MenuItem("fish_hat.h");
-        if (ImGui::BeginMenu("More.."))
-        {
-            ImGui::MenuItem("Hello");
-            ImGui::MenuItem("Sailor");
-            if (ImGui::BeginMenu("Recurse.."))
-            {
-                MenuFile();
-                ImGui::EndMenu();
-            }
-            ImGui::EndMenu();
-        }
-        ImGui::EndMenu();
-    }
-    if (ImGui::MenuItem("Save", "Ctrl+S")) {}
-    if (ImGui::MenuItem("Save As..")) {}
-
-    ImGui::Separator();
-
-    if (ImGui::BeginMenu("Disabled", false)) // Disabled
-    {
-        IM_ASSERT(0);
-    }
-    if (ImGui::MenuItem("Checked", NULL, true)) {}
-    if (ImGui::MenuItem("Quit", "Alt+F4")) {}
-}
-
-void EditorInterface::MenuOption()
-{
-
-    if (ImGui::BeginMenu("Themes"))
-    {
-        if (ImGui::MenuItem("Dark"))
-        {
-            ImGui::StyleColorsDark();
-        }
-        if (ImGui::MenuItem("Light"))
-        {
-            ImGui::StyleColorsLight();
-        }
-        if (ImGui::MenuItem("Classic"))
-        {
-            ImGui::StyleColorsClassic();
-        }
-        ImGui::EndMenu();
-    }
 }*/

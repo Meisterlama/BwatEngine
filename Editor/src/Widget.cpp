@@ -37,7 +37,7 @@ void Widget::Tick()
 {
     TickAlways();
 
-    if (!window)
+    if (!isWindow)
         return;
 
     bool begun = false;
@@ -48,6 +48,7 @@ void Widget::Tick()
         if (ImGui::Begin(title.c_str(), &isVisible, flags))
         {
             window = ImGui::GetCurrentWindow();
+            height = ImGui::GetWindowHeight();
             begun = true;
         }
         else if (window && window->Hidden)

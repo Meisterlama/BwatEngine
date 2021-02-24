@@ -15,9 +15,10 @@ public:
     ~EditorInterface();
 
     void OnTick();
+    void Initialise(Bwat::Window mainWindow);
+    void DestroyImGui();
 
 private:
-    void Initialise(Bwat::Window mainWindow);
     void ApplyStyle() const;
     void BeginWindow();
 
@@ -36,15 +37,9 @@ private:
 EditorInterface();
 ~EditorInterface();
 
-void InitImGui(Bwat::Window mainWindow);
-void CreateFrame();
-void RenderImGui();
 void ShowScene(float color[3]);
 void DrawInterface(float color[3]);
-void DestroyImGui();
-static void MenuFile();
-static void MainMenuBar();
-static void MenuOption();
+
 
 private:
 unsigned int fbo;
