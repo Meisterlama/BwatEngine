@@ -5,7 +5,7 @@
 #include <cmath>
 
 // Currently only wrapping std functions
-namespace BMath
+namespace BwatEngine::Math
 {
 
 #pragma region Declarations

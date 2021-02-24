@@ -4,7 +4,7 @@
 #include "Math/Meta.hpp"
 #include <limits>
 
-namespace BMath {
+namespace BwatEngine::Math {
     // Based on Math for Game Programmers: Noise-Based RNG from GDC 2017
 
 #pragma region Declarations
