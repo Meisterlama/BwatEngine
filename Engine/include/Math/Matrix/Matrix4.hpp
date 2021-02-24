@@ -338,7 +338,7 @@ namespace BMath
     template<typename T>
     ML_FUNC_DECL Matrix4<T> Matrix4<T>::CreatePerspective(T fovy, T aspect, T near, T far)
     {
-        T top = near*tan(fovy*0.5);
+        T top = near*tan(BMath::ToRads(fovy)*0.5);
         T right = top*aspect;
 
         return CreatePerspective(-right, right, -top, top, near, far);
@@ -356,10 +356,10 @@ namespace BMath
     template<typename T>
     ML_FUNC_DECL Matrix4<T> Matrix4<T>::CreateTranslationMat(Vector3<T> translation)
     {
-        return Matrix4<T>{1            , 0            , 0            , 0,
-                          0            , 1            , 0            , 0,
-                          0            , 0            , 1            , 0,
-                          translation.X, translation.Y, translation.Z, 1};
+        return Matrix4<T>{1, 0, 0, translation.X,
+                          0, 1, 0, translation.Y,
+                          0, 0, 1, translation.Z,
+                          0, 0, 0, 1};
     }
 
     template<typename T>
@@ -396,9 +396,9 @@ namespace BMath
     {
         T c = Cos(angle);
         T s = Sin(angle);
-        return Matrix4<T>{ c, 0,s, 0,
+        return Matrix4<T>{ c, 0,-s, 0,
                            0, 1, 0, 0,
-                           -s, 0, c, 0,
+                           s, 0, c, 0,
                            0, 0, 0, 1};
     }
 

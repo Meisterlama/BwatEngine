@@ -14,21 +14,29 @@
 #include "Rendering/shader.hpp"
 #include "Rendering/model.hpp"
 #include "Rendering/camera.hpp"
-
 #include "Editor/include/EditorInterface.hpp"
+#include "Rendering/light.hpp"
 
 
 int main()
 {
 	Bwat::Window mainWindow;
 
-	EditorInterface editor;
-	editor.InitImGui(mainWindow);
-//#endif
+	// Init ImGui
+	IMGUI_CHECKVERSION();
+	ImGui::CreateContext();
+	ImGuiIO& io = ImGui::GetIO(); (void)io;
+	io.ConfigFlags |= ImGuiConfigFlags_NavEnableKeyboard;       
+	io.ConfigFlags |= ImGuiConfigFlags_DockingEnable;           
+	ImGui::StyleColorsDark();
+
+	ImGui_ImplGlfw_InitForOpenGL(mainWindow.window, true);
+	ImGui_ImplOpenGL3_Init("#version 330");
 
 	// Shader
-	//Rendering::Shader myShader("basic.vs", "basic.fs");
-	//Rendering::Model myModel((std::string)"media/bag/backpack.obj");
+	Rendering::Shader myShader("media/basic.vs", "media/basic.fs");
+	Rendering::Shader myShaderLight("media/basic.vs", "media/multilight.fs");
+	Rendering::Model myModel((std::string)"media/bag/backpack.obj");
 
 	// time init var
 	float deltaTime = 0.0f;
@@ -37,51 +45,71 @@ int main()
 	// Camera init
 	Rendering::Camera cam;
 
-	float color[3] = { 0.5f, 0.2f, 0.5f };
+	float color[3] = { 0.5f, 0.5f, 0.5f };
 	Rendering::Triangle myTri;
 
-	while (mainWindow.IsWorking())
-	{
-	    glfwPollEvents();
+	// Light, Next we need manage light on a lights manager or on scene graph ... WIP
+	std::vector<Rendering::Light*> lights;
 
+	Rendering::Light mylight(Rendering::TYPE_LIGHT::Point, { 0.1f,0.1f,0.5f }, { 0.1f,0.1f,0.5f }, { 0.1f,0.1f,0.5f });
+
+	lights.push_back(&mylight);
+	
+
+	while (mainWindow.IsWorking())
+	{	
 		//Time
 		float currentFrame = glfwGetTime();
 		deltaTime = currentFrame - lastFrame;
 		lastFrame = currentFrame;
 
 		//ImGui
-		editor.DrawInterface(color);
-//#endif
+		ImGui_ImplOpenGL3_NewFrame();
+		ImGui_ImplGlfw_NewFrame();
+		ImGui::NewFrame();
+
+		ImGui::ColorEdit3("Clear color", color);
+		//debug Light
+		ImGui::ColorEdit3("light ambient", lights[0]->ambient.values);
+		ImGui::DragFloat3("posLight", lights[0]->position.values);
+		ImGui::DragFloat3("dirLight", lights[0]->direction.values);
+		ImGui::DragFloat("cutOff", &lights[0]->cutoff);
+		ImGui::DragFloat("outerCutOff", &lights[0]->outerCutoff);
 
 		// Depth Test and buffer
-		/*glEnable(GL_DEPTH_TEST);
+		glEnable(GL_DEPTH_TEST);
 		glViewport(0, 0, mainWindow.GetWidth(), mainWindow.GetHeight());
 		glClearColor(color[0], color[1], color[2], 1.f);
 		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
 		//Camera 
-		cam.usefreefly(&mainWindow, deltaTime);
+		cam.UseFreeFly(&mainWindow, deltaTime);
 
 		// projection, view and model 
 		BMath::Matrix4<float> projection = BMath::Matrix4<float>::CreatePerspective(60.f, mainWindow.GetWidth() / mainWindow.GetHeight(), 0.1f, 100.0f);
-		BMath::Matrix4<float> view = cam.ViewOfCamera();
+		BMath::Matrix4<float> view = cam.GetViewMatrix();
 		BMath::Matrix4<float> model = BMath::Matrix4<float>::CreateScaleMat(1.f);
 
 		//use shader 
-		glUseProgram(myShader.ID);
-		myShader.setMat4("proj", projection);
-		myShader.setMat4("model", model);
-		myShader.setMat4("view", view);*/
+		myShaderLight.use();
+		myShaderLight.setMat4("proj", projection);
+		myShaderLight.setMat4("model", model);
+		myShaderLight.setMat4("view", view);
+		myShaderLight.setVec3("viewPos", cam.cameraPos.X, cam.cameraPos.Y, cam.cameraPos.Z);
 
 		//myTri.Update();
-		//myModel.Draw(myShader);
+		myModel.Draw(myShaderLight,lights);
 
-//#ifdef BWATEDITOR
+		ImGui::Render();
+		ImGui_ImplOpenGL3_RenderDrawData(ImGui::GetDrawData());
+
 		glfwSwapBuffers(mainWindow.window);
-
+		glfwPollEvents();
 	}
-//#ifdef BWATEDITOR
-	editor.DestroyImGui();
+
+	ImGui_ImplGlfw_Shutdown();
+	ImGui_ImplOpenGL3_Shutdown();
+	ImGui::DestroyContext();
 
 	mainWindow.Close();
 

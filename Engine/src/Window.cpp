@@ -6,7 +6,13 @@ using namespace Bwat;
 
 Window::Window()
 {
-	SetUp();
+	//Define size of window
+	width = 1200;
+	height = 720;
+
+	// init context
+	window = InitGLFW();
+	InitGlad();
 }
 
 Window::~Window()
@@ -25,7 +31,7 @@ void debugGLFWCallback(int error_code, const char* description)
 	printf("GLFW error (%x) = %s\n", error_code, description);
 }
 
-GLFWwindow* InitGLFW()
+GLFWwindow* Window::InitGLFW()
 {
 	glfwInit();
 
@@ -36,13 +42,13 @@ GLFWwindow* InitGLFW()
 	glfwWindowHint(GLFW_OPENGL_DEBUG_CONTEXT, GLFW_TRUE);
 	glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE);
 
-	GLFWwindow* window = glfwCreateWindow(800, 600, "TestEngine", nullptr, nullptr);
+	GLFWwindow* window = glfwCreateWindow(width, height, "TestEngine", nullptr, nullptr);
 	glfwMakeContextCurrent(window);
 
 	return window;
 }
 
-void InitGlad()
+void Window::InitGlad()
 {
 	gladLoadGLLoader(reinterpret_cast<GLADloadproc>(glfwGetProcAddress));
 
@@ -59,14 +65,6 @@ void InitGlad()
 		glDebugMessageControl(GL_DONT_CARE, GL_DEBUG_TYPE_PERFORMANCE, GL_DONT_CARE, 0, nullptr, GL_FALSE);
 		glDebugMessageControl(GL_DONT_CARE, GL_DEBUG_TYPE_OTHER, GL_DONT_CARE, 0, nullptr, GL_FALSE);
 	}
-}
-
-void Window::SetUp()
-{
-	this->window = InitGLFW();
-	InitGlad();
-	this->width = 800;
-	this->height = 600;
 }
 
 void Window::Close()

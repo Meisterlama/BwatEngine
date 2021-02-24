@@ -36,6 +36,12 @@ namespace BMath
 
         ML_FUNC_DECL Vector2(const Vector2& vec) = default;
         ML_FUNC_DECL Vector2(Vector2&& vec) noexcept = default;
+
+        template<typename U>
+        ML_FUNC_DECL Vector2(const Vector2<U>& vec)
+            : X(static_cast<T>(vec.X)), Y(static_cast<T>(vec.Y))
+        {}
+
         ~Vector2() = default;
 
         [[nodiscard]] ML_FUNC_DECL float DotProduct(const Vector2& v) const;
