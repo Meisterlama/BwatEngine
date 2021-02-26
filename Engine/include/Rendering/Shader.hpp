@@ -1,13 +1,8 @@
-
 #pragma once
 
-#include <glad/glad.h> 
-
 #include <string>
-#include <fstream>
-#include <sstream>
-#include <iostream>
 #include "Math/Math.hpp"
+#include "glad/glad.h"
 
 namespace Rendering
 {

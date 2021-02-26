@@ -1,8 +1,5 @@
 #include "Rendering/Camera.hpp"
-#include <math.h>
-#include <glad/glad.h>
-#include <GLFW/glfw3.h>
-#include <iostream>
+#include "Inputs/InputHandler.hpp"
 
 using namespace Rendering;
 
@@ -19,9 +16,11 @@ Camera::~Camera()
 
 void Camera::UseFreeFly(Bwat::Window* win,float deltaTime)
 {
-    if (glfwGetKey(win->window, GLFW_KEY_F1))
+    if (BwatEngine::InputHandler::GetKeyboardDown(BwatEngine::KEY_F1))
+    {
         lockMouse = !lockMouse;
-
+        glfwSetInputMode(win->window, GLFW_CURSOR, (lockMouse) ? GLFW_CURSOR_DISABLED : GLFW_CURSOR_NORMAL);
+    }
     if (lockMouse)
     {
         MouseMovement(win, deltaTime);
@@ -31,26 +30,20 @@ void Camera::UseFreeFly(Bwat::Window* win,float deltaTime)
 
 void Camera::MouseMovement(Bwat::Window* win, float deltaTime)
 {
-    glfwGetCursorPos(win->window, &xpos, &ypos);
-    float xdelta_pos = xpos - win->GetWidth() / 2;
-    float ydelta_pos = ypos - win->GetHeight() / 2;
+    BwatEngine::Math::Vec2f mouseDelta = BwatEngine::InputHandler::GetMouseDelta();
 
     float sensitivity_mouse = 0.1f;
 
-    xdelta_pos *= sensitivity_mouse * deltaTime;
-    ydelta_pos *= sensitivity_mouse * deltaTime;
+    mouseDelta *= sensitivity_mouse * deltaTime;
 
-    yaw -= xdelta_pos;
-    pitch -= ydelta_pos;
+    yaw -= mouseDelta.X;
+    pitch -= mouseDelta.Y;
 
     if (pitch >= BwatEngine::Math::PI / 2)
         pitch = BwatEngine::Math::PI / 2;
 
     else if (pitch <= -BwatEngine::Math::PI / 2)
         pitch = -BwatEngine::Math::PI / 2;
-
-
-    glfwSetCursorPos(win->window, win->GetWidth() / 2, win->GetHeight() / 2);
 }
 
 void Camera::CameraMovementFF(Bwat::Window* win, float deltaTime)
@@ -60,27 +53,27 @@ void Camera::CameraMovementFF(Bwat::Window* win, float deltaTime)
     float FrameSpeed = Speed * deltaTime;
 
 
-    if (glfwGetKey(win->window, GLFW_KEY_LEFT_SHIFT))
+    if (BwatEngine::InputHandler::GetKeyboard(BwatEngine::KEY_LEFT_SHIFT))
         FrameSpeed *= 3.f;
 
 
     float ForwardVelocity = 0.f;
-    if (glfwGetKey(win->window, GLFW_KEY_W))
+    if (BwatEngine::InputHandler::GetKeyboard(BwatEngine::KEY_W))
         ForwardVelocity = -FrameSpeed;
-    if (glfwGetKey(win->window, GLFW_KEY_S))
+    if (BwatEngine::InputHandler::GetKeyboard(BwatEngine::KEY_S))
         ForwardVelocity = FrameSpeed;
 
 
     float StrafeVelocity = 0.f;
-    if (glfwGetKey(win->window, GLFW_KEY_A))
+    if (BwatEngine::InputHandler::GetKeyboard(BwatEngine::KEY_A))
         StrafeVelocity = -FrameSpeed;
-    if (glfwGetKey(win->window, GLFW_KEY_D))
+    if (BwatEngine::InputHandler::GetKeyboard(BwatEngine::KEY_D))
         StrafeVelocity = FrameSpeed;
 
-    if (glfwGetKey(win->window, GLFW_KEY_SPACE))
+    if (BwatEngine::InputHandler::GetKeyboard(BwatEngine::KEY_SPACE))
         cameraPos.Y += Speed * deltaTime;
 
-    if (glfwGetKey(win->window, GLFW_KEY_LEFT_CONTROL))
+    if (BwatEngine::InputHandler::GetKeyboard(BwatEngine::KEY_LEFT_CONTROL))
         cameraPos.Y -= Speed * deltaTime;
 
     cameraPos.Z += cos(-yaw) * cos(pitch) * ForwardVelocity;
@@ -90,7 +83,6 @@ void Camera::CameraMovementFF(Bwat::Window* win, float deltaTime)
     cameraPos.Z += sin(-yaw) * StrafeVelocity;
     cameraPos.X += cos(-yaw) * StrafeVelocity;
 
-    glfwSetInputMode(win->window, GLFW_CURSOR, GLFW_CURSOR_HIDDEN);
 }
 
 BwatEngine::Math::Mat4f Camera::GetViewMatrix()

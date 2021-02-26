@@ -1,8 +1,7 @@
 #pragma once
 
-#include "../Math/Math.hpp"
+#include "Math/Math.hpp"
 #include "Window.hpp"
-#include <imgui_impl_glfw.h>
 
 namespace Rendering
 {
