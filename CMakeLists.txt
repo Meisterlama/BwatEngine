@@ -2,20 +2,50 @@ cmake_minimum_required(VERSION 3.17)
 
 project(BwatEngine LANGUAGES C CXX)
 
-set(CMAKE_CXX_STANDARD 14)
+set(CMAKE_CXX_STANDARD 17)
 
-set(EXECUTABLE_OUTPUT_PATH "${CMAKE_BINARY_DIR}")
-set(LIBRARY_OUTPUT_PATH "${CMAKE_BINARY_DIR}")
+set(BWAT_ENGINE_TEST_ENABLED OFF)
+set(BWAT_EDITOR_ENABLED ON)
+set(BWAT_EDITOR_DEBUG_ENABLED ON)
+
+
+if(BWAT_EDITOR_DEBUG_ENABLED)
+    add_compile_definitions(BWATDEBUG)
+endif()
+
 
 add_subdirectory(lib)
-include_directories(${BWATLIBS_HEADERS})
-
-add_subdirectory(docs)
-
-#TODO: Add game building target and ability to switch between editor and game
+if(BWAT_ENGINE_TEST_ENABLED)
+    add_subdirectory(tests)
+endif()
 
 add_subdirectory(Engine)
-include_directories(Engine)
-add_subdirectory(Editor)
+set(ENGINE_LIBRARY glad glfw assimp flatbuffers imgui OpenAL stb)
 
-target_link_libraries(Editor Engine ${BWATLIBS_LIBS})
+add_subdirectory(Game)
+target_link_libraries(Game PUBLIC ${ENGINE_LIBRARY})
+target_link_libraries(Game PUBLIC Engine)
+
+add_subdirectory(Editor)
+target_link_libraries(Editor PUBLIC ${ENGINE_LIBRARY})
+target_link_libraries(Editor PUBLIC Engine)
+
+target_link_libraries(Engine PUBLIC Game ${ENGINE_LIBRARY})
+
+file(GLOB_RECURSE BWATENGINE_ASSETS
+        ${CMAKE_SOURCE_DIR}/Assets/*)
+
+MESSAGE(STATUS "\n\n\nASSETS: ${BWATENGINE_ASSETS}")
+
+add_executable(Launcher launcher.cpp)
+target_link_libraries(Launcher PUBLIC Engine)
+add_custom_command(TARGET Launcher
+        COMMAND ${CMAKE_COMMAND} -E copy_directory
+        ${CMAKE_SOURCE_DIR}/Assets/ $<TARGET_FILE_DIR:Launcher>/Assets/
+        DEPENDS ${BWATENGINE_ASSETS})
+
+if(BWAT_EDITOR_ENABLED)
+    target_link_libraries(Engine PUBLIC Editor)
+    target_link_libraries(Launcher PUBLIC Editor)
+    target_compile_definitions(Launcher PRIVATE BWATEDITOR)
+endif()

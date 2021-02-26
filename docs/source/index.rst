@@ -19,12 +19,11 @@ HELLO WORLD
 
 Here is the documentation for the main.cpp
 
-.. doxygenfile:: main.cpp
+.. doxygenfile:: Math/Vector/Vector2.hpp
    :project: BwatEngine
 
 Indices and tables
 ==================
 
 * :ref:`genindex`
-* :ref:`modindex`
 * :ref:`search`

@@ -5,4 +5,8 @@ project(Editor LANGUAGES C CXX)
 file(GLOB_RECURSE BWAT_EDITOR_SRC
         src/*.cpp)
 
-add_executable(Editor ${BWAT_EDITOR_SRC})
+file(GLOB_RECURSE BWAT_EDITOR_HEADERS
+        include/*.hpp)
+
+add_library(Editor STATIC ${BWAT_EDITOR_SRC} ${BWAT_EDITOR_HEADERS})
+target_include_directories(Editor PUBLIC ${CMAKE_CURRENT_SOURCE_DIR}/include)
