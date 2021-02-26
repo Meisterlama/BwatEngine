@@ -2,25 +2,23 @@
 #define ENTITY_HPP
 
 #include <vector>
-#include <iostream>
+#include "Math/Transform.hpp"
+#include "Math/Matrix/Matrices.hpp"
 
-#include "Math/Math.hpp"
-#include "Component.hpp"
-
-struct Transform
+namespace BSceneNode
 {
-	BwatEngine::Math::Vec3f position{ 0 };
-	BwatEngine::Math::Vec3f rotation{ 0 };
-	BwatEngine::Math::Vec3f scale{ 1 };
-};
-
+    class SceneNode;
+}
+class Component;
 class Entity
 {
 
 private:
 
-	Transform myTransform;
-	std::vector<Component*> myComponents;
+	BwatEngine::Math::Transform localTransform{};
+	BwatEngine::Math::Mat4f globalTransform = localTransform.GetTRS();
+	std::vector<Component*> myComponents{};
+    BSceneNode::SceneNode* node = nullptr;
 
 public :
 
@@ -28,8 +26,8 @@ public :
 
 	void AddComponent(Component* tmpComp);
 	void UpdateAllComponent();
-	Transform& GetTransform() { return myTransform; };
-	void SetTransform(Transform transform) { myTransform = transform; };
+    BwatEngine::Math::Transform& GetLocalTransform() { return localTransform; };
+	void SetTransform(BwatEngine::Math::Transform transform) { localTransform = transform; };
 	
 };
 

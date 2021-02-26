@@ -1,4 +1,5 @@
 #include "ECS/Entity.hpp"
+#include "ECS/Component.hpp"
 
 
 void Entity::AddComponent(Component* tmpComp)
