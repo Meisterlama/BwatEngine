@@ -24,11 +24,11 @@ set(ENGINE_LIBRARY glad glfw assimp flatbuffers imgui OpenAL stb)
 
 add_subdirectory(Game)
 target_link_libraries(Game PUBLIC ${ENGINE_LIBRARY})
-target_link_libraries(Game INTERFACE Engine)
+target_link_libraries(Game PUBLIC Engine)
 
 add_subdirectory(Editor)
 target_link_libraries(Editor PUBLIC ${ENGINE_LIBRARY})
-target_link_libraries(Editor INTERFACE Engine)
+target_link_libraries(Editor PUBLIC Engine)
 
 target_link_libraries(Engine PUBLIC Game ${ENGINE_LIBRARY})
 
