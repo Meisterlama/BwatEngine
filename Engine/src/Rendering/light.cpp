@@ -8,7 +8,7 @@ ambient(0),diffuse(0),specular(0)
 }
 
 
-Light::Light(TYPE_LIGHT myType, BMath::vec3f tmpAmbient, BMath::vec3f tmpDiffuse, BMath::vec3f tmpSpecular) 
+Light::Light(TYPE_LIGHT myType, BwatEngine::Math::Vec3f tmpAmbient, BwatEngine::Math::Vec3f tmpDiffuse, BwatEngine::Math::Vec3f tmpSpecular)
 {
     typeoflight = myType;
     ambient = tmpAmbient;
@@ -16,17 +16,17 @@ Light::Light(TYPE_LIGHT myType, BMath::vec3f tmpAmbient, BMath::vec3f tmpDiffuse
     specular = tmpSpecular;
 }
 
-void Light::SetAmbient(BMath::vec3f tmpAmbient)
+void Light::SetAmbient(BwatEngine::Math::Vec3f tmpAmbient)
 {
     ambient = tmpAmbient;
 }
 
-void Light::SetDiffuse(BMath::vec3f tmpDiffuse)
+void Light::SetDiffuse(BwatEngine::Math::Vec3f tmpDiffuse)
 {
     diffuse = tmpDiffuse;
 }
 
-void Light::SetSpecular(BMath::vec3f tmpSpecular)
+void Light::SetSpecular(BwatEngine::Math::Vec3f tmpSpecular)
 {
     specular = tmpSpecular;
 }

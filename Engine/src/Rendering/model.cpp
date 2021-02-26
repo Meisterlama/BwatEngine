@@ -49,7 +49,7 @@ Rendering::Mesh Model::ProcessMesh(aiMesh* mesh, const aiScene* scene)
     for (unsigned int i = 0; i < mesh->mNumVertices; i++)
     {
         Rendering::Vertex vertex;
-        BMath::vec3f vector; // we declare a placeholder vector since assimp uses its own vector class that doesn't directly convert to glm's vec3 class so we transfer the data to this placeholder glm::vec3 first.
+        BwatEngine::Math::Vec3f vector; // we declare a placeholder vector since assimp uses its own vector class that doesn't directly convert to glm's vec3 class so we transfer the data to this placeholder glm::Vec3 first.
         // positions
         vector.X = mesh->mVertices[i].x;
         vector.Y = mesh->mVertices[i].y;
@@ -81,14 +81,14 @@ Rendering::Mesh Model::ProcessMesh(aiMesh* mesh, const aiScene* scene)
         // texture coordinates
         if (mesh->mTextureCoords[0]) // does the mesh contain texture coordinates?
         {
-            BMath::vec2f vec;
+            BwatEngine::Math::Vec2f vec;
             vec.X = mesh->mTextureCoords[0][i].x;
             vec.Y = mesh->mTextureCoords[0][i].y;
             vertex.texCoords = vec;
            
         }
         else
-            vertex.texCoords = BMath::vec2f(0.0f, 0.0f);
+            vertex.texCoords = BwatEngine::Math::Vec2f(0.0f, 0.0f);
 
         vertices.push_back(vertex);
     }

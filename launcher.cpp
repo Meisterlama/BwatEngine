@@ -100,7 +100,7 @@ int main()
 		//ImGui::DragFloat("outerCutOff", &lights[0]->outerCutoff);
 
 		const char* items[] = { "Apple", "Banana", "Cherry", "Kiwi", "Mango", "Orange", "Pineapple", "Strawberry", "Watermelon" };
-		
+
 		static int item_current = 0;
 		ImGui::ListBox("Entities", &item_current,items, myWorld.GetWorldEntities().size(), 4);
 
@@ -118,9 +118,9 @@ int main()
 		cam.UseFreeFly(&mainWindow, deltaTime);
 
 		// projection, view and model 
-		BMath::Matrix4<float> projection = BMath::Matrix4<float>::CreatePerspective(60.f, mainWindow.GetWidth() / mainWindow.GetHeight(), 0.1f, 100.0f);
-		BMath::Matrix4<float> view = cam.GetViewMatrix();
-		BMath::Matrix4<float> model = BMath::Matrix4<float>::CreateScaleMat(1.f);
+		BwatEngine::Math::Mat4f projection = BwatEngine::Math::Mat4f::CreatePerspective(60.f, mainWindow.GetWidth() / mainWindow.GetHeight(), 0.1f, 100.0f);
+		BwatEngine::Math::Mat4f view = cam.GetViewMatrix();
+		BwatEngine::Math::Mat4f model = BwatEngine::Math::Mat4f::CreateScaleMat(1.f);
 
 		//use shader 
 		myShaderLight.use();

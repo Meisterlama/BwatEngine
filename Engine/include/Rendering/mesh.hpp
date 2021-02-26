@@ -12,11 +12,11 @@ namespace Rendering
 
 struct Vertex
 {
-    BMath::vec3f postion;
-    BMath::vec3f normal;
-    BMath::vec2f texCoords;
-    BMath::vec3f tangent;
-    BMath::vec3f bitangent;
+    BwatEngine::Math::Vec3f postion;
+    BwatEngine::Math::Vec3f normal;
+    BwatEngine::Math::Vec2f texCoords;
+    BwatEngine::Math::Vec3f tangent;
+    BwatEngine::Math::Vec3f bitangent;
 };
 
 class Mesh

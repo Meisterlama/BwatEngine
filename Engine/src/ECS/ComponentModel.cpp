@@ -20,9 +20,9 @@ void ComponentModel::UpdateComponent()
 {
 	Transform transform = this->GetParent()->GetTransform();
 	myShader->setMat4("model",
-                      BMath::Matrix4<float>::CreateXYZRotationMat(transform.rotation).Transpose() *
-                      BMath::Matrix4<float>::CreateTranslationMat(transform.position) *
-                      BMath::Matrix4<float>::CreateScaleMat(transform.scale)
+                      BwatEngine::Math::Mat4f::CreateXYZRotationMat(transform.rotation).Transpose() *
+                      BwatEngine::Math::Mat4f::CreateTranslationMat(transform.position) *
+                      BwatEngine::Math::Mat4f::CreateScaleMat(transform.scale)
                       );
 	myModel->Draw(*myShader, World::GetWorldLights());
 }

@@ -31,7 +31,7 @@ namespace BwatEngine
     {
         inputHandler->mousePos = {xpos, ypos};
 
-        BMath::vec2d mouseDelta = inputHandler->mousePos - inputHandler->mouseOldPos;
+        BwatEngine::Math::Vec2d mouseDelta = inputHandler->mousePos - inputHandler->mouseOldPos;
 
 //        LogDebug("\nOldPos X:%f;Y:%f,\nNewPos X:%f;Y:%f,\nDelta X:%f;Y:%f",
 //                 inputHandler->mouseOldPos.X, inputHandler->mouseOldPos.Y,
@@ -86,8 +86,8 @@ namespace BwatEngine
     bool InputHandler::GetMouseButtonDown(Mouse button) {return inputHandler->mouse[button].down;}
     bool InputHandler::GetMouseButtonUp(Mouse button) {return inputHandler->mouse[button].up;}
     bool InputHandler::GetMouseButton(Mouse button) {return inputHandler->mouse[button].pressed;}
-    BMath::vec2d InputHandler::GetMousePos() {return inputHandler->mousePos;}
-    BMath::vec2d InputHandler::GetMouseDelta() {return inputHandler->mouseDelta;}
-    BMath::vec2d InputHandler::GetScrollDelta() {return inputHandler->scrollDelta;}
+    BwatEngine::Math::Vec2d InputHandler::GetMousePos() {return inputHandler->mousePos;}
+    BwatEngine::Math::Vec2d InputHandler::GetMouseDelta() {return inputHandler->mouseDelta;}
+    BwatEngine::Math::Vec2d InputHandler::GetScrollDelta() {return inputHandler->scrollDelta;}
 }
 

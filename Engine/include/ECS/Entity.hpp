@@ -9,9 +9,9 @@
 
 struct Transform
 {
-	BMath::vec3f position{ 0 };
-	BMath::vec3f rotation{ 0 };
-	BMath::vec3f scale{ 1 };
+	BwatEngine::Math::Vec3f position{ 0 };
+	BwatEngine::Math::Vec3f rotation{ 0 };
+	BwatEngine::Math::Vec3f scale{ 1 };
 };
 
 class Entity

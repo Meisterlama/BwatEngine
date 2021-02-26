@@ -18,11 +18,11 @@ namespace BwatEngine
         std::map<Keyboard, InputState> keyboard{};
         std::map<Mouse, InputState> mouse{};
 
-        BMath::vec2d mouseDelta{};
-        BMath::vec2d mousePos{};
-        BMath::vec2d mouseOldPos{};
+        BwatEngine::Math::Vec2d mouseDelta{};
+        BwatEngine::Math::Vec2d mousePos{};
+        BwatEngine::Math::Vec2d mouseOldPos{};
 
-        BMath::vec2d scrollDelta{};
+        BwatEngine::Math::Vec2d scrollDelta{};
 
         InputHandler() = default;
         ~InputHandler() { if (inputHandler) delete inputHandler;}
@@ -51,9 +51,9 @@ namespace BwatEngine
         static bool GetMouseButtonDown(Mouse button);
         static bool GetMouseButtonUp(Mouse button);
         static bool GetMouseButton(Mouse button);
-        static BMath::vec2d GetMousePos();
-        static BMath::vec2d GetMouseDelta();
-        static BMath::vec2d GetScrollDelta();
+        static BwatEngine::Math::Vec2d GetMousePos();
+        static BwatEngine::Math::Vec2d GetMouseDelta();
+        static BwatEngine::Math::Vec2d GetScrollDelta();
     };
 }
 

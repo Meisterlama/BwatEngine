@@ -43,11 +43,11 @@ void Camera::MouseMovement(Bwat::Window* win, float deltaTime)
     yaw -= xdelta_pos;
     pitch -= ydelta_pos;
 
-    if (pitch >= BMath::PI / 2)
-        pitch = BMath::PI / 2;
+    if (pitch >= BwatEngine::Math::PI / 2)
+        pitch = BwatEngine::Math::PI / 2;
 
-    else if (pitch <= -BMath::PI / 2)
-        pitch = -BMath::PI / 2;
+    else if (pitch <= -BwatEngine::Math::PI / 2)
+        pitch = -BwatEngine::Math::PI / 2;
 
 
     glfwSetCursorPos(win->window, win->GetWidth() / 2, win->GetHeight() / 2);
@@ -93,12 +93,12 @@ void Camera::CameraMovementFF(Bwat::Window* win, float deltaTime)
     glfwSetInputMode(win->window, GLFW_CURSOR, GLFW_CURSOR_HIDDEN);
 }
 
-BMath::Matrix4<float> Camera::GetViewMatrix()
+BwatEngine::Math::Mat4f Camera::GetViewMatrix()
 {
-    BMath::Matrix4<float> View{1};
-    View *= BMath::Matrix4<float>::CreateTranslationMat(-cameraPos);
-    View *= BMath::Matrix4<float>::CreateYRotationMat(yaw);
-    View *= BMath::Matrix4<float>::CreateXRotationMat(pitch);
+    BwatEngine::Math::Mat4f View{1};
+    View *= BwatEngine::Math::Mat4f::CreateTranslationMat(-cameraPos);
+    View *= BwatEngine::Math::Mat4f::CreateYRotationMat(yaw);
+    View *= BwatEngine::Math::Mat4f::CreateXRotationMat(pitch);
     return View;
 }
 

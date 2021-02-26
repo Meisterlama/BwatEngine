@@ -9,8 +9,8 @@
 class Entity
 {
 public:
-    BMath::Matrix4<float> worldTransform;
-    BMath::Matrix4<float> transform;
+    BwatEngine::Math::Mat4f worldTransform;
+    BwatEngine::Math::Mat4f transform;
 };
 
 namespace BSceneNode
@@ -23,13 +23,13 @@ namespace BSceneNode
 
         SceneNode& AddChild(Entity& _child);
 
-        void UpdateGraph(const BMath::Matrix4<float>& parentWorldTransform);
+        void UpdateGraph(const BwatEngine::Math::Mat4f& parentWorldTransform);
 
 
 
         // if you want to have ref to first and last child uncomment this and in the .cpp
-        // std::Vector<SceneNode*>::const_iterator GetChildIteratorStart();
-        // std::Vector<SceneNode*>::const_iterator GetChildIteratorEnd();
+        // std::vector<SceneNode*>::const_iterator GetChildIteratorStart();
+        // std::vector<SceneNode*>::const_iterator GetChildIteratorEnd();
 
     protected:
         std::vector<std::unique_ptr<SceneNode>> children;

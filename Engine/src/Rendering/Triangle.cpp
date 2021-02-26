@@ -58,9 +58,9 @@ Triangle::Triangle()
 	{
 		VertexTriangle triangleA[] =
 		{
-			{	BMath::vec3f{ 0.5f, -0.5f, -1.0f}, BMath::vec4f{ 1.f, 0.f, 0.f, 1.f} },
-			{	BMath::vec3f{-0.5f, -0.5f, -1.0f}, BMath::vec4f{ 0.f, 1.f, 0.f, 1.f} },
-			{	BMath::vec3f{ 0.0f,  0.5f, -1.0f}, BMath::vec4f{ 0.f, 0.f, 1.f, 1.f} },
+			{	BwatEngine::Math::Vec3f{ 0.5f, -0.5f, -1.0f}, BwatEngine::Math::Vec4f{ 1.f, 0.f, 0.f, 1.f} },
+			{	BwatEngine::Math::Vec3f{-0.5f, -0.5f, -1.0f}, BwatEngine::Math::Vec4f{ 0.f, 1.f, 0.f, 1.f} },
+			{	BwatEngine::Math::Vec3f{ 0.0f,  0.5f, -1.0f}, BwatEngine::Math::Vec4f{ 0.f, 0.f, 1.f, 1.f} },
 		};
 
 		glGenBuffers(1, &vertexbuffer);

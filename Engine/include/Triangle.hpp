@@ -9,8 +9,8 @@ namespace Rendering
 {
 	struct VertexTriangle
 	{
-		BMath::vec3f position;
-		BMath::vec4f color;
+		BwatEngine::Math::Vec3f position;
+		BwatEngine::Math::Vec4f color;
 	};
 
 	class Triangle
@@ -27,6 +27,6 @@ namespace Rendering
 		GLuint vertexArray;
 		GLuint program;
 
-		BMath::vec3f colorTriangle;
+		BwatEngine::Math::Vec3f colorTriangle;
 	};
 }

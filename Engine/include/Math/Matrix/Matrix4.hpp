@@ -12,6 +12,8 @@ namespace BwatEngine::Math
         template<typename T>
         class Vector3;
         template<typename T>
+        class Vector4;
+        template<typename T>
         class Matrix4
         {
         public:

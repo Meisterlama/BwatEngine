@@ -17,7 +17,7 @@ SceneNode& SceneNode::AddChild(Entity& _child)
     return *children.back();
 }
 
-void SceneNode::UpdateGraph(const BMath::Matrix4<float>& parentWorldTransform)
+void SceneNode::UpdateGraph(const BwatEngine::Math::Mat4f& parentWorldTransform)
 {
     entity.worldTransform = parentWorldTransform * entity.transform;
     for (auto& child : children)
@@ -26,12 +26,12 @@ void SceneNode::UpdateGraph(const BMath::Matrix4<float>& parentWorldTransform)
 
 
 /*
-std::Vector<SceneNode*>::const_iterator SceneNode::GetChildIteratorStart()
+std::vector<SceneNode*>::const_iterator SceneNode::GetChildIteratorStart()
 {
     return children.begin();
 }
 
-std::Vector<SceneNode*>::const_iterator GetChildIteratorEnd()
+std::vector<SceneNode*>::const_iterator GetChildIteratorEnd()
 {
     return children.end();
 }
