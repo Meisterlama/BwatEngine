@@ -9,9 +9,9 @@
 
 struct Transform
 {
-	BMath::vec3f position;
-	BMath::vec3f rotation;
-	BMath::vec3f scale;
+	BMath::vec3f position{ 0 };
+	BMath::vec3f rotation{ 0 };
+	BMath::vec3f scale{ 1 };
 };
 
 class Entity
@@ -28,6 +28,8 @@ public :
 
 	void AddComponent(Component* tmpComp);
 	void UpdateAllComponent();
+	Transform& GetTransform() { return myTransform; };
+	void SetTransform(Transform transform) { myTransform = transform; };
 	
 };
 

@@ -25,6 +25,7 @@ public:
 
 	static Rendering::Shader* GetDefaultShader();
 	static std::vector<Rendering::Light*>& GetWorldLights();
+	std::vector<Entity*>& GetWorldEntities();
 };
 
 #endif // !WORLD_HPP

@@ -31,6 +31,11 @@ std::vector<Rendering::Light*>& World::GetWorldLights()
 	return lights;
 }
 
+std::vector<Entity*>& World::GetWorldEntities()
+{
+	return entities; 
+}
+
 Rendering::Shader* World::GetDefaultShader()
 {
 	return defaultShader;

@@ -18,6 +18,8 @@ ComponentModel::ComponentModel(std::string& pathFile)
 
 void ComponentModel::UpdateComponent()
 {
+	Transform transform = this->GetParent()->GetTransform();
+	myShader->setMat4("model", BMath::Matrix4<float>::CreateTRSMat(transform.position, transform.rotation, transform.scale));
 	myModel->Draw(*myShader, World::GetWorldLights());
 }
 

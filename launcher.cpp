@@ -38,7 +38,9 @@ int main()
 	// Shader
 	Rendering::Shader myShader("Assets/basic.vs", "Assets/basic.fs");
 	Rendering::Shader myShaderLight("Assets/basic.vs", "Assets/multilight.fs");
+
 	Rendering::Model myModel((std::string)"Assets/bag/backpack.obj");
+	Rendering::Model myModel2((std::string)"Assets/cube.obj");
 
 	// time init var
 	float deltaTime = 0.0f;
@@ -60,13 +62,19 @@ int main()
 	// myWorld
 	World  myWorld(&myShaderLight);
 
-
-	ComponentModel myNewModel(&myModel);
+	ComponentModel* myNewModel = new ComponentModel(&myModel);
+	ComponentModel* myNewModel2 = new ComponentModel(&myModel2);
 
 	Entity myEntity;
-	myEntity.AddComponent(&myNewModel);
+	Entity myEntity2;
+	myEntity.AddComponent(myNewModel);
+	myEntity2.AddComponent(myNewModel2);
+
+	//Entity& myEntity = myWorld.CreateEntity();
+	//myEntity.AddComponent<ComponentModel>(&myModel);
 
 	myWorld.AddEntity(&myEntity);
+	myWorld.AddEntity(&myEntity2);
 	myWorld.AddLight(&mylight);
 
 	while (mainWindow.IsWorking())
@@ -81,13 +89,24 @@ int main()
 		ImGui_ImplGlfw_NewFrame();
 		ImGui::NewFrame();
 
+		//ImGui::ShowDemoWindow();
+
 		ImGui::ColorEdit3("Clear color", color);
 		//debug Light
 		ImGui::ColorEdit3("light ambient", lights[0]->ambient.values);
-		ImGui::DragFloat3("posLight", lights[0]->position.values);
-		ImGui::DragFloat3("dirLight", lights[0]->direction.values);
-		ImGui::DragFloat("cutOff", &lights[0]->cutoff);
-		ImGui::DragFloat("outerCutOff", &lights[0]->outerCutoff);
+		//ImGui::DragFloat3("posLight", lights[0]->position.values);
+		//ImGui::DragFloat3("dirLight", lights[0]->direction.values);
+		//ImGui::DragFloat("cutOff", &lights[0]->cutoff);
+		//ImGui::DragFloat("outerCutOff", &lights[0]->outerCutoff);
+
+		const char* items[] = { "Apple", "Banana", "Cherry", "Kiwi", "Mango", "Orange", "Pineapple", "Strawberry", "Watermelon" };
+		
+		static int item_current = 0;
+		ImGui::ListBox("Entities", &item_current,items, myWorld.GetWorldEntities().size(), 4);
+
+		ImGui::DragFloat3("position", myWorld.GetWorldEntities()[item_current]->GetTransform().position.values, 0.01);
+		ImGui::DragFloat3("rotation", myWorld.GetWorldEntities()[item_current]->GetTransform().rotation.values, 0.01);
+		ImGui::DragFloat3("scale", myWorld.GetWorldEntities()[item_current]->GetTransform().scale.values, 0.01);
 
 		// Depth Test and buffer
 		glEnable(GL_DEPTH_TEST);

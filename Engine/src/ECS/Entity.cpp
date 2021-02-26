@@ -3,6 +3,7 @@
 
 void Entity::AddComponent(Component* tmpComp)
 {
+	tmpComp->SetParent(this);
 	myComponents.push_back(tmpComp);
 }
 
