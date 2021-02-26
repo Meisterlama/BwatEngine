@@ -18,6 +18,8 @@
 #include "World.hpp"
 #include "ECS/ComponentModel.hpp"
 
+#include "Inputs/InputHandler.hpp"
+
 
 int main()
 {
@@ -75,12 +77,15 @@ int main()
 	myWorld.AddEntity(&myEntity2);
 	myWorld.AddLight(&mylight);
 
+	BwatEngine::InputHandler::Initialize(mainWindow.window);
+
 	while (mainWindow.IsWorking())
 	{	
 		//Time
 		float currentFrame = glfwGetTime();
 		deltaTime = currentFrame - lastFrame;
 		lastFrame = currentFrame;
+
 
 		//ImGui
 		ImGui_ImplOpenGL3_NewFrame();
@@ -135,7 +140,9 @@ int main()
 		ImGui_ImplOpenGL3_RenderDrawData(ImGui::GetDrawData());
 
 		glfwSwapBuffers(mainWindow.window);
-		glfwPollEvents();
+
+        BwatEngine::InputHandler::Update();
+        glfwPollEvents();
 	}
 
 	ImGui_ImplGlfw_Shutdown();
