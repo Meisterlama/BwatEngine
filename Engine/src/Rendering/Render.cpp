@@ -1,4 +1,4 @@
-#include "../../include/Rendering/Render.hpp"
+#include "Rendering/Render.hpp"
 
 using namespace Rendering;
 
@@ -7,22 +7,22 @@ Render::Render()
     Shader sh("Assets/basic.vs", "Assets/multilight.fs");
     myShaderLight = sh;
 
-    Model m("Assets/bag/backpack.obj");
+    Model m((std::string)"Assets/bag/backpack.obj");
     myModel = &m;
 
     Rendering::Light mylight(Rendering::TYPE_LIGHT::Point, { 0.1f,0.1f,0.5f }, { 0.1f,0.1f,0.5f }, { 0.1f,0.1f,0.5f });
     lights.push_back(&mylight);
 }
 
-void Render::RenderScene(Bwat::Window mainWindow, float deltaTime)
+void Render::RenderScene()
 {
     glEnable(GL_DEPTH_TEST);
-    glViewport(0, 0, mainWindow.GetWidth(), mainWindow.GetHeight());
+    //glViewport(0, 0, mainWindow.GetWidth(), mainWindow.GetHeight());
     glClearColor(1.0f, 1.0f, 1.0f, 1.0f);
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
     //Camera
-    cam.UseFreeFly(&mainWindow, deltaTime);
+    //cam.UseFreeFly(&mainWindow, deltaTime);
 
     // projection, view and model
     BMath::Matrix4<float> projection = BMath::Matrix4<float>::CreatePerspective(60.f, mainWindow.GetWidth() / mainWindow.GetHeight(), 0.1f, 100.0f);

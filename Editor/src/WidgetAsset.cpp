@@ -1,4 +1,4 @@
-#include "../include/WidgetAsset.hpp"
+#include "WidgetAsset.hpp"
 
 WidgetAsset::WidgetAsset(EditorInterface *editor) : Widget(editor)
 {

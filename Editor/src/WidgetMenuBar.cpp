@@ -1,4 +1,4 @@
-#include "../include/WidgetMenuBar.hpp"
+#include "WidgetMenuBar.hpp"
 
 WidgetMenuBar::WidgetMenuBar(EditorInterface *editor) : Widget(editor)
 {

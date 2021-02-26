@@ -1,11 +1,13 @@
 #include <imgui_impl_glfw.h>
 #include <imgui_impl_opengl3.h>
 
-#include "../include/EditorInterface.hpp"
-#include "../include/WidgetMenuBar.hpp"
-#include "../include/WidgetHierarchy.hpp"
-#include "../include/WidgetAsset.hpp"
-#include "../../lib/imgui/include/imgui_internal.h"
+#include "EditorInterface.hpp"
+#include "WidgetMenuBar.hpp"
+#include "WidgetHierarchy.hpp"
+#include "WidgetAsset.hpp"
+#include "WidgetViewport.hpp"
+#include "imgui_internal.h"
+#include "Window.hpp"
 
 EditorInterface::~EditorInterface()
 {
@@ -60,6 +62,7 @@ void EditorInterface::Initialise(Bwat::Window mainWindow)
     widgets.emplace_back(std::make_shared<WidgetMenuBar>(this));
     widgets.emplace_back(std::make_shared<WidgetHierarchy>(this));
     widgets.emplace_back(std::make_shared<WidgetAsset>(this));
+    widgets.emplace_back(std::make_shared<WidgetViewport>(this));
 }
 
 void EditorInterface::ApplyStyle() const

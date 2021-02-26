@@ -1,6 +1,6 @@
-#include "../include/Widget.hpp"
-#include "../include/EditorInterface.hpp"
-#include "../../lib/imgui/include/imgui_internal.h"
+#include "Widget.hpp"
+#include "EditorInterface.hpp"
+#include "imgui_internal.h"
 
 Widget::Widget(EditorInterface* edit)
 {

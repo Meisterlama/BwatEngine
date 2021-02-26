@@ -1,4 +1,4 @@
-#include "../include/WidgetHierarchy.hpp"
+#include "WidgetHierarchy.hpp"
 
 WidgetHierarchy::WidgetHierarchy(EditorInterface *editor) : Widget(editor)
 {

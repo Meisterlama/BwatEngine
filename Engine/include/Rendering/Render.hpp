@@ -2,11 +2,11 @@
 #define BWATENGINE_RENDER_HPP
 
 #include <string>
-#include "../../Engine/include/Window.hpp"
-#include "Rendering/shader.hpp"
-#include "Rendering/model.hpp"
-#include "Rendering/camera.hpp"
-#include "Rendering/light.hpp"
+#include "Window.hpp"
+#include "shader.hpp"
+#include "model.hpp"
+#include "camera.hpp"
+#include "light.hpp"
 
 namespace Rendering
 {
@@ -15,13 +15,17 @@ namespace Rendering
     public:
         Render();
 
-        void RenderScene(Bwat::Window mainWindow, float deltaTime);
+        void RenderScene();
 
+        Bwat::Window mainWindow;
         Camera cam;
         Shader myShaderLight;
         Model* myModel;
 
         std::vector<Light*> lights;
+
+        float deltaTime = 0.0f;
+        float lastFrame = 0.0f;
     };
 }
 
