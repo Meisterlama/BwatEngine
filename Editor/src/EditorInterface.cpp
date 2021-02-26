@@ -1,4 +1,4 @@
-#include "../include/EditorInterface.hpp"
+#include "EditorInterface.hpp"
 
 EditorInterface::EditorInterface()
 {

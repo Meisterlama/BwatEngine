@@ -1,4 +1,4 @@
-#include "Rendering/camera.hpp"
+#include "Rendering/Camera.hpp"
 #include <math.h>
 #include <glad/glad.h>
 #include <GLFW/glfw3.h>

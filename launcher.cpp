@@ -9,13 +9,12 @@
 #define BMATH_IMPLEMENTATION
 #include "Math/Math.hpp"
 
-#include "Triangle.hpp"
 #include "Window.hpp"
-#include "Rendering/shader.hpp"
-#include "Rendering/model.hpp"
-#include "Rendering/camera.hpp"
+#include "Rendering/Shader.hpp"
+#include "Rendering/Model.hpp"
+#include "Rendering/Camera.hpp"
 #include "Editor/include/EditorInterface.hpp"
-#include "Rendering/light.hpp"
+#include "Rendering/Light.hpp"
 #include "World.hpp"
 #include "ECS/ComponentModel.hpp"
 
@@ -50,7 +49,6 @@ int main()
 	Rendering::Camera cam;
 
 	float color[3] = { 0.5f, 0.5f, 0.5f };
-	Rendering::Triangle myTri;
 
 	// Light, Next we need manage light on a lights manager or on scene graph ... WIP
 	std::vector<Rendering::Light*> lights;
