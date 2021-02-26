@@ -19,7 +19,11 @@ ComponentModel::ComponentModel(std::string& pathFile)
 void ComponentModel::UpdateComponent()
 {
 	Transform transform = this->GetParent()->GetTransform();
-	myShader->setMat4("model", BMath::Matrix4<float>::CreateTRSMat(transform.position, transform.rotation, transform.scale));
+	myShader->setMat4("model",
+                      BMath::Matrix4<float>::CreateXYZRotationMat(transform.rotation).Transpose() *
+                      BMath::Matrix4<float>::CreateTranslationMat(transform.position) *
+                      BMath::Matrix4<float>::CreateScaleMat(transform.scale)
+                      );
 	myModel->Draw(*myShader, World::GetWorldLights());
 }
 
