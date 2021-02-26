@@ -1,6 +1,9 @@
-#include "Rendering/shader.hpp"
+#include "Rendering/Shader.hpp"
 #include <imgui.h>
 #include <filesystem>
+#include <iostream>
+#include <fstream>
+#include <sstream>
 
 using namespace Rendering;
 
