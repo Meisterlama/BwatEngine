@@ -102,9 +102,9 @@ int main()
 		static int item_current = 0;
 		ImGui::ListBox("Entities", &item_current,items, myWorld.GetWorldEntities().size(), 4);
 
-		ImGui::DragFloat3("position", myWorld.GetWorldEntities()[item_current]->GetTransform().position.values, 0.01);
-		ImGui::DragFloat3("rotation", myWorld.GetWorldEntities()[item_current]->GetTransform().rotation.values, 0.01);
-		ImGui::DragFloat3("scale", myWorld.GetWorldEntities()[item_current]->GetTransform().scale.values, 0.01);
+		ImGui::DragFloat3("position", myWorld.GetWorldEntities()[item_current]->GetLocalTransform().position.values, 0.01);
+		ImGui::DragFloat3("rotation", myWorld.GetWorldEntities()[item_current]->GetLocalTransform().rotation.values, 0.01);
+		ImGui::DragFloat3("scale", myWorld.GetWorldEntities()[item_current]->GetLocalTransform().scale.values, 0.01);
 
 		// Depth Test and buffer
 		glEnable(GL_DEPTH_TEST);

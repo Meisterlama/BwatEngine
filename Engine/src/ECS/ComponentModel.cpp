@@ -18,7 +18,7 @@ ComponentModel::ComponentModel(std::string& pathFile)
 
 void ComponentModel::UpdateComponent()
 {
-	Transform transform = this->GetParent()->GetTransform();
+	BwatEngine::Math::Transform transform = this->GetParent()->GetLocalTransform();
 	myShader->setMat4("model",
                       BwatEngine::Math::Mat4f::CreateXYZRotationMat(transform.rotation).Transpose() *
                       BwatEngine::Math::Mat4f::CreateTranslationMat(transform.position) *
