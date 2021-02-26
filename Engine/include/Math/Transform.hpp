@@ -14,7 +14,7 @@ namespace BwatEngine::Math
         Vec3f rotation{ 0 };
         Vec3f scale{ 1 };
 
-        Transform(Vec3f _position = {0}, Vec3f _rotation = {0}, Vec3f _scale = {0} )
+        Transform(Vec3f _position = {0}, Vec3f _rotation = {0}, Vec3f _scale = {1} )
         : position(_position),
           rotation(_rotation),
           scale(_scale) {};
