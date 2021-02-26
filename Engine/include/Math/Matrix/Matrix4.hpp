@@ -3,6 +3,7 @@
 
 #include "Math/Meta.hpp"
 #include "Math/Vector/Vector3.hpp"
+#include "Math/Common.hpp"
 
 #pragma region Declarations
 namespace BwatEngine::Math
