@@ -10,22 +10,13 @@ class World
 {
 private:
 
-	static std::vector<Rendering::Light*> lights;
-	static Rendering::Shader* defaultShader;
-
-	std::vector<Entity*> entities;
+	static std::vector<Rendering::Light> lights;
 
 public:
 
-	World(Rendering::Shader* defaultShader);
+	static void AddLight(Rendering::Light newlight);
 
-	void AddLight(Rendering::Light* newlight);
-	void AddEntity(Entity* newEntity);
-	void UpdateEntities();
-
-	static Rendering::Shader* GetDefaultShader();
-	static std::vector<Rendering::Light*>& GetWorldLights();
-	std::vector<Entity*>& GetWorldEntities();
+	static std::vector<Rendering::Light>& GetWorldLights();
 };
 
 #endif // !WORLD_HPP

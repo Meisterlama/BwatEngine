@@ -87,10 +87,6 @@ void Camera::CameraMovementFF(Bwat::Window* win, float deltaTime)
 
 BwatEngine::Math::Mat4f Camera::GetViewMatrix()
 {
-    BwatEngine::Math::Mat4f View{1};
-    View *= BwatEngine::Math::Mat4f::CreateTranslationMat(-cameraPos);
-    View *= BwatEngine::Math::Mat4f::CreateYRotationMat(yaw);
-    View *= BwatEngine::Math::Mat4f::CreateXRotationMat(pitch);
-    return View;
+    return BwatEngine::Math::Mat4f::CreateTRSMat(-cameraPos, {pitch, yaw, 0}, {1});
 }
 

@@ -16,17 +16,8 @@ Mesh::Mesh(std::vector<Vertex> mVertices, std::vector<unsigned int> mIndices, st
 	initMesh();
 }
 
-void Mesh::Draw(Shader& shader, const std::vector<Light*> lights)
+void Mesh::Draw(Shader& shader)
 {
-    shader.use();
-
-    shader.setInt("nbrlights", (int)lights.size());
-    for (unsigned int i = 0; i < lights.size(); i++)
-    {
-        std::string index = std::to_string(i);
-        lights[i]->ApplyOnShader(&shader, index);
-    }
-
     unsigned int diffuseNr = 1;
     unsigned int specularNr = 1;
 

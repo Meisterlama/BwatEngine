@@ -22,9 +22,9 @@ namespace Rendering
 	private:
 
 		//Data
-		std::vector<Texture> textures_loaded;
-		std::vector<Mesh> meshes;
-		std::string directory;
+		std::vector<Texture> textures_loaded{};
+		std::vector<Mesh> meshes{};
+		std::string directory{};
 
 
 		void LoadModel(std::string path);
@@ -34,8 +34,9 @@ namespace Rendering
 
 	public:
 
-		Model(std::string& path);
-		void Draw(Shader& shader, const std::vector<Light*> lights);
+        Model() = default;
+        Model(std::string &path);
+		void Draw(Shader& shader);
 
 	};
 
