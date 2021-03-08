@@ -1,10 +1,10 @@
 #include <cmath>
 
-#include "Rendering/model.hpp"
+#include "Rendering/Model.hpp"
 
 using namespace Rendering;
 
-Model::Model(std::string& path)
+Model::Model(std::string &path)
 {
     LoadModel(path);
 };
@@ -152,9 +152,9 @@ std::vector<Rendering::Texture> Model::LoadMaterialTextures(aiMaterial* mat, aiT
     return textures;
 }
 
-void Model::Draw(Rendering::Shader& shader, const std::vector<Light*> lights)
+void Model::Draw(Rendering::Shader& shader)
 {
 	for (unsigned int i = 0; i < meshes.size(); i++)
-		meshes[i].Draw(shader,lights);
+		meshes[i].Draw(shader);
 }
 
