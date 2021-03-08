@@ -17,13 +17,13 @@ namespace Rendering
     private:
 
     public:
-        BMath::vec3f position{ 0,0,0 };
-        BMath::vec3f direction{ 0,0,0 };
+        BwatEngine::Math::Vec3f position{ 0,0,0 };
+        BwatEngine::Math::Vec3f direction{ 0,0,0 };
 
         // classic
-        BMath::vec3f ambient{ 0,0,0 };
-        BMath::vec3f diffuse{ 0,0,0 };
-        BMath::vec3f specular{ 0,0,0 };
+        BwatEngine::Math::Vec3f ambient{ 0,0,0 };
+        BwatEngine::Math::Vec3f diffuse{ 0,0,0 };
+        BwatEngine::Math::Vec3f specular{ 0,0,0 };
 
         // attenuation
         float constant = 1.f;
@@ -47,12 +47,12 @@ namespace Rendering
         Light();
         ~Light() {};
 
-        Light(TYPE_LIGHT myType, BMath::vec3f tmpAmbient, BMath::vec3f tmpDiffuse, BMath::vec3f tmpSpecular);
+        Light(TYPE_LIGHT myType, BwatEngine::Math::Vec3f tmpAmbient, BwatEngine::Math::Vec3f tmpDiffuse, BwatEngine::Math::Vec3f tmpSpecular);
 
         //Methods
-        void SetAmbient(BMath::vec3f tmpAmbient);
-        void SetDiffuse(BMath::vec3f tmpDiffuse);
-        void SetSpecular(BMath::vec3f tmpSpecular);
+        void SetAmbient(BwatEngine::Math::Vec3f tmpAmbient);
+        void SetDiffuse(BwatEngine::Math::Vec3f tmpDiffuse);
+        void SetSpecular(BwatEngine::Math::Vec3f tmpSpecular);
 
         void SetAttenuation(float tmpConstant, float tmpLinear, float tmpQuadratic);
         void SetMaterialLight(int tmpMatDiffuse, int tmpMatSpecular, float tmpMatShininess);

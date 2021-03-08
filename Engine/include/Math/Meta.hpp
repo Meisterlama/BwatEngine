@@ -11,7 +11,7 @@
 // Concatenate constexpr and eventual inline
 #define ML_FUNC_DECL ML_INLINE
 
-namespace BMath
+namespace BwatEngine::Math
 {
     // Magic numbers
     constexpr float PI = 3.1415926535897932;

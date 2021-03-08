@@ -1,8 +1,7 @@
 #pragma once
 
-#include "../Math/Math.hpp"
+#include "Math/Math.hpp"
 #include "Window.hpp"
-#include <imgui_impl_glfw.h>
 
 namespace Rendering
 {
@@ -12,7 +11,7 @@ namespace Rendering
 
         float yaw = 0;
         float pitch = 0;
-        BMath::vec3f cameraPos{0,0,5};
+        BwatEngine::Math::Vec3f cameraPos{0,0,5};
 
         double xpos = 0, ypos = 0;
         bool lockMouse = false;
@@ -25,7 +24,7 @@ namespace Rendering
         void UseFreeFly(Bwat::Window*, float);
         void MouseMovement(Bwat::Window* win, float deltaTime);
         void CameraMovementFF(Bwat::Window* win, float deltaTime);
-        BMath::Matrix4<float> GetViewMatrix();
+        BwatEngine::Math::Mat4f GetViewMatrix();
 
     };
 

@@ -9,13 +9,16 @@
 #define BMATH_IMPLEMENTATION
 #include "Math/Math.hpp"
 
-#include "Triangle.hpp"
 #include "Window.hpp"
-#include "Rendering/shader.hpp"
-#include "Rendering/model.hpp"
-#include "Rendering/camera.hpp"
+#include "Rendering/Shader.hpp"
+#include "Rendering/Model.hpp"
+#include "Rendering/Camera.hpp"
 #include "Editor/include/EditorInterface.hpp"
-#include "Rendering/light.hpp"
+#include "Rendering/Light.hpp"
+#include "World.hpp"
+#include "ECS/ComponentModel.hpp"
+
+#include "Inputs/InputHandler.hpp"
 
 
 int main()
@@ -34,9 +37,11 @@ int main()
 	ImGui_ImplOpenGL3_Init("#version 330");
 
 	// Shader
-	Rendering::Shader myShader("media/basic.vs", "media/basic.fs");
-	Rendering::Shader myShaderLight("media/basic.vs", "media/multilight.fs");
-	Rendering::Model myModel((std::string)"media/bag/backpack.obj");
+	Rendering::Shader myShader("Assets/basic.vs", "Assets/basic.fs");
+	Rendering::Shader myShaderLight("Assets/basic.vs", "Assets/multilight.fs");
+
+	Rendering::Model myModel((std::string)"Assets/bag/backpack.obj");
+	Rendering::Model myModel2((std::string)"Assets/cube.obj");
 
 	// time init var
 	float deltaTime = 0.0f;
@@ -46,15 +51,33 @@ int main()
 	Rendering::Camera cam;
 
 	float color[3] = { 0.5f, 0.5f, 0.5f };
-	Rendering::Triangle myTri;
 
 	// Light, Next we need manage light on a lights manager or on scene graph ... WIP
 	std::vector<Rendering::Light*> lights;
 
-	Rendering::Light mylight(Rendering::TYPE_LIGHT::Point, { 0.1f,0.1f,0.5f }, { 0.1f,0.1f,0.5f }, { 0.1f,0.1f,0.5f });
+	Rendering::Light mylight(Rendering::TYPE_LIGHT::Directional, { 0.1f,0.1f,0.5f }, { 0.1f,0.1f,0.5f }, { 0.1f,0.1f,0.5f });
 
 	lights.push_back(&mylight);
 	
+	// myWorld
+	World  myWorld(&myShaderLight);
+
+	ComponentModel* myNewModel = new ComponentModel(&myModel);
+	ComponentModel* myNewModel2 = new ComponentModel(&myModel2);
+
+	Entity myEntity;
+	Entity myEntity2;
+	myEntity.AddComponent(myNewModel);
+	myEntity2.AddComponent(myNewModel2);
+
+	//Entity& myEntity = myWorld.CreateEntity();
+	//myEntity.AddComponent<ComponentModel>(&myModel);
+
+	myWorld.AddEntity(&myEntity);
+	myWorld.AddEntity(&myEntity2);
+	myWorld.AddLight(&mylight);
+
+	BwatEngine::InputHandler::Initialize(mainWindow.window);
 
 	while (mainWindow.IsWorking())
 	{	
@@ -63,18 +86,30 @@ int main()
 		deltaTime = currentFrame - lastFrame;
 		lastFrame = currentFrame;
 
+
 		//ImGui
 		ImGui_ImplOpenGL3_NewFrame();
 		ImGui_ImplGlfw_NewFrame();
 		ImGui::NewFrame();
 
+		//ImGui::ShowDemoWindow();
+
 		ImGui::ColorEdit3("Clear color", color);
 		//debug Light
 		ImGui::ColorEdit3("light ambient", lights[0]->ambient.values);
-		ImGui::DragFloat3("posLight", lights[0]->position.values);
-		ImGui::DragFloat3("dirLight", lights[0]->direction.values);
-		ImGui::DragFloat("cutOff", &lights[0]->cutoff);
-		ImGui::DragFloat("outerCutOff", &lights[0]->outerCutoff);
+		//ImGui::DragFloat3("posLight", lights[0]->position.values);
+		//ImGui::DragFloat3("dirLight", lights[0]->direction.values);
+		//ImGui::DragFloat("cutOff", &lights[0]->cutoff);
+		//ImGui::DragFloat("outerCutOff", &lights[0]->outerCutoff);
+
+		const char* items[] = { "Apple", "Banana", "Cherry", "Kiwi", "Mango", "Orange", "Pineapple", "Strawberry", "Watermelon" };
+
+		static int item_current = 0;
+		ImGui::ListBox("Entities", &item_current,items, myWorld.GetWorldEntities().size(), 4);
+
+		ImGui::DragFloat3("position", myWorld.GetWorldEntities()[item_current]->GetLocalTransform().position.values, 0.01);
+		ImGui::DragFloat3("rotation", myWorld.GetWorldEntities()[item_current]->GetLocalTransform().rotation.values, 0.01);
+		ImGui::DragFloat3("scale", myWorld.GetWorldEntities()[item_current]->GetLocalTransform().scale.values, 0.01);
 
 		// Depth Test and buffer
 		glEnable(GL_DEPTH_TEST);
@@ -86,9 +121,9 @@ int main()
 		cam.UseFreeFly(&mainWindow, deltaTime);
 
 		// projection, view and model 
-		BMath::Matrix4<float> projection = BMath::Matrix4<float>::CreatePerspective(60.f, mainWindow.GetWidth() / mainWindow.GetHeight(), 0.1f, 100.0f);
-		BMath::Matrix4<float> view = cam.GetViewMatrix();
-		BMath::Matrix4<float> model = BMath::Matrix4<float>::CreateScaleMat(1.f);
+		BwatEngine::Math::Mat4f projection = BwatEngine::Math::Mat4f::CreatePerspective(60.f, mainWindow.GetWidth() / mainWindow.GetHeight(), 0.1f, 100.0f);
+		BwatEngine::Math::Mat4f view = cam.GetViewMatrix();
+		BwatEngine::Math::Mat4f model = BwatEngine::Math::Mat4f::CreateScaleMat(1.f);
 
 		//use shader 
 		myShaderLight.use();
@@ -97,14 +132,17 @@ int main()
 		myShaderLight.setMat4("view", view);
 		myShaderLight.setVec3("viewPos", cam.cameraPos.X, cam.cameraPos.Y, cam.cameraPos.Z);
 
+		myWorld.UpdateEntities();
 		//myTri.Update();
-		myModel.Draw(myShaderLight,lights);
+		//myModel.Draw(myShaderLight,lights);
 
 		ImGui::Render();
 		ImGui_ImplOpenGL3_RenderDrawData(ImGui::GetDrawData());
 
 		glfwSwapBuffers(mainWindow.window);
-		glfwPollEvents();
+
+        BwatEngine::InputHandler::Update();
+        glfwPollEvents();
 	}
 
 	ImGui_ImplGlfw_Shutdown();

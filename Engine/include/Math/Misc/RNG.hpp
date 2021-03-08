@@ -3,7 +3,7 @@
 
 #include "Math/Meta.hpp"
 
-namespace BMath
+namespace BwatEngine::Math
 {
 
 #pragma region Declarations
