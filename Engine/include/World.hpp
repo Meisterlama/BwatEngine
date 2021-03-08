@@ -14,7 +14,7 @@ private:
 
 public:
 
-	static void AddLight(Rendering::Light newlight);
+	static void AddLight(Rendering::Light& newlight);
 
 	static std::vector<Rendering::Light>& GetWorldLights();
 };
