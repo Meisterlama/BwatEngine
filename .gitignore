@@ -10,3 +10,5 @@ Assets
 docs/build
 docs/env
 docs/xml
+out
+CMakeSettings.json
