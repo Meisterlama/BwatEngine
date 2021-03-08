@@ -4,15 +4,15 @@
 #include <vector>
 #include <memory>
 
-#include "Rendering/Render.hpp"
 #include "Widget.hpp"
+#include "Window.hpp"
 
 
 class  EditorInterface
 {
 public:
-    EditorInterface() = default;
-    ~EditorInterface();
+    EditorInterface();
+    ~EditorInterface(){};
 
     void OnTick();
     void Initialise(Bwat::Window mainWindow);
@@ -33,15 +33,3 @@ private:
 
 #endif //BWATENGINE_EDITORINTERFACE_HPP
 
-/*public:
-EditorInterface();
-~EditorInterface();
-
-void ShowScene(float color[3]);
-void DrawInterface(float color[3]);
-
-
-private:
-unsigned int fbo;
-unsigned int tex;
-unsigned int rbo;*/
