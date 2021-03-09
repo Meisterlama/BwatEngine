@@ -46,7 +46,7 @@ void EditorInterface::OnTick()
     glfwMakeContextCurrent(backup_current_context);
 }
 
-void EditorInterface::Initialise(Bwat::Window mainWindow)
+void EditorInterface::Initialise(BwatEngine::Window mainWindow)
 {
     IMGUI_CHECKVERSION();
     ImGui::CreateContext();

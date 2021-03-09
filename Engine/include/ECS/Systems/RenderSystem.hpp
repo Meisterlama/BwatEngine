@@ -8,6 +8,7 @@
 #include "Rendering/Shader.hpp"
 #include "Rendering/Model.hpp"
 #include "Window.hpp"
+#include "World.hpp"
 
 namespace BwatEngine
 {
@@ -16,14 +17,14 @@ namespace BwatEngine
     class RenderSystem : public System
     {
         Rendering::Shader shader;
-        Bwat::Window* window;
+        Window* window;
         Entity* camera;
 
 
     public:
         Math::Vec3f clearColor = { 0.5f, 0.5f, 0.5f };
 
-        void Init(Bwat::Window* _window)
+        void Init(Window* _window)
         {
             window = _window;
             shader = {"Assets/basic.vs", "Assets/multilight.fs"};

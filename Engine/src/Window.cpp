@@ -2,7 +2,7 @@
 #include <cstdio>
 #include <iostream>
 
-using namespace Bwat;
+using namespace BwatEngine;
 
 Window::Window()
 {

@@ -15,7 +15,7 @@ public:
     ~EditorInterface(){};
 
     void OnTick();
-    void Initialise(Bwat::Window mainWindow);
+    void Initialise(BwatEngine::Window mainWindow);
     void DestroyImGui();
 
 private:
