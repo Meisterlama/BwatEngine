@@ -9,8 +9,11 @@
 #include "WidgetViewport.hpp"
 #include "imgui_internal.h"
 
-EditorInterface::EditorInterface()
+#include "Engine.hpp"
+
+EditorInterface::EditorInterface(BwatEngine::Engine* _engine)
 {
+    engine = _engine;
     widgets.clear();
     widgets.shrink_to_fit();
 }

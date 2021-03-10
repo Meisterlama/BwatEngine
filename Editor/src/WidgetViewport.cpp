@@ -1,4 +1,6 @@
 #include "WidgetViewport.hpp"
+#include "EditorInterface.hpp"
+#include "Engine.hpp"
 
 WidgetViewport::WidgetViewport(EditorInterface *editor) : Widget(editor)
 {
@@ -20,7 +22,7 @@ void WidgetViewport::TickVisible()
     glBindFramebuffer(GL_FRAMEBUFFER, 0);
 
     ImGui::GetWindowDrawList()->AddImage(
-            (ImTextureID)(size_t)fbo, ImVec2(ImGui::GetCursorScreenPos()),
+            (ImTextureID)(size_t)editor->engine->fbo, ImVec2(ImGui::GetCursorScreenPos()),
             ImVec2(ImGui::GetCursorScreenPos().x + ImGui::GetWindowWidth(), ImGui::GetCursorScreenPos().y + ImGui::GetWindowHeight()), ImVec2(0, 1), ImVec2(1, 0));
 }
 

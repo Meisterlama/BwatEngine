@@ -14,8 +14,6 @@ namespace BwatEngine
 	class PhysicsSystem;
 	class PlayerControlSystem;
 	class RenderSystem;
-	
-	
 
 	class Engine
 	{
@@ -38,6 +36,7 @@ namespace BwatEngine
 		std::shared_ptr<PhysicsSystem> physicsSystem = nullptr;
 		std::shared_ptr<PlayerControlSystem> playerControlSystem = nullptr;
 		std::shared_ptr<RenderSystem> renderSystem = nullptr;
+
 
 	private:
 

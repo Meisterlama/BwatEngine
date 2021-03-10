@@ -31,20 +31,6 @@ namespace BwatEngine {
     //initialization
     Engine::Engine()
     {
-        //Window mainWindow;
-        
-
-        // Init ImGui
-        /*IMGUI_CHECKVERSION();
-        ImGui::CreateContext();
-        ImGuiIO& io = ImGui::GetIO(); (void)io;
-        io.ConfigFlags |= ImGuiConfigFlags_NavEnableKeyboard;
-        io.ConfigFlags |= ImGuiConfigFlags_DockingEnable;
-        ImGui::StyleColorsDark();
-
-        ImGui_ImplGlfw_InitForOpenGL(mainWindow.window, true);
-        ImGui_ImplOpenGL3_Init("#version 330");*/
-
         Entity::InitCoordinator();
         Entity::GetCoordinator().RegisterComponent<GravityComponent>();
         Entity::GetCoordinator().RegisterComponent<RigidBodyComponent>();
@@ -154,46 +140,11 @@ namespace BwatEngine {
             lastFrame = currentFrame;
 
 
-            //ImGui
-            /*ImGui_ImplOpenGL3_NewFrame();
-            ImGui_ImplGlfw_NewFrame();
-            ImGui::NewFrame();
-
-            //ImGui::ShowDemoWindow();
-
-            ImGui::Text("FPS: %f", (deltaTime !=0) ? 1/deltaTime : 0);
-
-            ImGui::ColorEdit3("Clear color", renderSystem->clearColor.values);
-            //debug Light
-            ImGui::ColorEdit3("light ambient", World::GetWorldLights()[0].ambient.values);
-            static int item_current = 0;
-
-            ImGui::ListBoxHeader("Entities");
-            for (EntityType i = 0; i < entities.size(); i++)
-            {
-                bool selected = false;
-                std::string entityName = (entities[i].name != "")?entities[i].name  : "Entity_" + std::to_string(entities[i].GetID());
-
-                if (ImGui::Selectable(entityName.c_str()))
-                {
-                    item_current = i;
-                }
-            }
-            ImGui::ListBoxFooter();
-
-
-            ImGui::DragFloat3("position", entities[item_current].GetComponent<TransformComponent>().transform.position.values, 0.01);
-            ImGui::DragFloat3("rotation", entities[item_current].GetComponent<TransformComponent>().transform.rotation.values, 0.01);
-            ImGui::DragFloat3("scale", entities[item_current].GetComponent<TransformComponent>().transform.scale.values, 0.01);*/
-
-
             //physicsSystem->Update(deltaTime);
             playerControlSystem->Update(deltaTime, window);
             renderSystem->Update(deltaTime);
             inputSystem->Update(deltaTime);
 
-            //ImGui::Render();
-            //ImGui_ImplOpenGL3_RenderDrawData(ImGui::GetDrawData());
 
             glfwSwapBuffers(window.window);
         }
@@ -203,11 +154,7 @@ namespace BwatEngine {
     //Close all content 
     void Engine::Close()
     {
-
-        //ImGui_ImplGlfw_Shutdown();
-        //ImGui_ImplOpenGL3_Shutdown();
-        //ImGui::DestroyContext();
-
         window.Close();
     }
 }
+
