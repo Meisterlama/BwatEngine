@@ -40,7 +40,7 @@ namespace BwatEngine {
         Entity::GetCoordinator().RegisterComponent<PlayerComponent>();
 
         inputSystem = Entity::GetCoordinator().RegisterSystem<InputsSystem>();
-        inputSystem->Init(window.window);
+        inputSystem->Init(context.window.window);
 
         physicsSystem = Entity::GetCoordinator().RegisterSystem<PhysicsSystem>();
         {
@@ -69,7 +69,7 @@ namespace BwatEngine {
             signature.set(Entity::GetComponentType<TransformComponent>());
             Entity::GetCoordinator().SetSystemSignature<RenderSystem>(signature);
         }
-        renderSystem->Init(&window);
+        renderSystem->Init(&context.window);
 
 
         // time init var
@@ -97,7 +97,7 @@ namespace BwatEngine {
                     Math::Vec3f {1.f}
                 } });
                 entities[i].AddComponent<CameraComponent>(
-                    { Math::Mat4f::CreatePerspective(80.f, window.GetWidth() / window.GetHeight(), 0.1f, 1000.0f)
+                    { Math::Mat4f::CreatePerspective(80.f, context.window.GetWidth() / context.window.GetHeight(), 0.1f, 1000.0f)
                     });
                 entities[i].AddComponent<PlayerComponent>({});
                 entities[i].name = "Camera";
@@ -130,31 +130,34 @@ namespace BwatEngine {
     //Main Funtion of engine 
     void Engine::Update()
     {
-        while (window.IsWorking())
-        {
-            glfwPollEvents();
+       
+        glfwPollEvents();
 
-            //Time
-            float currentFrame = glfwGetTime();
-            deltaTime = currentFrame - lastFrame;
-            lastFrame = currentFrame;
-
-
-            //physicsSystem->Update(deltaTime);
-            playerControlSystem->Update(deltaTime, window);
-            renderSystem->Update(deltaTime);
-            inputSystem->Update(deltaTime);
+        //Time
+        float currentFrame = glfwGetTime();
+        context.deltaTime = currentFrame - context.lastFrame;
+        context.lastFrame = currentFrame;
 
 
-            glfwSwapBuffers(window.window);
-        }
+        //physicsSystem->Update(deltaTime);
+        playerControlSystem->Update(context.deltaTime, context.window);
+        
+        context.MainFBO.UseAndBind();
+        renderSystem->Update(context.deltaTime);
+        context.MainFBO.Unbind();
+
+        inputSystem->Update(context.deltaTime);
+
+
+        glfwSwapBuffers(context.window.window);
+        
     }
 
 
     //Close all content 
     void Engine::Close()
     {
-        window.Close();
+        context.window.Close();
     }
 }
 

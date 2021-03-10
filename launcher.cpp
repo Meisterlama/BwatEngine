@@ -5,14 +5,25 @@
 #include "ECS/Entity.hpp"
 
 #include "Engine.hpp"
+#include "EditorInterface.hpp"
 
 int main()
 {
-   
     using namespace BwatEngine;
 
 	Engine engine;
-	engine.Update();
+
+	EditorInterface editor(&engine);
+	editor.Initialise(engine.context.window);
+
+	while (engine.ShouldRun())
+	{
+		engine.Update();
+		editor.OnTick();
+	}
+	
+	editor.DestroyImGui();
+
 	engine.Close();
 
 	return 0;

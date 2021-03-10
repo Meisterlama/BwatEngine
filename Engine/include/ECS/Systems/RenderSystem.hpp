@@ -41,6 +41,7 @@ namespace BwatEngine
         {
             if (!camera)
                 return;
+
             glEnable(GL_DEPTH_TEST);
             glViewport(0, 0, window->GetWidth(), window->GetHeight());
             glClearColor(clearColor[0], clearColor[1], clearColor[2], 1.f);

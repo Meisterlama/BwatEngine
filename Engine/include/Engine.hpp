@@ -6,6 +6,7 @@
 #include <memory>
 
 #include "Rendering/Model.hpp"
+#include "Rendering/FrameBuffer.hpp"
 
 
 namespace BwatEngine
@@ -14,6 +15,16 @@ namespace BwatEngine
 	class PhysicsSystem;
 	class PlayerControlSystem;
 	class RenderSystem;
+
+	struct Context
+	{
+		Window window;
+
+		float deltaTime = 0.0f;
+		float lastFrame = 0.0f;
+
+		Rendering::FrameBufferObject MainFBO;
+	};
 
 	class Engine
 	{
@@ -26,16 +37,16 @@ namespace BwatEngine
 		void Update();
 		void Close();
 
-		Window window;
-		Rendering::Model model;
+		Context context;
 
-		float deltaTime = 0.0f;
-		float lastFrame = 0.0f;
+		Rendering::Model model;
 
 		std::shared_ptr<InputsSystem> inputSystem = nullptr;
 		std::shared_ptr<PhysicsSystem> physicsSystem = nullptr;
 		std::shared_ptr<PlayerControlSystem> playerControlSystem = nullptr;
 		std::shared_ptr<RenderSystem> renderSystem = nullptr;
+
+		bool ShouldRun() { return context.window.IsWorking(); };
 
 
 	private:

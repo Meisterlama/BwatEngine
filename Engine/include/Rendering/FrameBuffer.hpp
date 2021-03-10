@@ -16,8 +16,11 @@ namespace Rendering
 
 		std::string name;
 		GLuint fbo;
+		Texture textureColor;
+		GLuint depthRenderbuffer;
 
 		FrameBufferObject(float width, float height);
+		FrameBufferObject() {};
 		~FrameBufferObject() {};
 
 		void UseAndBind();

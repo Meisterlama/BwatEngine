@@ -5,10 +5,8 @@ using namespace Rendering;
 
 FrameBufferObject::FrameBufferObject(float width , float height)
 {
-    GLuint depthRenderbuffer = 0;
-
-    Texture myTexture;
-    myTexture.GenerateTexture(width, height);
+    depthRenderbuffer = 0;
+    textureColor.GenerateTexture(width, height);
 
     // Create depth buffer
     {
@@ -22,7 +20,7 @@ FrameBufferObject::FrameBufferObject(float width , float height)
     glGenFramebuffers(1, &fbo);
     glBindFramebuffer(GL_FRAMEBUFFER, fbo);
 
-    glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_2D, myTexture.id, 0);
+    glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_2D, textureColor.id, 0);
     glFramebufferRenderbuffer(GL_FRAMEBUFFER, GL_DEPTH_ATTACHMENT, GL_RENDERBUFFER, depthRenderbuffer);
 
     GLenum drawBuffers[] = { GL_COLOR_ATTACHMENT0 };
