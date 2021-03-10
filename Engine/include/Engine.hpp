@@ -7,7 +7,7 @@
 
 #include "Rendering/Model.hpp"
 #include "Rendering/FrameBuffer.hpp"
-
+#include "ECS/Entity.hpp"
 
 namespace BwatEngine
 {
@@ -18,7 +18,7 @@ namespace BwatEngine
 
 	struct Context
 	{
-		Window window;
+		Window window{};
 
 		float deltaTime = 0.0f;
 		float lastFrame = 0.0f;
@@ -40,6 +40,7 @@ namespace BwatEngine
 		Context context;
 
 		Rendering::Model model;
+		std::vector<Entity> entities;
 
 		std::shared_ptr<InputsSystem> inputSystem = nullptr;
 		std::shared_ptr<PhysicsSystem> physicsSystem = nullptr;

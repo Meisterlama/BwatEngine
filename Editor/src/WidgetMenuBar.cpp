@@ -1,5 +1,6 @@
 #include "WidgetMenuBar.hpp"
-
+#include "EditorInterface.hpp"
+#include "Engine.hpp"
 WidgetMenuBar::WidgetMenuBar(EditorInterface *editor) : Widget(editor)
 {
     title = "MenuBar";
@@ -10,6 +11,7 @@ void WidgetMenuBar::TickAlways()
 {
     if (ImGui::BeginMainMenuBar())
     {
+        ImGui::Text("%f", (editor->engine->context.deltaTime != 0) ? 1.f / editor->engine->context.deltaTime : 0);
         if (ImGui::BeginMenu("File"))
         {
             MenuFile();
