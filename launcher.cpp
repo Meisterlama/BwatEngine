@@ -22,8 +22,6 @@ int main()
 		editor.OnTick();
 	}
 	
-	editor.DestroyImGui();
-
 	engine.Close();
 
 	return 0;

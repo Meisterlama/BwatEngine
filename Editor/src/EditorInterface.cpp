@@ -20,16 +20,16 @@ EditorInterface::EditorInterface(BwatEngine::Engine* _engine)
 
 void EditorInterface::DestroyImGui()
 {
-    ImGui_ImplGlfw_Shutdown();
-    ImGui_ImplOpenGL3_Shutdown();
-    ImGui::DestroyContext();
+    //ImGui_ImplGlfw_Shutdown();
+    //ImGui_ImplOpenGL3_Shutdown();
+    //ImGui::DestroyContext();
 }
 
 void EditorInterface::OnTick()
 {
-    ImGui_ImplOpenGL3_NewFrame();
-    ImGui_ImplGlfw_NewFrame();
-    ImGui::NewFrame();
+    //ImGui_ImplOpenGL3_NewFrame();
+    //ImGui_ImplGlfw_NewFrame();
+    //ImGui::NewFrame();
 
     BeginWindow();
 
@@ -43,23 +43,15 @@ void EditorInterface::OnTick()
     ImGui::Render();
     ImGui_ImplOpenGL3_RenderDrawData(ImGui::GetDrawData());
 
-    GLFWwindow* backup_current_context = glfwGetCurrentContext();
-    ImGui::UpdatePlatformWindows();
-    ImGui::RenderPlatformWindowsDefault();
-    glfwMakeContextCurrent(backup_current_context);
+    //GLFWwindow* backup_current_context = glfwGetCurrentContext();
+    //ImGui::UpdatePlatformWindows();
+    //ImGui::RenderPlatformWindowsDefault();
+    //glfwMakeContextCurrent(backup_current_context);
 }
 
 void EditorInterface::Initialise(BwatEngine::Window mainWindow)
 {
-    IMGUI_CHECKVERSION();
-    ImGui::CreateContext();
-    ImGuiIO& io = ImGui::GetIO(); (void)io;
-    io.ConfigFlags |= ImGuiConfigFlags_NavEnableKeyboard;       // Enable Keyboard Controls
-    io.ConfigFlags |= ImGuiConfigFlags_DockingEnable;           // Enable Docking
     ApplyStyle();
-
-    ImGui_ImplGlfw_InitForOpenGL(mainWindow.window, true);
-    ImGui_ImplOpenGL3_Init("#version 330");
 
     //Push widget here
     widgets.emplace_back(std::make_shared<WidgetMenuBar>(this));
