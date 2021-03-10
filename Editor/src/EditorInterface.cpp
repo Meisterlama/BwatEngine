@@ -9,8 +9,11 @@
 #include "WidgetViewport.hpp"
 #include "imgui_internal.h"
 
-EditorInterface::EditorInterface()
+#include "Engine.hpp"
+
+EditorInterface::EditorInterface(BwatEngine::Engine* _engine)
 {
+    engine = _engine;
     widgets.clear();
     widgets.shrink_to_fit();
 }
@@ -46,7 +49,7 @@ void EditorInterface::OnTick()
     glfwMakeContextCurrent(backup_current_context);
 }
 
-void EditorInterface::Initialise(Bwat::Window mainWindow)
+void EditorInterface::Initialise(BwatEngine::Window mainWindow)
 {
     IMGUI_CHECKVERSION();
     ImGui::CreateContext();
