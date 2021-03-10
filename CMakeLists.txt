@@ -39,6 +39,7 @@ MESSAGE(STATUS "\n\n\nASSETS: ${BWATENGINE_ASSETS}")
 
 add_executable(Launcher launcher.cpp)
 target_link_libraries(Launcher PUBLIC Engine)
+add_dependencies(Launcher Engine)
 add_custom_command(TARGET Launcher
         COMMAND ${CMAKE_COMMAND} -E copy_directory
         ${CMAKE_SOURCE_DIR}/Assets/ $<TARGET_FILE_DIR:Launcher>/Assets/
