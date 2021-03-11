@@ -3,7 +3,7 @@
 
 #include <vector>
 
-#include "Rendering/light.hpp"
+#include "Rendering/Light.hpp"
 #include "ECS/Entity.hpp"
 
 class World

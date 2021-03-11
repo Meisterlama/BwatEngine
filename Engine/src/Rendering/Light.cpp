@@ -1,4 +1,4 @@
-#include "Rendering/light.hpp"
+#include "Rendering/Light.hpp"
 
 using namespace Rendering;
 
