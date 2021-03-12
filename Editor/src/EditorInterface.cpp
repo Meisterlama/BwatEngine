@@ -102,6 +102,7 @@ void EditorInterface::BeginWindow()
             //Docks widgets here
             ImGui::DockBuilderDockWindow("Hierarchy", dockRightID);
             ImGui::DockBuilderDockWindow("Assets", dockDownID);
+            ImGui::DockBuilderDockWindow("Viewport", dockMainID);
 
             ImGui::DockBuilderFinish(dockMainID);
         }
