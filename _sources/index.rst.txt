@@ -8,9 +8,7 @@ Welcome to BwatEngine's documentation!
 
 .. toctree::
    :caption: Contents:
-
-   TaskSystem/quickstart
-   Task/task
+   :glob:
 
 Getting Started
 ======
