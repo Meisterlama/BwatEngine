@@ -80,6 +80,20 @@ set(ALSOFT_UPDATE_BUILD_VERSION  OFF CACHE BOOL "" FORCE)
 
 add_subdirectory(openal-soft)
 
+# PHYSX BUILD
+set(TARGET_BUILD_PLATFORM "windows")
+set(NV_USE_DEBUG_WINCRT ON CACHE BOOL "Use the debug version of the CRT")
+set(PHYSX_ROOT_DIR ${CMAKE_CURRENT_SOURCE_DIR}/Physx/physx)
+set(PXSHARED_PATH ${PHYSX_ROOT_DIR}/../pxshared)
+set(PXSHARED_INSTALL_PREFIX ${CMAKE_INSTALL_PREFIX})
+set(CMAKEMODULES_VERSION "1.27")
+set(CMAKEMODULES_PATH ${PHYSX_ROOT_DIR}/../externals/cmakemodules)
+set(PX_OUTPUT_LIB_DIR ${CMAKE_CURRENT_BINARY_DIR}/externals/physx)
+set(PX_OUTPUT_BIN_DIR ${CMAKE_CURRENT_BINARY_DIR}/externals/physx)
+
+add_subdirectory(${PHYSX_ROOT_DIR}/compiler/public externals/physx)
+include_directories(PUBLIC ${PHYSX_ROOT_DIR}/include)
+
 # STB BUILD
 set(STB_SRC
         stb/src/stb_image.cpp
