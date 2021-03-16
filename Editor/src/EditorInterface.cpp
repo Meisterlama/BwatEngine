@@ -7,6 +7,7 @@
 #include "WidgetHierarchy.hpp"
 #include "WidgetAsset.hpp"
 #include "WidgetViewport.hpp"
+#include "WidgetProperties.hpp"
 #include "imgui_internal.h"
 
 #include "Engine.hpp"
@@ -58,6 +59,7 @@ void EditorInterface::Initialise(BwatEngine::Window mainWindow)
     widgets.emplace_back(std::make_shared<WidgetHierarchy>(this));
     widgets.emplace_back(std::make_shared<WidgetAsset>(this));
     widgets.emplace_back(std::make_shared<WidgetViewport>(this));
+    widgets.emplace_back(std::make_shared<WidgetProperties>(this));
 }
 
 void EditorInterface::ApplyStyle() const
@@ -100,9 +102,10 @@ void EditorInterface::BeginWindow()
             ImGuiID dockDownID = ImGui::DockBuilderSplitNode(dockMainID, ImGuiDir_Down, 0.25f, nullptr, &dockMainID);
 
             //Docks widgets here
-            ImGui::DockBuilderDockWindow("Hierarchy", dockRightID);
             ImGui::DockBuilderDockWindow("Assets", dockDownID);
             ImGui::DockBuilderDockWindow("Viewport", dockMainID);
+            ImGui::DockBuilderDockWindow("Properties", dockRightID);
+            ImGui::DockBuilderDockWindow("Hierarchy", dockRightID);
 
             ImGui::DockBuilderFinish(dockMainID);
         }
