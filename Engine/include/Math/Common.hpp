@@ -25,6 +25,7 @@ namespace BwatEngine::Math
     [[nodiscard]] ML_FUNC_DECL float Tan(float x);
 
     [[nodiscard]] ML_FUNC_DECL float Atan(float x);
+    [[nodiscard]] ML_FUNC_DECL float Atan2(float x, float y);
 
     [[nodiscard]] ML_FUNC_DECL float Abs(float x);
 

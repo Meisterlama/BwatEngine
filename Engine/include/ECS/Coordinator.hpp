@@ -13,7 +13,26 @@ namespace BwatEngine
         std::unique_ptr<EntityManager> entityManager;
         std::unique_ptr<SystemManager> systemManager;
 
+        Coordinator() = default;
+        ~Coordinator()
+        {
+            Coordinator* coordinator = GetInstance();
+            if (coordinator)
+                delete coordinator;
+        }
+
+
+        Coordinator(Coordinator& other) = delete;
+        void operator=(const Coordinator&) = delete;
+
     public:
+        static Coordinator* GetInstance()
+        {
+            static Coordinator* coordinator = nullptr;
+            if (!coordinator)
+                coordinator = new Coordinator;
+            return coordinator;
+        }
         void Init()
         {
             componentManager = std::make_unique<ComponentManager>();
@@ -21,12 +40,12 @@ namespace BwatEngine
             systemManager = std::make_unique<SystemManager>();
         }
 
-        EntityType CreateEntity()
+        Entity CreateEntity()
         {
             return entityManager->CreateEntity();
         }
 
-        void DestroyEntity(EntityType entity)
+        void DestroyEntity(Entity entity)
         {
             entityManager->DestroyEntity(entity);
 
@@ -42,7 +61,7 @@ namespace BwatEngine
         }
 
         template<typename T>
-        void AddComponent(EntityType entity, T component)
+        void AddComponent(Entity entity, T component)
         {
             componentManager->AddComponent<T>(entity, component);
 
@@ -54,7 +73,7 @@ namespace BwatEngine
         }
 
         template<typename T>
-        void RemoveComponent(EntityType entity)
+        void RemoveComponent(Entity entity)
         {
             componentManager->RemoveComponent<T>(entity);
 
@@ -66,7 +85,7 @@ namespace BwatEngine
         }
 
         template<typename T>
-        T &GetComponent(EntityType entity)
+        T &GetComponent(Entity entity)
         {
             return componentManager->GetComponent<T>(entity);
         }
