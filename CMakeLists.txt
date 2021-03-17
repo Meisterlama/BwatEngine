@@ -4,6 +4,20 @@ project(BwatEngine LANGUAGES C CXX)
 
 set(CMAKE_CXX_STANDARD 17)
 
+if (UNIX AND NOT APPLE)
+    set(LINUX TRUE)
+endif ()
+
+if(LINUX)
+    message(STATUS ">>> Linux ${CMAKE_SYSTEM}")
+    add_definitions(-DLINUX)
+elseif(WIN32)
+    add_definitions(-DWIN32)
+    message(STATUS ">>> Not Linux ${CMAKE_SYSTEM}")
+else()
+    message(FATAL_ERROR ">>> Not supported platform ${CMAKE_SYSTEM}")
+endif()
+
 set(BWAT_ENGINE_TEST_ENABLED ON)
 set(BWAT_EDITOR_ENABLED ON)
 set(BWAT_EDITOR_DEBUG_ENABLED ON)
