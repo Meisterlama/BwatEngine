@@ -8,7 +8,7 @@
 #include "Rendering/Shader.hpp"
 #include "Rendering/Model.hpp"
 #include "Window.hpp"
-#include "World.hpp"
+#include "Scene.hpp"
 
 namespace BwatEngine
 {
@@ -24,12 +24,12 @@ namespace BwatEngine
     public:
         Math::Vec3f clearColor = { 0.5f, 0.5f, 0.5f };
 
-        void Init(Window* _window)
+        void Init()
         {
-            window = _window;
+            window = &Engine::GetContext().window;
             shader = {"Assets/basic.vs", "Assets/multilight.fs"};
             Rendering::Light mylight(Rendering::TYPE_LIGHT::Directional, { 0.1f,0.1f,0.5f }, { 0.1f,0.1f,0.5f }, { 0.1f,0.1f,0.5f });
-            World::AddLight(mylight);
+            Scene::AddLight(mylight);
         }
 
         void SetCamera(Entity* _camera)
@@ -37,7 +37,7 @@ namespace BwatEngine
             camera = _camera;
         }
 
-        void Update(float dt)
+        void Update()
         {
             if (!camera)
                 return;
@@ -54,11 +54,11 @@ namespace BwatEngine
             shader.setMat4("view", Math::Mat4f::CreateTRSMat(cameraTransform.position, cameraTransform.rotation, cameraTransform.scale).Invert());
             shader.setMat4("proj", cameraProjection);
 
-            shader.setInt("nbrlights", (int)World::GetWorldLights().size());
-            for (unsigned int i = 0; i < World::GetWorldLights().size(); i++)
+            shader.setInt("nbrlights", (int)Scene::GetLights().size());
+            for (unsigned int i = 0; i < Scene::GetLights().size(); i++)
             {
                 std::string index = std::to_string(i);
-                World::GetWorldLights()[i].ApplyOnShader(&shader, index);
+                Scene::GetLights()[i].ApplyOnShader(&shader, index);
             }
             for (auto entityID : entities)
             {

@@ -3,6 +3,13 @@
 
 #include "ECS/System.hpp"
 
+#include "ECS/Components/GravityComponent.hpp"
+#include "ECS/Components/RigidBodyComponent.hpp"
+#include "ECS/Components/CameraComponent.hpp"
+#include "ECS/Components/PlayerComponent.hpp"
+#include "ECS/Components/RenderableComponent.hpp"
+#include "ECS/Components/TransformComponent.hpp"
+
 namespace BwatEngine
 {
     class PhysicsSystem : public System
@@ -10,7 +17,7 @@ namespace BwatEngine
     public:
         void Init() {};
 
-        void Update(float dt) 
+        void Update() 
         {
             for (auto entityID : entities)
             {
@@ -19,8 +26,8 @@ namespace BwatEngine
                 auto& transform = entity.GetComponent<TransformComponent>().transform;
                 auto const& gravity = entity.GetComponent<GravityComponent>();
 
-                transform.position += rigidBody.velocity * dt;
-                rigidBody.velocity += gravity.force * dt;
+                transform.position += rigidBody.velocity * Engine::GetContext().deltaTime;
+                rigidBody.velocity += gravity.force * Engine::GetContext().deltaTime;
             }
         };
     };

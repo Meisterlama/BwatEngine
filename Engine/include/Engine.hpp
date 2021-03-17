@@ -9,12 +9,10 @@
 #include "Rendering/FrameBuffer.hpp"
 #include "ECS/Entity.hpp"
 
+#include "Physic/Physic.hpp"
+
 namespace BwatEngine
 {
-	class InputsSystem;
-	class PhysicsSystem;
-	class PlayerControlSystem;
-	class RenderSystem;
 
 	struct Context
 	{
@@ -24,6 +22,8 @@ namespace BwatEngine
 		float lastFrame = 0.0f;
 
 		Rendering::FrameBufferObject MainFBO;
+
+		Scene scene{};
 	};
 
 	class Engine
@@ -37,18 +37,9 @@ namespace BwatEngine
 		void Update();
 		void Close();
 
-		Context context;
-
-		Rendering::Model model;
-		std::vector<Entity> entities;
-
-		std::shared_ptr<InputsSystem> inputSystem = nullptr;
-		std::shared_ptr<PhysicsSystem> physicsSystem = nullptr;
-		std::shared_ptr<PlayerControlSystem> playerControlSystem = nullptr;
-		std::shared_ptr<RenderSystem> renderSystem = nullptr;
-
 		bool ShouldRun() { return context.window.IsWorking(); };
 
+		static Context& GetContext() { return context; };
 
 	private:
 

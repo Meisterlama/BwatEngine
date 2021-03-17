@@ -9,9 +9,9 @@ namespace BwatEngine
     class InputsSystem : public System
     {
     public:
-        void Init(GLFWwindow* window)
+        void Init()
         {
-            BwatEngine::InputHandler::Initialize(window);
+            BwatEngine::InputHandler::Initialize(Engine::GetContext().window.window);
         }
 
         void Update(float dt)
