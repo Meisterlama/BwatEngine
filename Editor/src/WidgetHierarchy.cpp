@@ -11,20 +11,20 @@ WidgetHierarchy::WidgetHierarchy(EditorInterface *editor) : Widget(editor)
 
 void WidgetHierarchy::TickVisible()
 {
-    if (ImGui::ListBoxHeader("Entities", editor->engine->entities.size(), 10))
+    for (BwatEngine::EntityType i = 0; i < editor->engine->entities.size(); i++)
     {
-        for (BwatEngine::EntityType i = 0; i < editor->engine->entities.size(); i++)
-        {
-            bool selected = false;
-            std::string entityName = (editor->engine->entities[i].name != "") ? editor->engine->entities[i].name :
+        bool selected = false;
+        std::string entityName = (editor->engine->entities[i].name != "") ? editor->engine->entities[i].name :
                                      "Entity_" + std::to_string(editor->engine->entities[i].GetID());
-
-            if (ImGui::Selectable(entityName.c_str()))
-            {
+        if (ImGui::TreeNode(entityName.c_str()))
+        {
+            //if (ImGui::Selectable(entityName.c_str()))
+            //{
                 WidgetProperties::Inspect(editor->engine->entities[i]);
-            }
+            //}
+
+            ImGui::TreePop();
         }
-        ImGui::ListBoxFooter();
     }
 }
 
