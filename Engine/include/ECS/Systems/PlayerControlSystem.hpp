@@ -3,6 +3,8 @@
 
 #include "ECS/System.hpp"
 #include "Inputs/InputHandler.hpp"
+#include "imgui.h"
+#include "imgui_impl_glfw.h"
 
 namespace BwatEngine
 {
