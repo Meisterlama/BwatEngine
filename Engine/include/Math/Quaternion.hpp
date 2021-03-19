@@ -70,7 +70,10 @@ namespace BwatEngine::Math
 
             ML_FUNC_DECL Quaternion(Vector3<T> axis, T angle)
             {
-                if (Vector3Length(axis) != 0.0f) return Quaternion<T>{0};
+                if (Vector3Length(axis) != 0.0f) {
+                    *this = Quaternion{0};
+                    return;
+                }
 
                 angle *= 0.5;
                 axis.Normalize();
@@ -78,7 +81,7 @@ namespace BwatEngine::Math
                 float s = Sin(angle);
                 float c = Cos(angle);
 
-                return Quaternion<T>(axis.X * s, axis.Y * s, axis.Z * s, axis.W * c);
+                *this = Quaternion<T>(axis.X * s, axis.Y * s, axis.Z * s, axis.W * c);
             }
 
             ML_FUNC_DECL Quaternion(const Quaternion &quat) = default;

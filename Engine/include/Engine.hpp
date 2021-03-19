@@ -7,7 +7,9 @@
 
 #include "Rendering/Model.hpp"
 #include "Rendering/FrameBuffer.hpp"
-#include "ECS/Entity.hpp"
+#include "Core.hpp"
+
+#include "ECS/Coordinator.hpp"
 
 namespace BwatEngine
 {
@@ -24,7 +26,14 @@ namespace BwatEngine
 		float lastFrame = 0.0f;
 
 		Rendering::FrameBufferObject MainFBO;
-	};
+
+        std::shared_ptr<InputsSystem> inputSystem = nullptr;
+        std::shared_ptr<PhysicsSystem> physicsSystem = nullptr;
+        std::shared_ptr<PlayerControlSystem> playerControlSystem = nullptr;
+        std::shared_ptr<RenderSystem> renderSystem = nullptr;
+
+        std::vector<Entity> entities;
+    };
 
 	class Engine
 	{
@@ -40,12 +49,6 @@ namespace BwatEngine
 		Context context;
 
 		Rendering::Model model;
-		std::vector<Entity> entities;
-
-		std::shared_ptr<InputsSystem> inputSystem = nullptr;
-		std::shared_ptr<PhysicsSystem> physicsSystem = nullptr;
-		std::shared_ptr<PlayerControlSystem> playerControlSystem = nullptr;
-		std::shared_ptr<RenderSystem> renderSystem = nullptr;
 
 		bool ShouldRun() { return context.window.IsWorking(); };
 
