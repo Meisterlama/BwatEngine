@@ -30,7 +30,7 @@ std::vector<Rendering::Light>& Scene::GetLights()
 	return lights;
 }
 
-Scene::Scene()
+Scene::Scene(Window& window)
 {
     Entity::InitCoordinator();
     Entity::GetCoordinator().RegisterComponent<GravityComponent>();
@@ -41,7 +41,7 @@ Scene::Scene()
     Entity::GetCoordinator().RegisterComponent<PlayerComponent>();
 
     inputSystem = Entity::GetCoordinator().RegisterSystem<InputsSystem>();
-    inputSystem->Init();
+    inputSystem->Init(window);
 
     physicsSystem = Entity::GetCoordinator().RegisterSystem<PhysicsSystem>();
     {
@@ -94,7 +94,7 @@ Scene::Scene()
                 } });
                 entities[i].AddComponent<CameraComponent>(
                     { Math::Mat4f::CreatePerspective(80.f, 
-                        Engine::GetContext().window.GetWidth() / Engine::GetContext().window.GetHeight(), 0.1f, 1000.0f)
+                        window.GetWidth() / window.GetHeight(), 0.1f, 1000.0f)
                     });
                 entities[i].AddComponent<PlayerComponent>({});
                 entities[i].name = "Camera";

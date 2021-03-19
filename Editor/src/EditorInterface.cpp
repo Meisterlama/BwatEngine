@@ -49,7 +49,7 @@ void EditorInterface::OnTick()
     //glfwMakeContextCurrent(backup_current_context);
 }
 
-void EditorInterface::Initialise(BwatEngine::Window mainWindow)
+void EditorInterface::Initialise()
 {
     ApplyStyle();
 

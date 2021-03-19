@@ -26,8 +26,8 @@ namespace BwatEngine
                 auto& transform = entity.GetComponent<TransformComponent>().transform;
                 auto const& gravity = entity.GetComponent<GravityComponent>();
 
-                transform.position += rigidBody.velocity * Engine::GetContext().deltaTime;
-                rigidBody.velocity += gravity.force * Engine::GetContext().deltaTime;
+                transform.position += rigidBody.velocity * Time::deltaTime;
+                rigidBody.velocity += gravity.force * Time::deltaTime;
             }
         };
     };

@@ -16,13 +16,11 @@
 #include "ECS/Systems/PlayerControlSystem.hpp"
 #include "ECS/Systems/RenderSystem.hpp"
 
-
 namespace BwatEngine {
 
     //initialization
-    Engine::Engine()
+    Engine::Engine() : scene(window)
     {
-        GetContext() = {};
 
         IMGUI_CHECKVERSION();
         ImGui::CreateContext();
@@ -30,14 +28,9 @@ namespace BwatEngine {
         io.ConfigFlags |= ImGuiConfigFlags_NavEnableKeyboard;       // Enable Keyboard Controls
         io.ConfigFlags |= ImGuiConfigFlags_DockingEnable;           // Enable Docking
 
-        ImGui_ImplGlfw_InitForOpenGL(context.window.window, false);
+        ImGui_ImplGlfw_InitForOpenGL(GetGLFWwindow(), false);
         ImGui_ImplOpenGL3_Init("#version 330");
 
-        
-    }
-
-    Engine::~Engine()
-    {
     }
 
     //Main Funtion of engine 
@@ -49,10 +42,10 @@ namespace BwatEngine {
         ImGui_ImplGlfw_NewFrame();
         ImGui::NewFrame();
 
-        //Time
+
         float currentFrame = glfwGetTime();
-        context.deltaTime = currentFrame - context.lastFrame;
-        context.lastFrame = currentFrame;
+        Time::deltaTime = currentFrame - lastFrame;
+        lastFrame = currentFrame;
 
         ImGui::Begin("bonjour");
 
@@ -60,21 +53,17 @@ namespace BwatEngine {
         ImGui::End();
 
         //physicsSystem->Update(deltaTime);
-        context.scene.playerControlSystem->Update(context.deltaTime, context.window);
+        scene.playerControlSystem->Update(Time::deltaTime, GetGLFWwindow());
         
-        context.MainFBO.UseAndBind();
-        context.scene.renderSystem->Update();
-        context.MainFBO.Unbind();
+        MainFBO.UseAndBind();
+        scene.renderSystem->Update(GetWindow());
+        MainFBO.Unbind();
 
-        context.scene.inputSystem->Update(context.deltaTime);
+        scene.inputSystem->Update();
 
-        //ImGui::Render();
-        //ImGui_ImplOpenGL3_RenderDrawData(ImGui::GetDrawData());
-
-        glfwSwapBuffers(context.window.window);
+        glfwSwapBuffers(GetGLFWwindow());
         
     }
-
 
     //Close all content 
     void Engine::Close()
@@ -82,7 +71,12 @@ namespace BwatEngine {
         ImGui_ImplGlfw_Shutdown();
         ImGui_ImplOpenGL3_Shutdown();
         ImGui::DestroyContext();
-        context.window.Close();
+        GetWindow().Close();
+    }
+
+    Engine::~Engine()
+    {
+
     }
 }
 

@@ -13,11 +13,11 @@ namespace BwatEngine
         void Init()
         {};
 
-        void Update(float dt, Window &win)
+        void Update(float dt, GLFWwindow *win)
         {
             if (InputHandler::GetKeyboardDown(KEY_F1)) {
                 lockMouse = !lockMouse;
-                glfwSetInputMode(win.window, GLFW_CURSOR, (lockMouse) ? GLFW_CURSOR_DISABLED : GLFW_CURSOR_NORMAL);
+                glfwSetInputMode(win, GLFW_CURSOR, (lockMouse) ? GLFW_CURSOR_DISABLED : GLFW_CURSOR_NORMAL);
             }
             if (lockMouse) {
                 for (auto &entityId : entities) {

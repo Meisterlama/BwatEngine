@@ -2,12 +2,14 @@
 #define WORLD_HPP
 
 #include <vector>
-
-#include "Rendering/Light.hpp"
-#include "ECS/Entity.hpp"
+#include <random>
 #include <PxPhysicsAPI.h>
 
-#include <random>
+#include "Rendering/Light.hpp"
+#include "Rendering/Model.hpp"
+#include "ECS/Entity.hpp"
+#include "Physic/Physic.hpp"
+
 
 namespace BwatEngine
 {
@@ -15,6 +17,7 @@ namespace BwatEngine
 	class PhysicsSystem;
 	class PlayerControlSystem;
 	class RenderSystem;
+	class Window;
 
 	class Scene
 	{
@@ -27,7 +30,7 @@ namespace BwatEngine
 		static void AddLight(Rendering::Light& newlight);
 		static std::vector<Rendering::Light>& GetLights();
 
-		Scene();
+		Scene(Window& window);
 
 		Physic physic{};
 

@@ -17,16 +17,14 @@ namespace BwatEngine
     class RenderSystem : public System
     {
         Rendering::Shader shader;
-        Window* window;
         Entity* camera;
 
-
     public:
+
         Math::Vec3f clearColor = { 0.5f, 0.5f, 0.5f };
 
         void Init()
         {
-            window = &Engine::GetContext().window;
             shader = {"Assets/basic.vs", "Assets/multilight.fs"};
             Rendering::Light mylight(Rendering::TYPE_LIGHT::Directional, { 0.1f,0.1f,0.5f }, { 0.1f,0.1f,0.5f }, { 0.1f,0.1f,0.5f });
             Scene::AddLight(mylight);
@@ -37,13 +35,13 @@ namespace BwatEngine
             camera = _camera;
         }
 
-        void Update()
+        void Update(Window &win)
         {
             if (!camera)
                 return;
 
             glEnable(GL_DEPTH_TEST);
-            glViewport(0, 0, window->GetWidth(), window->GetHeight());
+            glViewport(0, 0, win.GetWidth(), win.GetHeight());
             glClearColor(clearColor[0], clearColor[1], clearColor[2], 1.f);
             glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
