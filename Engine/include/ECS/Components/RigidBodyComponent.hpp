@@ -2,13 +2,19 @@
 #define ENGINE_ECS_COMPONENTS_RIGID_BODY_HPP
 
 #include "Math/Vector/Vector3.hpp"
+#include "Math/Transform.hpp"
+#include <PxPhysicsAPI.h>
 
 namespace BwatEngine
 {
     struct RigidBodyComponent
     {
-        Math::Vec3f velocity;
-        Math::Vec3f acceleration;
+        RigidBodyComponent(const Math::Transform& transform)
+        {
+            rigidBody = Physic::GetPhysics()->createRigidDynamic(*(physx::PxTransform*) & transform);
+        };
+
+        physx::PxRigidDynamic* rigidBody;
     };
 }
 

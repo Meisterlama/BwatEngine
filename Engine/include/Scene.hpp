@@ -3,7 +3,6 @@
 
 #include <vector>
 #include <random>
-#include <PxPhysicsAPI.h>
 
 #include "Rendering/Light.hpp"
 #include "Rendering/Model.hpp"
@@ -32,7 +31,6 @@ namespace BwatEngine
 
 		Scene(Window& window);
 
-		Physic physic{};
 
 		Rendering::Model model;
 
@@ -42,6 +40,13 @@ namespace BwatEngine
 		std::shared_ptr<PhysicsSystem> physicsSystem = nullptr;
 		std::shared_ptr<PlayerControlSystem> playerControlSystem = nullptr;
 		std::shared_ptr<RenderSystem> renderSystem = nullptr;
+
+		// PhysX
+		Physic physic{};
+		physx::PxScene* scenePhysic;
+		void PSaddActor() { scenePhysic->addActor(); }
+
+
 	};
 
 }

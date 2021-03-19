@@ -16,26 +16,30 @@ public:
 Physic::Physic()
 {
 	gFoundation = PxCreateFoundation(PX_PHYSICS_VERSION, gAllocator, gErrorCallback);
-	
-	//Tool of debug for PhysX
-	//gPvd = PxCreatePvd(*gFoundation);
-	//PxPvdTransport* transport = PxDefaultPvdSocketTransportCreate(PVD_HOST, 5425, 10);
 
 	gPhysics = PxCreatePhysics(PX_PHYSICS_VERSION, *gFoundation, PxTolerancesScale(), true);
 	PxInitExtensions(*gPhysics, nullptr);
+	
+	gCooking = PxCreateCooking(PX_PHYSICS_VERSION, *gFoundation, PxCookingParams(gPhysics->getTolerancesScale()));
 
 	PxU32 numCores = 4;
 	gDispatcher = PxDefaultCpuDispatcherCreate(numCores == 0 ? 0 : numCores - 1);
+
+
+	if (!PxInitExtensions(*gPhysics, gPvd))
+		LogError("PxCreatePhysics failed!");;
 	
-	if(gFoundation && gPhysics)
-		LogInfo("[PhysXEngine] PhysX has been initalized succesfully!");
+	if(gFoundation && gPhysics && gCooking)
+		LogInfo("[PhysX] PxCreatePhysics succes!");
+	else
+		LogError("[PhysX] PxCreatePhysics failed!");;
 }
 
 Physic::~Physic()
 {
 	gDispatcher->release();
+	gCooking->release();
 	gPhysics->release();
 	gFoundation->release();
 }
-
 

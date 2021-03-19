@@ -14,14 +14,19 @@ namespace BwatEngine
 		Physic();
 		~Physic();
 
+		physx::PxFoundation* GetFoundation() { return gFoundation; }
+		static physx::PxPhysics* GetPhysics() { return gPhysics; }
+		physx::PxCooking* GetCooking() { return gCooking; }
+		physx::PxCpuDispatcher* GetCPUDispatcher() { return gDispatcher; }
+
 	private:
 
 		physx::PxDefaultAllocator gAllocator;
-		physx::PxFoundation* gFoundation = nullptr;
-		physx::PxPhysics* gPhysics = nullptr;
-		physx::PxPvd* gPvd = nullptr;
-
 		physx::PxDefaultCpuDispatcher* gDispatcher = nullptr;
+		physx::PxFoundation* gFoundation = nullptr;
+		static physx::PxPhysics* gPhysics;
+		physx::PxCooking* gCooking = nullptr;
+		physx::PxPvd* gPvd = nullptr;
 
 	};
 

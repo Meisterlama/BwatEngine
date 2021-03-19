@@ -5,31 +5,24 @@
 
 #include "ECS/Components/GravityComponent.hpp"
 #include "ECS/Components/RigidBodyComponent.hpp"
-#include "ECS/Components/CameraComponent.hpp"
-#include "ECS/Components/PlayerComponent.hpp"
-#include "ECS/Components/RenderableComponent.hpp"
 #include "ECS/Components/TransformComponent.hpp"
+
+#include "Scene.hpp"
 
 namespace BwatEngine
 {
     class PhysicsSystem : public System
     {
     public:
-        void Init() {};
 
-        void Update() 
-        {
-            for (auto entityID : entities)
-            {
-                Entity entity{ entityID };
-                auto& rigidBody = entity.GetComponent<RigidBodyComponent>();
-                auto& transform = entity.GetComponent<TransformComponent>().transform;
-                auto const& gravity = entity.GetComponent<GravityComponent>();
+        void Init(Scene* scene, const Math::Vec3f &gravity);
+        void BeginSimulation();
+        void Update();
+        
 
-                transform.position += rigidBody.velocity * Time::deltaTime;
-                rigidBody.velocity += gravity.force * Time::deltaTime;
-            }
-        };
+    private:
+
+        Scene* ptrScene = nullptr;
     };
 }
 
