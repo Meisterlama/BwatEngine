@@ -2,7 +2,7 @@
 #define ENGINE_ECS_ENTITY_MANAGER_HPP
 #include "Core.hpp"
 #include "Debug/Logger.hpp"
-#include <array>
+#include <vector>
 #include <queue>
 #include <cassert>
 
@@ -12,12 +12,15 @@ namespace BwatEngine
     {
         std::queue<Entity> availableEntities{};
         Entity nextEntity{};
-        std::array<Signature, MAX_ENTITIES> signatures{};
+        // TODO: Manage vector reallocation to handle more entities than default MAX_ENTITIES
+        std::vector<Signature> signatures{};
         int livingEntityCount{};
 
     public:
         EntityManager()
-        {}
+        {
+            signatures.reserve(MAX_ENTITIES);
+        }
 
         Entity CreateEntity()
         {

@@ -4,7 +4,7 @@
 #include "Core.hpp"
 #include <cassert>
 #include <unordered_map>
-#include <array>
+#include <vector>
 
 namespace BwatEngine
 {
@@ -18,12 +18,18 @@ namespace BwatEngine
     template<typename T>
     class ComponentArray: public IComponentArray
     {
-        std::array<T, MAX_ENTITIES> componentArray{};
+        // TODO: Manage vector reallocation to handle more entities than default MAX_ENTITIES
+        std::vector<T> componentArray{};
         std::unordered_map<Entity, size_t> entityToIndexMap{};
         std::unordered_map<size_t, Entity> indexToEntityMap{};
         size_t size{};
 
     public:
+        ComponentArray()
+        {
+            componentArray.reserve(MAX_ENTITIES);
+        }
+
         void InsertData(Entity entity, T component)
         {
             assert(entityToIndexMap.find(entity) == entityToIndexMap.end() && "Component added to same entity more than once.");
