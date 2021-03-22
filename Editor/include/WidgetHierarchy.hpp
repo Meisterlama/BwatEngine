@@ -3,7 +3,6 @@
 
 #include "Widget.hpp"
 #include <memory>
-#include <ECS/Entity.hpp>
 
 class WidgetHierarchy : public Widget
 {

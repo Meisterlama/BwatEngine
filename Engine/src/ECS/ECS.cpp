@@ -74,7 +74,7 @@ namespace BwatEngine
         std::uniform_real_distribution<float> randScale(3.0f, 5.0f);
         std::uniform_real_distribution<float> randColor(0.0f, 1.0f);
         std::uniform_real_distribution<float> randGravity(-10.0f, -1.0f);
-        context.entities = std::vector<Entity>(MAX_ENTITIES / 10);
+        context.entities = std::vector<Entity>(100);
         for (Entity i = 0; i < context.entities.size(); i++)
         {
             context.entities[i] =  BwatEngine::Coordinator::GetInstance()->CreateEntity();
@@ -108,5 +108,8 @@ namespace BwatEngine
                 BwatEngine::Coordinator::GetInstance()->AddComponent<RenderableComponent>(context.entities[i],{ &model });
             }
         }
+        Coordinator::GetInstance()->SetParent(context.entities[5], context.entities[3]);
+        Coordinator::GetInstance()->SetParent(context.entities[3], context.entities[2]);
+
     }
 }
