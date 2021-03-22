@@ -221,7 +221,14 @@
 <dl class="cpp function">
 <dt id="_CPPv4N10BwatEngine4Math8Internal7Vector27Vector2E1T">
 <span id="_CPPv3N10BwatEngine4Math8Internal7Vector27Vector2E1T"></span><span id="_CPPv2N10BwatEngine4Math8Internal7Vector27Vector2E1T"></span><span id="BwatEngine::Math::Internal::Vector2::Vector2__T"></span><span class="target" id="classBwatEngine_1_1Math_1_1Internal_1_1Vector2_1ac38cda47c0ffbe455e138b6f6f380384"></span><em class="property"><span class="pre">inline</span></em> <span class="pre">ML_FUNC_DECL</span> <code class="sig-name descname"><span class="pre">Vector2</span></code><span class="sig-paren">(</span><a class="reference internal" href="#_CPPv4I0EN10BwatEngine4Math8Internal7Vector2E" title="BwatEngine::Math::Internal::Vector2::T"><span class="pre">T</span></a> <em><span class="pre">x</span></em> <span class="pre">=</span> <span class="pre">0</span><span class="sig-paren">)</span><a class="headerlink" href="#_CPPv4N10BwatEngine4Math8Internal7Vector27Vector2E1T" title="Permalink to this definition">¶</a><br /></dt>
-<dd></dd></dl>
+<dd><p><dl class="simple">
+<dt><strong>Parameters</strong></dt><dd><ul class="breatheparameterlist simple">
+<li><p><code class="docutils literal notranslate"><span class="pre">x</span></code>: Values of all members </p></li>
+</ul>
+</dd>
+</dl>
+</p>
+</dd></dl>
 
 <dl class="cpp function">
 <dt id="_CPPv4N10BwatEngine4Math8Internal7Vector27Vector2E1T1T">
@@ -251,47 +258,113 @@
 <dl class="cpp function">
 <dt>
 <span class="target" id="classBwatEngine_1_1Math_1_1Internal_1_1Vector2_1a7c4407dd601365fb828270d7ce1cdf9a"></span><code class="sig-name descname"><span class="pre">ML_FUNC_DECL</span> <span class="pre">float</span> <span class="pre">DotProduct</span> <span class="pre">(const</span> <span class="pre">Vector2</span> <span class="pre">&amp;v)</span> <span class="pre">const</span></code></dt>
-<dd></dd></dl>
+<dd><p><dl class="simple">
+<dt><strong>Return</strong></dt><dd><p>The dot product between self and v </p>
+</dd>
+</dl>
+</p>
+</dd></dl>
 
 <dl class="cpp function">
 <dt>
 <span class="target" id="classBwatEngine_1_1Math_1_1Internal_1_1Vector2_1a1ba23890f726fee3602167e2ff2c0cd0"></span><code class="sig-name descname"><span class="pre">ML_FUNC_DECL</span> <span class="pre">float</span> <span class="pre">Amplitude</span> <span class="pre">()</span> <span class="pre">const</span></code></dt>
-<dd></dd></dl>
+<dd><p><dl class="simple">
+<dt><strong>Remark</strong></dt><dd><p>Valid for comparisons, but actually equals to length squared, at the benefits of not computing sqrt </p>
+</dd>
+<dt><strong>Return</strong></dt><dd><p>The amplitude of the vector </p>
+</dd>
+</dl>
+</p>
+</dd></dl>
 
 <dl class="cpp function">
 <dt>
 <span class="target" id="classBwatEngine_1_1Math_1_1Internal_1_1Vector2_1a631dac5c5b5900d3016daa4a7d8a95d7"></span><code class="sig-name descname"><span class="pre">ML_FUNC_DECL</span> <span class="pre">float</span> <span class="pre">Length</span> <span class="pre">()</span> <span class="pre">const</span></code></dt>
-<dd></dd></dl>
+<dd><p><dl class="simple">
+<dt><strong>Remark</strong></dt><dd><p>If you only need it for comparison consider using <a class="reference internal" href="#classBwatEngine_1_1Math_1_1Internal_1_1Vector2_1a1ba23890f726fee3602167e2ff2c0cd0"><span class="std std-ref">Amplitude()</span></a> </p>
+</dd>
+<dt><strong>Return</strong></dt><dd><p>The length of the vector </p>
+</dd>
+</dl>
+</p>
+</dd></dl>
 
 <dl class="cpp function">
 <dt>
 <span class="target" id="classBwatEngine_1_1Math_1_1Internal_1_1Vector2_1a8ee14722b201230b85d89b64dbfad3a1"></span><code class="sig-name descname"><span class="pre">ML_FUNC_DECL</span> <span class="pre">Vector2</span> <span class="pre">&amp;</span> <span class="pre">Scale</span> <span class="pre">(const</span> <span class="pre">float</span> <span class="pre">&amp;factor)</span></code></dt>
-<dd></dd></dl>
+<dd><p>Scale the vector in place. </p>
+<p><dl class="simple">
+<dt><strong>Return</strong></dt><dd><p>A reference to self </p>
+</dd>
+<dt><strong>Parameters</strong></dt><dd><ul class="breatheparameterlist simple">
+<li><p><code class="docutils literal notranslate"><span class="pre">factor</span></code>: Factor of the uniform scale </p></li>
+</ul>
+</dd>
+</dl>
+</p>
+</dd></dl>
 
 <dl class="cpp function">
 <dt>
 <span class="target" id="classBwatEngine_1_1Math_1_1Internal_1_1Vector2_1a1521ced5527d58c5386080f0eb2b409c"></span><code class="sig-name descname"><span class="pre">ML_FUNC_DECL</span> <span class="pre">Vector2</span> <span class="pre">GetScaled</span> <span class="pre">(const</span> <span class="pre">float</span> <span class="pre">&amp;factor)</span> <span class="pre">const</span></code></dt>
-<dd></dd></dl>
+<dd><p><dl class="simple">
+<dt><strong>Return</strong></dt><dd><p>A scaled copy of the vector </p>
+</dd>
+<dt><strong>Parameters</strong></dt><dd><ul class="breatheparameterlist simple">
+<li><p><code class="docutils literal notranslate"><span class="pre">factor</span></code>: Factor of the uniform scale </p></li>
+</ul>
+</dd>
+</dl>
+</p>
+</dd></dl>
 
 <dl class="cpp function">
 <dt>
 <span class="target" id="classBwatEngine_1_1Math_1_1Internal_1_1Vector2_1a64430df0986552bc0f5e1ab69c1b6df4"></span><code class="sig-name descname"><span class="pre">ML_FUNC_DECL</span> <span class="pre">Vector2</span> <span class="pre">&amp;</span> <span class="pre">Normalize</span> <span class="pre">()</span></code></dt>
-<dd></dd></dl>
+<dd><p>Normalize the vector in place. </p>
+<p><dl class="simple">
+<dt><strong>Warning</strong></dt><dd><p>Does not check for length == 0 </p>
+</dd>
+<dt><strong>Return</strong></dt><dd><p>A reference to self </p>
+</dd>
+</dl>
+</p>
+</dd></dl>
 
 <dl class="cpp function">
 <dt>
 <span class="target" id="classBwatEngine_1_1Math_1_1Internal_1_1Vector2_1a2219f1913f1d7d55cdfbced40184bfa2"></span><code class="sig-name descname"><span class="pre">ML_FUNC_DECL</span> <span class="pre">Vector2</span> <span class="pre">GetNormalized</span> <span class="pre">()</span> <span class="pre">const</span></code></dt>
-<dd></dd></dl>
+<dd><p><dl class="simple">
+<dt><strong>Return</strong></dt><dd><p>A normalized copy of the vector </p>
+</dd>
+</dl>
+</p>
+</dd></dl>
 
 <dl class="cpp function">
 <dt>
 <span class="target" id="classBwatEngine_1_1Math_1_1Internal_1_1Vector2_1a73a60119d0e23a4d9afd95cd6d6f98b5"></span><code class="sig-name descname"><span class="pre">ML_FUNC_DECL</span> <span class="pre">Vector2</span> <span class="pre">&amp;</span> <span class="pre">SafeNormalize</span> <span class="pre">()</span></code></dt>
-<dd></dd></dl>
+<dd><p>Normalize the vector in place. </p>
+<p><dl class="simple">
+<dt><strong>Remark</strong></dt><dd><p>If length == 0, does nothing </p>
+</dd>
+<dt><strong>Return</strong></dt><dd><p>A reference to self </p>
+</dd>
+</dl>
+</p>
+</dd></dl>
 
 <dl class="cpp function">
 <dt>
 <span class="target" id="classBwatEngine_1_1Math_1_1Internal_1_1Vector2_1a1b0dcda87cc0c154167034e5a5c0a8f4"></span><code class="sig-name descname"><span class="pre">ML_FUNC_DECL</span> <span class="pre">Vector2</span> <span class="pre">GetSafeNormalized</span> <span class="pre">()</span> <span class="pre">const</span></code></dt>
-<dd></dd></dl>
+<dd><p><dl class="simple">
+<dt><strong>Remark</strong></dt><dd><p>If length == 0, return Vector{0} </p>
+</dd>
+<dt><strong>Return</strong></dt><dd><p>Return a normalized copy of the vector </p>
+</dd>
+</dl>
+</p>
+</dd></dl>
 
 <dl class="cpp function">
 <dt>
