@@ -3,7 +3,7 @@
 
 #include "Widget.hpp"
 #include <memory>
-#include <ECS/Entity.hpp>
+#include "Core.hpp"
 #include <ECS/Components/TransformComponent.hpp>
 
 class WidgetProperties : public Widget
@@ -15,7 +15,7 @@ public:
 
     static void Inspect(BwatEngine::Entity& entity);
 
-    static BwatEngine::Entity* currentEntity;
+    static BwatEngine::Entity currentEntity;
 
 private:
     template<typename T>
