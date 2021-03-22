@@ -1,13 +1,15 @@
 #ifndef BWATENGINE_FILEDIALOG_H
 #define BWATENGINE_FILEDIALOG_H
 
+#include <filesystem>
+#include <set>
+
 class FileDialog
 {
 private:
     struct FileInfoStruct
     {
-        char type = '';
-        std::filesystem::path filePath;
+        std::string filePath;
         std::string fileName;
         std::string ext;
     };
@@ -29,16 +31,21 @@ private:
     bool showDialog = false;
     std::vector<FilterInfoStruct> filterList;
     FilterInfoStruct selectedFilter;
+    std::string dlgFilters{};
+    std::filesystem::path dlgPath;
+    std::filesystem::path dlgDefaultFileName;
+    std::filesystem::path dlgDefaultEx;
 
 public:
     FileDialog();
     ~FileDialog();
 
-    void OpenDialog(const char* aFilters, const std::filesystem::path& aFilePathName, ImGuiFileDialogFlags flags = 0);
+    void OpenDialog(const char* aFilters, const std::filesystem::path& aFilePathName);
 
-protected:
-    void SetDefaultFileName(const std::string& aFileName);																// set default file name
-    bool SelectDirectory(const FileInfoStruct& aInfos);																	// enter directory
-    void SelectFileName(const FileInfoStruct& aInfos);
+protected:	    // set default file name
+    void ParseFilters(const char* aFilters);
+    void SetSelectedFilterWithExt(const std::string& aFilter);
+    void SetPath(const std::string& aPath);
+    void ScanDir(const std::string& aPath);
 };
 #endif //BWATENGINE_FILEDIALOG_H
