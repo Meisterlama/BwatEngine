@@ -47,12 +47,7 @@ namespace BwatEngine {
         Time::deltaTime = currentFrame - lastFrame;
         lastFrame = currentFrame;
 
-        ImGui::Begin("bonjour");
-
-        ImGui::Text("bonjor");
-        ImGui::End();
-
-        //physicsSystem->Update(deltaTime);
+        scene.physicsSystem->Update();
         scene.playerControlSystem->Update(Time::deltaTime, GetGLFWwindow());
         
         MainFBO.UseAndBind();

@@ -10,6 +10,10 @@
 #include "Window.hpp"
 #include "Scene.hpp"
 
+#include "ECS/Components/CameraComponent.hpp"
+#include "ECS/Components/TransformComponent.hpp"
+#include "ECS/Components/RenderableComponent.hpp"
+
 namespace BwatEngine
 {
     extern Entity gCamera;

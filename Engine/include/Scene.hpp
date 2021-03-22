@@ -44,7 +44,6 @@ namespace BwatEngine
 		// PhysX
 		Physic physic{};
 		physx::PxScene* scenePhysic;
-		void PSaddActor() { scenePhysic->addActor(); }
 
 
 	};

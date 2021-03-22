@@ -7,6 +7,7 @@
 #include "ECS/Components/PlayerComponent.hpp"
 #include "ECS/Components/RenderableComponent.hpp"
 #include "ECS/Components/TransformComponent.hpp"
+#include "ECS/Components/ColliderComponent.hpp"
 
 
 #include "ECS/Systems/InputSystem.hpp"
@@ -14,6 +15,8 @@
 #include "ECS/Systems/PlayerControlSystem.hpp"
 #include "ECS/Systems/RenderSystem.hpp"
 #include "Engine.hpp"
+
+#include "Physic/PhysicCast.hpp"
 
 
 using namespace BwatEngine;
@@ -39,6 +42,7 @@ Scene::Scene(Window& window)
     Entity::GetCoordinator().RegisterComponent<RenderableComponent>();
     Entity::GetCoordinator().RegisterComponent<TransformComponent>();
     Entity::GetCoordinator().RegisterComponent<PlayerComponent>();
+    Entity::GetCoordinator().RegisterComponent<ColliderComponent>();
 
     inputSystem = Entity::GetCoordinator().RegisterSystem<InputsSystem>();
     inputSystem->Init(window);
@@ -46,12 +50,12 @@ Scene::Scene(Window& window)
     physicsSystem = Entity::GetCoordinator().RegisterSystem<PhysicsSystem>();
     {
         Signature signature;
-        signature.set(Entity::GetComponentType<GravityComponent>());
         signature.set(Entity::GetComponentType<RigidBodyComponent>());
         signature.set(Entity::GetComponentType<TransformComponent>());
+        signature.set(Entity::GetComponentType<ColliderComponent>());
         Entity::GetCoordinator().SetSystemSignature<PhysicsSystem>(signature);
     }
-    physicsSystem->Init();
+    physicsSystem->Init(this, {0, -1, 0});
 
     playerControlSystem = Entity::GetCoordinator().RegisterSystem<PlayerControlSystem>();
     {
@@ -82,7 +86,10 @@ Scene::Scene(Window& window)
     std::uniform_real_distribution<float> randColor(0.0f, 1.0f);
     std::uniform_real_distribution<float> randGravity(-10.0f, -1.0f);
 
+    physx::PxMaterial* material = Physic::GetPhysics()->createMaterial(0,0,0);
+
     entities = std::vector<Entity>(MAX_ENTITIES);
+
         for (EntityType i = 0; i < entities.size(); i++)
         {
             if (i == 0)
@@ -101,20 +108,20 @@ Scene::Scene(Window& window)
                 renderSystem->SetCamera(&entities[i]);
             }
             else
-            {
-                entities[i].AddComponent<GravityComponent>({
-                                                               Math::Vec3f{0.f, randGravity(generator), 0.f}
-                    });
-                entities[i].AddComponent<RigidBodyComponent>({
-                                                                 Math::Vec3f{0.f, 0.f, 0.f},
-                                                                 Math::Vec3f{0.f, 0.f, 0.f}
-                    });
+            {               
                 entities[i].AddComponent<TransformComponent>({ Math::Transform{
                     Math::Vec3f{randPosition(generator), randPosition(generator), randPosition(generator)},
                     Math::Vec3f{randRotation(generator), randRotation(generator), randRotation(generator)},
                     Math::Vec3f{3}
                 } });
+                auto& eTransform =  entities[i].GetComponent<TransformComponent>().transform;
+                entities[i].AddComponent<RigidBodyComponent>(eTransform);
+                entities[i].AddComponent<ColliderComponent>({ material, physx::PxBoxGeometry{ ToPxVec3(eTransform.scale / 2) }, eTransform });
                 entities[i].AddComponent<RenderableComponent>({ &model });
+
+                //physx::PxActor* actor = entities[i].GetComponent<ColliderComponent>().staticActor;
+                //actor->userData = (void*)0x1234;
+                scenePhysic->addActor(*entities[i].GetComponent<RigidBodyComponent>().rigidBody);
             }
         }
 }
