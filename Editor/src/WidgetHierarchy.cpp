@@ -43,7 +43,7 @@ void WidgetHierarchy::TickVisible()
 {
     auto &coordinator = *BwatEngine::Coordinator::GetInstance();
 
-    for (auto &entity : coordinator.GetRootNodes())
+    for (auto &entity : coordinator.GetRootEntities())
     {
         ShowEntity(entity);
     }

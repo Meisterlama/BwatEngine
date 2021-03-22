@@ -147,7 +147,8 @@ namespace BwatEngine
             return sceneMap[entity];
         }
 
-        std::vector<Entity> GetRootNodes()
+        //TODO: Better way to get root entities
+        std::vector<Entity> GetRootEntities()
         {
             std::vector<Entity> rootEntities;
             for (auto& [id, node] : sceneMap)
