@@ -38,6 +38,9 @@ namespace BwatEngine
         void operator=(const Coordinator&) = delete;
 
     public:
+        /**
+         * @return A handle to the Coordinator instance
+         */
         static Coordinator* GetInstance()
         {
             static Coordinator* coordinator = nullptr;
