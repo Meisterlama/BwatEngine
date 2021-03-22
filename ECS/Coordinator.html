@@ -1,0 +1,439 @@
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" >
+<head>
+  <meta charset="utf-8" />
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  
+  <title>Coordinator &mdash; BwatEngine  documentation</title>
+  
+
+  
+  <link rel="stylesheet" href="../_static/css/theme.css" type="text/css" />
+  <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
+
+  
+  
+
+  
+  
+
+  
+
+  
+  <!--[if lt IE 9]>
+    <script src="../_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+  
+    
+      <script type="text/javascript" id="documentation_options" data-url_root="../" src="../_static/documentation_options.js"></script>
+        <script src="../_static/jquery.js"></script>
+        <script src="../_static/underscore.js"></script>
+        <script src="../_static/doctools.js"></script>
+    
+    <script type="text/javascript" src="../_static/js/theme.js"></script>
+
+    
+    <link rel="index" title="Index" href="../genindex.html" />
+    <link rel="search" title="Search" href="../search.html" />
+    <link rel="prev" title="ECS" href="../ECSQuickstart.html" /> 
+</head>
+
+<body class="wy-body-for-nav">
+
+   
+  <div class="wy-grid-for-nav">
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+          
+
+          
+            <a href="../index.html" class="icon icon-home"> BwatEngine
+          
+
+          
+          </a>
+
+          
+            
+            
+          
+
+          
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+
+          
+        </div>
+
+        
+        <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+          
+            
+            
+              
+            
+            
+              <ul class="current">
+<li class="toctree-l1 current"><a class="reference internal" href="../ECSQuickstart.html">ECS</a><ul class="current">
+<li class="toctree-l2 current"><a class="current reference internal" href="#">Coordinator</a></li>
+</ul>
+</li>
+</ul>
+
+            
+          
+        </div>
+        
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" aria-label="top navigation">
+        
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../index.html">BwatEngine</a>
+        
+      </nav>
+
+
+      <div class="wy-nav-content">
+        
+        <div class="rst-content">
+        
+          
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<div role="navigation" aria-label="breadcrumbs navigation">
+
+  <ul class="wy-breadcrumbs">
+    
+      <li><a href="../index.html" class="icon icon-home"></a> &raquo;</li>
+        
+          <li><a href="../ECSQuickstart.html">ECS</a> &raquo;</li>
+        
+      <li>Coordinator</li>
+    
+    
+      <li class="wy-breadcrumbs-aside">
+        
+          
+            <a href="../_sources/ECS/Coordinator.rst.txt" rel="nofollow"> View page source</a>
+          
+        
+      </li>
+    
+  </ul>
+
+  
+  <div class="rst-breadcrumbs-buttons" role="navigation" aria-label="breadcrumb navigation">
+      
+      
+        <a href="../ECSQuickstart.html" class="btn btn-neutral float-left" title="ECS" accesskey="p"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+      
+  </div>
+  
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+            
+  <div class="section" id="coordinator">
+<h1>Coordinator<a class="headerlink" href="#coordinator" title="Permalink to this headline">¶</a></h1>
+<dl class="cpp class">
+<dt id="_CPPv4N10BwatEngine11CoordinatorE">
+<span id="_CPPv3N10BwatEngine11CoordinatorE"></span><span id="_CPPv2N10BwatEngine11CoordinatorE"></span><span id="BwatEngine::Coordinator"></span><span class="target" id="classBwatEngine_1_1Coordinator"></span><em class="property"><span class="pre">class</span> </em><code class="sig-prename descclassname"><span class="pre">BwatEngine</span><code class="sig-prename descclassname"><span class="pre">::</span></code></code><code class="sig-name descname"><span class="pre">Coordinator</span></code><a class="headerlink" href="#_CPPv4N10BwatEngine11CoordinatorE" title="Permalink to this definition">¶</a><br /></dt>
+<dd><p>Singleton managing everything related to the ECS. </p>
+<div class="breathe-sectiondef docutils container">
+<p class="breathe-sectiondef-title rubric">Public Functions</p>
+<dl class="cpp function">
+<dt id="_CPPv4N10BwatEngine11Coordinator4InitEv">
+<span id="_CPPv3N10BwatEngine11Coordinator4InitEv"></span><span id="_CPPv2N10BwatEngine11Coordinator4InitEv"></span><span id="BwatEngine::Coordinator::Init"></span><span class="target" id="classBwatEngine_1_1Coordinator_1aebd3aec3dcdc6882f704645f40554a99"></span><em class="property"><span class="pre">inline</span></em> <span class="pre">void</span> <code class="sig-name descname"><span class="pre">Init</span></code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#_CPPv4N10BwatEngine11Coordinator4InitEv" title="Permalink to this definition">¶</a><br /></dt>
+<dd></dd></dl>
+
+<dl class="cpp function">
+<dt id="_CPPv4N10BwatEngine11Coordinator12CreateEntityEv">
+<span id="_CPPv3N10BwatEngine11Coordinator12CreateEntityEv"></span><span id="_CPPv2N10BwatEngine11Coordinator12CreateEntityEv"></span><span id="BwatEngine::Coordinator::CreateEntity"></span><span class="target" id="classBwatEngine_1_1Coordinator_1a06ac96e7d3f8b79caf5f566aee86f522"></span><em class="property"><span class="pre">inline</span></em> <span class="pre">Entity</span> <code class="sig-name descname"><span class="pre">CreateEntity</span></code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#_CPPv4N10BwatEngine11Coordinator12CreateEntityEv" title="Permalink to this definition">¶</a><br /></dt>
+<dd><p>Find a valid entity ID, reserve it and return it. </p>
+<p><dl class="simple">
+<dt><strong>Return</strong></dt><dd><p>The created entity ID </p>
+</dd>
+</dl>
+</p>
+</dd></dl>
+
+<dl class="cpp function">
+<dt id="_CPPv4N10BwatEngine11Coordinator13DestroyEntityE6Entity">
+<span id="_CPPv3N10BwatEngine11Coordinator13DestroyEntityE6Entity"></span><span id="_CPPv2N10BwatEngine11Coordinator13DestroyEntityE6Entity"></span><span id="BwatEngine::Coordinator::DestroyEntity__Entity"></span><span class="target" id="classBwatEngine_1_1Coordinator_1a3a4a232fc8e6d8d950ea3366835ecdc0"></span><em class="property"><span class="pre">inline</span></em> <span class="pre">void</span> <code class="sig-name descname"><span class="pre">DestroyEntity</span></code><span class="sig-paren">(</span><span class="pre">Entity</span> <em><span class="pre">entity</span></em><span class="sig-paren">)</span><a class="headerlink" href="#_CPPv4N10BwatEngine11Coordinator13DestroyEntityE6Entity" title="Permalink to this definition">¶</a><br /></dt>
+<dd><p>Destroy the given <code class="docutils literal notranslate"><span class="pre">entity</span></code> from every managers, removing it from the scene hierarchy. </p>
+<p><dl class="simple">
+<dt><strong>Warning</strong></dt><dd><p>Destroying non existing entity result in undefined behavior </p>
+</dd>
+<dt><strong>Parameters</strong></dt><dd><ul class="breatheparameterlist simple">
+<li><p><code class="docutils literal notranslate"><span class="pre">entity</span></code>: Entity ID </p></li>
+</ul>
+</dd>
+</dl>
+</p>
+</dd></dl>
+
+<dl class="cpp function">
+<dt id="_CPPv4I0EN10BwatEngine11Coordinator17RegisterComponentEvv">
+<span id="_CPPv3I0EN10BwatEngine11Coordinator17RegisterComponentEv"></span><span id="_CPPv2I0EN10BwatEngine11Coordinator17RegisterComponentEv"></span><span class="pre">template&lt;</span><span class="pre">typename</span> <code class="sig-name descname"><span class="pre">T</span></code><span class="pre">&gt;</span><br /><span class="target" id="classBwatEngine_1_1Coordinator_1a37506f96fc4581137e613e277344e366"></span><em class="property"><span class="pre">inline</span></em> <span class="pre">void</span> <code class="sig-name descname"><span class="pre">RegisterComponent</span></code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#_CPPv4I0EN10BwatEngine11Coordinator17RegisterComponentEvv" title="Permalink to this definition">¶</a><br /></dt>
+<dd><p>Register the component of type <code class="docutils literal notranslate"><span class="pre">T</span></code> to the ComponentManager. </p>
+<p><dl class="simple">
+<dt><strong>Warning</strong></dt><dd><p>Registering a component twice is invalid </p>
+</dd>
+<dt><strong>Template Parameters</strong></dt><dd><ul class="breatheparameterlist simple">
+<li><p><code class="docutils literal notranslate"><span class="pre">T</span></code>: Component type to register </p></li>
+</ul>
+</dd>
+</dl>
+</p>
+</dd></dl>
+
+<dl class="cpp function">
+<dt id="_CPPv4I0EN10BwatEngine11Coordinator12AddComponentEv6Entity1T">
+<span id="_CPPv3I0EN10BwatEngine11Coordinator12AddComponentE6Entity1T"></span><span id="_CPPv2I0EN10BwatEngine11Coordinator12AddComponentE6Entity1T"></span><span class="pre">template&lt;</span><span class="pre">typename</span> <code class="sig-name descname"><span class="pre">T</span></code><span class="pre">&gt;</span><br /><span class="target" id="classBwatEngine_1_1Coordinator_1ae50589e0d7d37ed2929e657fe7e35c5e"></span><em class="property"><span class="pre">inline</span></em> <span class="pre">void</span> <code class="sig-name descname"><span class="pre">AddComponent</span></code><span class="sig-paren">(</span><span class="pre">Entity</span> <em><span class="pre">entity</span></em>, <a class="reference internal" href="#_CPPv4I0EN10BwatEngine11Coordinator12AddComponentEv6Entity1T" title="BwatEngine::Coordinator::AddComponent::T"><span class="pre">T</span></a> <em><span class="pre">component</span></em><span class="sig-paren">)</span><a class="headerlink" href="#_CPPv4I0EN10BwatEngine11Coordinator12AddComponentEv6Entity1T" title="Permalink to this definition">¶</a><br /></dt>
+<dd><p>Add a component \T to the given <code class="docutils literal notranslate"><span class="pre">entity</span></code>. </p>
+<p><dl class="simple">
+<dt><strong>Warning</strong></dt><dd><p>Adding a component that an entity already has is invalid </p>
+</dd>
+<dt><strong>Template Parameters</strong></dt><dd><ul class="breatheparameterlist simple">
+<li><p><code class="docutils literal notranslate"><span class="pre">T</span></code>: Added component’s type </p></li>
+</ul>
+</dd>
+<dt><strong>Parameters</strong></dt><dd><ul class="breatheparameterlist simple">
+<li><p><code class="docutils literal notranslate"><span class="pre">entity</span></code>: Entity ID </p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">component</span></code>: Component’s data (existing one or in place constructor) </p></li>
+</ul>
+</dd>
+</dl>
+</p>
+</dd></dl>
+
+<dl class="cpp function">
+<dt id="_CPPv4I0EN10BwatEngine11Coordinator15RemoveComponentEv6Entity">
+<span id="_CPPv3I0EN10BwatEngine11Coordinator15RemoveComponentE6Entity"></span><span id="_CPPv2I0EN10BwatEngine11Coordinator15RemoveComponentE6Entity"></span><span class="pre">template&lt;</span><span class="pre">typename</span> <code class="sig-name descname"><span class="pre">T</span></code><span class="pre">&gt;</span><br /><span class="target" id="classBwatEngine_1_1Coordinator_1a738cd3906276f7d7b0869e63e1782666"></span><em class="property"><span class="pre">inline</span></em> <span class="pre">void</span> <code class="sig-name descname"><span class="pre">RemoveComponent</span></code><span class="sig-paren">(</span><span class="pre">Entity</span> <em><span class="pre">entity</span></em><span class="sig-paren">)</span><a class="headerlink" href="#_CPPv4I0EN10BwatEngine11Coordinator15RemoveComponentEv6Entity" title="Permalink to this definition">¶</a><br /></dt>
+<dd><p>Remove the component <code class="docutils literal notranslate"><span class="pre">T</span></code> from the given <code class="docutils literal notranslate"><span class="pre">entity</span></code>. </p>
+<p><dl class="simple">
+<dt><strong>Warning</strong></dt><dd><p>Removing inexistant component is not valid </p>
+</dd>
+<dt><strong>Template Parameters</strong></dt><dd><ul class="breatheparameterlist simple">
+<li><p><code class="docutils literal notranslate"><span class="pre">T</span></code>: Removed component’s type </p></li>
+</ul>
+</dd>
+<dt><strong>Parameters</strong></dt><dd><ul class="breatheparameterlist simple">
+<li><p><code class="docutils literal notranslate"><span class="pre">entity</span></code>: Entity ID </p></li>
+</ul>
+</dd>
+</dl>
+</p>
+</dd></dl>
+
+<dl class="cpp function">
+<dt id="_CPPv4I0EN10BwatEngine11Coordinator12GetComponentER1T6Entity">
+<span id="_CPPv3I0EN10BwatEngine11Coordinator12GetComponentE6Entity"></span><span id="_CPPv2I0EN10BwatEngine11Coordinator12GetComponentE6Entity"></span><span class="pre">template&lt;</span><span class="pre">typename</span> <code class="sig-name descname"><span class="pre">T</span></code><span class="pre">&gt;</span><br /><span class="target" id="classBwatEngine_1_1Coordinator_1a0ab3a7062a868c782ee197a1d2b94b28"></span><em class="property"><span class="pre">inline</span></em> <a class="reference internal" href="#_CPPv4I0EN10BwatEngine11Coordinator12GetComponentER1T6Entity" title="BwatEngine::Coordinator::GetComponent::T"><span class="pre">T</span></a> <span class="pre">&amp;</span><code class="sig-name descname"><span class="pre">GetComponent</span></code><span class="sig-paren">(</span><span class="pre">Entity</span> <em><span class="pre">entity</span></em><span class="sig-paren">)</span><a class="headerlink" href="#_CPPv4I0EN10BwatEngine11Coordinator12GetComponentER1T6Entity" title="Permalink to this definition">¶</a><br /></dt>
+<dd><p>Get the component <code class="docutils literal notranslate"><span class="pre">T</span></code> from the <code class="docutils literal notranslate"><span class="pre">entity</span></code>. </p>
+<p><dl class="simple">
+<dt><strong>Return</strong></dt><dd><p>A reference to the component </p>
+</dd>
+<dt><strong>Template Parameters</strong></dt><dd><ul class="breatheparameterlist simple">
+<li><p><code class="docutils literal notranslate"><span class="pre">T</span></code>: Type of the component to get </p></li>
+</ul>
+</dd>
+<dt><strong>Parameters</strong></dt><dd><ul class="breatheparameterlist simple">
+<li><p><code class="docutils literal notranslate"><span class="pre">entity</span></code>: Entity ID </p></li>
+</ul>
+</dd>
+</dl>
+</p>
+</dd></dl>
+
+<dl class="cpp function">
+<dt id="_CPPv4I0EN10BwatEngine11Coordinator16GetComponentTypeE13ComponentTypev">
+<span id="_CPPv3I0EN10BwatEngine11Coordinator16GetComponentTypeEv"></span><span id="_CPPv2I0EN10BwatEngine11Coordinator16GetComponentTypeEv"></span><span class="pre">template&lt;</span><span class="pre">typename</span> <code class="sig-name descname"><span class="pre">T</span></code><span class="pre">&gt;</span><br /><span class="target" id="classBwatEngine_1_1Coordinator_1aaeb0787e3b00d078f8b344e8131e49b5"></span><em class="property"><span class="pre">inline</span></em> <span class="pre">ComponentType</span> <code class="sig-name descname"><span class="pre">GetComponentType</span></code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#_CPPv4I0EN10BwatEngine11Coordinator16GetComponentTypeE13ComponentTypev" title="Permalink to this definition">¶</a><br /></dt>
+<dd><p><dl class="simple">
+<dt><strong>Return</strong></dt><dd><p>The component’s internal ID </p>
+</dd>
+<dt><strong>Template Parameters</strong></dt><dd><ul class="breatheparameterlist simple">
+<li><p><code class="docutils literal notranslate"><span class="pre">T</span></code>: Component’s type </p></li>
+</ul>
+</dd>
+</dl>
+</p>
+</dd></dl>
+
+<dl class="cpp function">
+<dt id="_CPPv4I0EN10BwatEngine11Coordinator14RegisterSystemENSt10shared_ptrI1TEEv">
+<span id="_CPPv3I0EN10BwatEngine11Coordinator14RegisterSystemEv"></span><span id="_CPPv2I0EN10BwatEngine11Coordinator14RegisterSystemEv"></span><span class="pre">template&lt;</span><span class="pre">typename</span> <code class="sig-name descname"><span class="pre">T</span></code><span class="pre">&gt;</span><br /><span class="target" id="classBwatEngine_1_1Coordinator_1a718a243fcc89082d5f1acf722adaeaa7"></span><em class="property"><span class="pre">inline</span></em> <span class="pre">std</span><span class="pre">::</span><span class="pre">shared_ptr</span><span class="pre">&lt;</span><a class="reference internal" href="#_CPPv4I0EN10BwatEngine11Coordinator14RegisterSystemENSt10shared_ptrI1TEEv" title="BwatEngine::Coordinator::RegisterSystem::T"><span class="pre">T</span></a><span class="pre">&gt;</span> <code class="sig-name descname"><span class="pre">RegisterSystem</span></code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#_CPPv4I0EN10BwatEngine11Coordinator14RegisterSystemENSt10shared_ptrI1TEEv" title="Permalink to this definition">¶</a><br /></dt>
+<dd><p>Register the system to the internal manager. </p>
+<p><dl class="simple">
+<dt><strong>Return</strong></dt><dd><p>A pointer to the registered system </p>
+</dd>
+<dt><strong>Template Parameters</strong></dt><dd><ul class="breatheparameterlist simple">
+<li><p><code class="docutils literal notranslate"><span class="pre">T</span></code>: System’s type </p></li>
+</ul>
+</dd>
+</dl>
+</p>
+</dd></dl>
+
+<dl class="cpp function">
+<dt id="_CPPv4I0EN10BwatEngine11Coordinator18SetSystemSignatureEv9Signature">
+<span id="_CPPv3I0EN10BwatEngine11Coordinator18SetSystemSignatureE9Signature"></span><span id="_CPPv2I0EN10BwatEngine11Coordinator18SetSystemSignatureE9Signature"></span><span class="pre">template&lt;</span><span class="pre">typename</span> <code class="sig-name descname"><span class="pre">T</span></code><span class="pre">&gt;</span><br /><span class="target" id="classBwatEngine_1_1Coordinator_1ab4a80cdfc367ba8ea95963c6ebc5f1b3"></span><em class="property"><span class="pre">inline</span></em> <span class="pre">void</span> <code class="sig-name descname"><span class="pre">SetSystemSignature</span></code><span class="sig-paren">(</span><span class="pre">Signature</span> <em><span class="pre">signature</span></em><span class="sig-paren">)</span><a class="headerlink" href="#_CPPv4I0EN10BwatEngine11Coordinator18SetSystemSignatureEv9Signature" title="Permalink to this definition">¶</a><br /></dt>
+<dd><p>Set the accepted <code class="docutils literal notranslate"><span class="pre">signature</span></code> for the given system. </p>
+<p><dl class="simple">
+<dt><strong>Template Parameters</strong></dt><dd><ul class="breatheparameterlist simple">
+<li><p><code class="docutils literal notranslate"><span class="pre">T</span></code>: System’s type </p></li>
+</ul>
+</dd>
+<dt><strong>Parameters</strong></dt><dd><ul class="breatheparameterlist simple">
+<li><p><code class="docutils literal notranslate"><span class="pre">signature</span></code>: Signature accepted by the system </p></li>
+</ul>
+</dd>
+</dl>
+</p>
+</dd></dl>
+
+<dl class="cpp function">
+<dt id="_CPPv4N10BwatEngine11Coordinator18GetEntitySignatureE6Entity">
+<span id="_CPPv3N10BwatEngine11Coordinator18GetEntitySignatureE6Entity"></span><span id="_CPPv2N10BwatEngine11Coordinator18GetEntitySignatureE6Entity"></span><span id="BwatEngine::Coordinator::GetEntitySignature__Entity"></span><span class="target" id="classBwatEngine_1_1Coordinator_1a955ba8d43602ce366f306c6df022d37d"></span><em class="property"><span class="pre">inline</span></em> <span class="pre">Signature</span> <code class="sig-name descname"><span class="pre">GetEntitySignature</span></code><span class="sig-paren">(</span><span class="pre">Entity</span> <em><span class="pre">entity</span></em><span class="sig-paren">)</span><a class="headerlink" href="#_CPPv4N10BwatEngine11Coordinator18GetEntitySignatureE6Entity" title="Permalink to this definition">¶</a><br /></dt>
+<dd><p><dl class="simple">
+<dt><strong>Return</strong></dt><dd><p>The signature of the given <code class="docutils literal notranslate"><span class="pre">entity</span></code> </p>
+</dd>
+<dt><strong>Parameters</strong></dt><dd><ul class="breatheparameterlist simple">
+<li><p><code class="docutils literal notranslate"><span class="pre">entity</span></code>: Entity ID </p></li>
+</ul>
+</dd>
+</dl>
+</p>
+</dd></dl>
+
+<dl class="cpp function">
+<dt id="_CPPv4N10BwatEngine11Coordinator9SetParentE6Entity6Entity">
+<span id="_CPPv3N10BwatEngine11Coordinator9SetParentE6Entity6Entity"></span><span id="_CPPv2N10BwatEngine11Coordinator9SetParentE6Entity6Entity"></span><span id="BwatEngine::Coordinator::SetParent__Entity.Entity"></span><span class="target" id="classBwatEngine_1_1Coordinator_1ac9af2c5a0eb56977e7940ea700d4243b"></span><em class="property"><span class="pre">inline</span></em> <span class="pre">void</span> <code class="sig-name descname"><span class="pre">SetParent</span></code><span class="sig-paren">(</span><span class="pre">Entity</span> <em><span class="pre">entity</span></em>, <span class="pre">Entity</span> <em><span class="pre">parent</span></em><span class="sig-paren">)</span><a class="headerlink" href="#_CPPv4N10BwatEngine11Coordinator9SetParentE6Entity6Entity" title="Permalink to this definition">¶</a><br /></dt>
+<dd><p>Set the parent entity in the internal scene graph. </p>
+<p><dl class="simple">
+<dt><strong>Parameters</strong></dt><dd><ul class="breatheparameterlist simple">
+<li><p><code class="docutils literal notranslate"><span class="pre">entity</span></code>: Entity ID </p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">parent</span></code>: Parent entity ID </p></li>
+</ul>
+</dd>
+</dl>
+</p>
+</dd></dl>
+
+<dl class="cpp function">
+<dt id="_CPPv4N10BwatEngine11Coordinator7GetNodeE6Entity">
+<span id="_CPPv3N10BwatEngine11Coordinator7GetNodeE6Entity"></span><span id="_CPPv2N10BwatEngine11Coordinator7GetNodeE6Entity"></span><span id="BwatEngine::Coordinator::GetNode__Entity"></span><span class="target" id="classBwatEngine_1_1Coordinator_1a43be1a85c58d5b70cd226140f8cc0b77"></span><em class="property"><span class="pre">inline</span></em> <span class="pre">SceneNode</span> <span class="pre">&amp;</span><code class="sig-name descname"><span class="pre">GetNode</span></code><span class="sig-paren">(</span><span class="pre">Entity</span> <em><span class="pre">entity</span></em><span class="sig-paren">)</span><a class="headerlink" href="#_CPPv4N10BwatEngine11Coordinator7GetNodeE6Entity" title="Permalink to this definition">¶</a><br /></dt>
+<dd><p><dl class="simple">
+<dt><strong>Return</strong></dt><dd><p>Get the scene graph’s node associated to entity </p>
+</dd>
+<dt><strong>Parameters</strong></dt><dd><ul class="breatheparameterlist simple">
+<li><p><code class="docutils literal notranslate"><span class="pre">entity</span></code>: Entity ID </p></li>
+</ul>
+</dd>
+</dl>
+</p>
+</dd></dl>
+
+<dl class="cpp function">
+<dt id="_CPPv4N10BwatEngine11Coordinator15GetRootEntitiesEv">
+<span id="_CPPv3N10BwatEngine11Coordinator15GetRootEntitiesEv"></span><span id="_CPPv2N10BwatEngine11Coordinator15GetRootEntitiesEv"></span><span id="BwatEngine::Coordinator::GetRootEntities"></span><span class="target" id="classBwatEngine_1_1Coordinator_1a84f5d0f2c511d0f16eb74af50db339e6"></span><em class="property"><span class="pre">inline</span></em> <span class="pre">std</span><span class="pre">::</span><span class="pre">vector</span><span class="pre">&lt;</span><span class="pre">Entity</span><span class="pre">&gt;</span> <code class="sig-name descname"><span class="pre">GetRootEntities</span></code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#_CPPv4N10BwatEngine11Coordinator15GetRootEntitiesEv" title="Permalink to this definition">¶</a><br /></dt>
+<dd><p><dl class="simple">
+<dt><strong>Return</strong></dt><dd><p>A std::vector of every entities that does not have a parent </p>
+</dd>
+<dt><strong>Warning</strong></dt><dd><p>Current implementation iterates over every entities without caching </p>
+</dd>
+</dl>
+</p>
+</dd></dl>
+
+</div>
+<div class="breathe-sectiondef docutils container">
+<p class="breathe-sectiondef-title rubric">Public Static Functions</p>
+<dl class="cpp function">
+<dt id="_CPPv4N10BwatEngine11Coordinator11GetInstanceEv">
+<span id="_CPPv3N10BwatEngine11Coordinator11GetInstanceEv"></span><span id="_CPPv2N10BwatEngine11Coordinator11GetInstanceEv"></span><span id="BwatEngine::Coordinator::GetInstance"></span><span class="target" id="classBwatEngine_1_1Coordinator_1a0f2751e7c0cc8f45d153b276bbc6c82d"></span><em class="property"><span class="pre">static</span></em> <em class="property"><span class="pre">inline</span></em> <a class="reference internal" href="#_CPPv4N10BwatEngine11CoordinatorE" title="BwatEngine::Coordinator"><span class="pre">Coordinator</span></a> <span class="pre">*</span><code class="sig-name descname"><span class="pre">GetInstance</span></code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#_CPPv4N10BwatEngine11Coordinator11GetInstanceEv" title="Permalink to this definition">¶</a><br /></dt>
+<dd></dd></dl>
+
+</div>
+</dd></dl>
+
+</div>
+
+
+           </div>
+           
+          </div>
+          <footer>
+    <div class="rst-footer-buttons" role="navigation" aria-label="footer navigation">
+        <a href="../ECSQuickstart.html" class="btn btn-neutral float-left" title="ECS" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+    </div>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>
+        &#169; Copyright 2021, Baptiste, William, Amelie, Theo.
+
+    </p>
+  </div>
+    
+    
+    
+    Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    
+    provided by <a href="https://readthedocs.org">Read the Docs</a>. 
+
+</footer>
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+  
+
+  <script type="text/javascript">
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script>
+
+  
+  
+    
+   
+
+</body>
+</html>
