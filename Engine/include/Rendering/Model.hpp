@@ -23,20 +23,21 @@ namespace Rendering
 
 		//Data
 		std::vector<Texture> textures_loaded{};
+		std::vector<std::string> tex;
 		std::vector<Mesh> meshes{};
 		std::string directory{};
 
 
-		void LoadModel(std::string path);
+		void LoadModel(const std::string& path);
 		void ProcessNode(aiNode* node, const aiScene* scene);
 		Mesh ProcessMesh(aiMesh* mesh, const aiScene* scene);
-		std::vector<Texture> LoadMaterialTextures(aiMaterial* mat, aiTextureType type, std::string typeName);
+		std::vector<std::string> LoadMaterialTextures(aiMaterial* mat, aiTextureType type, std::string typeName);
 
 	public:
 
         Model() = default;
-        Model(std::string path);
-		void Draw(Shader& shader);
+        Model(const std::string &path);
+		    void Draw(Shader& shader);
 
 	};
 
