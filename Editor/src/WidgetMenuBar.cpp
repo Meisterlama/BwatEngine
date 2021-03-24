@@ -11,7 +11,7 @@ void WidgetMenuBar::TickAlways()
 {
     if (ImGui::BeginMainMenuBar())
     {
-        ImGui::Text("%f", (editor->engine->context.deltaTime != 0) ? 1.f / editor->engine->context.deltaTime : 0);
+        ImGui::Text("%f", (BwatEngine::Time::deltaTime != 0) ? 1.f / BwatEngine::Time::deltaTime : 0);
         if (ImGui::BeginMenu("File"))
         {
             MenuFile();
