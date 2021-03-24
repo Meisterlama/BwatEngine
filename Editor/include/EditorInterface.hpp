@@ -19,7 +19,7 @@ public:
     ~EditorInterface(){};
 
     void OnTick();
-    void Initialise(BwatEngine::Window mainWindow);
+    void Initialise();
     void DestroyImGui();
 
     BwatEngine::Engine* engine = nullptr;
