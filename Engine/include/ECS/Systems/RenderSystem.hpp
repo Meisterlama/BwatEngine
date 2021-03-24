@@ -28,53 +28,11 @@ namespace BwatEngine
 
         Math::Vec3f clearColor = { 0.5f, 0.5f, 0.5f };
 
-        void Init()
-        {
-            shader = {"Assets/basic.vs", "Assets/basic.fs"};
-            Rendering::Light mylight(Rendering::TYPE_LIGHT::Directional, { 0.1f,0.1f,0.5f }, { 0.1f,0.1f,0.5f }, { 0.1f,0.1f,0.5f });
-            Scene::AddLight(mylight);
-        }
+        void Init();
+        void SetCamera(Entity _camera);
+        void Update(Window& win);
 
-        void SetCamera(Entity _camera)
-        {
-            camera = _camera;
-        }
-
-        void Update(Window &win)
-        {
-            if (camera == -1)
-                return;
-
-            glEnable(GL_DEPTH_TEST);
-            glViewport(0, 0, win.GetWidth(), win.GetHeight());
-            glClearColor(clearColor[0], clearColor[1], clearColor[2], 1.f);
-            glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-
-            auto coordinator = Coordinator::GetInstance();
-
-            auto& cameraTransform = coordinator->GetComponent<TransformComponent>(camera).transform;
-            auto& cameraProjection = coordinator->GetComponent<CameraComponent>(camera).projectionMat;
-
-            shader.use();
-            shader.setMat4("view", Math::Mat4f::CreateTRSMat(cameraTransform.position, cameraTransform.rotation, cameraTransform.scale).Invert());
-            shader.setMat4("proj", cameraProjection);
-
-            shader.setInt("nbrlights", (int)Scene::GetLights().size());
-            for (unsigned int i = 0; i < Scene::GetLights().size(); i++)
-            {
-                std::string index = std::to_string(i);
-                Scene::GetLights()[i].ApplyOnShader(&shader, index);
-            }
-            for (auto entityID : entities)
-            {
-                auto entityTransform = coordinator->GetComponent<TransformComponent>(entityID).transform;
-                auto renderableComponent = coordinator->GetComponent<RenderableComponent>(entityID);
-                shader.setMat4("model", Math::Mat4f::CreateTRSMat(entityTransform.position, entityTransform.rotation, entityTransform.scale));
-
-                renderableComponent.model->Draw(shader);
-            }
-
-        }
+        
     };
 }
 

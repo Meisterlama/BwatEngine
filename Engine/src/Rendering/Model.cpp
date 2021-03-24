@@ -38,6 +38,47 @@ void Model::ProcessNode(aiNode* node, const aiScene* scene)
     }
 }
 
+//void render()
+//{
+//    phongShader.use();
+//    foreach Model
+//    {
+//        foreach Mesh in Model
+//        {
+//            bindPhongMaterial(model.material); // model.material.bind()
+//            drawMesh(model.mesh) // model.mesh.draw()
+//        }
+//    }
+//}
+//
+//struct PhongMaterial
+//{
+//    PhongMaterial() = default;
+//    PhongMaterial(aiMaterial& from)
+//    {
+//        {
+//            aiString path;
+//            from.GetTexture(aiTextureType_DIFFUSE, 0, &path);
+//            diffuse = LoadTexture(path);
+//        }
+//        {
+//            aiString path;
+//            from.GetTexture(aiTextureType_SPECULAR, 0, &path);
+//            specular = LoadTexture(path);
+//        }
+//        {
+//            aiColor3D diffuseColor;
+//            from.Get(AI_MATKEY_COLOR_DIFFUSE, diffuseColor);
+//            color = { diffuseColor.r, diffuseColor.g, diffuseColor.b }
+//        }
+//
+//    }
+//    Texture* diffuse;
+//    Texture* specular;
+//    
+//    //Math::Vec3f color;
+//};
+
 Rendering::Mesh Model::ProcessMesh(aiMesh* mesh, const aiScene* scene)
 {
     // data to fill
@@ -102,6 +143,8 @@ Rendering::Mesh Model::ProcessMesh(aiMesh* mesh, const aiScene* scene)
     }
     // process materials
     aiMaterial* material = scene->mMaterials[mesh->mMaterialIndex];
+
+    //Rendering::Material myMaterial(material);
 
     // 1. diffuse maps
     std::vector<Rendering::Texture> diffuseMaps = LoadMaterialTextures(material, aiTextureType_DIFFUSE, "texture_diffuse");

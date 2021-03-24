@@ -6,6 +6,7 @@
 #include "Math/Math.hpp"
 #include "Texture.hpp"
 #include "Light.hpp"
+#include "Material.hpp"
 
 namespace Rendering
 {
@@ -26,6 +27,7 @@ private:
 
     void initMesh();
     unsigned int VAO, VBO, EBO;
+    Material material;
 
 public :
 
@@ -38,7 +40,6 @@ public :
     Mesh(std::vector<Vertex> vertices, std::vector<unsigned int> indices, std::vector<Texture> textures);
 
     void Draw(Shader& shader);
-
 
 };
 
