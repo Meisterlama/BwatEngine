@@ -7,16 +7,22 @@
 #include "Widget.hpp"
 #include "Window.hpp"
 
+namespace BwatEngine
+{
+    class Engine;
+}
 
 class  EditorInterface
 {
 public:
-    EditorInterface();
+    EditorInterface(BwatEngine::Engine* _engine);
     ~EditorInterface(){};
 
     void OnTick();
-    void Initialise(Bwat::Window mainWindow);
+    void Initialise();
     void DestroyImGui();
+
+    BwatEngine::Engine* engine = nullptr;
 
 private:
     void ApplyStyle() const;

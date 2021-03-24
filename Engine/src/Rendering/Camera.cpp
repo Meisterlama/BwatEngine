@@ -14,12 +14,12 @@ Camera::~Camera()
 }
 
 
-void Camera::UseFreeFly(Bwat::Window* win,float deltaTime)
+void Camera::UseFreeFly(BwatEngine::Window* win,float deltaTime)
 {
     if (BwatEngine::InputHandler::GetKeyboardDown(BwatEngine::KEY_F1))
     {
         lockMouse = !lockMouse;
-        glfwSetInputMode(win->window, GLFW_CURSOR, (lockMouse) ? GLFW_CURSOR_DISABLED : GLFW_CURSOR_NORMAL);
+        glfwSetInputMode(win->handler, GLFW_CURSOR, (lockMouse) ? GLFW_CURSOR_DISABLED : GLFW_CURSOR_NORMAL);
     }
     if (lockMouse)
     {
@@ -28,7 +28,7 @@ void Camera::UseFreeFly(Bwat::Window* win,float deltaTime)
     }
 }
 
-void Camera::MouseMovement(Bwat::Window* win, float deltaTime)
+void Camera::MouseMovement(BwatEngine::Window* win, float deltaTime)
 {
     BwatEngine::Math::Vec2f mouseDelta = BwatEngine::InputHandler::GetMouseDelta();
 
@@ -46,7 +46,7 @@ void Camera::MouseMovement(Bwat::Window* win, float deltaTime)
         pitch = -BwatEngine::Math::PI / 2;
 }
 
-void Camera::CameraMovementFF(Bwat::Window* win, float deltaTime)
+void Camera::CameraMovementFF(BwatEngine::Window* win, float deltaTime)
 {
 
     float Speed = 4.f;
@@ -54,7 +54,7 @@ void Camera::CameraMovementFF(Bwat::Window* win, float deltaTime)
 
 
     if (BwatEngine::InputHandler::GetKeyboard(BwatEngine::KEY_LEFT_SHIFT))
-        FrameSpeed *= 3.f;
+        FrameSpeed *= 10.f;
 
 
     float ForwardVelocity = 0.f;

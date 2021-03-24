@@ -1,4 +1,4 @@
-#include "Rendering/mesh.hpp"
+#include "Rendering/Mesh.hpp"
 
 #include <cstring>
 #include <stdio.h>

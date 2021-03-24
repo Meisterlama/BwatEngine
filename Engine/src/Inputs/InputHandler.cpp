@@ -1,6 +1,8 @@
 #include "Inputs/InputHandler.hpp"
 #include "Debug/Logger.hpp"
 
+#include "imgui_impl_glfw.h"
+
 namespace BwatEngine
 {
     InputHandler* InputHandler::inputHandler= nullptr;;
@@ -12,7 +14,7 @@ namespace BwatEngine
         inputHandler->keyboard[(Keyboard)key].down = !oldPress && (action == GLFW_PRESS);
         inputHandler->keyboard[(Keyboard)key].up = oldPress && (action == GLFW_RELEASE);
 
-
+        ImGui_ImplGlfw_KeyCallback(window, key, scancode, action, mods);
 //        LogTrace("Mod: %i; Key: %s(%i) %s",
 //                 mods, glfwGetKeyName(key, 0), key, (action == 0) ? "released" : ((action == 1) ? "pressed" : "repeated"));
     }
@@ -23,6 +25,7 @@ namespace BwatEngine
         inputHandler->mouse[(Mouse)button].down = !oldPress && (action == GLFW_PRESS);
         inputHandler->mouse[(Mouse)button].up = oldPress && (action == GLFW_RELEASE);
 
+        ImGui_ImplGlfw_MouseButtonCallback(window, button, action, mods);
 //        LogTrace("Mouse button %i(mod %i) %s",
 //                 button, mods, (action == 0) ? "released" : ((action == 1) ? "pressed" : "repeated"));
     }
@@ -42,6 +45,7 @@ namespace BwatEngine
     void InputHandler::ScrollCallback(GLFWwindow* window, double xoffset, double yoffset)
     {
         inputHandler->scrollDelta = {xoffset, yoffset};
+        ImGui_ImplGlfw_ScrollCallback(window, xoffset, yoffset);
 //        LogDebug("\nScroll Delta: X:%f;Y:%f",
 //                 xoffset, yoffset);
     }

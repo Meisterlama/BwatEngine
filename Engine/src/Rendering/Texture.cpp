@@ -1,5 +1,7 @@
+
 #include "Rendering/texture.hpp"
 #include "Debug/Logger.hpp"
+
 
 using namespace Rendering;
 
@@ -26,10 +28,7 @@ Texture::Texture(const std::string& path, Type type)
         glTexImage2D(GL_TEXTURE_2D, 0, format, width, height, 0, format, GL_UNSIGNED_BYTE, data);
         glGenerateMipmap(GL_TEXTURE_2D);
 
-        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);
-        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
-        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR_MIPMAP_LINEAR);
-        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+        TextureParameter();
 
         stbi_image_free(data);
     }
@@ -70,10 +69,7 @@ void Texture::GenerateTextureID(const std::string& path)
         glTexImage2D(GL_TEXTURE_2D, 0, format, width, height, 0, format, GL_UNSIGNED_BYTE, data);
         glGenerateMipmap(GL_TEXTURE_2D);
 
-        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);
-        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
-        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR_MIPMAP_LINEAR);
-        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+        TextureParameter();
 
         stbi_image_free(data);
     }
@@ -85,3 +81,40 @@ void Texture::GenerateTextureID(const std::string& path)
 
     id = textureID;
 }*/
+
+void Texture::GenerateTexture(float width, float height, GLenum format, unsigned char* data)
+{
+    GenTexture();
+    BindTexture();
+    TextureParameter();
+    TextureImage(width, height, format, data);
+    UnbindTexture();
+}
+
+void Texture::GenTexture()
+{
+    glGenTextures(1, &id);
+}
+
+void Texture::BindTexture()
+{
+    glBindTexture(GL_TEXTURE_2D, id);
+}
+
+void Texture::UnbindTexture()
+{
+    glBindTexture(GL_TEXTURE_2D, 0);
+}
+
+void Texture::TextureParameter()
+{
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+}
+
+void Texture::TextureImage(float width, float height, GLenum format, unsigned char* data)
+{
+    glTexImage2D(GL_TEXTURE_2D, 0, format, width, height, 0, format, GL_UNSIGNED_BYTE, data);
+}

@@ -2,27 +2,31 @@
 #define ENGINE_ECS_SYSTEMS_PHYSICS_HPP
 
 #include "ECS/System.hpp"
+#include "ECS/Components/RigidBodyComponent.hpp"
+#include "ECS/Components/TransformComponent.hpp"
+#include "ECS/Components/GravityComponent.hpp"
+
+#include "ECS/Components/GravityComponent.hpp"
+#include "ECS/Components/RigidBodyComponent.hpp"
+#include "ECS/Components/TransformComponent.hpp"
+
+#include "Scene.hpp"
 
 namespace BwatEngine
 {
     class PhysicsSystem : public System
     {
     public:
-        void Init() {};
 
-        void Update(float dt) 
-        {
-            for (auto entityID : entities)
-            {
-                Entity entity{ entityID };
-                auto& rigidBody = entity.GetComponent<RigidBodyComponent>();
-                auto& transform = entity.GetComponent<TransformComponent>().transform;
-                auto const& gravity = entity.GetComponent<GravityComponent>();
+        void Init(Scene* scene, const Math::Vec3f &gravity);
+        void BeginSimulation();
+        void Update();
+        void SetColliderForRigidbody(Entity entity);
+        
 
-                transform.position += rigidBody.velocity * dt;
-                rigidBody.velocity += gravity.force * dt;
-            }
-        };
+    private:
+
+        Scene* ptrScene = nullptr;
     };
 }
 

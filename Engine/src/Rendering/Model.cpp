@@ -6,6 +6,7 @@
 
 using namespace Rendering;
 
+
 Model::Model(const std::string &path)
 {
     LoadModel(path);

@@ -19,7 +19,7 @@ namespace Rendering
             E_NORMAL,
             E_HEIGHT
         };
-        unsigned int id;
+        GLuint id;
         Type type;
         std::string path;
 
@@ -28,6 +28,14 @@ namespace Rendering
 
         Texture(const std::string& path, Type type);
         ~Texture();
+        void GenerateTexture(float width, float height, GLenum format = GL_RGBA, unsigned char* data = nullptr);
+
+        void GenTexture();
+        void BindTexture();
+        void UnbindTexture();
+        void TextureParameter();
+        void TextureImage(float width, float height, GLenum format = GL_RGBA, unsigned char* data = nullptr);
+
     };
 }
 

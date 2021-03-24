@@ -7,26 +7,30 @@
 #include "WidgetHierarchy.hpp"
 #include "WidgetAsset.hpp"
 #include "WidgetViewport.hpp"
+#include "WidgetProperties.hpp"
 #include "imgui_internal.h"
 
-EditorInterface::EditorInterface()
+#include "Engine.hpp"
+
+EditorInterface::EditorInterface(BwatEngine::Engine* _engine)
 {
+    engine = _engine;
     widgets.clear();
     widgets.shrink_to_fit();
 }
 
 void EditorInterface::DestroyImGui()
 {
-    ImGui_ImplGlfw_Shutdown();
-    ImGui_ImplOpenGL3_Shutdown();
-    ImGui::DestroyContext();
+    //ImGui_ImplGlfw_Shutdown();
+    //ImGui_ImplOpenGL3_Shutdown();
+    //ImGui::DestroyContext();
 }
 
 void EditorInterface::OnTick()
 {
-    ImGui_ImplOpenGL3_NewFrame();
-    ImGui_ImplGlfw_NewFrame();
-    ImGui::NewFrame();
+    //ImGui_ImplOpenGL3_NewFrame();
+    //ImGui_ImplGlfw_NewFrame();
+    //ImGui::NewFrame();
 
     BeginWindow();
 
@@ -40,29 +44,22 @@ void EditorInterface::OnTick()
     ImGui::Render();
     ImGui_ImplOpenGL3_RenderDrawData(ImGui::GetDrawData());
 
-    GLFWwindow* backup_current_context = glfwGetCurrentContext();
-    ImGui::UpdatePlatformWindows();
-    ImGui::RenderPlatformWindowsDefault();
-    glfwMakeContextCurrent(backup_current_context);
+    //GLFWwindow* backup_current_context = glfwGetCurrentContext();
+    //ImGui::UpdatePlatformWindows();
+    //ImGui::RenderPlatformWindowsDefault();
+    //glfwMakeContextCurrent(backup_current_context);
 }
 
-void EditorInterface::Initialise(Bwat::Window mainWindow)
+void EditorInterface::Initialise()
 {
-    IMGUI_CHECKVERSION();
-    ImGui::CreateContext();
-    ImGuiIO& io = ImGui::GetIO(); (void)io;
-    io.ConfigFlags |= ImGuiConfigFlags_NavEnableKeyboard;       // Enable Keyboard Controls
-    io.ConfigFlags |= ImGuiConfigFlags_DockingEnable;           // Enable Docking
     ApplyStyle();
-
-    ImGui_ImplGlfw_InitForOpenGL(mainWindow.window, true);
-    ImGui_ImplOpenGL3_Init("#version 330");
 
     //Push widget here
     widgets.emplace_back(std::make_shared<WidgetMenuBar>(this));
     widgets.emplace_back(std::make_shared<WidgetHierarchy>(this));
     widgets.emplace_back(std::make_shared<WidgetAsset>(this));
     widgets.emplace_back(std::make_shared<WidgetViewport>(this));
+    widgets.emplace_back(std::make_shared<WidgetProperties>(this));
 }
 
 void EditorInterface::ApplyStyle() const
@@ -105,8 +102,10 @@ void EditorInterface::BeginWindow()
             ImGuiID dockDownID = ImGui::DockBuilderSplitNode(dockMainID, ImGuiDir_Down, 0.25f, nullptr, &dockMainID);
 
             //Docks widgets here
-            ImGui::DockBuilderDockWindow("Hierarchy", dockRightID);
             ImGui::DockBuilderDockWindow("Assets", dockDownID);
+            ImGui::DockBuilderDockWindow("Viewport", dockMainID);
+            ImGui::DockBuilderDockWindow("Properties", dockRightID);
+            ImGui::DockBuilderDockWindow("Hierarchy", dockRightID);
 
             ImGui::DockBuilderFinish(dockMainID);
         }

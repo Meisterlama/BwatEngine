@@ -13,13 +13,13 @@
 namespace BwatEngine
 {
 // ECS
-    using EntityType = uint32_t;
+    using Entity = uint32_t;
 
-    const EntityType MAX_ENTITIES = 500;
+    static constexpr Entity MAX_ENTITIES = 1000;
 
     using ComponentType = uint8_t;
 
-    const ComponentType MAX_COMPONENTS = 32;
+    static constexpr ComponentType MAX_COMPONENTS = 32;
 
     using Signature = std::bitset<MAX_COMPONENTS>;
 }
