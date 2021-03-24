@@ -42,8 +42,8 @@ void WidgetProperties::ShowComponent<BwatEngine::RigidBodyComponent>(BwatEngine:
 {
     if (ImGui::CollapsingHeader("RigidBody",ImGuiTreeNodeFlags_DefaultOpen))
     {
-        ImGui::DragFloat3("Velocity", component.velocity.values, 0.01);
-        ImGui::DragFloat3("Acceleration", component.acceleration.values, 0.01);
+        //ImGui::DragFloat3("Velocity", component.velocity.values, 0.01);
+        //ImGui::DragFloat3("Acceleration", component.acceleration.values, 0.01);
     }
 }
 

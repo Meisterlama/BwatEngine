@@ -2,6 +2,7 @@
 #include "Time.hpp"
 #include "Physic/PhysicCast.hpp"
 #include "ECS/Components/ColliderComponent.hpp"
+#include "ECS/Coordinator.hpp"
 
 using namespace BwatEngine;
 
@@ -23,10 +24,10 @@ void PhysicsSystem::BeginSimulation()
 
 void PhysicsSystem::SetColliderForRigidbody(Entity entity)
 {
-    auto rigidComp = entity.GetComponent<RigidBodyComponent>();
-    auto colliderComp = entity.GetComponent<ColliderComponent>();
-
-    rigidComp.rigidBody->attachShape(*colliderComp.shape);
+    //auto rigidComp = entity.GetComponent<RigidBodyComponent>();
+    //auto colliderComp = entity.GetComponent<ColliderComponent>();
+    //
+    //rigidComp.rigidBody->attachShape(*colliderComp.shape);
 }
 
 
@@ -37,11 +38,10 @@ void PhysicsSystem::Update()
 
     //now, need an updats of entities
     //get all entities and refresh transform
-    for (auto entityID : entities)
+    for (auto entity : entities)
     {
-        Entity entity{ entityID };
-        auto& rigidBody = entity.GetComponent<RigidBodyComponent>();
-        auto& transform = entity.GetComponent<TransformComponent>().transform;
+        auto& rigidBody = Coordinator::GetInstance()->GetComponent<RigidBodyComponent>(entity);
+        auto& transform = Coordinator::GetInstance()->GetComponent<TransformComponent>(entity).transform;
 
         transform.position = ToBwatVec3(rigidBody.rigidBody->getGlobalPose().p);
     }
