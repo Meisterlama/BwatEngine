@@ -29,7 +29,7 @@ namespace BwatEngine
 
         void Init()
         {
-            shader = {"Assets/basic.vs", "Assets/multilight.fs"};
+            shader = {"Assets/basic.vs", "Assets/basic.fs"};
             Rendering::Light mylight(Rendering::TYPE_LIGHT::Directional, { 0.1f,0.1f,0.5f }, { 0.1f,0.1f,0.5f }, { 0.1f,0.1f,0.5f });
             Scene::AddLight(mylight);
         }

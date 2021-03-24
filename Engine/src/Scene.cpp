@@ -8,6 +8,7 @@
 #include "ECS/Components/RenderableComponent.hpp"
 #include "ECS/Components/TransformComponent.hpp"
 #include "ECS/Components/ColliderComponent.hpp"
+#include "ECS/Components/StaticActorComponent.hpp"
 
 
 #include "ECS/Systems/InputSystem.hpp"
@@ -43,6 +44,8 @@ Scene::Scene(Window& window)
     Entity::GetCoordinator().RegisterComponent<TransformComponent>();
     Entity::GetCoordinator().RegisterComponent<PlayerComponent>();
     Entity::GetCoordinator().RegisterComponent<ColliderComponent>();
+    Entity::GetCoordinator().RegisterComponent<StaticActorComponent>();
+
 
     inputSystem = Entity::GetCoordinator().RegisterSystem<InputsSystem>();
     inputSystem->Init(window);
@@ -88,7 +91,7 @@ Scene::Scene(Window& window)
 
     physx::PxMaterial* material = Physic::GetPhysics()->createMaterial(0,0,0);
 
-    entities = std::vector<Entity>(MAX_ENTITIES);
+    entities = std::vector<Entity>(1000);
 
         for (EntityType i = 0; i < entities.size(); i++)
         {
@@ -107,7 +110,27 @@ Scene::Scene(Window& window)
                 entities[i].name = "Camera";
                 renderSystem->SetCamera(&entities[i]);
             }
-            else
+            else if (i == 1) // Plane
+            {
+                entities[i].AddComponent<TransformComponent>({ Math::Transform{
+                    Math::Vec3f{0, -105, 0},
+                    Math::Vec3f{0, 0, 0},
+                    Math::Vec3f{300, 1, 300}}});
+
+                auto& eTransform = entities[i].GetComponent<TransformComponent>().transform;
+                entities[i].AddComponent<StaticActorComponent>(eTransform);
+
+                auto& statActor = entities[i].GetComponent<StaticActorComponent>().staticActor;
+                statActor->userData = (void*)0x1234;
+                /*ColliderComponent& collider = */entities[i].AddComponent<ColliderComponent>({ material, physx::PxBoxGeometry{ ToPxVec3(eTransform.scale / 2.f) } });
+                entities[i].AddComponent<RenderableComponent>({ &model });
+
+                entities[i].GetComponent<StaticActorComponent>().staticActor->attachShape(
+                    *entities[i].GetComponent<ColliderComponent>().shape);
+
+                scenePhysic->addActor(*statActor);
+            }
+            else // Cube
             {               
                 entities[i].AddComponent<TransformComponent>({ Math::Transform{
                     Math::Vec3f{randPosition(generator), randPosition(generator), randPosition(generator)},
@@ -120,6 +143,8 @@ Scene::Scene(Window& window)
                 entities[i].AddComponent<RenderableComponent>({ &model });
 
                 //physx::PxActor* actor = entities[i].GetComponent<ColliderComponent>().staticActor;
+                entities[i].GetComponent<RigidBodyComponent>().rigidBody->attachShape(
+                    *entities[i].GetComponent<ColliderComponent>().shape);
                 //actor->userData = (void*)0x1234;
                 scenePhysic->addActor(*entities[i].GetComponent<RigidBodyComponent>().rigidBody);
             }

@@ -7,7 +7,7 @@ using namespace BwatEngine;
 ColliderComponent::ColliderComponent(physx::PxMaterial* PMat, physx::PxBoxGeometry& Geo, Math::Transform& entityT)
 {
 	material = PMat;
-	shape = Physic::GetPhysics()->createShape(physx::PxBoxGeometry(Geo.halfExtents.x, Geo.halfExtents.y, Geo.halfExtents.z), *material);
+	shape = Physic::GetPhysics()->createShape(Geo, *material);
 	//staticActor = Physic::GetPhysics()->createRigidDynamic(ToPxTransform(entityT));
 	//staticActor->attachShape(*shape);
 	type = COLLIDER_SHAPE_BOX;
@@ -17,7 +17,8 @@ ColliderComponent::ColliderComponent(physx::PxMaterial* PMat, physx::PxBoxGeomet
 ColliderComponent::ColliderComponent(physx::PxMaterial* PMat, physx::PxBoxGeometry& Geo)
 {
 	material = PMat;
-	//staticActor = physx::PxCreatePlane(*Physic::GetPhysics(), physx::PxPlane(0, 1, 0, 0), *material);
+	shape = Physic::GetPhysics()->createShape(Geo, *material);
+	//myStatic = physx::PxCreatePlane(*Physic::GetPhysics(), physx::PxPlane(0, 1, 0, 0), *material);
 	type = COLLIDER_SHAPE_PLANE;
 }
 
