@@ -35,6 +35,8 @@
 #include "ECS/Systems/PlayerControlSystem.hpp"
 #include "ECS/Systems/RenderSystem.hpp"
 
+#include "ResourceManager/ResourceManager.hpp"
+
 
 
 int main()
@@ -98,8 +100,10 @@ int main()
 	float deltaTime = 0.0f;
 	float lastFrame = 0.0f;
 
-    Rendering::Model mymodel = Rendering::Model{(std::string) "Assets/bag/backpack.obj"};
-    Rendering::Model model = Rendering::Model{(std::string) "Assets/cube.obj"};
+
+    Rendering::Model* myModel = ResourceManager::Instance()->GetOrLoadModel("Assets/bag/backpack.obj");
+    Rendering::Model* model = ResourceManager::Instance()->GetOrLoadModel("Assets/cube.obj");
+
 
     std::vector<Entity> entities(MAX_ENTITIES);
 
@@ -141,7 +145,7 @@ int main()
                 Math::Vec3f{randRotation(generator), randRotation(generator), randRotation(generator)},
                 Math::Vec3f{3}
             }});
-            entities[i].AddComponent<RenderableComponent>({&model});
+            entities[i].AddComponent<RenderableComponent>({model});
         }
     }
 
