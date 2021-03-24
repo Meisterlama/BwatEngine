@@ -19,7 +19,7 @@ namespace BwatEngine
     public:
         EntityManager()
         {
-            signatures.reserve(MAX_ENTITIES);
+            signatures.resize(MAX_ENTITIES);
         }
 
         Entity CreateEntity()

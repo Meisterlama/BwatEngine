@@ -7,7 +7,6 @@
 #include "Time.hpp"
 #include "Window.hpp"
 #include "Scene.hpp"
-#include "ECS/Entity.hpp"
 #include "Physic/Physic.hpp"
 #include "Rendering/FrameBuffer.hpp"
 
