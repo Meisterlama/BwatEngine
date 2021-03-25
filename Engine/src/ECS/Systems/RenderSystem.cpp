@@ -5,8 +5,8 @@ using namespace BwatEngine;
 
 void RenderSystem::Init()
 {
-    shader = { "Assets/basic.vs", "Assets/basic.fs" };
-    Rendering::Light mylight(Rendering::TYPE_LIGHT::Directional, { 0.1f,0.1f,0.5f }, { 0.1f,0.1f,0.5f }, { 0.1f,0.1f,0.5f });
+    shader = { "Assets/colors.vs", "Assets/colors.fs" };
+    Rendering::Light mylight(Rendering::TYPE_LIGHT::Directional, { 0.5f,0.5f,0.5f }, { 0.5f,0.5f,0.5f }, { 0.5f,0.5f,0.5f });
     Scene::AddLight(mylight);
 }
 
@@ -45,9 +45,9 @@ void RenderSystem::Update(Window& win)
     {
         auto entityTransform = coordinator->GetComponent<TransformComponent>(entity).transform;
         auto renderableComponent = coordinator->GetComponent<RenderableComponent>(entity);
-        shader.setMat4("model", Math::Mat4f::CreateTRSMat(entityTransform.position, entityTransform.rotation, entityTransform.scale));
+         shader.setMat4("model", Math::Mat4f::CreateTRSMat(entityTransform.position, entityTransform.rotation, entityTransform.scale));
 
-        renderableComponent.model->Draw(shader);
+        renderableComponent.model->Draw(&renderableComponent.materials);
     }
 
 }

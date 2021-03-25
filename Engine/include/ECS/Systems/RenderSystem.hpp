@@ -19,10 +19,10 @@ namespace BwatEngine
 
     class RenderSystem : public System
     {
+
         Rendering::Shader shader;
         Window* window;
         Entity camera = -1;
-
 
     public:
 
@@ -31,7 +31,6 @@ namespace BwatEngine
         void Init();
         void SetCamera(Entity _camera);
         void Update(Window& win);
-
         
     };
 }

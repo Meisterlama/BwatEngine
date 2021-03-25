@@ -1,6 +1,7 @@
 #pragma once
 
 #include <vector>
+#include <memory>
 #include "Mesh.hpp"
 #include "glad/glad.h"
 #include "GLFW/glfw3.h"
@@ -16,28 +17,26 @@
 
 namespace Rendering
 {
-
+	class Material;
 	class Model
 	{
 	private:
 
 		//Data
-		std::vector<Texture> textures_loaded{};
-		std::vector<Mesh> meshes{};
+		std::vector<std::unique_ptr<Mesh>> meshes;
 		std::string directory{};
-
 
 		void LoadModel(std::string path);
 		void ProcessNode(aiNode* node, const aiScene* scene);
-		Mesh ProcessMesh(aiMesh* mesh, const aiScene* scene);
-		std::vector<Texture> LoadMaterialTextures(aiMaterial* mat, aiTextureType type, std::string typeName);
+		void ProcessMesh(aiMesh* mesh, const aiScene* scene);
 
 	public:
 
         Model() = default;
         Model(std::string path);
-		void Draw(Shader& shader);
 
+		std::vector<Material*> GetDefaultMaterials() const;
+		void Draw(std::vector<Material*>* materials = nullptr);
 	};
 
 }

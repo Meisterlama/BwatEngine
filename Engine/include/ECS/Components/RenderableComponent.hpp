@@ -8,7 +8,15 @@ namespace BwatEngine
 {
     struct RenderableComponent
     {
-        Rendering::Model* model;
+        RenderableComponent() = default;
+        RenderableComponent(Rendering::Model* model)
+            : model(model)
+            , materials(model->GetDefaultMaterials())
+        {
+        }
+
+        Rendering::Model* model = nullptr;
+        std::vector<Rendering::Material*> materials;
     };
 }
 
