@@ -56,6 +56,7 @@ namespace BwatEngine
         glfwSetMouseButtonCallback(_window, InputHandler::MouseButtonCallback);
         glfwSetCursorPosCallback(_window, InputHandler::MouseMovementCallback);
         glfwSetScrollCallback(_window, InputHandler::ScrollCallback);
+        glfwSetCharCallback(_window, ImGui_ImplGlfw_CharCallback);
 
         GetInstance()->window = _window;
     }
