@@ -55,7 +55,7 @@ namespace BwatEngine
             auto& cameraProjection = coordinator->GetComponent<CameraComponent>(camera).projectionMat;
 
             shader.use();
-            shader.setMat4("view", Math::Mat4f::CreateTRSMat(cameraTransform.position, cameraTransform.rotation, cameraTransform.scale).Invert());
+            shader.setMat4("view", cameraTransform.GetTRS().Invert());
             shader.setMat4("proj", cameraProjection);
 
             shader.setInt("nbrlights", (int)World::GetWorldLights().size());
@@ -68,7 +68,7 @@ namespace BwatEngine
             {
                 auto entityTransform = coordinator->GetComponent<TransformComponent>(entityID).transform;
                 auto renderableComponent = coordinator->GetComponent<RenderableComponent>(entityID);
-                shader.setMat4("model", Math::Mat4f::CreateTRSMat(entityTransform.position, entityTransform.rotation, entityTransform.scale));
+                shader.setMat4("model", entityTransform.GetTRS());
 
                 renderableComponent.model->Draw(shader);
             }
