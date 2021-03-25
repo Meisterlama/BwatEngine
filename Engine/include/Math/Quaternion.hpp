@@ -2,7 +2,8 @@
 #ifndef MATH_QUATERNION_HPP
 #define MATH_QUATERNION_HPP
 
-#include "Math/Vector/Vector3.hpp"
+#include "Math/Vector/Vectors.hpp"
+#include "Math/Common.hpp"
 
 namespace BwatEngine::Math
 {
@@ -13,21 +14,6 @@ namespace BwatEngine::Math
         template<typename T>
         class Quaternion
         {
-        private:
-            T old_values[4];
-            Internal::Matrix4<T> rotation{1};
-
-            bool isDirty()
-            {
-                if (*this != Quaternion<T>{old_values[0], old_values[1], old_values[2], old_values[3]}) {
-                    old_values[0] = values[0];
-                    old_values[1] = values[1];
-                    old_values[2] = values[2];
-                    old_values[3] = values[3];
-                    return true;
-                }
-                return false;
-            }
         public:
             union
             {
@@ -42,32 +28,56 @@ namespace BwatEngine::Math
             };
 
             ML_FUNC_DECL Quaternion(T x = 0)
-                : X(x), Y(x), Z(x), W(x)
+                : W(x), X(x), Y(x), Z(x)
             {}
 
-            ML_FUNC_DECL Quaternion(T x, T y, T z, T w)
-                : X(x), Y(y), Z(z), W(w)
+            ML_FUNC_DECL Quaternion(T w, T x, T y, T z)
+                : W(w), X(x), Y(y), Z(z)
             {}
 
+            /**
+             * Create a Quaternion with each component equals to the vector's one
+             * @remark The vector's constructor is (X, Y, Z, W) while the quaternion's one is (W,X,Y,Z)
+             */
+            ML_FUNC_DECL Quaternion(Vector4<T> vec)
+                : W(vec.W), X(vec.X), Y(vec.Y), Z(vec.Z)
+            {}
+
+            /**
+             * Create a Quaternion with the rotation represented by \p vec
+             * @param vec Euler angle rotation (in radians)
+             */
             ML_FUNC_DECL Quaternion(Vector3<T> vec)
-                : X(0), Y(vec.X), Z(vec.Y), W(vec.Z)
-            {}
-
-            ML_FUNC_DECL Quaternion(T roll, T pitch, T yaw)
             {
-                T x0 = Cos(roll / 2);
-                T x1 = Sin(roll / 2);
-                T y0 = Cos(pitch / 2);
-                T y1 = Sin(pitch / 2);
-                T z0 = Cos(yaw / 2);
-                T z1 = Sin(yaw / 2);
+                T cx = Cos(vec.X / 2);
+                T cy = Cos(vec.Y / 2);
+                T cz = Cos(vec.Z / 2);
+                T sx = Sin(vec.X / 2);
+                T sy = Sin(vec.Y / 2);
+                T sz = Sin(vec.Z / 2);
 
-                X = x1 * y0 * z0 - x0 * y1 * z1;
-                Y = x0 * y1 * z0 - x1 * y0 * z1;
-                Z = x0 * y0 * z1 - x1 * y1 * z0;
-                W = x0 * y0 * z0 - x1 * y1 * z1;
+                W = cx * cy * cz + sx * sy * sz;
+                X = sx * cy * cz - cx * sy * sz;
+                Y = cx * sy * cz + sx * cy * sz;
+                Z = cx * cy * sz - sx * sy * cz;
             }
 
+            /**
+             * Create a quaternion corresponding to the given rotation
+             * @param roll  Rotation around X axis (in radians)
+             * @param pitch Rotation around Y axis (in radians)
+             * @param yaw   Rotation around Z axis (in radians)
+             */
+            ML_FUNC_DECL Quaternion(T pitch, T yaw, T roll)
+            {
+                *this = Quaternion{Vector3<T>{pitch, yaw, roll}};
+            }
+
+            /**
+             * Create a quaterion corresponding to the rotation of \p angle around the given \p axis
+             * @param axis Axis of the rotation
+             * @param angle Angle of the rotation (in radians)
+             */
             ML_FUNC_DECL Quaternion(Vector3<T> axis, T angle)
             {
                 if (Vector3Length(axis) != 0.0f) {
@@ -90,50 +100,93 @@ namespace BwatEngine::Math
 
             ~Quaternion() = default;
 
-            // Compute the amplitude without computing the sqrt
-            // Valid for comparisons, but actually equals to length squared
+            /**
+             * @remark Valid for comparisons, but actually equals to length squared, at the benefits of not computing sqrt
+             * @return The amplitude of the quaternion
+             */
             [[nodiscard]] ML_FUNC_DECL float Amplitude() const;
 
-            // Return the length of the quaternion
-            // If you only need it for comparison consider using Amplitude()
-            [[nodiscard]] ML_FUNC_DECL float Length() const;
+            /**
+             * @remark If you only need it for comparison consider using Amplitude()
+             * @return The norm of the quaternion
+             */
+            [[nodiscard]] ML_FUNC_DECL float Norm() const;
 
+            /**
+             * Compute the dot product between two Quaternion, similarly to Vector4
+             */
             [[nodiscard]] ML_FUNC_DECL float DotProduct(const Quaternion &q) const;
 
-            // Scale in place
+            /**
+             * @brief Scale the Quaternion in place
+             * @param factor Factor of the uniform scale
+             * @return A reference to self
+             */
             ML_FUNC_DECL Quaternion &Scale(const float &factor);
 
-            // Get a scaled copy of the quaternion
+            /**
+             * @param factor Factor of the uniform scale
+             * @return A scaled copy of the Quaternion
+             */
             [[nodiscard]] ML_FUNC_DECL Quaternion GetScaled(const float &factor) const;
 
-            // Normalize in place
+            /**
+             * @brief Normalize the Quaternion in place
+             * @warning Does not check for norm == 0
+             * @return A reference to self
+             */
             ML_FUNC_DECL Quaternion &Normalize();
 
-            // Get a normalized copy of the quaternion
+            /**
+             * @return A normalized copy of the Quaternion
+             * @warning Does not check for norm == 0
+             */
             [[nodiscard]] ML_FUNC_DECL Quaternion GetNormalized() const;
 
-            // Normalize in place.
-            // Check for length != 0
+            /**
+             * @brief Normalize the Quaternion in place
+             * @remark If norm == 0, does nothing
+             * @return A reference to self
+             */
             ML_FUNC_DECL Quaternion &SafeNormalize();
 
-            // Get a normalized copy of the quaternion
-            // If quaternion length == 0, return quaternion{0}
+            /**
+             * @remark If norm == 0, return Quaternion{0}
+             * @return Return a normalized copy of the Quaternion
+             */
             [[nodiscard]] ML_FUNC_DECL Quaternion GetSafeNormalized() const;
 
-            // Conjugate in place
+            /**
+             * @brief Conjugate the Quaternion in place
+             * @return A reference to self
+             */
             ML_FUNC_DECL Quaternion &Conjugate();
 
-            // Get a conjugate copy of the quaternion
+            /**
+             * @return A conjugated copy of the Quaternion
+             */
             [[nodiscard]] ML_FUNC_DECL Quaternion GetConjugate() const;
 
+            /**
+             * @brief Invert the quaternion in place
+             * @return A reference to self
+             */
             ML_FUNC_DECL Quaternion &Invert();
 
+            /**
+             * @return An inverted copy of the Quaternion
+             */
             [[nodiscard]] ML_FUNC_DECL Quaternion GetInverted() const;
 
-            [[nodiscard]] ML_FUNC_DECL Internal::Matrix4<T> GetRotationMatrix();
-
+            /**
+             * @return A vector containing the euler angles corresponding to the Quaternion
+             */
             [[nodiscard]] ML_FUNC_DECL Vector3<T> GetEulerAngles();
 
+            /**
+             * @param vec Euler angles of the rotation (in radians)
+             * @return The given vector \p vec composed with the rotation given by the Quaternion
+             */
             [[nodiscard]] ML_FUNC_DECL Vector3<T> Rotate(Vector3<T> vec);
 
             [[nodiscard]] ML_FUNC_DECL bool Equals(const Quaternion &rhs) const;
@@ -212,15 +265,15 @@ namespace BwatEngine::Math
     }
 
     template<typename T>
-    ML_FUNC_DECL float Internal::Quaternion<T>::Length() const
+    ML_FUNC_DECL float Internal::Quaternion<T>::Norm() const
     {
-        return std::sqrt(Amplitude());
+        return Sqrt(Amplitude());
     }
 
     template<typename T>
     ML_FUNC_DECL float Internal::Quaternion<T>::DotProduct(const Internal::Quaternion<T> &q) const
     {
-        return (X * X + Y * Y + Z * Z + W * W);
+        return (X * q.X + Y * q.Y + Z * q.Z + W * q.W);
     }
 
     template<typename T>
@@ -260,14 +313,14 @@ namespace BwatEngine::Math
     template<typename T>
     ML_FUNC_DECL Internal::Quaternion<T> &Internal::Quaternion<T>::Normalize()
     {
-        *this /= Length();
+        *this /= Norm();
         return *this;
     }
 
     template<typename T>
     ML_FUNC_DECL Internal::Quaternion<T> Internal::Quaternion<T>::GetNormalized() const
     {
-        return Internal::Quaternion{*this} / Length();
+        return Internal::Quaternion{*this} / Norm();
     }
 
     template<typename T>
@@ -297,7 +350,7 @@ namespace BwatEngine::Math
     template<typename T>
     ML_FUNC_DECL Internal::Quaternion<T> Internal::Quaternion<T>::GetConjugate() const
     {
-        return Internal::Quaternion<T>{X, Y, Z, W};
+        return Internal::Quaternion<T>{W, -X, -Y, -Z};
     }
 
     template<typename T>
@@ -314,52 +367,40 @@ namespace BwatEngine::Math
         return *this;
     }
 
-    template<typename T>
-    ML_FUNC_DECL Internal::Matrix4 <T> Internal::Quaternion<T>::GetRotationMatrix()
-    {
-        if (isDirty())
-        {
-            float x2 = 2 * (X * X), y2 = 2 * (Y * Y), z2 = 2 * (Z * Z);
-
-            float xy = 2 * (X * Y), xz = 2 * (X * Z), yz = 2 * (Y * Z);
-            float xw = 2 * (X * W), yw = 2 * (Y * W), zw = 2 * (Z * W);
-
-            rotation = Internal::Matrix4<T>{1 - y2 - z2, xy + zw    , xz - yw    , 0,
-                              xy - zw    , 1 - x2 - z2, yz + xw    , 0,
-                              xz + yw    , yz - xw    , 1 - x2 - y2, 0,
-                              0          , 0          , 0          , 1};
-
-        }
-
-        return rotation;
-    }
-
-
-
     template <typename T>
     [[nodiscard]] ML_FUNC_DECL Internal::Vector3<T> Internal::Quaternion<T>::GetEulerAngles()
     {
+        Normalize();
+        float pitch;
+        float yaw;
+        float roll;
         // roll (x-axis rotation)
-        float x0 = 2.0*(W*X + Y*Z);
-        float x1 = 1.0 - 2.0*(X*X + Y*Y);
+        T p0 = 2.0 * (Y * Z + W * X);
+        T p1 = W*W - X*X - Y*Y + Z*Z;
 
-        // pitch (y-axis rotation)
-        float y0 = 2.0*(W*Y - Z*X);
-        y0 = y0 > 1.0 ? 1.0 : y0;
-        y0 = y0 < -1.0 ? -1.0 : y0;
+        if (p0 == 0 && p1 == 0)
+            pitch = 2 * Atan2(X, W);
+        else
+            pitch = Atan2(p0, p1);
 
-        // yaw (z-axis rotation)
-        float z0 = 2.0*(W*Z + X*Y);
-        float z1 = 1.0 - 2.0*(Y*Y + Z*Z);
+        T y0 = -2 * (X*Z - W*Y);
+        y0 = Clamp(y0, -1, 1);
+        yaw = Asin(y0);
 
-        return Vector3<T>{ToDegs(Atan2(x0, x1)), ToDegs(Asin(y0)), ToDegs(Atan2(z0, z1))};
+        T r0 = 2 * (X*Y + W*Z);
+        T r1 = W*W + X*X - Y*Y - Z*Z;
+
+        roll = Atan2(r0, r1);
+
+
+        return {pitch, yaw, roll};
     }
     template <typename T>
     [[nodiscard]] ML_FUNC_DECL Internal::Vector3<T> Internal::Quaternion<T>::Rotate(Vector3<T> v)
     {
-        return Vector3<T>{v.X*(X*X + W*W - Y*Y - Z*Z) + v.y*(2*X*Y - 2*W*Z) + v.z*(2*X*Z + 2*W*Y),
-                          v.X*(2*W*Z + 2*X*Y) + v.y*(W*W - X*X + Y*Y - Z*Z) + v.z*(-2*W*X + 2*Y*Z),
-                          v.X*(-2*W*Y + 2*X*Z) + v.y*(2*W*X + 2*Y*Z)+ v.z*(W*W - X*X - Y*Y + Z*Z)};
+        return Vector3<T>{v.X*(X*X + W*W - Y*Y - Z*Z) + v.Y*(2*X*Y - 2*W*Z) + v.Z*(2*X*Z + 2*W*Y),
+                          v.X*(2*W*Z + 2*X*Y) + v.Y*(W*W - X*X + Y*Y - Z*Z) + v.Z*(-2*W*X + 2*Y*Z),
+                          v.X*(-2*W*Y + 2*X*Z) + v.Y*(2*W*X + 2*Y*Z)+ v.Z*(W*W - X*X - Y*Y + Z*Z)};
     }
 
     template<typename T>
@@ -377,10 +418,10 @@ namespace BwatEngine::Math
     template<typename T>
     ML_FUNC_DECL Internal::Quaternion<T> &Internal::Quaternion<T>::operator=(const Internal::Quaternion<T> &other)
     {
+        W = other.W;
         X = other.X;
         Y = other.Y;
         Z = other.Z;
-        W = other.W;
         return *this;
     }
 
@@ -414,19 +455,20 @@ namespace BwatEngine::Math
     template<typename T>
     ML_FUNC_DECL Internal::Quaternion<T> Internal::Quaternion<T>::operator+(const Internal::Quaternion<T> &rhs) const
     {
-        return Internal::Quaternion<T>{X + rhs.X,
-                             Y + rhs.Y,
-                             Z + rhs.Z,
-                             W + rhs.W};
+        return Internal::Quaternion<T>{W + rhs.W,
+                                       X + rhs.X,
+                                       Y + rhs.Y,
+                                       Z + rhs.Z
+                                      };
     }
 
     template<typename T>
     ML_FUNC_DECL Internal::Quaternion<T> &Internal::Quaternion<T>::operator+=(const Internal::Quaternion<T> &quat)
     {
+        W += quat.W;
         X += quat.X;
         Y += quat.Y;
         Z += quat.Z;
-        W += quat.W;
         return *this;
     }
 
@@ -443,36 +485,37 @@ namespace BwatEngine::Math
     template<typename T>
     ML_FUNC_DECL Internal::Quaternion<T> Internal::Quaternion<T>::operator-(const Internal::Quaternion<T> &rhs) const
     {
-        return Internal::Quaternion<T>{X - rhs.X,
-                             Y - rhs.Y,
-                             Z - rhs.Z,
-                             W - rhs.W};
+        return Internal::Quaternion<T>{X - rhs.W,
+                                       X - rhs.X,
+                                       Y - rhs.Y,
+                                       Z - rhs.Z
+                                      };
     }
 
     template<typename T>
     ML_FUNC_DECL Internal::Quaternion<T> &Internal::Quaternion<T>::operator-=(const Internal::Quaternion<T> &quat)
     {
+        W -= quat.W;
         X -= quat.X;
         Y -= quat.Y;
         Z -= quat.Z;
-        W -= quat.W;
         return *this;
     }
 
     template<typename T>
     ML_FUNC_DECL Internal::Quaternion<T> &Internal::Quaternion<T>::operator--()
     {
+        W--;
         X--;
         Y--;
         Z--;
-        W--;
         return *this;
     }
 
     template<typename T>
     [[nodiscard]] ML_FUNC_DECL Internal::Quaternion<T> operator-(Internal::Quaternion<T> quat)
     {
-        return Internal::Quaternion<T>{-quat.X, -quat.Y, -quat.Z, -quat.W};
+        return Internal::Quaternion<T>{-quat.W, -quat.X, -quat.Y, -quat.Z};
     }
 
     template<typename T>
@@ -488,15 +531,17 @@ namespace BwatEngine::Math
     ML_FUNC_DECL Internal::Quaternion<T> &Internal::Quaternion<T>::operator*=(const Internal::Quaternion<T> &quat)
     {
         *this = *this * quat;
+        return *this;
     }
 
     template<typename T>
     ML_FUNC_DECL Internal::Quaternion<T> Internal::Quaternion<T>::operator*(const float &scalar) const
     {
-        return Internal::Quaternion<T>{X * scalar,
-                             Y * scalar,
-                             Z * scalar,
-                             W * scalar};
+        return Internal::Quaternion<T>{W * scalar,
+                                       X * scalar,
+                                       Y * scalar,
+                                       Z * scalar
+                                      };
     }
 
     template<typename T>
@@ -508,29 +553,30 @@ namespace BwatEngine::Math
     template<typename T>
     ML_FUNC_DECL Internal::Quaternion<T> &Internal::Quaternion<T>::operator*=(const float &scalar)
     {
+        W *= scalar;
         X *= scalar;
         Y *= scalar;
         Z *= scalar;
-        W *= scalar;
         return *this;
     }
 
     template<typename T>
     ML_FUNC_DECL Internal::Quaternion<T> Internal::Quaternion<T>::operator/(const float &scalar) const
     {
-        return Internal::Quaternion<T>{X / scalar,
-                             Y / scalar,
-                             Z / scalar,
-                             W / scalar};
+        return Internal::Quaternion<T>{W / scalar,
+                                       X / scalar,
+                                       Y / scalar,
+                                       Z / scalar
+                                      };
     }
 
     template<typename T>
     ML_FUNC_DECL Internal::Quaternion<T> &Internal::Quaternion<T>::operator/=(const float &scalar)
     {
+        W /= scalar;
         X /= scalar;
         Y /= scalar;
         Z /= scalar;
-        W /= scalar;
         return *this;
     }
 
@@ -568,10 +614,11 @@ namespace BwatEngine::Math
         float ratioA = Sin((1 - ratio) * halfTheta) / sinHalfTheta;
         float ratioB = Sin(ratio * halfTheta) / sinHalfTheta;
 
-        return Internal::Quaternion<T>{(begin.X * ratioA + end.X * ratioB),
-                             (begin.Y * ratioA + end.Y * ratioB),
-                             (begin.Z * ratioA + end.Z * ratioB),
-                             (begin.W * ratioA + end.W * ratioB)};
+        return Internal::Quaternion<T>{(begin.W * ratioA + end.W * ratioB),
+                                       (begin.X * ratioA + end.X * ratioB),
+                                       (begin.Y * ratioA + end.Y * ratioB),
+                                       (begin.Z * ratioA + end.Z * ratioB),
+                                      };
     }
 
 #pragma endregion

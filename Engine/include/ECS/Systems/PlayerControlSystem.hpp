@@ -1,6 +1,7 @@
 #ifndef ENGINE_ECS_SYSTEMS_PLAYER_CONTROL_HPP
 #define ENGINE_ECS_SYSTEMS_PLAYER_CONTROL_HPP
 
+#include "Math/Common.hpp"
 #include "ECS/System.hpp"
 #include "Inputs/InputHandler.hpp"
 #include "imgui.h"
@@ -11,6 +12,7 @@ namespace BwatEngine
     class PlayerControlSystem: public System
     {
         bool lockMouse = false;
+        Math::Vec3f rotation{};
     public:
         void Init()
         {};
@@ -30,14 +32,28 @@ namespace BwatEngine
                     float sensitivity_mouse = 0.1f;
                     mouseDelta *= sensitivity_mouse * dt;
 
-                    transform.rotation.Y -= mouseDelta.X;
-                    transform.rotation.X -= mouseDelta.Y;
+//                    if (Math::Quatf(rotation) != transform.rotation)
+//                        rotation = transform.rotation.GetEulerAngles();
 
-                    if (transform.rotation.X >= Math::PI / 2)
-                        transform.rotation.X = Math::PI / 2;
+                    rotation.Y += mouseDelta.X;
+                    rotation.X += mouseDelta.Y;
 
-                    else if (transform.rotation.X <= -Math::PI / 2)
-                        transform.rotation.X = -Math::PI / 2;
+
+                    if (rotation.X > (Math::PI/2 - 0.001))
+                        rotation.X = (Math::PI/2 - 0.001);
+                    else if (rotation.X < -(Math::PI/2 - 0.001))
+                        rotation.X = -(Math::PI/2 - 0.001) ;
+
+                    if(InputHandler::GetKeyboard(KEY_Q))
+                    {
+                        rotation.Z -= 2 * dt;
+                    }
+                    if(InputHandler::GetKeyboard(KEY_E))
+                    {
+                        rotation.Z += 2 * dt;
+                    }
+
+                    transform.rotation = {rotation};
 
                     float Speed = 4.f;
                     float FrameSpeed = Speed * dt;
@@ -66,12 +82,12 @@ namespace BwatEngine
                     if (InputHandler::GetKeyboard(KEY_LEFT_CONTROL))
                         transform.position.Y -= Speed * dt;
 
-                    transform.position.Z += cos(-transform.rotation.Y) * cos(transform.rotation.X) * ForwardVelocity;
-                    transform.position.X += sin(transform.rotation.Y) * cos(-transform.rotation.X) * ForwardVelocity;
-                    transform.position.Y -= sin(transform.rotation.X) * ForwardVelocity;
+                    Math::Vec3f forwardVec = transform.rotation.Rotate({0, 0, 1}).Normalize();
+                    Math::Vec3f rightVec = transform.rotation.Rotate({1, 0, 0}).Normalize();
 
-                    transform.position.Z += sin(-transform.rotation.Y) * StrafeVelocity;
-                    transform.position.X += cos(-transform.rotation.Y) * StrafeVelocity;
+                    Math::Vec3f translation = forwardVec * ForwardVelocity + rightVec * StrafeVelocity;
+
+                    transform.position += translation;
                 }
             }
         }

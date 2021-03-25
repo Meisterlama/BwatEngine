@@ -2,6 +2,7 @@
 #define ENGINE_MATH_TRANSFORM_HPP
 
 #include "Math/Vector/Vector3.hpp"
+#include "Math/Quaternion.hpp"
 #include "Math/Matrix/Matrix4.hpp"
 
 #pragma region Declarations
@@ -11,7 +12,7 @@ namespace BwatEngine::Math
     {
     public:
         Vec3f position{ 0 };
-        Vec3f rotation{ 0 };
+        Quatf rotation{ 1, 0, 0, 0 };
         Vec3f scale{ 1 };
 
         Transform(Vec3f _position = {0}, Vec3f _rotation = {0}, Vec3f _scale = {1} )
