@@ -41,6 +41,7 @@ public:
     ~FileDialog();
 
     void OpenDialog(const char* aFilters, const std::filesystem::path& aFilePathName);
+    void ShowList();
 
 protected:	    // set default file name
     void ParseFilters(const char* aFilters);

@@ -1,4 +1,5 @@
 #include "FileDialog.hpp"
+#include "imgui.h"
 #include <dirent.h>
 
 inline std::vector<std::string> SplitStringToVector(const std::string& text, char delimiter, bool pushEmpty)
@@ -50,6 +51,7 @@ void FileDialog::OpenDialog(const char *aFilters, const std::filesystem::path& a
 
     ParseFilters(aFilters);
     SetSelectedFilterWithExt(dlgDefaultEx.string());
+    SetPath(dlgPath.string());
 }
 
 void FileDialog::ParseFilters(const char *aFilters)
@@ -159,7 +161,7 @@ void FileDialog::SetPath(const std::string &aPath)
     fileList.clear();
     if (dlgFilters.empty())
         dlgDefaultFileName = ".";
-
+    ScanDir(currentPath.string());
 }
 
 void FileDialog::ScanDir(const std::string &aPath)
@@ -213,6 +215,23 @@ void FileDialog::ScanDir(const std::string &aPath)
             }
 
             free(files);
+        }
+    }
+}
+
+void FileDialog::ShowList()
+{
+    for (int i = 0; i < fileList.size(); i++)
+    {
+        if(ImGui::Selectable(fileList[i].fileName.c_str()))
+        {
+            std::filesystem::path dir = fileList[i].filePath + fileList[i].fileName;
+            if (fileList[i].fileName == "..")
+                OpenDialog("", dir.parent_path());
+            else if (!dir.has_extension())
+            {
+                OpenDialog("",fileList[i].filePath + "/" + fileList[i].fileName);
+            }
         }
     }
 }
