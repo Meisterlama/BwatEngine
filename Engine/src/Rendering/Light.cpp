@@ -56,23 +56,19 @@ void Light::ApplyOnShader(Shader* shader , const std::string& i) const
 {
     shader->use();
 
-    shader->setVec3("lights[" + i + "].ambient", ambient.X, ambient.Y, ambient.Z);
-    shader->setVec3("lights[" + i + "].diffuse", diffuse.X, diffuse.Y, diffuse.Z);
-    shader->setVec3("lights[" + i + "].specular", specular.X, specular.Y, specular.Z);
+    shader->setVec3("light.ambient", ambient.X, ambient.Y, ambient.Z);
+    shader->setVec3("light.diffuse", diffuse.X, diffuse.Y, diffuse.Z);
+    shader->setVec3("light.specular", specular.X, specular.Y, specular.Z);
 
-    shader->setFloat("material.shininess", matShininess);
-    shader->setInt("material.diffuse", matDiffuse);
-    shader->setInt("material.specular", matSpecular);
+    //shader->setFloat("light.constant",  constant);
+    //shader->setFloat("light.linear",    linear);
+    //shader->setFloat("light.quadratic", quadratic);
 
-    shader->setFloat("lights[" + i + "].constant",  constant);
-    shader->setFloat("lights[" + i + "].linear",    linear);
-    shader->setFloat("lights[" + i + "].quadratic", quadratic);
+    //shader->setFloat("light.cutOff", cutoff);
+    //shader->setFloat("light.outerCutOff", outerCutoff);
 
-    shader->setFloat("lights[" + i + "].cutOff", cutoff);
-    shader->setFloat("lights[" + i + "].outerCutOff", outerCutoff);
-
-    shader->setVec3("lights[" + i + "].position", position.X, position.Y, position.Z);
-    shader->setVec3("lights[" + i + "].direction", direction.X, direction.Y, direction.Z);
-    shader->setInt("lights[" + i + "].typeoflight", typeoflight);
+    shader->setVec3("light.position", position.X, position.Y, position.Z);/*
+    shader->setVec3("light.direction", direction.X, direction.Y, direction.Z);*//*
+    shader->setInt("light.typeoflight", typeoflight);*/
 }
 

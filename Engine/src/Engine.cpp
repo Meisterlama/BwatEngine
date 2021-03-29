@@ -50,17 +50,18 @@ namespace BwatEngine {
         Time::deltaTime = currentFrame - lastFrame;
         lastFrame = currentFrame;
 
-        //ImGui::Render();
-        //ImGui_ImplOpenGL3_RenderDrawData(ImGui::GetDrawData());
         scene.physicsSystem->Update();
         scene.playerControlSystem->Update(Time::deltaTime, GetGLFWwindow());
         
-        MainFBO.UseAndBind();
-        scene.renderSystem->Update(GetWindow());
-        MainFBO.Unbind();
+        if (MainFBO)
+            MainFBO->UseAndBind();
+
+         scene.renderSystem->Update(GetWindow());
+
+         if (MainFBO)
+            MainFBO->Unbind();
 
         scene.inputSystem->Update();
-
         glfwSwapBuffers(GetGLFWwindow());
         
     }
