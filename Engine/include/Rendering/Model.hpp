@@ -18,6 +18,7 @@
 namespace Rendering
 {
 	class Material;
+
 	class Model
 	{
 	private:
@@ -26,14 +27,14 @@ namespace Rendering
 		std::vector<std::unique_ptr<Mesh>> meshes;
 		std::string directory{};
 
-		void LoadModel(std::string path);
+		void LoadModel(const std::string path);
 		void ProcessNode(aiNode* node, const aiScene* scene);
 		void ProcessMesh(aiMesh* mesh, const aiScene* scene);
 
 	public:
 
         Model() = default;
-        Model(std::string path);
+        Model(const std::string path);
 
 		std::vector<Material*> GetDefaultMaterials() const;
 		void Draw(std::vector<Material*>* materials = nullptr);

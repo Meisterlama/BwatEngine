@@ -3,6 +3,7 @@
 
 #include "Math/Meta.hpp"
 #include <cmath>
+#include <algorithm>
 
 // Currently only wrapping std functions
 namespace BwatEngine::Math

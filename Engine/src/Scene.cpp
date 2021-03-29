@@ -40,7 +40,7 @@ std::vector<Rendering::Light>& Scene::GetLights()
 }
 
 Scene::Scene(Window& window)
-    : texture("Assets/image/test2.jpg"), texture1("Assets/image/green.png")
+    : texture("Assets/image/green.png",Rendering::Texture::Type::E_DIFFUSE), texture1("Assets/image/moteur.jpg", Rendering::Texture::Type::E_DIFFUSE)
 {
     Coordinator& coordinator = *Coordinator::GetInstance();
     coordinator.Init();
