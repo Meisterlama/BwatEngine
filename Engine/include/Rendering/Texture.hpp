@@ -12,6 +12,14 @@ namespace Rendering
 {
     struct Texture
     {
+        enum class Type
+        {
+            E_DIFFUSE,
+            E_SPECULAR,
+            E_NORMAL,
+            E_HEIGHT
+        };
+      
         GLuint id;
 
         Texture() = delete;

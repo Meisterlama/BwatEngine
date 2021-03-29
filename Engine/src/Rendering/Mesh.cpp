@@ -4,6 +4,7 @@
 #include <stdio.h>
 #include <iostream>
 #include <fstream>
+#include "ResourceManager/ResourceManager.hpp"
 
 using namespace Rendering;
 

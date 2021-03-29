@@ -3,6 +3,7 @@
 
 #include "Math/Meta.hpp"
 #include "Math/Vector/Vector3.hpp"
+#include "Math/Quaternion.hpp"
 #include "Math/Common.hpp"
 
 #pragma region Declarations
@@ -174,6 +175,12 @@ namespace BwatEngine::Math
             static ML_FUNC_DECL Matrix4 CreateRotationMat(Internal::Vector3<T> axis, T angle);
 
             /**
+             * @param rotation Quaternion representing the rotation (Should be normalized before)
+             * @return A matrix that represent the \p rotation given
+             */
+            static ML_FUNC_DECL Matrix4 CreateRotationMat(Internal::Quaternion<T> rotation);
+
+            /**
              * @param angle Euler angle of the rotation (in radians)
              * @return A matrix that represent a rotation of \p angle around the X axis
              */
@@ -221,6 +228,26 @@ namespace BwatEngine::Math
              */
             static ML_FUNC_DECL Matrix4 CreateSRTMat(Internal::Vector3<T> translation,
                                                      Internal::Vector3<T> rotation,
+                                                     Internal::Vector3<T> scale);
+
+            /**
+             * @param translation Translation vector in XYZ coordinates
+             * @param rotation Quaternion representing the rotation
+             * @param scale Scale vector in XYZ coordinates
+             * @return A matrix representing the combination of Translation, RotationXYZ and Scale (in this order)
+             */
+            static ML_FUNC_DECL Matrix4 CreateTRSMat(Internal::Vector3<T> translation,
+                                                     Internal::Quaternion<T> rotation,
+                                                     Internal::Vector3<T> scale);
+
+            /**
+             * @param translation Translation vector in XYZ coordinates
+             * @param rotation Quaternion representing the rotation
+             * @param scale Scale vector in XYZ coordinates
+             * @return A matrix representing the combination of Scale, RotationXYZ and Translation (in this order)
+             */
+            static ML_FUNC_DECL Matrix4 CreateSRTMat(Internal::Vector3<T> translation,
+                                                     Internal::Quaternion<T> rotation,
                                                      Internal::Vector3<T> scale);
 
             /**
@@ -497,7 +524,22 @@ namespace BwatEngine::Math
         return Internal::Matrix4<T>{  x*x*t + ca  , y*x*t + z*sa, z*x*t - y*sa, 0.0f,
                             x*y*t - z*sa, y*y*t + ca  , z*y*t + x*sa, 0.0f,
                             x*z*t + y*sa, y*z*t - x*sa, z*z*t + ca  , 0.0f,
-                            0.0f        , 0.0f        , 0.0f        , 1.0f};
+                            0.0f        , 0.0f        , 0.0f        , 1.0f};//.Transpose();
+    }
+
+    template<typename T>
+    ML_FUNC_DECL Internal::Matrix4<T> Internal::Matrix4<T>::CreateRotationMat(Internal::Quaternion<T> rotation)
+    {
+        rotation.Normalize();
+        float x2 = 2 * (rotation.X * rotation.X), y2 = 2 * (rotation.Y * rotation.Y), z2 = 2 * (rotation.Z * rotation.Z);
+        float xy = 2 * (rotation.X * rotation.Y), xz = 2 * (rotation.X * rotation.Z), yz = 2 * (rotation.Y * rotation.Z);
+        float xw = 2 * (rotation.X * rotation.W), yw = 2 * (rotation.Y * rotation.W), zw = 2 * (rotation.Z * rotation.W);
+
+
+        return Internal::Matrix4<T>{1 - y2 - z2, xy - zw    , xz + yw    , 0,
+                                    xy + zw    , 1 - x2 - z2, yz - xw    , 0,
+                                    xz - yw    , yz + xw    , 1 - x2 - y2, 0,
+                                    0          , 0          , 0          , 1}.Transpose();
     }
 
     template<typename T>
@@ -569,6 +611,19 @@ namespace BwatEngine::Math
     ML_FUNC_DECL Internal::Matrix4<T> Internal::Matrix4<T>::CreateSRTMat(Internal::Vector3<T> translation, Internal::Vector3<T> rotation, Internal::Vector3<T> scale)
     {
         return (CreateScaleMat(scale) * CreateXYZRotationMat(rotation) * CreateTranslationMat(translation));
+    }
+
+    template<typename T>
+    ML_FUNC_DECL Internal::Matrix4<T> Internal::Matrix4<T>::CreateTRSMat(Internal::Vector3<T> translation, Internal::Quaternion<T> rotation, Internal::Vector3<T> scale)
+    {
+        return (CreateTranslationMat(translation) * CreateRotationMat(rotation) * CreateScaleMat(scale));
+    }
+
+
+    template<typename T>
+    ML_FUNC_DECL Internal::Matrix4<T> Internal::Matrix4<T>::CreateSRTMat(Internal::Vector3<T> translation, Internal::Quaternion<T> rotation, Internal::Vector3<T> scale)
+    {
+        return (CreateScaleMat(scale) * CreateRotationMat(rotation) * CreateTranslationMat(translation));
     }
 
     template<typename T>

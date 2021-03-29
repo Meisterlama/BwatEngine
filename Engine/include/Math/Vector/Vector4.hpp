@@ -88,6 +88,7 @@ namespace BwatEngine::Math
             ML_FUNC_DECL Vector4 &Normalize();
 
             /**
+             * @warning Does not check for length == 0
              * @return A normalized copy of the vector
              */
             [[nodiscard]] ML_FUNC_DECL Vector4 GetNormalized() const;

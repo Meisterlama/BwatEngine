@@ -1,4 +1,7 @@
-#include "Rendering/Texture.hpp"
+
+#include "Rendering/texture.hpp"
+#include "Debug/Logger.hpp"
+
 
 using namespace Rendering;
 
@@ -15,6 +18,7 @@ Texture::Texture(const char* filename)
 {
     glGenTextures(1, &id);
     glBindTexture(GL_TEXTURE_2D, id);
+
 
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
@@ -47,7 +51,6 @@ Texture::Texture(const char* filename)
         std::cout << "Texture failed to load at path: " << filename << std::endl;
         stbi_image_free(data);
     }
-
 }
 
 Texture::~Texture()
@@ -64,6 +67,3 @@ void Texture::UnBind()
 {
     glBindTexture(GL_TEXTURE_2D, 0);
 }
-
-
-

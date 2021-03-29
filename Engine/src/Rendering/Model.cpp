@@ -1,22 +1,25 @@
 #include <cmath>
 
 #include "Rendering/Model.hpp"
+#include "ResourceManager/ResourceManager.hpp"
+#include "Debug/Logger.hpp"
 
 using namespace Rendering;
 
-Model::Model(std::string path)
+
+Model::Model(const std::string &path)
 {
     LoadModel(path);
 };
 
-void Model::LoadModel(std::string path)
+void Model::LoadModel(const std::string& path)
 {
     Assimp::Importer import;
     const aiScene* scene = import.ReadFile(path, aiProcess_Triangulate | aiProcess_FlipUVs);
 
     if (!scene || scene->mFlags & AI_SCENE_FLAGS_INCOMPLETE || !scene->mRootNode)
     {
-        std::cout << "ERROR::ASSIMP::" << import.GetErrorString() << std::endl;
+        LogError("ERROR::ASSIMP::%s\n", import.GetErrorString());
         return;
     }
     directory = path.substr(0, path.find_last_of('/'));
@@ -29,6 +32,7 @@ void Model::ProcessNode(aiNode* node, const aiScene* scene)
     for (unsigned int i = 0; i < node->mNumMeshes; i++)
     {
         aiMesh* mesh = scene->mMeshes[node->mMeshes[i]];
+
         ProcessMesh(mesh, scene);
     }
     // then do the same for each of its children
@@ -43,7 +47,6 @@ void Model::ProcessMesh(aiMesh* mesh, const aiScene* scene)
     // data to fill
     std::vector<Rendering::Vertex> vertices;
     std::vector<unsigned int> indices;
-    std::vector<Rendering::Texture> textures;
 
     // walk through each of the mesh's vertices
     for (unsigned int i = 0; i < mesh->mNumVertices; i++)
@@ -107,6 +110,7 @@ void Model::Draw(std::vector<Material*>* materials)
             meshes[i]->defaultMaterial.Bind();
 
         meshes[i]->Draw();
+
     }
 }
 

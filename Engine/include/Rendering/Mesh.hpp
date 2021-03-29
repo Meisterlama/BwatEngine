@@ -40,5 +40,4 @@ namespace Rendering
         void Draw();
     
     };
-
 }

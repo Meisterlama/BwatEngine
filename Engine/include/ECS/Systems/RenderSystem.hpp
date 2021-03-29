@@ -32,6 +32,7 @@ namespace BwatEngine
         void SetCamera(Entity _camera);
         void Update(Window& win);
         
+
     };
 }
 
