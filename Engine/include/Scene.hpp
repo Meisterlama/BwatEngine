@@ -31,8 +31,12 @@ namespace BwatEngine
 
 		Scene(Window& window);
 
-
+		// TODO : resrc manager to load rsrc and stock
 		Rendering::Model model;
+		Rendering::Texture texture;
+		Rendering::Texture texture1;
+		Rendering::Material myMat;
+		Rendering::Material myMat1;
 
 		std::vector<Entity> entities;
 

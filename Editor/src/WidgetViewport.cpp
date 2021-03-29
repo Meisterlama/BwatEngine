@@ -2,15 +2,13 @@
 #include "EditorInterface.hpp"
 #include "Engine.hpp"
 
-WidgetViewport::WidgetViewport(EditorInterface *editor) : Widget(editor)
+WidgetViewport::WidgetViewport(EditorInterface *editor) : Widget(editor) , 
+    fbo(editor->engine->GetWindow().GetWidth(), editor->engine->GetWindow().GetHeight())
 {
     title = "Viewport";
     flags |= ImGuiWindowFlags_NoScrollbar;
 
-    fbo = Rendering::FrameBufferObject(editor->engine->GetWindow().GetWidth()
-        , editor->engine->GetWindow().GetHeight());
-
-    editor->engine->MainFBO = fbo;
+    editor->engine->MainFBO = &fbo;
 }
 
 void WidgetViewport::TickVisible()
