@@ -1,6 +1,11 @@
 #include "FileDialog.hpp"
 #include "imgui.h"
+
+#if WIN32
+#include <direntWin32.h>
+#else
 #include <dirent.h>
+#endif
 
 inline std::vector<std::string> SplitStringToVector(const std::string& text, char delimiter, bool pushEmpty)
 {

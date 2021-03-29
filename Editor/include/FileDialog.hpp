@@ -3,6 +3,7 @@
 
 #include <filesystem>
 #include <set>
+#include <vector>
 
 class FileDialog
 {
