@@ -8,13 +8,13 @@ Material::Material(const aiMaterial& from)
     {
         aiString path;
         if (from.GetTexture(aiTextureType_DIFFUSE, 0, &path) == aiReturn_SUCCESS)
-            diffuse = new Texture(path.C_Str()); // TODO: use resrc manager 
+            diffuse = new Texture(path.C_Str(), Rendering::Texture::Type::E_DIFFUSE); // TODO: use resrc manager 
             
     }
     {
         aiString path;
         if (from.GetTexture(aiTextureType_SPECULAR, 0, &path) == aiReturn_SUCCESS)
-            specular = new Texture(path.C_Str());
+            specular = new Texture(path.C_Str(), Rendering::Texture::Type::E_SPECULAR);
     }
     {
         //aiColor3D diffuseColor;

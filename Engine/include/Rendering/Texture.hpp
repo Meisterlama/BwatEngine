@@ -21,13 +21,16 @@ namespace Rendering
         };
       
         GLuint id;
+        Type type;
+        std::string path;
 
         Texture() = delete;
         Texture(const Texture&) = delete;
 
-        Texture(int width, int height);
-        Texture(const char* path);
+        Texture(const std::string& path, Type type);
         ~Texture();
+
+        Texture(int width, int height);
 
         void Use();
         void UnBind();

@@ -4,15 +4,15 @@
 #include "ResourceManager/ResourceManager.hpp"
 #include "Debug/Logger.hpp"
 
+
 using namespace Rendering;
 
-
-Model::Model(const std::string &path)
+Model::Model(const std::string path)
 {
     LoadModel(path);
 };
 
-void Model::LoadModel(const std::string& path)
+void Model::LoadModel(const std::string path)
 {
     Assimp::Importer import;
     const aiScene* scene = import.ReadFile(path, aiProcess_Triangulate | aiProcess_FlipUVs);
