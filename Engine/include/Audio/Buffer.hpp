@@ -13,7 +13,7 @@ namespace BwatEngine::Audio
         Buffer();
         ~Buffer();
 
-        void BufferAudioData(AudioData& audioData);
+        void BufferAudioData(const AudioData& audioData);
 
         const ALuint& GetID() const { return bufferID; }
     };

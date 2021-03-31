@@ -5,13 +5,18 @@ namespace BwatEngine::Audio
     Source::Source()
     {
         alGenSources(1, &sourceID);
-        CheckALErrors();
+    }
+
+    Source::Source(const AudioData& audioData)
+    {
+        alGenSources(1, &sourceID);
+        SetAudioData(audioData);
     }
 
     Source::~Source()
     {
-        alDeleteSources(1, &sourceID);
-        CheckALErrors();
+//        alDeleteSources(1, &sourceID);
+//        CheckALErrors();
     }
 
     void Source::SetPitch(float pitch)
@@ -39,7 +44,7 @@ namespace BwatEngine::Audio
         alSourcei(sourceID, AL_LOOPING, (loop) ? AL_TRUE: AL_FALSE);
     }
 
-    void Source::SetAudioData(AudioData &audioData)
+    void Source::SetAudioData(const AudioData &audioData)
     {
         length = audioData.length;
         buffer.BufferAudioData(audioData);
