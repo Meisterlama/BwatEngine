@@ -2,8 +2,8 @@
 #include <ECS/Components/RenderableComponent.hpp>
 #include <ECS/Components/RigidBodyComponent.hpp>
 
+#include "ResourceManager/ResourceManager.hpp"
 #include "ECS/Coordinator.hpp"
-
 
 #include <Rendering/Model.hpp>
 
@@ -32,7 +32,26 @@ void WidgetProperties::ShowComponent<BwatEngine::RenderableComponent>(BwatEngine
 {
     if (ImGui::CollapsingHeader("Renderable",ImGuiTreeNodeFlags_DefaultOpen))
     {
-        ImGui::Text("Wonderful Model here");
+        const char* modelName = component.model->modelPath.filename().string().c_str();
+        ImGui::Text("Mesh");
+        ImGui::SameLine();
+        if(ImGui::BeginCombo("##Mesh", modelName))
+        {
+            auto meshList = BwatEngine::ResourceManager::Instance()->GetModelList();
+
+            for(auto &model : meshList)
+            {
+                bool selected = (modelName == model->modelPath.filename());
+                if(ImGui::Selectable(model->modelPath.filename().string().c_str(), selected))
+                {
+                    component.model = model;
+                }
+                if(selected)
+                    ImGui::SetItemDefaultFocus();
+            }
+
+            ImGui::EndCombo();
+        }
         //ImGui::Text("%s", component.model->directory.c_str());
     }
 }
