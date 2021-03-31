@@ -1,3 +1,6 @@
+#ifndef ENGINE_AUDIO_SOURCE_HPP
+#define ENGINE_AUDIO_SOURCE_HPP
+
 #include "Audio/Sound.hpp"
 #include "Math/Vector/Vector3.hpp"
 #include "Audio/Buffer.hpp"
@@ -9,10 +12,12 @@ namespace BwatEngine::Audio
         {
         private:
             Buffer buffer{};
-            ALuint sourceID;
-            float length;
+            ALuint sourceID{};
+            float length{};
+
         public:
             Source();
+            Source(const AudioData& audioData);
 
             ~Source();
 
@@ -22,7 +27,7 @@ namespace BwatEngine::Audio
             void SetVelocity(Math::Vec3f vel);
             void SetLooping(bool loop);
 
-            void SetAudioData(AudioData& audioData);
+            void SetAudioData(const AudioData& audioData);
 
             void Play();
             void Stop();
@@ -31,3 +36,5 @@ namespace BwatEngine::Audio
             const float& GetDuration() const { return length; }
         };
     }
+
+#endif // ENGINE_AUDIO_SOURCE_HPP
