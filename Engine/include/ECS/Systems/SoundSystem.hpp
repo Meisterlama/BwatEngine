@@ -29,7 +29,7 @@ namespace BwatEngine
                 if (state != AL_PLAYING)
                 {
                     component.source.SetGain(1);
-                    component.source.SetPitch(rng.RollRandomFloatZeroToOne() * 3);
+                    component.source.SetPitch(rng.RollRandomFloatInRange(0.5, 2));
                     component.source.Play();
                 }
             }
