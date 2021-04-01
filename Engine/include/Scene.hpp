@@ -16,6 +16,8 @@ namespace BwatEngine
 	class PhysicsSystem;
 	class PlayerControlSystem;
 	class RenderSystem;
+	class ScriptSystem;
+	class SoundSystem;
 	class Window;
 
 	class Scene
@@ -44,6 +46,8 @@ namespace BwatEngine
 		std::shared_ptr<PhysicsSystem> physicsSystem = nullptr;
 		std::shared_ptr<PlayerControlSystem> playerControlSystem = nullptr;
 		std::shared_ptr<RenderSystem> renderSystem = nullptr;
+		std::shared_ptr<SoundSystem> soundSystem = nullptr;
+		std::shared_ptr<ScriptSystem> scriptSystem = nullptr;
 
 		// PhysX
 		Physic physic{};
