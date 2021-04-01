@@ -54,8 +54,10 @@ namespace BwatEngine {
 
         static bool updatePhysics = false;
         if (InputHandler::GetKeyboardDown(KEY_F2))
+        {
             updatePhysics = !updatePhysics;
-
+                    
+        }
         static bool updateAudio = false;
         if (InputHandler::GetKeyboardDown(KEY_F3))
             updateAudio = !updateAudio;
@@ -81,8 +83,16 @@ namespace BwatEngine {
 
         scene.inputSystem->Update();
 
-        // if game running update script
-        scene.scriptSystem->Update();
+        static bool updateScript = false;
+        if (InputHandler::GetKeyboardDown(KEY_F4))
+        {
+            updateScript = !updateScript;
+
+        }
+        if (updateScript)
+        {
+            scene.scriptSystem->Update();
+        }
 
         glfwSwapBuffers(GetGLFWwindow());
         
