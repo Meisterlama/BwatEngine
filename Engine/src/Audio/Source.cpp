@@ -44,6 +44,27 @@ namespace BwatEngine::Audio
         alSourcei(sourceID, AL_LOOPING, (loop) ? AL_TRUE: AL_FALSE);
     }
 
+    float Source::GetPitch()
+    {
+        float pitch;
+        alGetSourcef(sourceID, AL_PITCH, &pitch);
+        return pitch;
+    }
+
+    float Source::GetGain()
+    {
+        float gain;
+        alGetSourcef(sourceID, AL_GAIN, &gain);
+        return gain;
+    }
+
+    bool Source::GetLooping()
+    {
+        int loop;
+        alGetSourcei(sourceID, AL_LOOPING, &loop);
+        return (loop == AL_TRUE);
+    }
+
     void Source::SetAudioData(const AudioData &audioData)
     {
         length = audioData.length;
