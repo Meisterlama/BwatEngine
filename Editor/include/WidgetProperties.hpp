@@ -21,6 +21,12 @@ private:
     template<typename T>
     void ShowComponent(T& component);
 
+    template<typename T>
+    bool AddComponentMenuItem(BwatEngine::Entity entity);
+
+    template<typename T>
+    bool ShowComponentMenuItem(BwatEngine::Entity entity);
+
 };
 
 #endif //BWATENGINE_WIDGETPROPERTIES_H
