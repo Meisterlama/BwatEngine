@@ -94,6 +94,8 @@ Scene::Scene(Window& window)
 
     BwatEngine::ResourceManager::Instance()->GetOrLoadModel("Assets/cube.obj");
     BwatEngine::ResourceManager::Instance()->GetOrLoadModel("Assets/sphere.obj");
+    BwatEngine::ResourceManager::Instance()->GetOrLoadTexture("Assets/image/Heart.png", Rendering::Texture::Type::E_DIFFUSE);
+    BwatEngine::ResourceManager::Instance()->GetOrLoadTexture("Assets/image/Purple.jpg", Rendering::Texture::Type::E_DIFFUSE);
 
     std::default_random_engine generator;
     std::uniform_real_distribution<float> randPosition(-100.0f, 100.0f);

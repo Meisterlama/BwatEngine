@@ -105,6 +105,16 @@ namespace BwatEngine
             return modelList;
         }
 
+        std::vector<Rendering::Texture*> GetTextList()
+        {
+            std::vector<Rendering::Texture*> textList;
+            for (auto &it : textures)
+            {
+                textList.push_back(it.second.get());
+            }
+            return textList;
+        }
+
     private:
 
         ResourceManager() = default;
