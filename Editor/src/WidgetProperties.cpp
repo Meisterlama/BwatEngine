@@ -3,8 +3,8 @@
 #include <ECS/Components/RigidBodyComponent.hpp>
 #include <ECS/Components/AudioSourceComponent.hpp>
 
+#include "ResourceManager/ResourceManager.hpp"
 #include "ECS/Coordinator.hpp"
-
 
 #include <Rendering/Model.hpp>
 
@@ -33,8 +33,79 @@ void WidgetProperties::ShowComponent<BwatEngine::RenderableComponent>(BwatEngine
 {
     if (ImGui::CollapsingHeader("Renderable",ImGuiTreeNodeFlags_DefaultOpen))
     {
-        ImGui::Text("Wonderful Model here");
-        //ImGui::Text("%s", component.model->directory.c_str());
+        const char* modelName = component.model->modelPath.filename().string().c_str();
+        ImGui::Text("Mesh");
+        ImGui::SameLine();
+        if(ImGui::BeginCombo("##Mesh", modelName))
+        {
+            auto meshList = BwatEngine::ResourceManager::Instance()->GetModelList();
+
+            for(auto &model : meshList)
+            {
+                bool selected = (modelName == model->modelPath.filename());
+                if(ImGui::Selectable(model->modelPath.filename().string().c_str(), selected))
+                {
+                    component.model = model;
+                }
+                if(selected)
+                    ImGui::SetItemDefaultFocus();
+            }
+            ImGui::EndCombo();
+        }
+
+        for (int i = 0; i < component.materials.size(); i++)
+        {
+            const char* DiffName;
+            if (component.materials[i]->diffuse != nullptr)
+                DiffName = component.materials[i]->diffuse->path.c_str();
+            else
+                DiffName = "";
+
+            ImGui::Text("Diffuse Texture");
+            ImGui::SameLine();
+            if(ImGui::BeginCombo("##Diff", DiffName))
+            {
+                auto textList = BwatEngine::ResourceManager::Instance()->GetTextList();
+
+                for(auto &text : textList)
+                {
+                    bool selected = (DiffName == text->path);
+                    if(ImGui::Selectable(text->path.c_str(), selected))
+                    {
+                        component.materials[i]->diffuse = text;
+                    }
+                    if(selected)
+                        ImGui::SetItemDefaultFocus();
+                }
+                ImGui::EndCombo();
+            }
+
+            const char* SpecName;
+            if (component.materials[i]->specular != nullptr)
+                SpecName = component.materials[i]->specular->path.c_str();
+            else
+                SpecName = "";
+
+            ImGui::Text("Specular Texture");
+            ImGui::SameLine();
+            if(ImGui::BeginCombo("##Spec", SpecName))
+            {
+                auto textList = BwatEngine::ResourceManager::Instance()->GetTextList();
+
+                for(auto &text : textList)
+                {
+                    bool selected = (SpecName == text->path);
+                    if(ImGui::Selectable(text->path.c_str(), selected))
+                    {
+                        component.materials[i]->specular = text;
+                    }
+                    if(selected)
+                        ImGui::SetItemDefaultFocus();
+                }
+                ImGui::EndCombo();
+            }
+        }
+
     }
 }
 

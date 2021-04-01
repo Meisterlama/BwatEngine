@@ -2,6 +2,7 @@
 #define RESOURCEMANAGER_RESOURCEMANAGER_HPP_
 
 #include <string>
+#include <vector>
 #include <unordered_map>
 #include "Rendering/Model.hpp"
 
@@ -11,6 +12,9 @@ namespace BwatEngine
     class ResourceManager
     {
     public:
+
+
+
         /* the instance for the singleton */
 
         static ResourceManager* Instance()
@@ -91,6 +95,25 @@ namespace BwatEngine
         }
 
         /* ************************************************************************* */
+        std::vector<Rendering::Model*> GetModelList()
+        {
+            std::vector<Rendering::Model*> modelList;
+            for (auto &it : models)
+            {
+                modelList.push_back(it.second.get());
+            }
+            return modelList;
+        }
+
+        std::vector<Rendering::Texture*> GetTextList()
+        {
+            std::vector<Rendering::Texture*> textList;
+            for (auto &it : textures)
+            {
+                textList.push_back(it.second.get());
+            }
+            return textList;
+        }
 
     private:
 
