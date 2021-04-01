@@ -18,32 +18,24 @@ void PhysicsSystem::Init(Scene* scene, const Math::Vec3f& gravity)
     ptrScene->scenePhysic = (ptrScene->physic.GetPhysics()->createScene(SceneDesc));
 }
 
-void PhysicsSystem::BeginSimulation()
-{
-}
-
-void PhysicsSystem::SetColliderForRigidbody(Entity entity)
-{
-    //auto rigidComp = entity.GetComponent<RigidBodyComponent>();
-    //auto colliderComp = entity.GetComponent<ColliderComponent>();
-    //
-    //rigidComp.rigidBody->attachShape(*colliderComp.shape);
-}
-
-
 void PhysicsSystem::Update()
 {
-    ptrScene->scenePhysic->simulate(Time::deltaTime);
-    ptrScene->scenePhysic->fetchResults(true);
-
-    //now, need an updats of entities
-    //get all entities and refresh transform
     for (auto entity : entities)
     {
-        auto& rigidBody = Coordinator::GetInstance()->GetComponent<RigidBodyComponent>(entity);
+        auto& rigidBody = Coordinator::GetInstance()->GetComponent<RigidBodyComponent>(entity).rigidBody;
         auto& transform = Coordinator::GetInstance()->GetComponent<TransformComponent>(entity).transform;
 
-        transform.position = ToBwatVec3(rigidBody.rigidBody->getGlobalPose().p);
-        transform.rotation = ToBwatQuat(rigidBody.rigidBody->getGlobalPose().q);
+        if (rigidBody.CompareOldTransform(transform))
+        {
+            transform.position = rigidBody.GetPosition();
+            transform.rotation = rigidBody.GetRotation();
+        }
+        else
+        {
+            rigidBody.SetTransform(transform);
+        }
     }
+
+    ptrScene->scenePhysic->simulate(Time::deltaTime);
+    ptrScene->scenePhysic->fetchResults(true);
 };

@@ -46,6 +46,7 @@ Physic::~Physic()
 	gDispatcher->release();
 	//gCooking->release();
 	gPhysics->release();
+	gPvd->release();
 	gFoundation->release();
 }
 
