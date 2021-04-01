@@ -17,6 +17,7 @@
 #include "ECS/Systems/PlayerControlSystem.hpp"
 #include "ECS/Systems/RenderSystem.hpp"
 #include "ECS/Systems/ScriptSystem.hpp"
+#include "ECS/Systems/SoundSystem.hpp"
 
 #include "Inputs/InputHandler.hpp"
 
@@ -51,7 +52,19 @@ namespace BwatEngine {
         Time::deltaTime = currentFrame - lastFrame;
         lastFrame = currentFrame;
 
-        scene.physicsSystem->Update();
+        static bool updatePhysics = false;
+        if (InputHandler::GetKeyboardDown(KEY_F2))
+            updatePhysics = !updatePhysics;
+
+        static bool updateAudio = false;
+        if (InputHandler::GetKeyboardDown(KEY_F3))
+            updateAudio = !updateAudio;
+
+        if (updatePhysics)
+        {
+            scene.physicsSystem->Update();
+        }
+
         scene.playerControlSystem->Update(Time::deltaTime, GetGLFWwindow());
         
         if (MainFBO)
@@ -59,11 +72,15 @@ namespace BwatEngine {
 
          scene.renderSystem->Update(GetWindow());
 
+        if (updateAudio)
+        {
+            scene.soundSystem->Update();
+        }
          if (MainFBO)
             MainFBO->Unbind();
 
         scene.inputSystem->Update();
-        
+
         // if game running update script
         scene.scriptSystem->Update();
 

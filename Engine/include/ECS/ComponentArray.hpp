@@ -27,16 +27,19 @@ namespace BwatEngine
     public:
         ComponentArray()
         {
-            componentArray.resize(MAX_ENTITIES);
+            componentArray.reserve(MAX_ENTITIES);
         }
 
-        void InsertData(Entity entity, T component)
+        void InsertData(Entity entity, T&& component)
         {
             assert(entityToIndexMap.find(entity) == entityToIndexMap.end() && "Component added to same entity more than once.");
             size_t newIndex = size;
             entityToIndexMap[entity] = newIndex;
             indexToEntityMap[newIndex] = entity;
-            componentArray[newIndex] = component;
+            if (size < componentArray.size())
+                componentArray[newIndex] = component;
+            else
+                componentArray.push_back(component);
             size++;
         }
 
