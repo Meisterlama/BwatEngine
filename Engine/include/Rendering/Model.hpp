@@ -2,7 +2,6 @@
 
 #include <vector>
 #include <memory>
-#include <filesystem>
 #include "Mesh.hpp"
 #include "glad/glad.h"
 #include "GLFW/glfw3.h"
@@ -33,8 +32,6 @@ namespace Rendering
 		void ProcessMesh(aiMesh* mesh, const aiScene* scene);
 
 	public:
-
-	    std::filesystem::path modelPath;
 
         Model() = default;
         Model(const std::string path);

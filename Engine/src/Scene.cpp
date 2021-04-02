@@ -26,7 +26,6 @@
 #include "Physic/PhysicCast.hpp"
 #include "Rendering/Material.hpp"
 
-#include "ResourceManager/ResourceManager.hpp"
 // Script include
 #include "Scripts/ScriptTest.hpp"
 
@@ -48,7 +47,7 @@ std::vector<Rendering::Light>& Scene::GetLights()
 }
 
 Scene::Scene(Window& window)
-    : texture("Assets/image/Purple.jpg",Rendering::Texture::Type::E_DIFFUSE), texture1("Assets/image/Heart.png", Rendering::Texture::Type::E_DIFFUSE)
+    : texture("Assets/image/green.png",Rendering::Texture::Type::E_DIFFUSE), texture1("Assets/image/moteur.jpg", Rendering::Texture::Type::E_DIFFUSE)
 {
     Coordinator& coordinator = *Coordinator::GetInstance();
     coordinator.Init();
@@ -115,12 +114,7 @@ Scene::Scene(Window& window)
     soundSystem->Init();
 
     //Rendering::Model mymodel = Rendering::Model{ (std::string) "Assets/bag/backpack.obj" };
-    model = Rendering::Model{"Assets/cube.obj" };
-
-    BwatEngine::ResourceManager::Instance()->GetOrLoadModel("Assets/cube.obj");
-    BwatEngine::ResourceManager::Instance()->GetOrLoadModel("Assets/sphere.obj");
-    BwatEngine::ResourceManager::Instance()->GetOrLoadTexture("Assets/image/Heart.png", Rendering::Texture::Type::E_DIFFUSE);
-    BwatEngine::ResourceManager::Instance()->GetOrLoadTexture("Assets/image/Purple.jpg", Rendering::Texture::Type::E_DIFFUSE);
+    model = Rendering::Model{ (std::string) "Assets/cube.obj" };
     Audio::AudioData audioData = Audio::LoadWavFile("Assets/pop.wav");
 
     std::default_random_engine generator;
