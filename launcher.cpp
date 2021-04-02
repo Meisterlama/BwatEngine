@@ -6,13 +6,8 @@
 //#include <assimp/scene.h>           // Output data structure
 //#include <assimp/postprocess.h>     // Post processing flags
 
-#include <random>
-
 #define BMATH_IMPLEMENTATION
 #include "Math/Math.hpp"
-
-#define ENTITY_IMPLEMENTATION
-#include "ECS/Entity.hpp"
 
 #include "Window.hpp"
 #include "Rendering/Shader.hpp"
@@ -21,25 +16,13 @@
 #include "Editor/include/EditorInterface.hpp"
 #include "Rendering/Light.hpp"
 #include "World.hpp"
+#include "ECS/ComponentModel.hpp"
 
 #include "Inputs/InputHandler.hpp"
-#include "ECS/Entity.hpp"
-#include "ECS/Components/GravityComponent.hpp"
-#include "ECS/Components/RigidBodyComponent.hpp"
-#include "ECS/Components/CameraComponent.hpp"
-#include "ECS/Components/PlayerComponent.hpp"
-#include "ECS/Components/RenderableComponent.hpp"
-#include "ECS/Components/TransformComponent.hpp"
-#include "ECS/Systems/InputSystem.hpp"
-#include "ECS/Systems/PhysicsSystem.hpp"
-#include "ECS/Systems/PlayerControlSystem.hpp"
-#include "ECS/Systems/RenderSystem.hpp"
-
 
 
 int main()
 {
-    using namespace BwatEngine;
 	Bwat::Window mainWindow;
 
 	// Init ImGui
@@ -53,101 +36,51 @@ int main()
 	ImGui_ImplGlfw_InitForOpenGL(mainWindow.window, true);
 	ImGui_ImplOpenGL3_Init("#version 330");
 
-	Entity::InitCoordinator();
-	Entity::GetCoordinator().RegisterComponent<GravityComponent>();
-	Entity::GetCoordinator().RegisterComponent<RigidBodyComponent>();
-	Entity::GetCoordinator().RegisterComponent<CameraComponent>();
-	Entity::GetCoordinator().RegisterComponent<RenderableComponent>();
-	Entity::GetCoordinator().RegisterComponent<TransformComponent>();
-	Entity::GetCoordinator().RegisterComponent<PlayerComponent>();
+	// Shader
+	Rendering::Shader myShader("Assets/basic.vs", "Assets/basic.fs");
+	Rendering::Shader myShaderLight("Assets/basic.vs", "Assets/multilight.fs");
 
-    auto inputSystem = Entity::GetCoordinator().RegisterSystem<InputsSystem>();
-    inputSystem->Init(mainWindow.window);
-
-    auto physicsSystem = Entity::GetCoordinator().RegisterSystem<PhysicsSystem>();
-    {
-        Signature signature;
-        signature.set(Entity::GetComponentType<GravityComponent>());
-        signature.set(Entity::GetComponentType<RigidBodyComponent>());
-        signature.set(Entity::GetComponentType<TransformComponent>());
-        Entity::GetCoordinator().SetSystemSignature<PhysicsSystem>(signature);
-    }
-    physicsSystem->Init();
-
-    auto playerControlSystem = Entity::GetCoordinator().RegisterSystem<PlayerControlSystem>();
-    {
-        Signature signature;
-        signature.set(Entity::GetComponentType<PlayerComponent>());
-        signature.set(Entity::GetComponentType<TransformComponent>());
-        Entity::GetCoordinator().SetSystemSignature<PlayerControlSystem>(signature);
-
-    }
-    playerControlSystem->Init();
-
-    auto renderSystem = Entity::GetCoordinator().RegisterSystem<RenderSystem>();
-    {
-        Signature signature;
-        signature.set(Entity::GetComponentType<RenderableComponent>());
-        signature.set(Entity::GetComponentType<TransformComponent>());
-        Entity::GetCoordinator().SetSystemSignature<RenderSystem>(signature);
-    }
-    renderSystem->Init(&mainWindow);
-
+	Rendering::Model myModel((std::string)"Assets/bag/backpack.obj");
+	Rendering::Model myModel2((std::string)"Assets/cube.obj");
 
 	// time init var
 	float deltaTime = 0.0f;
 	float lastFrame = 0.0f;
 
-    Rendering::Model mymodel = Rendering::Model{(std::string) "Assets/bag/backpack.obj"};
-    Rendering::Model model = Rendering::Model{(std::string) "Assets/cube.obj"};
+	// Camera init
+	Rendering::Camera cam;
 
-    std::vector<Entity> entities(MAX_ENTITIES);
+	float color[3] = { 0.5f, 0.5f, 0.5f };
 
-    std::default_random_engine generator;
-    std::uniform_real_distribution<float> randPosition(-100.0f, 100.0f);
-    std::uniform_real_distribution<float> randRotation(0.0f, 3.0f);
-    std::uniform_real_distribution<float> randScale(3.0f, 5.0f);
-    std::uniform_real_distribution<float> randColor(0.0f, 1.0f);
-    std::uniform_real_distribution<float> randGravity(-10.0f, -1.0f);
+	// Light, Next we need manage light on a lights manager or on scene graph ... WIP
+	std::vector<Rendering::Light*> lights;
 
+	Rendering::Light mylight(Rendering::TYPE_LIGHT::Directional, { 0.1f,0.1f,0.5f }, { 0.1f,0.1f,0.5f }, { 0.1f,0.1f,0.5f });
 
-    for (EntityType i = 0; i < entities.size(); i++)
-    {
-        if (i == 0)
-        {
-            entities[i].AddComponent<TransformComponent>({Math::Transform{
-                Math::Vec3f {0.f, 0.f, 200.f},
-                Math::Vec3f {0.f},
-                Math::Vec3f {1.f}
-            }});
-            entities[i].AddComponent<CameraComponent>(
-                {Math::Mat4f::CreatePerspective(80.f, mainWindow.GetWidth() / mainWindow.GetHeight(), 0.1f, 1000.0f)
-                });
-            entities[i].AddComponent<PlayerComponent>({});
-            entities[i].name = "Camera";
-            renderSystem->SetCamera(&entities[i]);
-        }
-        else
-        {
-            entities[i].AddComponent<GravityComponent>({
-                                                           Math::Vec3f{0.f, randGravity(generator), 0.f}
-                                                       });
-            entities[i].AddComponent<RigidBodyComponent>({
-                                                             Math::Vec3f{0.f, 0.f, 0.f},
-                                                             Math::Vec3f{0.f, 0.f, 0.f}
-                                                         });
-            entities[i].AddComponent<TransformComponent>({Math::Transform{
-                Math::Vec3f{randPosition(generator), randPosition(generator), randPosition(generator)},
-                Math::Vec3f{randRotation(generator), randRotation(generator), randRotation(generator)},
-                Math::Vec3f{3}
-            }});
-            entities[i].AddComponent<RenderableComponent>({&model});
-        }
-    }
+	lights.push_back(&mylight);
+	
+	// myWorld
+	World  myWorld(&myShaderLight);
+
+	ComponentModel* myNewModel = new ComponentModel(&myModel);
+	ComponentModel* myNewModel2 = new ComponentModel(&myModel2);
+
+	Entity myEntity;
+	Entity myEntity2;
+	myEntity.AddComponent(myNewModel);
+	myEntity2.AddComponent(myNewModel2);
+
+	//Entity& myEntity = myWorld.CreateEntity();
+	//myEntity.AddComponent<ComponentModel>(&myModel);
+
+	myWorld.AddEntity(&myEntity);
+	myWorld.AddEntity(&myEntity2);
+	myWorld.AddLight(&mylight);
+
+	BwatEngine::InputHandler::Initialize(mainWindow.window);
 
 	while (mainWindow.IsWorking())
-	{
-        glfwPollEvents();
+	{	
 		//Time
 		float currentFrame = glfwGetTime();
 		deltaTime = currentFrame - lastFrame;
@@ -161,40 +94,55 @@ int main()
 
 		//ImGui::ShowDemoWindow();
 
-		ImGui::Text("FPS: %f", (deltaTime !=0) ? 1/deltaTime : 0);
-
-		ImGui::ColorEdit3("Clear color", renderSystem->clearColor.values);
+		ImGui::ColorEdit3("Clear color", color);
 		//debug Light
-		ImGui::ColorEdit3("light ambient", World::GetWorldLights()[0].ambient.values);
-        static int item_current = 0;
+		ImGui::ColorEdit3("light ambient", lights[0]->ambient.values);
+		//ImGui::DragFloat3("posLight", lights[0]->position.values);
+		//ImGui::DragFloat3("dirLight", lights[0]->direction.values);
+		//ImGui::DragFloat("cutOff", &lights[0]->cutoff);
+		//ImGui::DragFloat("outerCutOff", &lights[0]->outerCutoff);
 
-		ImGui::ListBoxHeader("Entities");
-		for (EntityType i = 0; i < entities.size(); i++)
-        {
-		    bool selected = false;
-		    std::string entityName = (entities[i].name != "")?entities[i].name  : "Entity_" + std::to_string(entities[i].GetID());
+		const char* items[] = { "Apple", "Banana", "Cherry", "Kiwi", "Mango", "Orange", "Pineapple", "Strawberry", "Watermelon" };
 
-		    if (ImGui::Selectable(entityName.c_str()))
-            {
-		        item_current = i;
-            }
-        }
-        ImGui::ListBoxFooter();
+		static int item_current = 0;
+		ImGui::ListBox("Entities", &item_current,items, myWorld.GetWorldEntities().size(), 4);
 
+		ImGui::DragFloat3("position", myWorld.GetWorldEntities()[item_current]->GetLocalTransform().position.values, 0.01);
+		ImGui::DragFloat3("rotation", myWorld.GetWorldEntities()[item_current]->GetLocalTransform().rotation.values, 0.01);
+		ImGui::DragFloat3("scale", myWorld.GetWorldEntities()[item_current]->GetLocalTransform().scale.values, 0.01);
 
-        ImGui::DragFloat3("position", entities[item_current].GetComponent<TransformComponent>().transform.position.values, 0.01);
-        ImGui::DragFloat3("rotation", entities[item_current].GetComponent<TransformComponent>().transform.rotation.values, 0.01);
-        ImGui::DragFloat3("scale", entities[item_current].GetComponent<TransformComponent>().transform.scale.values, 0.01);
+		// Depth Test and buffer
+		glEnable(GL_DEPTH_TEST);
+		glViewport(0, 0, mainWindow.GetWidth(), mainWindow.GetHeight());
+		glClearColor(color[0], color[1], color[2], 1.f);
+		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
-		//physicsSystem->Update(deltaTime);
-		playerControlSystem->Update(deltaTime, mainWindow);
-		renderSystem->Update(deltaTime);
-		inputSystem->Update(deltaTime);
+		//Camera 
+		cam.UseFreeFly(&mainWindow, deltaTime);
+
+		// projection, view and model 
+		BwatEngine::Math::Mat4f projection = BwatEngine::Math::Mat4f::CreatePerspective(60.f, mainWindow.GetWidth() / mainWindow.GetHeight(), 0.1f, 100.0f);
+		BwatEngine::Math::Mat4f view = cam.GetViewMatrix();
+		BwatEngine::Math::Mat4f model = BwatEngine::Math::Mat4f::CreateScaleMat(1.f);
+
+		//use shader 
+		myShaderLight.use();
+		myShaderLight.setMat4("proj", projection);
+		myShaderLight.setMat4("model", model);
+		myShaderLight.setMat4("view", view);
+		myShaderLight.setVec3("viewPos", cam.cameraPos.X, cam.cameraPos.Y, cam.cameraPos.Z);
+
+		myWorld.UpdateEntities();
+		//myTri.Update();
+		//myModel.Draw(myShaderLight,lights);
 
 		ImGui::Render();
 		ImGui_ImplOpenGL3_RenderDrawData(ImGui::GetDrawData());
 
 		glfwSwapBuffers(mainWindow.window);
+
+        BwatEngine::InputHandler::Update();
+        glfwPollEvents();
 	}
 
 	ImGui_ImplGlfw_Shutdown();

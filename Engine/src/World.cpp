@@ -1,13 +1,42 @@
 #include "World.hpp"
 
-std::vector<Rendering::Light> World::lights;
+std::vector<Rendering::Light*> World::lights;
+Rendering::Shader* World::defaultShader;
 
-void World::AddLight(Rendering::Light& newlight)
+World::World(Rendering::Shader* shader)
+{
+	defaultShader = shader;
+}
+
+void World::UpdateEntities()
+{
+	for (Entity* entity : entities)
+	{
+		entity->UpdateAllComponent();
+	}
+}
+
+void World::AddLight(Rendering::Light* newlight)
 {
 	lights.push_back(newlight);
 }
 
-std::vector<Rendering::Light>& World::GetWorldLights()
+void World::AddEntity(Entity* newEntity)
+{
+	entities.push_back(newEntity);
+}
+
+std::vector<Rendering::Light*>& World::GetWorldLights()
 {
 	return lights;
+}
+
+std::vector<Entity*>& World::GetWorldEntities()
+{
+	return entities; 
+}
+
+Rendering::Shader* World::GetDefaultShader()
+{
+	return defaultShader;
 }

@@ -23,9 +23,9 @@ namespace BwatEngine::Math
                 // Column Major
                 struct
                 {
-                     T v0; T v1; T v2; T v3;     // a, b, c, d
-                     T v4; T v5; T v6; T v7;     // e, f, g, h
-                     T v8; T v9; T v10; T v11;   // i, j, k, l
+                     T v0; T v1; T v2; T v3;// a, b, c, d
+                     T v4; T v5; T v6; T v7;// e, f, g, h
+                     T v8; T v9; T v10; T v11; // i, j, k, l
                      T v12; T v13; T v14; T v15; // m, n, o, p
                 };
                 T values[4 * 4]{0};
@@ -49,10 +49,10 @@ namespace BwatEngine::Math
                 v15 = x15;
             }
 
-            ML_FUNC_DECL Matrix4( T x0, T x1, T x2, T x3,
-                                  T x4, T x5, T x6, T x7,
-                                  T x8, T x9, T x10, T x11,
-                                  T x12, T x13, T x14, T x15)
+            ML_FUNC_DECL Matrix4( T x0,T x4,T x8,T x12,
+                                  T x1,T x5,T x9,T x13,
+                                  T x2,T x6,T x10,T x14,
+                                  T x3,T x7,T x11,T x15)
             {
                 v0 = x0;
                 v1 = x1;
@@ -103,13 +103,8 @@ namespace BwatEngine::Math
             static ML_FUNC_DECL Matrix4 CreateZRotationMat(T angle);
             static ML_FUNC_DECL Matrix4 CreateXYZRotationMat(Internal::Vector3<T> angles);
             static ML_FUNC_DECL Matrix4 CreateScaleMat(Internal::Vector3<T> scale);
-            static ML_FUNC_DECL Matrix4 CreateTRSMat(Internal::Vector3<T> translation,
-                                                    Internal::Vector3<T> rotation,
-                                                    Internal::Vector3<T> scale);
-
-            static ML_FUNC_DECL Matrix4 CreateSRTMat(Internal::Vector3<T> translation,
-                                                     Internal::Vector3<T> rotation,
-                                                     Internal::Vector3<T> scale);
+            static ML_FUNC_DECL Matrix4
+            CreateTRSMat(Internal::Vector3<T> translation, Internal::Vector3<T> rotation, Internal::Vector3<T> scale);
             static ML_FUNC_DECL Matrix4
             LookAt(Internal::Vector3<T> origin, Internal::Vector3<T> target, Internal::Vector3<T> upDir);
 
@@ -434,14 +429,7 @@ namespace BwatEngine::Math
     template<typename T>
     ML_FUNC_DECL Internal::Matrix4<T> Internal::Matrix4<T>::CreateTRSMat(Internal::Vector3<T> translation, Internal::Vector3<T> rotation, Internal::Vector3<T> scale)
     {
-        return (CreateTranslationMat(translation) * CreateXYZRotationMat(rotation) * CreateScaleMat(scale)).Transpose();
-    }
-
-
-    template<typename T>
-    ML_FUNC_DECL Internal::Matrix4<T> Internal::Matrix4<T>::CreateSRTMat(Internal::Vector3<T> translation, Internal::Vector3<T> rotation, Internal::Vector3<T> scale)
-    {
-        return (CreateScaleMat(scale) * CreateXYZRotationMat(rotation) * CreateTranslationMat(translation));
+        return CreateTranslationMat(translation) * CreateXYZRotationMat(rotation).Transpose() * CreateScaleMat(scale);
     }
 
     template<typename T>
