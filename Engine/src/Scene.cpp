@@ -20,9 +20,6 @@
 #include "Engine.hpp"
 
 #include "Physic/PhysicCast.hpp"
-#include "Rendering/Material.hpp"
-
-//#include "Rendering/Material.hpp"
 
 
 using namespace BwatEngine;
@@ -40,7 +37,6 @@ std::vector<Rendering::Light>& Scene::GetLights()
 }
 
 Scene::Scene(Window& window)
-    : texture("Assets/image/test2.jpg"), texture1("Assets/image/green.png")
 {
     Coordinator& coordinator = *Coordinator::GetInstance();
     coordinator.Init();
@@ -66,7 +62,7 @@ Scene::Scene(Window& window)
         signature.set(coordinator.GetComponentType<ColliderComponent>());
         coordinator.SetSystemSignature<PhysicsSystem>(signature);
     }
-    physicsSystem->Init(this, { 0, -10, 0 });
+    physicsSystem->Init(this, { 0, -1, 0 });
 
     playerControlSystem = coordinator.RegisterSystem<PlayerControlSystem>();
     {
@@ -100,10 +96,7 @@ Scene::Scene(Window& window)
     physx::PxMaterial* material = Physic::GetPhysics()->createMaterial(0,0,0);
 
     entities = std::vector<Entity>(MAX_ENTITIES);
-    
-    myMat.SetDiffuse(texture);
-    myMat1.SetDiffuse(texture1);
-    
+
         for (Entity i = 0; i < entities.size(); i++)
         {
             entities[i] = coordinator.CreateEntity();
@@ -140,9 +133,6 @@ Scene::Scene(Window& window)
                     *coordinator.GetComponent<ColliderComponent>(entities[i]).shape);
 
                 scenePhysic->addActor(*statActor);
-
-                auto& renderableComponent = coordinator.GetComponent<RenderableComponent>(entities[i]);
-                renderableComponent.materials[0] = &myMat;
             }
             else // Cube
             {
@@ -161,10 +151,6 @@ Scene::Scene(Window& window)
                     *coordinator.GetComponent<ColliderComponent>(entities[i]).shape);
                 //actor->userData = (void*)0x1234;
                 scenePhysic->addActor(*coordinator.GetComponent<RigidBodyComponent>(entities[i]).rigidBody);
-
-                auto& renderableComponent = coordinator.GetComponent<RenderableComponent>(entities[i]);
-                renderableComponent.materials[0] = &myMat1;
-
             }
         }
 }

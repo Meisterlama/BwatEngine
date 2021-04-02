@@ -4,9 +4,9 @@
 using namespace Rendering;
 
 FrameBufferObject::FrameBufferObject(float width , float height)
-    : textureColor(width, height)
 {
     depthRenderbuffer = 0;
+    textureColor.GenerateTexture(width, height);
 
     // Create depth buffer
     {
@@ -36,7 +36,6 @@ void FrameBufferObject::UseAndBind()
 {
 	glBindFramebuffer(GL_FRAMEBUFFER, fbo);
 }
-
 void FrameBufferObject::Unbind()
 {
 	glBindFramebuffer(GL_FRAMEBUFFER, 0);

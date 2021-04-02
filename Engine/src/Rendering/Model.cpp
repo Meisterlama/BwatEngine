@@ -32,8 +32,7 @@ void Model::ProcessNode(aiNode* node, const aiScene* scene)
     for (unsigned int i = 0; i < node->mNumMeshes; i++)
     {
         aiMesh* mesh = scene->mMeshes[node->mMeshes[i]];
-
-        ProcessMesh(mesh, scene);
+        meshes.emplace_back(ProcessMesh(mesh, scene));
     }
     // then do the same for each of its children
     for (unsigned int i = 0; i < node->mNumChildren; i++)
@@ -42,7 +41,7 @@ void Model::ProcessNode(aiNode* node, const aiScene* scene)
     }
 }
 
-void Model::ProcessMesh(aiMesh* mesh, const aiScene* scene)
+Rendering::Mesh Model::ProcessMesh(aiMesh* mesh, const aiScene* scene)
 {
     // data to fill
     std::vector<Rendering::Vertex> vertices;
@@ -52,14 +51,12 @@ void Model::ProcessMesh(aiMesh* mesh, const aiScene* scene)
     for (unsigned int i = 0; i < mesh->mNumVertices; i++)
     {
         Rendering::Vertex vertex;
-        BwatEngine::Math::Vec3f vector; 
-
+        BwatEngine::Math::Vec3f vector; // we declare a placeholder vector since assimp uses its own vector class that doesn't directly convert to glm's vec3 class so we transfer the data to this placeholder glm::Vec3 first.
         // positions
         vector.X = mesh->mVertices[i].x;
         vector.Y = mesh->mVertices[i].y;
         vector.Z = mesh->mVertices[i].z;
         vertex.postion = vector;
-
         // normals
         if (mesh->HasNormals())
         {
@@ -67,6 +64,20 @@ void Model::ProcessMesh(aiMesh* mesh, const aiScene* scene)
             vector.Y = mesh->mNormals[i].y;
             vector.Z = mesh->mNormals[i].z;
             vertex.normal = vector;
+        }
+        // tangent
+        if (mesh->HasTangentsAndBitangents())
+        {
+            vector.X = mesh->mTangents[i].x;
+            vector.Y = mesh->mTangents[i].y;
+            vector.Z = mesh->mTangents[i].z;
+            vertex.tangent = vector;
+
+            // bitangent
+            vector.X = mesh->mBitangents[i].x;
+            vector.Y = mesh->mBitangents[i].y;
+            vector.Z = mesh->mBitangents[i].z;
+            vertex.bitangent = vector;
         }
 
         // texture coordinates
@@ -94,30 +105,43 @@ void Model::ProcessMesh(aiMesh* mesh, const aiScene* scene)
     // process materials
     aiMaterial* material = scene->mMaterials[mesh->mMaterialIndex];
 
-    Rendering::Material myMaterial(*material);
+    // 1. diffuse maps
+    std::vector<Texture*> textures;
+    std::vector<std::string> diffuseMaps = LoadMaterialTextures(material, aiTextureType_DIFFUSE, "texture_diffuse");
+    for (const std::string& path : diffuseMaps)
+        textures.push_back(ResourceManager::Instance()->GetOrLoadTexture(path, Texture::Type::E_DIFFUSE));
+    // 2. specular maps
+    std::vector<std::string> specularMaps = LoadMaterialTextures(material, aiTextureType_SPECULAR, "texture_specular");
+    for (const std::string& path : specularMaps)
+        textures.push_back(ResourceManager::Instance()->GetOrLoadTexture(path, Texture::Type::E_SPECULAR));
+    // 3. normal maps
+    std::vector<std::string> normalMaps = LoadMaterialTextures(material, aiTextureType_HEIGHT, "texture_normal");
+    for (const std::string& path : normalMaps)
+        textures.push_back(ResourceManager::Instance()->GetOrLoadTexture(path, Texture::Type::E_NORMAL));
+    // 4. height maps
+    std::vector<std::string> heightMaps = LoadMaterialTextures(material, aiTextureType_AMBIENT, "texture_height");
+    for (const std::string& path : heightMaps)
+        textures.push_back(ResourceManager::Instance()->GetOrLoadTexture(path, Texture::Type::E_HEIGHT));
 
     // return a mesh object created from the extracted mesh data
-    meshes.emplace_back(std::make_unique<Mesh>(vertices, indices, myMaterial));
+    return Rendering::Mesh(vertices, indices, textures);
 }
 
-void Model::Draw(std::vector<Material*>* materials)
+std::vector<std::string> Model::LoadMaterialTextures(aiMaterial* mat, aiTextureType type, std::string typeName)
 {
-    for (unsigned int i = 0; i < meshes.size(); i++)
+    std::vector<std::string> textures;
+    for (unsigned int i = 0; i < mat->GetTextureCount(type); i++)
     {
-        if (materials)
-            (*materials)[i]->Bind();
-        else
-            meshes[i]->defaultMaterial.Bind();
-
-        meshes[i]->Draw();
-
+        aiString str;
+        mat->GetTexture(type, i, &str);
+        textures.push_back(directory + '/' + str.C_Str());
     }
+    return textures;
 }
 
-std::vector<Material*> Model::GetDefaultMaterials() const
+void Model::Draw(Rendering::Shader& shader)
 {
-    std::vector<Material*> materials;
-    for (const auto& mesh : meshes)
-        materials.push_back(&mesh->defaultMaterial);
-    return materials;
+	for (unsigned int i = 0; i < meshes.size(); i++)
+		meshes[i].Draw(shader);
 }
+

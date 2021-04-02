@@ -32,7 +32,7 @@ namespace BwatEngine
 
 		GLFWwindow* GetGLFWwindow() { return window.handler; };
 
-		Rendering::FrameBufferObject* MainFBO = nullptr;
+		Rendering::FrameBufferObject MainFBO;
 
 	private:
 		float lastFrame = 0.0f;

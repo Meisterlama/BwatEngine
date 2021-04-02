@@ -54,7 +54,7 @@ void Camera::CameraMovementFF(BwatEngine::Window* win, float deltaTime)
 
 
     if (BwatEngine::InputHandler::GetKeyboard(BwatEngine::KEY_LEFT_SHIFT))
-        FrameSpeed *= 30.f;
+        FrameSpeed *= 10.f;
 
 
     float ForwardVelocity = 0.f;

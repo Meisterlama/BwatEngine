@@ -8,8 +8,9 @@
 
 using namespace Rendering;
 
-Mesh::Mesh(std::vector<Vertex> mVertices, std::vector<unsigned int> mIndices, const Material& material)
-    : vertices(mVertices), indices(mIndices), defaultMaterial(material)
+Mesh::Mesh(const std::vector<Vertex>& vertices, const std::vector<unsigned int>& indices, const std::vector<Texture*>& textures)
+        : indiceCount(indices.size())
+        , textures(textures)
 {
     glGenVertexArrays(1, &VAO);
     glGenBuffers(1, &VBO);
@@ -32,21 +33,62 @@ Mesh::Mesh(std::vector<Vertex> mVertices, std::vector<unsigned int> mIndices, co
     // vertex texture coords
     glEnableVertexAttribArray(2);
     glVertexAttribPointer(2, 2, GL_FLOAT, GL_FALSE, sizeof(Vertex), (void*)offsetof(Vertex, texCoords));
+    // vertex tangent
+    glEnableVertexAttribArray(3);
+    glVertexAttribPointer(3, 3, GL_FLOAT, GL_FALSE, sizeof(Vertex), (void*)offsetof(Vertex, tangent));
+    // vertex bitangent
+    glEnableVertexAttribArray(4);
+    glVertexAttribPointer(4, 3, GL_FLOAT, GL_FALSE, sizeof(Vertex), (void*)offsetof(Vertex, bitangent));
 
     glBindVertexArray(0);
+
+    loaded = true;
+}
+
+Mesh::Mesh(Mesh&& other)
+{
+    loaded = other.loaded;
+    VAO = other.VAO;
+    VBO = other.VBO;
+    EBO = other.EBO;
+    indiceCount = other.indiceCount;
+    textures = std::move(other.textures);
+    other.loaded = false;
 }
 
 Mesh::~Mesh()
 {
-    glDeleteBuffers(1, &VBO);
-    glDeleteBuffers(1, &EBO);
-    glDeleteVertexArrays(1, &VAO);
+    if (loaded) {
+        glDeleteVertexArrays(1, &VAO);
+        glDeleteBuffers(1, &VBO);
+        glDeleteBuffers(1, &EBO);
+    }
 }
 
-void Mesh::Draw()
+void Mesh::Draw(Shader& shader)
 {
+    unsigned int diffuseNr = 1;
+    unsigned int specularNr = 1;
+
+    for (unsigned int i = 0; i < textures.size(); i++)
+    {
+        glActiveTexture(GL_TEXTURE0 + i); 
+        Texture* usedTexture = textures[i];
+        std::string samplerName;
+
+        if (usedTexture->type == Texture::Type::E_DIFFUSE)
+            samplerName = "diffuse" + std::to_string(diffuseNr++);
+        else if (usedTexture->type == Texture::Type::E_SPECULAR)
+            samplerName = "specular" + std::to_string(specularNr++);
+
+        shader.setInt(samplerName, i);
+        glBindTexture(GL_TEXTURE_2D, usedTexture->id);
+    }
+
     // draw mesh
     glBindVertexArray(VAO);
-    glDrawElements(GL_TRIANGLES, indices.size(), GL_UNSIGNED_INT, 0);
+    glDrawElements(GL_TRIANGLES, indiceCount, GL_UNSIGNED_INT, 0);
     glBindVertexArray(0);
+
+    glActiveTexture(GL_TEXTURE0);
 }

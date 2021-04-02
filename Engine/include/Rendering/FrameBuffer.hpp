@@ -20,7 +20,7 @@ namespace Rendering
 		GLuint depthRenderbuffer;
 
 		FrameBufferObject(float width, float height);
-		//FrameBufferObject() {};
+		FrameBufferObject() {};
 		~FrameBufferObject() {};
 
 		void UseAndBind();
