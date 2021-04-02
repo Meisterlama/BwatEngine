@@ -57,12 +57,12 @@ namespace BwatEngine
 
                     transform.rotation = {rotation};
 
-                    float Speed = 25.f;
+                    float Speed = 4.f;
                     float FrameSpeed = Speed * dt;
 
 
                     if (InputHandler::GetKeyboard(KEY_LEFT_SHIFT))
-                        FrameSpeed *= 5.f;
+                        FrameSpeed *= 25.f;
 
 
                     float ForwardVelocity = 0.f;
