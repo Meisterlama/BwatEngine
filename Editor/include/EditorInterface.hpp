@@ -1,33 +1,41 @@
 #ifndef BWATENGINE_EDITORINTERFACE_HPP
 #define BWATENGINE_EDITORINTERFACE_HPP
 
-#include <imgui.h>
-#include <imgui_impl_glfw.h>
-#include <imgui_impl_opengl3.h>
+#include <vector>
+#include <memory>
 
-#include <glad/glad.h>
-#include <GLFW/glfw3.h>
+#include "Widget.hpp"
+#include "Window.hpp"
+
+namespace BwatEngine
+{
+    class Engine;
+}
 
 class  EditorInterface
 {
 public:
-    unsigned int fbo;
-    unsigned int tex;
-    unsigned int rbo;
+    EditorInterface(BwatEngine::Engine* _engine);
+    ~EditorInterface(){};
 
-    EditorInterface();
-
-    void InitImGui(GLFWwindow* window);
-    void CreateFrame();
-    void RenderImGui();
-    void DrawInterface(float color[3]);
+    void OnTick();
+    void Initialise();
     void DestroyImGui();
-    static void MenuFile();
-    static void MainMenuBar();
-    static void MenuOption();
+
+    BwatEngine::Engine* engine = nullptr;
+
+private:
+    void ApplyStyle() const;
+    void BeginWindow();
+
+    std::vector<std::shared_ptr<Widget>> widgets;
+    bool initialised = false;
+    bool editorBegun = false;
+
 };
 
 
 
 
 #endif //BWATENGINE_EDITORINTERFACE_HPP
+

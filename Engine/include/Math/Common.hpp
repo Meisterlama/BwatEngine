@@ -3,6 +3,7 @@
 
 #include "Math/Meta.hpp"
 #include <cmath>
+#include <algorithm>
 
 // Currently only wrapping std functions
 namespace BwatEngine::Math
@@ -13,6 +14,8 @@ namespace BwatEngine::Math
     [[nodiscard]] ML_FUNC_DECL float ToRads(float x);
 
     [[nodiscard]] ML_FUNC_DECL float ToDegs(float x);
+
+    [[nodiscard]] ML_FUNC_DECL float Clamp(float x, float minVal, float maxVal);
 
     [[nodiscard]] ML_FUNC_DECL float Sin(float x);
 
@@ -25,6 +28,7 @@ namespace BwatEngine::Math
     [[nodiscard]] ML_FUNC_DECL float Tan(float x);
 
     [[nodiscard]] ML_FUNC_DECL float Atan(float x);
+    [[nodiscard]] ML_FUNC_DECL float Atan2(float x, float y);
 
     [[nodiscard]] ML_FUNC_DECL float Abs(float x);
 
@@ -61,6 +65,11 @@ namespace BwatEngine::Math
     [[nodiscard]] ML_FUNC_DECL float ToDegs(float x)
     {
         return (x / PI) * 180;
+    }
+
+    [[nodiscard]] ML_FUNC_DECL float Clamp(float x, float minVal, float maxVal)
+    {
+        return std::min(std::max(x, minVal), maxVal);
     }
 
     [[nodiscard]] ML_FUNC_DECL float Sin(float x)

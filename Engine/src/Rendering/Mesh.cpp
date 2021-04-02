@@ -1,60 +1,15 @@
-#include "Rendering/mesh.hpp"
+#include "Rendering/Mesh.hpp"
 
 #include <cstring>
 #include <stdio.h>
 #include <iostream>
 #include <fstream>
+#include "ResourceManager/ResourceManager.hpp"
 
 using namespace Rendering;
 
-Mesh::Mesh(std::vector<Vertex> mVertices, std::vector<unsigned int> mIndices, std::vector<Texture> mTextures)
-{
-	vertices = mVertices;
-	indices = mIndices;
-	textures = mTextures;
-
-	initMesh();
-}
-
-void Mesh::Draw(Shader& shader, const std::vector<Light*> lights)
-{
-    shader.use();
-
-    shader.setInt("nbrlights", (int)lights.size());
-    for (unsigned int i = 0; i < lights.size(); i++)
-    {
-        std::string index = std::to_string(i);
-        lights[i]->ApplyOnShader(&shader, index);
-    }
-
-    unsigned int diffuseNr = 1;
-    unsigned int specularNr = 1;
-
-    for (unsigned int i = 0; i < textures.size(); i++)
-    {
-        glActiveTexture(GL_TEXTURE0 + i); 
-
-        std::string number;
-        std::string name = textures[i].type;
-
-        if (name == "texture_diffuse")
-            number = std::to_string(diffuseNr++);
-        else if (name == "texture_specular")
-            number = std::to_string(specularNr++);
-
-        shader.setInt((name + number).c_str(), i);
-        glBindTexture(GL_TEXTURE_2D, textures[i].id);
-    }
-
-    // draw mesh
-    glBindVertexArray(VAO);
-    glDrawElements(GL_TRIANGLES, indices.size(), GL_UNSIGNED_INT, 0);
-    glBindVertexArray(0);
-
-    glActiveTexture(GL_TEXTURE0);
-}
-
-void Mesh::initMesh()
+Mesh::Mesh(std::vector<Vertex> mVertices, std::vector<unsigned int> mIndices, const Material& material)
+    : vertices(mVertices), indices(mIndices), defaultMaterial(material)
 {
     glGenVertexArrays(1, &VAO);
     glGenBuffers(1, &VBO);
@@ -77,12 +32,21 @@ void Mesh::initMesh()
     // vertex texture coords
     glEnableVertexAttribArray(2);
     glVertexAttribPointer(2, 2, GL_FLOAT, GL_FALSE, sizeof(Vertex), (void*)offsetof(Vertex, texCoords));
-    // vertex tangent
-    glEnableVertexAttribArray(3);
-    glVertexAttribPointer(3, 3, GL_FLOAT, GL_FALSE, sizeof(Vertex), (void*)offsetof(Vertex, tangent));
-    // vertex bitangent
-    glEnableVertexAttribArray(4);
-    glVertexAttribPointer(4, 3, GL_FLOAT, GL_FALSE, sizeof(Vertex), (void*)offsetof(Vertex, bitangent));
 
+    glBindVertexArray(0);
+}
+
+Mesh::~Mesh()
+{
+    glDeleteBuffers(1, &VBO);
+    glDeleteBuffers(1, &EBO);
+    glDeleteVertexArrays(1, &VAO);
+}
+
+void Mesh::Draw()
+{
+    // draw mesh
+    glBindVertexArray(VAO);
+    glDrawElements(GL_TRIANGLES, indices.size(), GL_UNSIGNED_INT, 0);
     glBindVertexArray(0);
 }

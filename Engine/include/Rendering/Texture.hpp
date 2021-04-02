@@ -12,12 +12,28 @@ namespace Rendering
 {
     struct Texture
     {
-        unsigned int id;
-        std::string type;
+        enum class Type
+        {
+            E_DIFFUSE,
+            E_SPECULAR,
+            E_NORMAL,
+            E_HEIGHT
+        };
+      
+        GLuint id;
+        Type type;
         std::string path;
 
-        unsigned int TextureFromFile(const char* path, const std::string& directory);
-        void GenerateTextureID(const char* path, const std::string& directory);
+        Texture() = delete;
+        Texture(const Texture&) = delete;
+
+        Texture(const std::string& path, Type type);
+        ~Texture();
+
+        Texture(int width, int height);
+
+        void Use();
+        void UnBind();
     };
 }
 

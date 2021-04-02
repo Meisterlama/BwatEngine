@@ -4,6 +4,7 @@
 #include <iostream>
 #include <fstream>
 #include <sstream>
+#include "Debug/Logger.hpp"
 
 using namespace Rendering;
 
@@ -16,7 +17,8 @@ void Shader::checkCompileErrors(unsigned int program)
     {
         GLchar message[1024];
         glGetProgramInfoLog(program, IM_ARRAYSIZE(message), nullptr, message);
-        printf("Program link error : %s", message);
+        LogError("Program link error : %s", message);
+
     }
 }
 
@@ -35,7 +37,7 @@ GLuint Shader::createShader(GLenum type, int sourceCount, const char** sources)
     {
         GLchar message[1024];
         glGetShaderInfoLog(shader, IM_ARRAYSIZE(message), nullptr, message);
-        printf("Saherd compilation error : %s", message);
+        LogError("Shader compilation error : %s", message);
     }
 
     return shader;
@@ -69,7 +71,7 @@ Shader::Shader(const char *vertexPath, const char *fragmentPath)
     }
     catch (std::ifstream::failure e)
     {
-        std::cout << "ERROR::SHADER::FILE_NOT_SUCCESFULLY_READ" << std::endl;
+        LogError("ERROR::SHADER::FILE_NOT_SUCCESFULLY_READ\n");
     }
     const char *vShaderCode = vertexCode.c_str();
     const char *fShaderCode = fragmentCode.c_str();

@@ -1,11 +1,13 @@
 #pragma once
 
 #include <vector>
-#include "mesh.hpp"
+#include <memory>
+#include <filesystem>
+#include "Mesh.hpp"
 #include "glad/glad.h"
 #include "GLFW/glfw3.h"
-#include "shader.hpp"
-#include "light.hpp"
+#include "Shader.hpp"
+#include "Light.hpp"
 
 #include "Math/Math.hpp"
 
@@ -16,27 +18,29 @@
 
 namespace Rendering
 {
+	class Material;
 
 	class Model
 	{
 	private:
 
 		//Data
-		std::vector<Texture> textures_loaded;
-		std::vector<Mesh> meshes;
-		std::string directory;
+		std::vector<std::unique_ptr<Mesh>> meshes;
+		std::string directory{};
 
-
-		void LoadModel(std::string path);
+		void LoadModel(const std::string path);
 		void ProcessNode(aiNode* node, const aiScene* scene);
-		Mesh ProcessMesh(aiMesh* mesh, const aiScene* scene);
-		std::vector<Texture> LoadMaterialTextures(aiMaterial* mat, aiTextureType type, std::string typeName);
+		void ProcessMesh(aiMesh* mesh, const aiScene* scene);
 
 	public:
 
-		Model(std::string& path);
-		void Draw(Shader& shader, const std::vector<Light*> lights);
+	    std::filesystem::path modelPath;
 
+        Model() = default;
+        Model(const std::string path);
+
+		std::vector<Material*> GetDefaultMaterials() const;
+		void Draw(std::vector<Material*>* materials = nullptr);
 	};
 
 }

@@ -1,22 +1,27 @@
 #include <cmath>
 
-#include "Rendering/model.hpp"
+#include "Rendering/Model.hpp"
+#include "ResourceManager/ResourceManager.hpp"
+#include "Debug/Logger.hpp"
+
 
 using namespace Rendering;
 
-Model::Model(std::string& path)
+Model::Model(const std::string path)
 {
     LoadModel(path);
 };
 
-void Model::LoadModel(std::string path)
+void Model::LoadModel(const std::string path)
 {
+    modelPath = path;
+
     Assimp::Importer import;
     const aiScene* scene = import.ReadFile(path, aiProcess_Triangulate | aiProcess_FlipUVs);
 
     if (!scene || scene->mFlags & AI_SCENE_FLAGS_INCOMPLETE || !scene->mRootNode)
     {
-        std::cout << "ERROR::ASSIMP::" << import.GetErrorString() << std::endl;
+        LogError("ERROR::ASSIMP::%s\n", import.GetErrorString());
         return;
     }
     directory = path.substr(0, path.find_last_of('/'));
@@ -29,7 +34,8 @@ void Model::ProcessNode(aiNode* node, const aiScene* scene)
     for (unsigned int i = 0; i < node->mNumMeshes; i++)
     {
         aiMesh* mesh = scene->mMeshes[node->mMeshes[i]];
-        meshes.push_back(ProcessMesh(mesh, scene));
+
+        ProcessMesh(mesh, scene);
     }
     // then do the same for each of its children
     for (unsigned int i = 0; i < node->mNumChildren; i++)
@@ -38,23 +44,24 @@ void Model::ProcessNode(aiNode* node, const aiScene* scene)
     }
 }
 
-Rendering::Mesh Model::ProcessMesh(aiMesh* mesh, const aiScene* scene)
+void Model::ProcessMesh(aiMesh* mesh, const aiScene* scene)
 {
     // data to fill
     std::vector<Rendering::Vertex> vertices;
     std::vector<unsigned int> indices;
-    std::vector<Rendering::Texture> textures;
 
     // walk through each of the mesh's vertices
     for (unsigned int i = 0; i < mesh->mNumVertices; i++)
     {
         Rendering::Vertex vertex;
-        BwatEngine::Math::Vec3f vector; // we declare a placeholder vector since assimp uses its own vector class that doesn't directly convert to glm's vec3 class so we transfer the data to this placeholder glm::Vec3 first.
+        BwatEngine::Math::Vec3f vector; 
+
         // positions
         vector.X = mesh->mVertices[i].x;
         vector.Y = mesh->mVertices[i].y;
         vector.Z = mesh->mVertices[i].z;
         vertex.postion = vector;
+
         // normals
         if (mesh->HasNormals())
         {
@@ -62,20 +69,6 @@ Rendering::Mesh Model::ProcessMesh(aiMesh* mesh, const aiScene* scene)
             vector.Y = mesh->mNormals[i].y;
             vector.Z = mesh->mNormals[i].z;
             vertex.normal = vector;
-        }
-        // tangent
-        if (mesh->HasTangentsAndBitangents())
-        {
-            vector.X = mesh->mTangents[i].x;
-            vector.Y = mesh->mTangents[i].y;
-            vector.Z = mesh->mTangents[i].z;
-            vertex.tangent = vector;
-
-            // bitangent
-            vector.X = mesh->mBitangents[i].x;
-            vector.Y = mesh->mBitangents[i].y;
-            vector.Z = mesh->mBitangents[i].z;
-            vertex.bitangent = vector;
         }
 
         // texture coordinates
@@ -103,58 +96,30 @@ Rendering::Mesh Model::ProcessMesh(aiMesh* mesh, const aiScene* scene)
     // process materials
     aiMaterial* material = scene->mMaterials[mesh->mMaterialIndex];
 
-    // 1. diffuse maps
-    std::vector<Rendering::Texture> diffuseMaps = LoadMaterialTextures(material, aiTextureType_DIFFUSE, "texture_diffuse");
-    textures.insert(textures.end(), diffuseMaps.begin(), diffuseMaps.end());
-    // 2. specular maps
-    std::vector<Rendering::Texture> specularMaps = LoadMaterialTextures(material, aiTextureType_SPECULAR, "texture_specular");
-    textures.insert(textures.end(), specularMaps.begin(), specularMaps.end());
-    // 3. normal maps
-    std::vector<Rendering::Texture> normalMaps = LoadMaterialTextures(material, aiTextureType_HEIGHT, "texture_normal");
-    textures.insert(textures.end(), normalMaps.begin(), normalMaps.end());
-    // 4. height maps
-    std::vector<Rendering::Texture> heightMaps = LoadMaterialTextures(material, aiTextureType_AMBIENT, "texture_height");
-    textures.insert(textures.end(), heightMaps.begin(), heightMaps.end());
+    Rendering::Material myMaterial(*material);
 
     // return a mesh object created from the extracted mesh data
-    return Rendering::Mesh(vertices, indices, textures);
+    meshes.emplace_back(std::make_unique<Mesh>(vertices, indices, myMaterial));
 }
 
-std::vector<Rendering::Texture> Model::LoadMaterialTextures(aiMaterial* mat, aiTextureType type, std::string typeName)
+void Model::Draw(std::vector<Material*>* materials)
 {
-    std::vector<Rendering::Texture> textures;
-    for (unsigned int i = 0; i < mat->GetTextureCount(type); i++)
+    for (unsigned int i = 0; i < meshes.size(); i++)
     {
-        aiString str;
-        mat->GetTexture(type, i, &str);
+        if (materials)
+            (*materials)[i]->Bind();
+        else
+            meshes[i]->defaultMaterial.Bind();
 
-        bool skip = false;
-        for (unsigned int j = 0; j < textures_loaded.size(); j++)
-        {
-            if (std::strcmp(textures_loaded[j].path.data(), str.C_Str()) == 0)
-            {
-                textures.push_back(textures_loaded[j]);
-                skip = true; // a texture with the same filepath has already been loaded, continue to next one. (optimization)
-                break;
-            }
-        }
+        meshes[i]->Draw();
 
-        if (!skip)
-        {
-            Rendering::Texture texture;
-            texture.GenerateTextureID(str.C_Str(), directory);
-            texture.type = typeName;
-            texture.path = str.C_Str();
-            textures.push_back(texture);
-            textures_loaded.push_back(texture);
-        }
     }
-    return textures;
 }
 
-void Model::Draw(Rendering::Shader& shader, const std::vector<Light*> lights)
+std::vector<Material*> Model::GetDefaultMaterials() const
 {
-	for (unsigned int i = 0; i < meshes.size(); i++)
-		meshes[i].Draw(shader,lights);
+    std::vector<Material*> materials;
+    for (const auto& mesh : meshes)
+        materials.push_back(&mesh->defaultMaterial);
+    return materials;
 }
-

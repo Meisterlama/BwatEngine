@@ -2,7 +2,7 @@
 #include <cstdio>
 #include <iostream>
 
-using namespace Bwat;
+using namespace BwatEngine;
 
 Window::Window()
 {
@@ -11,7 +11,7 @@ Window::Window()
 	height = 720;
 
 	// init context
-	window = InitGLFW();
+	handler = InitGLFW();
 	InitGlad();
 }
 
@@ -69,6 +69,6 @@ void Window::InitGlad()
 
 void Window::Close()
 {
-	glfwDestroyWindow(window);
+	glfwDestroyWindow(handler);
 	glfwTerminate();
 }
