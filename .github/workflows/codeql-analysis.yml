@@ -34,10 +34,6 @@ jobs:
         # https://docs.github.com/en/free-pro-team@latest/github/finding-security-vulnerabilities-and-errors-in-your-code/configuring-code-scanning#changing-the-languages-that-are-analyzed
 
     steps:
-    - name: Install dependencies
-      run: |
-        sudo -E apt-add-repository -y "ppa:ubuntu-toolchain-r"
-        sudo apt-get install libxcursor-dev libxi-dev libxinerama-dev libxrandr-dev libxxf86vm-dev libglfw3-dev libgl1-mesa-dev libglu1-mesa-dev
     - name: Checkout repository
       uses: actions/checkout@v2
       with:
