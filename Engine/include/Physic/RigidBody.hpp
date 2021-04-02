@@ -18,15 +18,13 @@ namespace BwatEngine
 		physx::PxRigidBody* rigidBody = nullptr;
 		physx::PxRigidStatic* staticActor = nullptr;
 		bool isStatic = false;
-		bool shouldRegister = true;
 		Math::Transform oldTransform{};
 
 	public :
 
-		RigidBody(const Math::Transform& transform = {}, bool isStatic = false);
+		RigidBody(const Math::Transform& transform, bool isStatic = false);
 		~RigidBody();
 
-		void SetStatic(bool isStat);
 		void AttachCollider(Collider& collider);
 		void SetVelocity(const Math::Vec3f& vec);
 		void AddForce(const Math::Vec3f& vec);
@@ -35,14 +33,9 @@ namespace BwatEngine
 		void AddActor(physx::PxScene* scene);
 
 		bool CompareOldTransform(const Math::Transform& trans);
-		bool GetIsStatic() { return isStatic; }
-		bool ShouldRegister() { return shouldRegister; }
 
 		Math::Vec3f GetPosition();
 		Math::Quatf GetRotation();
-
-		float GetMass();
-		Math::Vec3f GetVelocity();
 
 	};
 }

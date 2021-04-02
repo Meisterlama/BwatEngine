@@ -81,22 +81,18 @@ namespace BwatEngine {
          if (MainFBO)
             MainFBO->Unbind();
 
-         static bool updateScript = false;
-         if (InputHandler::GetKeyboardDown(KEY_F4))
-         {
-             LogDebug("ScriptOn");
-             updateScript = !updateScript;
-
-         }
-         if (updateScript)
-         {
-             scene.scriptSystem->Update();
-         }
-
         scene.inputSystem->Update();
 
-       
-        
+        static bool updateScript = false;
+        if (InputHandler::GetKeyboardDown(KEY_F4))
+        {
+            updateScript = !updateScript;
+
+        }
+        if (updateScript)
+        {
+            scene.scriptSystem->Update();
+        }
 
         glfwSwapBuffers(GetGLFWwindow());
         

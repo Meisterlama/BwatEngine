@@ -24,19 +24,6 @@ void PhysicsSystem::Update()
     {
         auto& rigidBody = Coordinator::GetInstance()->GetComponent<RigidBodyComponent>(entity).rigidBody;
         auto& transform = Coordinator::GetInstance()->GetComponent<TransformComponent>(entity).transform;
-        auto& collider = Coordinator::GetInstance()->GetComponent<ColliderComponent>(entity).collider;
-
-        if (rigidBody.ShouldRegister())
-        {
-            if(!collider)
-            {
-                BoxCollider* boxCollider = new BoxCollider{ 1 };
-                collider = boxCollider;
-            }
-
-            rigidBody.AttachCollider(*collider);
-            rigidBody.AddActor(ptrScene->scenePhysic);
-        }
 
         if (rigidBody.CompareOldTransform(transform))
         {

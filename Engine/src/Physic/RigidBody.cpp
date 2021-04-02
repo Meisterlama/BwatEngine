@@ -2,7 +2,7 @@
 
 using namespace BwatEngine;
 
-RigidBody::RigidBody(const Math::Transform& transform, bool isStatic) : oldTransform(transform), isStatic(isStatic)
+RigidBody::RigidBody(const Math::Transform& transform, bool isStatic) : isStatic(isStatic)
 {
 	if (isStatic)
 		staticActor = Physic::GetPhysics()->createRigidStatic(ToPxTransform(transform));
@@ -18,46 +18,16 @@ RigidBody::~RigidBody()
 	//	rigidBody->release();
 }
 
-void RigidBody::SetStatic(bool isStat)
-{
-	if (isStatic == isStat)
-		return;
-
-	if (isStat)
-	{
-		isStatic = true;
-
-		if (rigidBody)
-		{
-			rigidBody->release();
-			rigidBody = nullptr;
-
-		}
-
-		staticActor = Physic::GetPhysics()->createRigidStatic(ToPxTransform(oldTransform));
-	}
-	else
-	{
-		isStatic = false;
-
-		if (staticActor)
-		{
-			staticActor->release();
-			staticActor = nullptr;
-		}
-
-		rigidBody = Physic::GetPhysics()->createRigidDynamic(ToPxTransform(oldTransform));
-	}
-
-	shouldRegister = true;
-}
-
 void RigidBody::AttachCollider(Collider& collider)
 {
 	if (isStatic)
+	{
 		staticActor->attachShape(*collider.GetShape());
+	}
 	else
+	{
 		rigidBody->attachShape(*collider.GetShape());
+	}
 }
 
 void RigidBody::SetVelocity(const Math::Vec3f& vec)
@@ -94,8 +64,6 @@ void RigidBody::AddActor(physx::PxScene* scene)
 		scene->addActor(*staticActor);
 	else
 		scene->addActor(*rigidBody);
-
-	shouldRegister = false;
 }
 
 bool RigidBody::CompareOldTransform(const Math::Transform& trans)
@@ -117,17 +85,4 @@ Math::Quatf RigidBody::GetRotation()
 		return ToBwatQuat(staticActor->getGlobalPose().q);
 	else
 		return ToBwatQuat(rigidBody->getGlobalPose().q);
-}
-
-
-float RigidBody::GetMass()
-{
-	if (!isStatic)
-		return rigidBody->getMass();
-}
-
-Math::Vec3f RigidBody::GetVelocity()
-{
-	if (!isStatic)
-		return ToBwatVec3(rigidBody->getLinearVelocity());
 }
