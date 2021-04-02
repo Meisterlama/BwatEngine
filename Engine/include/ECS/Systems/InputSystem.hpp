@@ -3,20 +3,18 @@
 
 #include "ECS/System.hpp"
 #include "Inputs/InputHandler.hpp"
-#include "Engine.hpp"
-#include "Window.hpp"
 
 namespace BwatEngine
 {
     class InputsSystem : public System
     {
     public:
-        void Init(Window& window)
+        void Init(GLFWwindow* window)
         {
-            BwatEngine::InputHandler::Initialize(window.handler);
+            BwatEngine::InputHandler::Initialize(window);
         }
 
-        void Update()
+        void Update(float dt)
         {
             BwatEngine::InputHandler::Update();
         };

@@ -16,11 +16,11 @@ namespace BwatEngine
 		GLFWwindow* InitGLFW();
 		void InitGlad();
 
-		GLFWwindow* handler = nullptr;
+		GLFWwindow* window = nullptr;
 
 		float GetHeight() { return height; };
 		float GetWidth() { return width; };
-		bool IsWorking() { return !glfwWindowShouldClose(handler); };
+		bool IsWorking() { return !glfwWindowShouldClose(window); };
 
 	private:
 

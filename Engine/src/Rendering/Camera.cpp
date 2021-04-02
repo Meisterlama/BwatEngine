@@ -19,7 +19,7 @@ void Camera::UseFreeFly(BwatEngine::Window* win,float deltaTime)
     if (BwatEngine::InputHandler::GetKeyboardDown(BwatEngine::KEY_F1))
     {
         lockMouse = !lockMouse;
-        glfwSetInputMode(win->handler, GLFW_CURSOR, (lockMouse) ? GLFW_CURSOR_DISABLED : GLFW_CURSOR_NORMAL);
+        glfwSetInputMode(win->window, GLFW_CURSOR, (lockMouse) ? GLFW_CURSOR_DISABLED : GLFW_CURSOR_NORMAL);
     }
     if (lockMouse)
     {
@@ -54,7 +54,7 @@ void Camera::CameraMovementFF(BwatEngine::Window* win, float deltaTime)
 
 
     if (BwatEngine::InputHandler::GetKeyboard(BwatEngine::KEY_LEFT_SHIFT))
-        FrameSpeed *= 10.f;
+        FrameSpeed *= 3.f;
 
 
     float ForwardVelocity = 0.f;

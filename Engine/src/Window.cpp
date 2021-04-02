@@ -7,11 +7,11 @@ using namespace BwatEngine;
 Window::Window()
 {
 	//Define size of window
-	width = 1200;
-	height = 720;
+	width = 800;
+	height = 600;
 
 	// init context
-	handler = InitGLFW();
+	window = InitGLFW();
 	InitGlad();
 }
 
@@ -69,6 +69,6 @@ void Window::InitGlad()
 
 void Window::Close()
 {
-	glfwDestroyWindow(handler);
+	glfwDestroyWindow(window);
 	glfwTerminate();
 }

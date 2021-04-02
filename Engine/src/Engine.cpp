@@ -3,13 +3,7 @@
 #include "imgui_impl_glfw.h"
 #include "imgui_impl_opengl3.h"
 
-#include "Math/Math.hpp"
-#include "Scene.hpp"
-
-#include "Rendering/Shader.hpp"
-#include "Rendering/Light.hpp"
-#include "Rendering/Camera.hpp"
-#include "EditorInterface.hpp"
+#include "Rendering/Model.hpp"
 
 #include "ECS/ECS.hpp"
 #include "ECS/Systems/InputSystem.hpp"
@@ -22,7 +16,7 @@
 namespace BwatEngine {
 
     //initialization
-    Engine::Engine() : scene(window)
+    Engine::Engine()
     {
 
         IMGUI_CHECKVERSION();
@@ -31,9 +25,23 @@ namespace BwatEngine {
         io.ConfigFlags |= ImGuiConfigFlags_NavEnableKeyboard;       // Enable Keyboard Controls
         io.ConfigFlags |= ImGuiConfigFlags_DockingEnable;           // Enable Docking
 
-        ImGui_ImplGlfw_InitForOpenGL(GetGLFWwindow(), false);
+        ImGui_ImplGlfw_InitForOpenGL(context.window.window, false);
         ImGui_ImplOpenGL3_Init("#version 330");
 
+        Coordinator::GetInstance()->Init();
+        InitComponents(context);
+        InitSystems(context);
+
+        // time init var
+
+        //Rendering::Model mymodel = Rendering::Model{ (std::string) "Assets/bag/backpack.obj" };
+        model = Rendering::Model{ (std::string) "Assets/cube.obj" };
+
+        InitSampleScene(context, model);
+    }
+
+    Engine::~Engine()
+    {
     }
 
     //Main Funtion of engine 
@@ -45,25 +53,27 @@ namespace BwatEngine {
         ImGui_ImplGlfw_NewFrame();
         ImGui::NewFrame();
 
-
+        //Time
         float currentFrame = glfwGetTime();
-        Time::deltaTime = currentFrame - lastFrame;
-        lastFrame = currentFrame;
+        context.deltaTime = currentFrame - context.lastFrame;
+        context.lastFrame = currentFrame;
+
+        //physicsSystem->Update(deltaTime);
+        context.playerControlSystem->Update(context.deltaTime, context.window);
+        
+        context.MainFBO.UseAndBind();
+        context.renderSystem->Update(context.deltaTime);
+        context.MainFBO.Unbind();
+
+        context.inputSystem->Update(context.deltaTime);
 
         //ImGui::Render();
         //ImGui_ImplOpenGL3_RenderDrawData(ImGui::GetDrawData());
-        scene.physicsSystem->Update();
-        scene.playerControlSystem->Update(Time::deltaTime, GetGLFWwindow());
-        
-        MainFBO.UseAndBind();
-        scene.renderSystem->Update(GetWindow());
-        MainFBO.Unbind();
 
-        scene.inputSystem->Update();
-
-        glfwSwapBuffers(GetGLFWwindow());
+        glfwSwapBuffers(context.window.window);
         
     }
+
 
     //Close all content 
     void Engine::Close()
@@ -71,12 +81,7 @@ namespace BwatEngine {
         ImGui_ImplGlfw_Shutdown();
         ImGui_ImplOpenGL3_Shutdown();
         ImGui::DestroyContext();
-        GetWindow().Close();
-    }
-
-    Engine::~Engine()
-    {
-
+        context.window.Close();
     }
 }
 

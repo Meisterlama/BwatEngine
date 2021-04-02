@@ -2,44 +2,58 @@
 #define ENGINE_HPP
 
 
+#include "Window.hpp"
 #include <memory>
 
-#include "Time.hpp"
-#include "Window.hpp"
-#include "Scene.hpp"
-#include "ECS/Entity.hpp"
-#include "Physic/Physic.hpp"
+#include "Rendering/Model.hpp"
 #include "Rendering/FrameBuffer.hpp"
+#include "Core.hpp"
+
+#include "ECS/Coordinator.hpp"
 
 namespace BwatEngine
 {
+	class InputsSystem;
+	class PhysicsSystem;
+	class PlayerControlSystem;
+	class RenderSystem;
+
+	struct Context
+	{
+		Window window{};
+
+		float deltaTime = 0.0f;
+		float lastFrame = 0.0f;
+
+		Rendering::FrameBufferObject MainFBO;
+
+        std::shared_ptr<InputsSystem> inputSystem = nullptr;
+        std::shared_ptr<PhysicsSystem> physicsSystem = nullptr;
+        std::shared_ptr<PlayerControlSystem> playerControlSystem = nullptr;
+        std::shared_ptr<RenderSystem> renderSystem = nullptr;
+
+        std::vector<Entity> entities;
+    };
 
 	class Engine
 	{
+
 	public:
+
 		Engine();
 		~Engine();
 
 		void Update();
 		void Close();
 
-		bool ShouldRun() { return window.IsWorking(); };
+		Context context;
 
-		Scene& GetScene() { return scene; }
-		const Scene& GetScene() const { return scene; }
+		Rendering::Model model;
 
-		Window& GetWindow() { return window; }
-		const Window& GetWindow() const { return window; }
+		bool ShouldRun() { return context.window.IsWorking(); };
 
-		GLFWwindow* GetGLFWwindow() { return window.handler; };
-
-		Rendering::FrameBufferObject MainFBO;
 
 	private:
-		float lastFrame = 0.0f;
-
-		Window window;
-		Scene scene;
 
 	};
 

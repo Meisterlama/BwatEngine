@@ -11,7 +11,7 @@ int main()
 	Engine engine;
 
 	EditorInterface editor(&engine);
-	editor.Initialise();
+	editor.Initialise(engine.context.window);
 
 	while (engine.ShouldRun())
 	{

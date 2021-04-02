@@ -7,10 +7,10 @@ WidgetViewport::WidgetViewport(EditorInterface *editor) : Widget(editor)
     title = "Viewport";
     flags |= ImGuiWindowFlags_NoScrollbar;
 
-    fbo = Rendering::FrameBufferObject(editor->engine->GetWindow().GetWidth()
-        , editor->engine->GetWindow().GetHeight());
+    fbo = Rendering::FrameBufferObject(editor->engine->context.window.GetWidth()
+                                      ,editor->engine->context.window.GetHeight());
 
-    editor->engine->MainFBO = fbo;
+    editor->engine->context.MainFBO = fbo;
 }
 
 void WidgetViewport::TickVisible()

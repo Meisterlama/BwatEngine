@@ -7,8 +7,7 @@
 #include "Rendering/Shader.hpp"
 #include "Rendering/Model.hpp"
 #include "Window.hpp"
-#include "Scene.hpp"
-
+#include "World.hpp"
 #include "ECS/Components/CameraComponent.hpp"
 #include "ECS/Components/TransformComponent.hpp"
 #include "ECS/Components/RenderableComponent.hpp"
@@ -25,14 +24,14 @@ namespace BwatEngine
 
 
     public:
-
         Math::Vec3f clearColor = { 0.5f, 0.5f, 0.5f };
 
-        void Init()
+        void Init(Window* _window)
         {
-            shader = {"Assets/basic.vs", "Assets/basic.fs"};
+            window = _window;
+            shader = {"Assets/basic.vs", "Assets/multilight.fs"};
             Rendering::Light mylight(Rendering::TYPE_LIGHT::Directional, { 0.1f,0.1f,0.5f }, { 0.1f,0.1f,0.5f }, { 0.1f,0.1f,0.5f });
-            Scene::AddLight(mylight);
+            World::AddLight(mylight);
         }
 
         void SetCamera(Entity _camera)
@@ -40,13 +39,13 @@ namespace BwatEngine
             camera = _camera;
         }
 
-        void Update(Window &win)
+        void Update(float dt)
         {
             if (camera == -1)
                 return;
 
             glEnable(GL_DEPTH_TEST);
-            glViewport(0, 0, win.GetWidth(), win.GetHeight());
+            glViewport(0, 0, window->GetWidth(), window->GetHeight());
             glClearColor(clearColor[0], clearColor[1], clearColor[2], 1.f);
             glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
@@ -59,11 +58,11 @@ namespace BwatEngine
             shader.setMat4("view", Math::Mat4f::CreateTRSMat(cameraTransform.position, cameraTransform.rotation, cameraTransform.scale).Invert());
             shader.setMat4("proj", cameraProjection);
 
-            shader.setInt("nbrlights", (int)Scene::GetLights().size());
-            for (unsigned int i = 0; i < Scene::GetLights().size(); i++)
+            shader.setInt("nbrlights", (int)World::GetWorldLights().size());
+            for (unsigned int i = 0; i < World::GetWorldLights().size(); i++)
             {
                 std::string index = std::to_string(i);
-                Scene::GetLights()[i].ApplyOnShader(&shader, index);
+                World::GetWorldLights()[i].ApplyOnShader(&shader, index);
             }
             for (auto entityID : entities)
             {
