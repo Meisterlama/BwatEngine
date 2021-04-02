@@ -88,11 +88,6 @@ namespace BwatEngine
         {
             systemManager->SetSignature<T>(signature);
         }
-
-        Signature GetEntitySignature(EntityType entity)
-        {
-            return entityManager->GetSignature(entity);
-        }
     };
 }
 #endif //ENGINE_ECS_COORDINATOR_HPP

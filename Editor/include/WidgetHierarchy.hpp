@@ -2,8 +2,6 @@
 #define BWATENGINE_WIDGETHIERARCHY_HPP
 
 #include "Widget.hpp"
-#include <memory>
-#include <ECS/Entity.hpp>
 
 class WidgetHierarchy : public Widget
 {
