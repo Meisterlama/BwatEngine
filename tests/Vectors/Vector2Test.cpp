@@ -5,11 +5,11 @@
 #include <gtest/gtest.h>
 #include "Math/Math.hpp"
 
-using BwatEngine::Math::Vec2f;
+using BMath::vec2f;
 
 TEST(Vector2, Constructors)
 {
-    Vec2f vec{1, 0};
+    vec2f vec{1, 0};
     ASSERT_EQ(vec.X, 1);
     ASSERT_EQ(vec.Y, 0);
     vec = {1};
@@ -18,16 +18,16 @@ TEST(Vector2, Constructors)
     vec = {0, 1};
     ASSERT_EQ(vec.X, 0);
     ASSERT_EQ(vec.Y, 1);
-    Vec2f vec2 = vec;
+    vec2f vec2 = vec;
     ASSERT_EQ(vec2.X, vec.X);
     ASSERT_EQ(vec2.Y, vec.Y);
 }
 
 TEST(Vector2, Addition)
 {
-    Vec2f vec1{1, 0};
-    Vec2f vec2{2, 1};
-    Vec2f checkVec{3, 1};
+    vec2f vec1{1, 0};
+    vec2f vec2{2, 1};
+    vec2f checkVec{3, 1};
     ASSERT_EQ(vec1 + vec2, checkVec);
 
     vec2 = {-1, 0};
@@ -54,9 +54,9 @@ TEST(Vector2, Addition)
 
 TEST(Vector2, Substraction)
 {
-    Vec2f vec1{1, 0};
-    Vec2f vec2{2, 1};
-    Vec2f checkVec{-1, -1};
+    vec2f vec1{1, 0};
+    vec2f vec2{2, 1};
+    vec2f checkVec{-1, -1};
     ASSERT_EQ(vec1 - vec2, checkVec);
 
     vec2 = {-1, 0};
@@ -83,8 +83,8 @@ TEST(Vector2, Substraction)
 
 TEST(Vector2, Multiplication)
 {
-    Vec2f vec1{1, 0};
-    Vec2f checkVec{2,0};
+    vec2f vec1{1, 0};
+    vec2f checkVec{2,0};
     ASSERT_EQ(vec1 * 2, checkVec);
     ASSERT_EQ(2 * vec1, checkVec);
 
@@ -111,8 +111,8 @@ TEST(Vector2, Multiplication)
 
 TEST(Vector2, Division)
 {
-    Vec2f vec1{2, 0};
-    Vec2f checkVec{1,0};
+    vec2f vec1{2, 0};
+    vec2f checkVec{1,0};
     ASSERT_EQ(vec1 / 2, checkVec);
     ASSERT_EQ(vec1 / -2, -checkVec);
 
@@ -122,9 +122,9 @@ TEST(Vector2, Division)
 
 TEST(Vector2, DotProduct)
 {
-    Vec2f vec1 = {3,4};
+    vec2f vec1 = {3,4};
     ASSERT_EQ(vec1.DotProduct(vec1), 3 * 3 + 4 * 4);
-    Vec2f vec2 = {2,5};
+    vec2f vec2 = {2,5};
     ASSERT_EQ(vec1.DotProduct(vec2), vec1.X * vec2.X + vec1.Y * vec2.Y);
 
 
@@ -132,7 +132,7 @@ TEST(Vector2, DotProduct)
 
 TEST(Vector2, Length)
 {
-    Vec2f vec1 = {3,4};
+    vec2f vec1 = {3,4};
     ASSERT_EQ(vec1.Length(), 5);
     ASSERT_EQ(vec1.Amplitude(), 25);
     vec1 = {-3,4};
@@ -149,8 +149,8 @@ TEST(Vector2, Length)
 
 TEST(Vector2, Normalize)
 {
-    Vec2f vec1 = {3,4};
-    Vec2f checkVec = vec1;
+    vec2f vec1 = {3,4};
+    vec2f checkVec = vec1;
     ASSERT_EQ(vec1.GetNormalized().Length(), 1);
     ASSERT_EQ(vec1, checkVec);
     ASSERT_EQ(vec1.Normalize().Length(), 1);
@@ -164,12 +164,12 @@ TEST(Vector2, Normalize)
 
 TEST(Vector2, Comparison)
 {
-    Vec2f vec1{1};
+    vec2f vec1{1};
     ASSERT_TRUE(vec1.Equals(vec1));
     ASSERT_TRUE(vec1 == vec1);
     ASSERT_FALSE(vec1 != vec1);
 
-    Vec2f vec2{1};
+    vec2f vec2{1};
     ASSERT_FALSE(vec2.IsZero());
     ASSERT_TRUE(vec1.Equals(vec2));
     ASSERT_TRUE(vec1 == vec2);
@@ -186,9 +186,9 @@ TEST(Vector2, Comparison)
 
 TEST(Vector2, Lerp)
 {
-    Vec2f vec1{0};
-    Vec2f vec2{2};
-    Vec2f checkVec{1};
+    vec2f vec1{0};
+    vec2f vec2{2};
+    vec2f checkVec{1};
     ASSERT_EQ(Lerp(vec1, vec2, 0.5), checkVec);
     ASSERT_EQ(Lerp(vec1, vec2, 0), vec1);
     ASSERT_EQ(Lerp(vec1, vec2, 1), vec2);

@@ -5,7 +5,7 @@
 #include <gtest/gtest.h>
 #include <Math/Math.hpp>
 
-using namespace BwatEngine::Math;
+using namespace BMath;
 
 TEST(Noise, uint) {
     for (int i = 0; i < 100; i++) {

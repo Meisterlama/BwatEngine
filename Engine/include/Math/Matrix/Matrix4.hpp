@@ -23,10 +23,22 @@ namespace BwatEngine::Math
                 // Column Major
                 struct
                 {
-                     T v0; T v1; T v2; T v3;// a, b, c, d
-                     T v4; T v5; T v6; T v7;// e, f, g, h
-                     T v8; T v9; T v10; T v11; // i, j, k, l
-                     T v12; T v13; T v14; T v15; // m, n, o, p
+                    T v0;
+                    T v4;
+                    T v8;
+                    T v12; // a, b, c, d
+                    T v1;
+                    T v5;
+                    T v9;
+                    T v13; // e, f, g, h
+                    T v2;
+                    T v6;
+                    T v10;
+                    T v14; // i, j, k, l
+                    T v3;
+                    T v7;
+                    T v11;
+                    T v15; // m, n, o, p
                 };
                 T values[4 * 4]{0};
             };
@@ -34,25 +46,25 @@ namespace BwatEngine::Math
             // Initialize the diagonal of the matrix
             ML_FUNC_DECL Matrix4(T x = 0)
             {
-                v0  = x;
-                v5  = x;
-                v10 = x;
-                v15 = x;
+                values[0 * 4 + 0] = x;
+                values[1 * 4 + 1] = x;
+                values[2 * 4 + 2] = x;
+                values[3 * 4 + 3] = x;
             }
 
             // Initialize the diagonal of the matrix
             ML_FUNC_DECL Matrix4(T x0, T x5, T x10, T x15)
             {
-                v0  = x0;
-                v5  = x5;
-                v10 = x10;
-                v15 = x15;
+                values[0 * 4 + 0] = x0;
+                values[1 * 4 + 1] = x5;
+                values[2 * 4 + 2] = x10;
+                values[3 * 4 + 3] = x15;
             }
 
-            ML_FUNC_DECL Matrix4( T x0,T x4,T x8,T x12,
-                                  T x1,T x5,T x9,T x13,
-                                  T x2,T x6,T x10,T x14,
-                                  T x3,T x7,T x11,T x15)
+            ML_FUNC_DECL Matrix4(T x0, T x1, T x2, T x3,
+                                 T x4, T x5, T x6, T x7,
+                                 T x8, T x9, T x10, T x11,
+                                 T x12, T x13, T x14, T x15)
             {
                 v0 = x0;
                 v1 = x1;
@@ -171,15 +183,30 @@ namespace BwatEngine::Math
     template<typename T>
     ML_FUNC_DECL Internal::Matrix4<T>& Internal::Matrix4<T>::Transpose()
     {
-        for (int i = 0; i < 4; i++)
-        {
-            for (int j = (i+1); j < 4; j++)
-            {
-                const T tmp = values[i*4 + j];
-                values[i*4 + j] = values[j*4 + i];
-                values[j*4 + i] = tmp;
-            }
-        }
+        T tmp = values[0*4 + 1];
+        values[0*4 + 1] = values[1*4 + 0];
+        values[1*4 + 0] = tmp;
+
+        tmp = values[0*4 + 2];
+        values[0*4 + 2] = values[2*4 + 0];
+        values[2*4 + 0] = tmp;
+
+        tmp = values[0*4 + 3];
+        values[0*4 + 3] = values[3*4 + 0];
+        values[3*4 + 0] = tmp;
+
+        tmp = values[1*4 + 2];
+        values[1*4 + 2] = values[2*4 + 1];
+        values[2*4 + 1] = tmp;
+
+        tmp = values[1*4 + 3];
+        values[1*4 + 3] = values[3*4 + 1];
+        values[3*4 + 1] = tmp;
+
+        tmp = values[2*4 + 3];
+        values[2*4 + 3] = values[3*4 + 2];
+        values[3*4 + 2] = tmp;
+
         return *this;
     }
 
@@ -258,10 +285,22 @@ namespace BwatEngine::Math
     ML_FUNC_DECL Internal::Matrix4<T>& Internal::Matrix4<T>::Normalize()
     {
         T det = GetDeterminant();
-        for (int i = 0; i < 16; i++)
-        {
-            values[i] /= det;
-        }
+        values[0*4 + 0]  /= det;
+        values[0*4 + 1]  /= det;
+        values[0*4 + 2]  /= det;
+        values[0*4 + 3]  /= det;
+        values[1*4 + 0]  /= det;
+        values[1*4 + 1]  /= det;
+        values[1*4 + 2]  /= det;
+        values[1*4 + 3]  /= det;
+        values[2*4 + 0]  /= det;
+        values[2*4 + 1]  /= det;
+        values[2*4 + 2] /= det;
+        values[2*4 + 3] /= det;
+        values[3*4 + 0] /= det;
+        values[3*4 + 1] /= det;
+        values[3*4 + 2] /= det;
+        values[3*4 + 3] /= det;
 
         return *this;
     }
@@ -421,15 +460,15 @@ namespace BwatEngine::Math
     ML_FUNC_DECL Internal::Matrix4<T> Internal::Matrix4<T>::CreateScaleMat(Internal::Vector3<T> scale)
     {
         return Internal::Matrix4<T>{scale.X, 0      , 0      , 0,
-                                    0      , scale.Y, 0      , 0,
-                                    0      , 0      , scale.Z, 0,
-                                    0      , 0      , 0      , 1};
+                          0      , scale.Y, 0      , 0,
+                          0      , 0      , scale.Z, 0,
+                          0      , 0      , 0      , 1};
     }
 
     template<typename T>
     ML_FUNC_DECL Internal::Matrix4<T> Internal::Matrix4<T>::CreateTRSMat(Internal::Vector3<T> translation, Internal::Vector3<T> rotation, Internal::Vector3<T> scale)
     {
-        return CreateTranslationMat(translation) * CreateXYZRotationMat(rotation).Transpose() * CreateScaleMat(scale);
+        return CreateTranslationMat(translation) * CreateXYZRotationMat(rotation) * CreateScaleMat(scale);
     }
 
     template<typename T>
@@ -468,22 +507,45 @@ namespace BwatEngine::Math
     template<typename T>
     ML_FUNC_DECL Internal::Matrix4<T>& Internal::Matrix4<T>::operator=(const Internal::Matrix4<T>& other)
     {
-        for (int i = 0; i < 16; i++)
-        {
-            values[i] = other.values[i];
-        }
+        values[0*4 + 0] = other.values[0*4 + 0];
+        values[0*4 + 1] = other.values[0*4 + 1];
+        values[0*4 + 2] = other.values[0*4 + 2];
+        values[0*4 + 3] = other.values[0*4 + 3];
+        values[1*4 + 0] = other.values[1*4 + 0];
+        values[1*4 + 1] = other.values[1*4 + 1];
+        values[1*4 + 2] = other.values[1*4 + 2];
+        values[1*4 + 3] = other.values[1*4 + 3];
+        values[2*4 + 0] = other.values[2*4 + 0];
+        values[2*4 + 1] = other.values[2*4 + 1];
+        values[2*4 + 2] = other.values[2*4 + 2];
+        values[2*4 + 3] = other.values[2*4 + 3];
+        values[3*4 + 0] = other.values[3*4 + 0];
+        values[3*4 + 1] = other.values[3*4 + 1];
+        values[3*4 + 2] = other.values[3*4 + 2];
+        values[3*4 + 3] = other.values[3*4 + 3];
+
         return *this;
     }
 
     template<typename T>
     [[nodiscard]] ML_FUNC_DECL bool Internal::Matrix4<T>::operator==(const Internal::Matrix4<T>& other) const
     {
-        for (int i = 0; i < 16; i++)
-        {
-            if (values[i] != other.values[i])
-                return false;
-        }
-        return true;
+        return (values[0*4 + 0] == other.values[0*4 + 0] &&
+                values[0*4 + 1] == other.values[0*4 + 1] &&
+                values[0*4 + 2] == other.values[0*4 + 2] &&
+                values[0*4 + 3] == other.values[0*4 + 3] &&
+                values[1*4 + 0] == other.values[1*4 + 0] &&
+                values[1*4 + 1] == other.values[1*4 + 1] &&
+                values[1*4 + 2] == other.values[1*4 + 2] &&
+                values[1*4 + 3] == other.values[1*4 + 3] &&
+                values[2*4 + 0] == other.values[2*4 + 0] &&
+                values[2*4 + 1] == other.values[2*4 + 1] &&
+                values[2*4 + 2] == other.values[2*4 + 2] &&
+                values[2*4 + 3] == other.values[2*4 + 3] &&
+                values[3*4 + 0] == other.values[3*4 + 0] &&
+                values[3*4 + 1] == other.values[3*4 + 1] &&
+                values[3*4 + 2] == other.values[3*4 + 2] &&
+                values[3*4 + 3] == other.values[3*4 + 3]);
     }
 
     template<typename T>
@@ -514,28 +576,67 @@ namespace BwatEngine::Math
     template<typename T>
     [[nodiscard]] ML_FUNC_DECL Internal::Matrix4<T> Internal::Matrix4<T>::operator+(const Internal::Matrix4<T>& other) const
     {
-        Internal::Matrix4<T> retMat = *this;
-        retMat += other;
-        return retMat;
+        return  Internal::Matrix4<T> {values[0*4 + 0] + other.values[0*4 + 0],
+                            values[0*4 + 1] + other.values[0*4 + 1],
+                            values[0*4 + 2] + other.values[0*4 + 2],
+                            values[0*4 + 3] + other.values[0*4 + 3],
+                            values[1*4 + 0] + other.values[1*4 + 0],
+                            values[1*4 + 1] + other.values[1*4 + 1],
+                            values[1*4 + 2] + other.values[1*4 + 2],
+                            values[1*4 + 3] + other.values[1*4 + 3],
+                            values[2*4 + 0] + other.values[2*4 + 0],
+                            values[2*4 + 1] + other.values[2*4 + 1],
+                            values[2*4 + 2] + other.values[2*4 + 2],
+                            values[2*4 + 3] + other.values[2*4 + 3],
+                            values[3*4 + 0] + other.values[3*4 + 0],
+                            values[3*4 + 1] + other.values[3*4 + 1],
+                            values[3*4 + 2] + other.values[3*4 + 2],
+                            values[3*4 + 3] + other.values[3*4 + 3]};
     }
 
     template<typename T>
     ML_FUNC_DECL Internal::Matrix4<T>& Internal::Matrix4<T>::operator+=(const Internal::Matrix4<T>& other)
     {
-        for (int i = 0; i < 16; i++)
-        {
-            values[i] += other.values[i];
-        }
+        values[0*4 + 0] += other.values[0*4 + 0];
+        values[0*4 + 1] += other.values[0*4 + 1];
+        values[0*4 + 2] += other.values[0*4 + 2];
+        values[0*4 + 3] += other.values[0*4 + 3];
+        values[1*4 + 0] += other.values[1*4 + 0];
+        values[1*4 + 1] += other.values[1*4 + 1];
+        values[1*4 + 2] += other.values[1*4 + 2];
+        values[1*4 + 3] += other.values[1*4 + 3];
+        values[2*4 + 0] += other.values[2*4 + 0];
+        values[2*4 + 1] += other.values[2*4 + 1];
+        values[2*4 + 2] += other.values[2*4 + 2];
+        values[2*4 + 3] += other.values[2*4 + 3];
+        values[3*4 + 0] += other.values[3*4 + 0];
+        values[3*4 + 1] += other.values[3*4 + 1];
+        values[3*4 + 2] += other.values[3*4 + 2];
+        values[3*4 + 3] += other.values[3*4 + 3];
+
         return *this;
     }
 
     template<typename T>
     ML_FUNC_DECL Internal::Matrix4<T>& Internal::Matrix4<T>::operator++()
     {
-        for (int i = 0; i < 16; i++)
-        {
-            values[i]++;
-        }
+        values[0*4 + 0]++;
+        values[0*4 + 1]++;
+        values[0*4 + 2]++;
+        values[0*4 + 3]++;
+        values[1*4 + 0]++;
+        values[1*4 + 1]++;
+        values[1*4 + 2]++;
+        values[1*4 + 3]++;
+        values[2*4 + 0]++;
+        values[2*4 + 1]++;
+        values[2*4 + 2]++;
+        values[2*4 + 3]++;
+        values[3*4 + 0]++;
+        values[3*4 + 1]++;
+        values[3*4 + 2]++;
+        values[3*4 + 3]++;
+
         return *this;
     }
 
@@ -549,28 +650,67 @@ namespace BwatEngine::Math
     template<typename T>
     [[nodiscard]] ML_FUNC_DECL Internal::Matrix4<T> Internal::Matrix4<T>::operator-(const Internal::Matrix4<T>& other) const
     {
-        Internal::Matrix4<T> retMat = *this;
-        retMat -= other;
-        return retMat;
+        return  Internal::Matrix4<T> {values[0*4 + 0] - other.values[0*4 + 0],
+                            values[0*4 + 1] - other.values[0*4 + 1],
+                            values[0*4 + 2] - other.values[0*4 + 2],
+                            values[0*4 + 3] - other.values[0*4 + 3],
+                            values[1*4 + 0] - other.values[1*4 + 0],
+                            values[1*4 + 1] - other.values[1*4 + 1],
+                            values[1*4 + 2] - other.values[1*4 + 2],
+                            values[1*4 + 3] - other.values[1*4 + 3],
+                            values[2*4 + 0] - other.values[2*4 + 0],
+                            values[2*4 + 1] - other.values[2*4 + 1],
+                            values[2*4 + 2] - other.values[2*4 + 2],
+                            values[2*4 + 3] - other.values[2*4 + 3],
+                            values[3*4 + 0] - other.values[3*4 + 0],
+                            values[3*4 + 1] - other.values[3*4 + 1],
+                            values[3*4 + 2] - other.values[3*4 + 2],
+                            values[3*4 + 3] - other.values[3*4 + 3]};
     }
 
     template<typename T>
     ML_FUNC_DECL Internal::Matrix4<T>& Internal::Matrix4<T>::operator-=(const Internal::Matrix4<T>& other)
     {
-        for (int i = 0; i < 16; i++)
-        {
-            values[i] -= other.values[i];
-        }
+        values[0*4 + 0] -= other.values[0*4 + 0];
+        values[0*4 + 1] -= other.values[0*4 + 1];
+        values[0*4 + 2] -= other.values[0*4 + 2];
+        values[0*4 + 3] -= other.values[0*4 + 3];
+        values[1*4 + 0] -= other.values[1*4 + 0];
+        values[1*4 + 1] -= other.values[1*4 + 1];
+        values[1*4 + 2] -= other.values[1*4 + 2];
+        values[1*4 + 3] -= other.values[1*4 + 3];
+        values[2*4 + 0] -= other.values[2*4 + 0];
+        values[2*4 + 1] -= other.values[2*4 + 1];
+        values[2*4 + 2] -= other.values[2*4 + 2];
+        values[2*4 + 3] -= other.values[2*4 + 3];
+        values[3*4 + 0] -= other.values[3*4 + 0];
+        values[3*4 + 1] -= other.values[3*4 + 1];
+        values[3*4 + 2] -= other.values[3*4 + 2];
+        values[3*4 + 3] -= other.values[3*4 + 3];
+
         return *this;
     }
 
     template<typename T>
     ML_FUNC_DECL Internal::Matrix4<T>& Internal::Matrix4<T>::operator--()
     {
-        for(int i = 0; i < 16; i++)
-        {
-            values[i]--;
-        }
+        values[0*4 + 0]--;
+        values[0*4 + 1]--;
+        values[0*4 + 2]--;
+        values[0*4 + 3]--;
+        values[1*4 + 0]--;
+        values[1*4 + 1]--;
+        values[1*4 + 2]--;
+        values[1*4 + 3]--;
+        values[2*4 + 0]--;
+        values[2*4 + 1]--;
+        values[2*4 + 2]--;
+        values[2*4 + 3]--;
+        values[3*4 + 0]--;
+        values[3*4 + 1]--;
+        values[3*4 + 2]--;
+        values[3*4 + 3]--;
+
         return *this;
     }
 
@@ -584,68 +724,176 @@ namespace BwatEngine::Math
     template<typename T>
     [[nodiscard]] ML_FUNC_DECL Internal::Matrix4<T> Internal::Matrix4<T>::operator*(const Internal::Matrix4<T>& other) const
     {
-        Internal::Matrix4<T> retMat = *this;
-        retMat *= other;
-        return retMat;
+        return Internal::Matrix4<T> {values[0*4 + 0] * other.values[0*4 + 0] + values[0*4 + 1] * other.values[1*4 + 0]  + values[0*4 + 2] * other.values[2*4 + 0] + values[0*4 + 3] * other.values[3*4 + 0],
+                           values[0*4 + 0] * other.values[0*4 + 1] + values[0*4 + 1] * other.values[1*4 + 1]  + values[0*4 + 2] * other.values[2*4 + 1] + values[0*4 + 3] * other.values[3*4 + 1],
+                           values[0*4 + 0] * other.values[0*4 + 2] + values[0*4 + 1] * other.values[1*4 + 2]  + values[0*4 + 2] * other.values[2*4 + 2] + values[0*4 + 3] * other.values[3*4 + 2],
+                           values[0*4 + 0] * other.values[0*4 + 3] + values[0*4 + 1] * other.values[1*4 + 3]  + values[0*4 + 2] * other.values[2*4 + 3] + values[0*4 + 3] * other.values[3*4 + 3],
+                           values[1*4 + 0] * other.values[0*4 + 0] + values[1*4 + 1] * other.values[1*4 + 0]  + values[1*4 + 2] * other.values[2*4 + 0] + values[1*4 + 3] * other.values[3*4 + 0],
+                           values[1*4 + 0] * other.values[0*4 + 1] + values[1*4 + 1] * other.values[1*4 + 1]  + values[1*4 + 2] * other.values[2*4 + 1] + values[1*4 + 3] * other.values[3*4 + 1],
+                           values[1*4 + 0] * other.values[0*4 + 2] + values[1*4 + 1] * other.values[1*4 + 2]  + values[1*4 + 2] * other.values[2*4 + 2] + values[1*4 + 3] * other.values[3*4 + 2],
+                           values[1*4 + 0] * other.values[0*4 + 3] + values[1*4 + 1] * other.values[1*4 + 3]  + values[1*4 + 2] * other.values[2*4 + 3] + values[1*4 + 3] * other.values[3*4 + 3],
+                           values[2*4 + 0] * other.values[0*4 + 0] + values[2*4 + 1] * other.values[1*4 + 0]  + values[2*4 + 2] * other.values[2*4 + 0] + values[2*4 + 3] * other.values[3*4 + 0],
+                           values[2*4 + 0] * other.values[0*4 + 1] + values[2*4 + 1] * other.values[1*4 + 1]  + values[2*4 + 2] * other.values[2*4 + 1] + values[2*4 + 3] * other.values[3*4 + 1],
+                           values[2*4 + 0] * other.values[0*4 + 2] + values[2*4 + 1] * other.values[1*4 + 2]  + values[2*4 + 2] * other.values[2*4 + 2] + values[2*4 + 3] * other.values[3*4 + 2],
+                           values[2*4 + 0] * other.values[0*4 + 3] + values[2*4 + 1] * other.values[1*4 + 3]  + values[2*4 + 2] * other.values[2*4 + 3] + values[2*4 + 3] * other.values[3*4 + 3],
+                           values[3*4 + 0] * other.values[0*4 + 0] + values[3*4 + 1] * other.values[1*4 + 0]  + values[3*4 + 2] * other.values[2*4 + 0] + values[3*4 + 3] * other.values[3*4 + 0],
+                           values[3*4 + 0] * other.values[0*4 + 1] + values[3*4 + 1] * other.values[1*4 + 1]  + values[3*4 + 2] * other.values[2*4 + 1] + values[3*4 + 3] * other.values[3*4 + 1],
+                           values[3*4 + 0] * other.values[0*4 + 2] + values[3*4 + 1] * other.values[1*4 + 2]  + values[3*4 + 2] * other.values[2*4 + 2] + values[3*4 + 3] * other.values[3*4 + 2],
+                           values[3*4 + 0] * other.values[0*4 + 3] + values[3*4 + 1] * other.values[1*4 + 3]  + values[3*4 + 2] * other.values[2*4 + 3] + values[3*4 + 3] * other.values[3*4 + 3]
+        };
     }
 
     template<typename T>
     ML_FUNC_DECL Internal::Matrix4<T>& Internal::Matrix4<T>::operator*=(const Internal::Matrix4<T>& other)
     {
-        const Internal::Matrix4<T> oldMat{*this};
+        T tmpV0  = values[0*4 + 0] * other.values[0*4 + 0] + values[0*4 + 1] * other.values[1*4 + 0]  + values[0*4 + 2] * other.values[2*4 + 0] + values[0*4 + 3] * other.values[3*4 + 0];
+        T tmpV1  = values[0*4 + 0] * other.values[0*4 + 1] + values[0*4 + 1] * other.values[1*4 + 1]  + values[0*4 + 2] * other.values[2*4 + 1] + values[0*4 + 3] * other.values[3*4 + 1];
+        T tmpV2  = values[0*4 + 0] * other.values[0*4 + 2] + values[0*4 + 1] * other.values[1*4 + 2]  + values[0*4 + 2] * other.values[2*4 + 2] + values[0*4 + 3] * other.values[3*4 + 2];
+        T tmpV3  = values[0*4 + 0] * other.values[0*4 + 3] + values[0*4 + 1] * other.values[1*4 + 3]  + values[0*4 + 2] * other.values[2*4 + 3] + values[0*4 + 3] * other.values[3*4 + 3];
+        T tmpV4  = values[1*4 + 0] * other.values[0*4 + 0] + values[1*4 + 1] * other.values[1*4 + 0]  + values[1*4 + 2] * other.values[2*4 + 0] + values[1*4 + 3] * other.values[3*4 + 0];
+        T tmpV5  = values[1*4 + 0] * other.values[0*4 + 1] + values[1*4 + 1] * other.values[1*4 + 1]  + values[1*4 + 2] * other.values[2*4 + 1] + values[1*4 + 3] * other.values[3*4 + 1];
+        T tmpV6  = values[1*4 + 0] * other.values[0*4 + 2] + values[1*4 + 1] * other.values[1*4 + 2]  + values[1*4 + 2] * other.values[2*4 + 2] + values[1*4 + 3] * other.values[3*4 + 2];
+        T tmpV7  = values[1*4 + 0] * other.values[0*4 + 3] + values[1*4 + 1] * other.values[1*4 + 3]  + values[1*4 + 2] * other.values[2*4 + 3] + values[1*4 + 3] * other.values[3*4 + 3];
+        T tmpV8  = values[2*4 + 0] * other.values[0*4 + 0] + values[2*4 + 1] * other.values[1*4 + 0]  + values[2*4 + 2] * other.values[2*4 + 0] + values[2*4 + 3] * other.values[3*4 + 0];
+        T tmpV9  = values[2*4 + 0] * other.values[0*4 + 1] + values[2*4 + 1] * other.values[1*4 + 1]  + values[2*4 + 2] * other.values[2*4 + 1] + values[2*4 + 3] * other.values[3*4 + 1];
+        T tmpV10 = values[2*4 + 0] * other.values[0*4 + 2] + values[2*4 + 1] * other.values[1*4 + 2]  + values[2*4 + 2] * other.values[2*4 + 2] + values[2*4 + 3] * other.values[3*4 + 2];
+        T tmpV11 = values[2*4 + 0] * other.values[0*4 + 3] + values[2*4 + 1] * other.values[1*4 + 3]  + values[2*4 + 2] * other.values[2*4 + 3] + values[2*4 + 3] * other.values[3*4 + 3];
+        T tmpV12 = values[3*4 + 0] * other.values[0*4 + 0] + values[3*4 + 1] * other.values[1*4 + 0]  + values[3*4 + 2] * other.values[2*4 + 0] + values[3*4 + 3] * other.values[3*4 + 0];
+        T tmpV13 = values[3*4 + 0] * other.values[0*4 + 1] + values[3*4 + 1] * other.values[1*4 + 1]  + values[3*4 + 2] * other.values[2*4 + 1] + values[3*4 + 3] * other.values[3*4 + 1];
+        T tmpV14 = values[3*4 + 0] * other.values[0*4 + 2] + values[3*4 + 1] * other.values[1*4 + 2]  + values[3*4 + 2] * other.values[2*4 + 2] + values[3*4 + 3] * other.values[3*4 + 2];
+        T tmpV15 = values[3*4 + 0] * other.values[0*4 + 3] + values[3*4 + 1] * other.values[1*4 + 3]  + values[3*4 + 2] * other.values[2*4 + 3] + values[3*4 + 3] * other.values[3*4 + 3];
 
-        for (int i = 0; i < 16; i++)
-        {
-            values[i] = oldMat.values[(i%4) * 4 + 0] * other.values[0 * 4 + (i/4)]
-                      + oldMat.values[(i%4) * 4 + 1] * other.values[1 * 4 + (i/4)]
-                      + oldMat.values[(i%4) * 4 + 2] * other.values[2 * 4 + (i/4)]
-                      + oldMat.values[(i%4) * 4 + 3] * other.values[3 * 4 + (i/4)];
-        }
+        values[0*4 + 0]  = tmpV0;
+        values[0*4 + 1]  = tmpV1;
+        values[0*4 + 2]  = tmpV2;
+        values[0*4 + 3]  = tmpV3;
+        values[1*4 + 0]  = tmpV4;
+        values[1*4 + 1]  = tmpV5;
+        values[1*4 + 2]  = tmpV6;
+        values[1*4 + 3]  = tmpV7;
+        values[2*4 + 0]  = tmpV8;
+        values[2*4 + 1]  = tmpV9;
+        values[2*4 + 2] = tmpV10;
+        values[2*4 + 3] = tmpV11;
+        values[3*4 + 0] = tmpV12;
+        values[3*4 + 1] = tmpV13;
+        values[3*4 + 2] = tmpV14;
+        values[3*4 + 3] = tmpV15;
+
         return *this;
     }
 
     template<typename T>
     [[nodiscard]] ML_FUNC_DECL Internal::Matrix4<T> Internal::Matrix4<T>::operator*(const T& scalar) const
     {
-        Internal::Matrix4<T> retMat = *this;
-        retMat *= scalar;
-        return retMat;
+        return  Internal::Matrix4<T> {values[0*4 + 0]  * scalar,
+                            values[0*4 + 1]  * scalar,
+                            values[0*4 + 2]  * scalar,
+                            values[0*4 + 3]  * scalar,
+                            values[1*4 + 0]  * scalar,
+                            values[1*4 + 1]  * scalar,
+                            values[1*4 + 2]  * scalar,
+                            values[1*4 + 3]  * scalar,
+                            values[2*4 + 0]  * scalar,
+                            values[2*4 + 1]  * scalar,
+                            values[2*4 + 2] * scalar,
+                            values[2*4 + 3] * scalar,
+                            values[3*4 + 0] * scalar,
+                            values[3*4 + 1] * scalar,
+                            values[3*4 + 2] * scalar,
+                            values[3*4 + 3] * scalar};
     }
 
     template<typename T>
     ML_FUNC_DECL Internal::Matrix4<T>& Internal::Matrix4<T>::operator*=(const T& scalar)
     {
-        for (int i = 0; i < 16; i++)
-        {
-            values[i] *= scalar;
-        }
+        values[0*4 + 0]  *= scalar;
+        values[0*4 + 1]  *= scalar;
+        values[0*4 + 2]  *= scalar;
+        values[0*4 + 3]  *= scalar;
+        values[1*4 + 0]  *= scalar;
+        values[1*4 + 1]  *= scalar;
+        values[1*4 + 2]  *= scalar;
+        values[1*4 + 3]  *= scalar;
+        values[2*4 + 0]  *= scalar;
+        values[2*4 + 1]  *= scalar;
+        values[2*4 + 2] *= scalar;
+        values[2*4 + 3] *= scalar;
+        values[3*4 + 0] *= scalar;
+        values[3*4 + 1] *= scalar;
+        values[3*4 + 2] *= scalar;
+        values[3*4 + 3] *= scalar;
+
         return *this;
     }
 
     template<typename T>
     [[nodiscard]] ML_FUNC_DECL Internal::Matrix4<T> Internal::Matrix4<T>::operator/(const T& scalar) const
     {
-        Internal::Matrix4<T> retMat = *this;
-        retMat *= scalar;
-        return retMat;
+        return  Internal::Matrix4<T> {values[0*4 + 0]  / scalar,
+                            values[0*4 + 1]  / scalar,
+                            values[0*4 + 2]  / scalar,
+                            values[0*4 + 3]  / scalar,
+                            values[1*4 + 0]  / scalar,
+                            values[1*4 + 1]  / scalar,
+                            values[1*4 + 2]  / scalar,
+                            values[1*4 + 3]  / scalar,
+                            values[2*4 + 0]  / scalar,
+                            values[2*4 + 1]  / scalar,
+                            values[2*4 + 2] / scalar,
+                            values[2*4 + 3] / scalar,
+                            values[3*4 + 0] / scalar,
+                            values[3*4 + 1] / scalar,
+                            values[3*4 + 2] / scalar,
+                            values[3*4 + 3] / scalar};
     }
 
     template<typename T>
     ML_FUNC_DECL Internal::Matrix4<T>& Internal::Matrix4<T>::operator/=(const T& scalar)
     {
-        for (int i = 0; i < 16; i++)
-        {
-            values[i] /= scalar;
-        }
+        values[0*4 + 0]  /= scalar;
+        values[0*4 + 1]  /= scalar;
+        values[0*4 + 2]  /= scalar;
+        values[0*4 + 3]  /= scalar;
+        values[1*4 + 0]  /= scalar;
+        values[1*4 + 1]  /= scalar;
+        values[1*4 + 2]  /= scalar;
+        values[1*4 + 3]  /= scalar;
+        values[2*4 + 0]  /= scalar;
+        values[2*4 + 1]  /= scalar;
+        values[2*4 + 2] /= scalar;
+        values[2*4 + 3] /= scalar;
+        values[3*4 + 0] /= scalar;
+        values[3*4 + 1] /= scalar;
+        values[3*4 + 2] /= scalar;
+        values[3*4 + 3] /= scalar;
+
         return *this;
     }
+
+
+
 
 }
 template<typename T>
 [[nodiscard]] ML_FUNC_DECL BwatEngine::Math::Internal::Matrix4<T> operator-(BwatEngine::Math::Internal::Matrix4<T> mat)
 {
-    mat *= -1;
-    return mat;
+    return  BwatEngine::Math::Internal::Matrix4<T> {-mat.values[0*4 + 0],
+                                  -mat.values[0*4 + 1],
+                                  -mat.values[0*4 + 2],
+                                  -mat.values[0*4 + 3],
+                                  -mat.values[1*4 + 0],
+                                  -mat.values[1*4 + 1],
+                                  -mat.values[1*4 + 2],
+                                  -mat.values[1*4 + 3],
+                                  -mat.values[2*4 + 0],
+                                  -mat.values[2*4 + 1],
+                                  -mat.values[2*4 + 2],
+                                  -mat.values[2*4 + 3],
+                                  -mat.values[3*4 + 0],
+                                  -mat.values[3*4 + 1],
+                                  -mat.values[3*4 + 2],
+                                  -mat.values[3*4 + 3]};
 }
 
 
