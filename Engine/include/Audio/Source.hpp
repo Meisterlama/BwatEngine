@@ -27,10 +27,6 @@ namespace BwatEngine::Audio
             void SetVelocity(Math::Vec3f vel);
             void SetLooping(bool loop);
 
-            float GetPitch();
-            float GetGain();
-            bool GetLooping();
-
             void SetAudioData(const AudioData& audioData);
 
             void Play();
