@@ -10,7 +10,6 @@
 #include "ECS/Components/RenderableComponent.hpp"
 #include "ECS/Components/TransformComponent.hpp"
 #include "ECS/Components/ColliderComponent.hpp"
-#include "ECS/Components/StaticActorComponent.hpp"
 #include "ECS/Components/ScriptComponent.hpp"
 #include "ECS/Components/AudioSourceComponent.hpp"
 
@@ -48,7 +47,7 @@ std::vector<Rendering::Light>& Scene::GetLights()
 }
 
 Scene::Scene(Window& window)
-    : texture("Assets/image/Purple.jpg",Rendering::Texture::Type::E_DIFFUSE), texture1("Assets/image/Heart.png", Rendering::Texture::Type::E_DIFFUSE)
+    : texture("Assets/image/moteur.jpg",Rendering::Texture::Type::E_DIFFUSE), texture1("Assets/image/green.png", Rendering::Texture::Type::E_DIFFUSE)
 {
     Coordinator& coordinator = *Coordinator::GetInstance();
     coordinator.Init();
@@ -117,9 +116,9 @@ Scene::Scene(Window& window)
     model = Rendering::Model{"Assets/cube.obj" };
 
     BwatEngine::ResourceManager::Instance()->GetOrLoadModel("Assets/cube.obj");
-    BwatEngine::ResourceManager::Instance()->GetOrLoadModel("Assets/sphere.obj");
-    BwatEngine::ResourceManager::Instance()->GetOrLoadTexture("Assets/image/Heart.png", Rendering::Texture::Type::E_DIFFUSE);
-    BwatEngine::ResourceManager::Instance()->GetOrLoadTexture("Assets/image/Purple.jpg", Rendering::Texture::Type::E_DIFFUSE);
+   // BwatEngine::ResourceManager::Instance()->GetOrLoadModel("Assets/sphere.obj");
+    BwatEngine::ResourceManager::Instance()->GetOrLoadTexture("Assets/image/green.png", Rendering::Texture::Type::E_DIFFUSE);
+    BwatEngine::ResourceManager::Instance()->GetOrLoadTexture("Assets/image/moteur.jpg", Rendering::Texture::Type::E_DIFFUSE);
     Audio::AudioData audioData = Audio::LoadWavFile("Assets/pop.wav");
 
     std::default_random_engine generator;
@@ -131,7 +130,7 @@ Scene::Scene(Window& window)
 
     physx::PxMaterial* material = Physic::GetPhysics()->createMaterial(0,0,0);
 
-    entities = std::vector<Entity>(MAX_ENTITIES);
+    entities = std::vector<Entity>(50);
     
     myMat.SetDiffuse(texture);
     myMat1.SetDiffuse(texture1);
@@ -163,13 +162,8 @@ Scene::Scene(Window& window)
                 Math::Transform& eTransform = coordinator.GetComponent<TransformComponent>(entities[i]).transform;
                 coordinator.AddComponent<RigidBodyComponent>(entities[i], { {eTransform , true} });
 
-                auto& rigidBody = coordinator.GetComponent<RigidBodyComponent>(entities[i]).rigidBody;
                 coordinator.AddComponent<ColliderComponent>(entities[i], { new BoxCollider{eTransform.scale} });
                 coordinator.AddComponent<RenderableComponent>(entities[i],{ &model });
-
-                rigidBody.AttachCollider(*coordinator.GetComponent<ColliderComponent>(entities[i]).collider);
-
-                rigidBody.AddActor(scenePhysic);
 
                 auto& renderableComponent = coordinator.GetComponent<RenderableComponent>(entities[i]);
                 renderableComponent.materials[0] = &myMat;
@@ -189,11 +183,6 @@ Scene::Scene(Window& window)
 
                 coordinator.AddComponent<ColliderComponent>(entities[i], { new BoxCollider{eTransform.scale} });
                 coordinator.AddComponent<RenderableComponent>(entities[i],{ &model });
-
-                auto& rigidBody = coordinator.GetComponent<RigidBodyComponent>(entities[i]).rigidBody;
-                rigidBody.AttachCollider(*coordinator.GetComponent<ColliderComponent>(entities[i]).collider);
-
-                rigidBody.AddActor(scenePhysic);
 
                 auto& renderableComponent = coordinator.GetComponent<RenderableComponent>(entities[i]);
                 renderableComponent.materials[0] = &myMat1;
