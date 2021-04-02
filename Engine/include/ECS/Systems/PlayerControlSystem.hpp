@@ -29,7 +29,7 @@ namespace BwatEngine
                     auto &transform = coordinator->GetComponent<TransformComponent>(entityId).transform;
 
                     Math::Vec2f mouseDelta = InputHandler::GetMouseDelta();
-                    float sensitivity_mouse = -0.1f;
+                    float sensitivity_mouse = 0.1f;
                     mouseDelta *= sensitivity_mouse * dt;
 
 //                    if (Math::Quatf(rotation) != transform.rotation)
@@ -60,7 +60,7 @@ namespace BwatEngine
 
 
                     if (InputHandler::GetKeyboard(KEY_LEFT_SHIFT))
-                        FrameSpeed *= 25.f;
+                        FrameSpeed *= 3.f;
 
 
                     float ForwardVelocity = 0.f;

@@ -15,15 +15,10 @@ namespace BwatEngine::Math
         Quatf rotation{ 1, 0, 0, 0 };
         Vec3f scale{ 1 };
 
-        Transform(Vec3f _position, Vec3f _rotation, Vec3f _scale)
+        Transform(Vec3f _position = {0}, Vec3f _rotation = {0}, Vec3f _scale = {1} )
         : position(_position),
           rotation(_rotation),
           scale(_scale) {};
-
-        Transform(Vec3f _position = { 0 }, Quatf _rotation = { 0 }, Vec3f _scale = { 1 })
-            : position(_position),
-            rotation(_rotation),
-            scale(_scale) {};
 
         Mat4f GetTRS();
     };

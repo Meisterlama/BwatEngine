@@ -14,10 +14,11 @@ Texture::Texture(int width, int height)
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
 }
 
-Texture::Texture(const std::string& path, Type type) : path(path), type(type)
+Texture::Texture(const char* filename)
 {
     glGenTextures(1, &id);
     glBindTexture(GL_TEXTURE_2D, id);
+
 
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
@@ -27,7 +28,7 @@ Texture::Texture(const std::string& path, Type type) : path(path), type(type)
     int width, height, nrComponents;
     stbi_set_flip_vertically_on_load(1);
 
-    unsigned char* data = stbi_load(path.c_str(), &width, &height, &nrComponents, 0);
+    unsigned char* data = stbi_load(filename, &width, &height, &nrComponents, 0);
 
     if (data)
     {
@@ -47,7 +48,7 @@ Texture::Texture(const std::string& path, Type type) : path(path), type(type)
     }
     else
     {
-        std::cout << "Texture failed to load at path: " << path.c_str() << std::endl;
+        std::cout << "Texture failed to load at path: " << filename << std::endl;
         stbi_image_free(data);
     }
 }

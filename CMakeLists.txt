@@ -18,7 +18,7 @@ else()
     message(FATAL_ERROR ">>> Not supported platform ${CMAKE_SYSTEM}")
 endif()
 
-set(BWAT_ENGINE_TEST_ENABLED OFF)
+set(BWAT_ENGINE_TEST_ENABLED ON)
 set(BWAT_EDITOR_ENABLED ON)
 set(BWAT_EDITOR_DEBUG_ENABLED ON)
 

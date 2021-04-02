@@ -44,6 +44,5 @@ void PhysicsSystem::Update()
         auto& transform = Coordinator::GetInstance()->GetComponent<TransformComponent>(entity).transform;
 
         transform.position = ToBwatVec3(rigidBody.rigidBody->getGlobalPose().p);
-        transform.rotation = ToBwatQuat(rigidBody.rigidBody->getGlobalPose().q);
     }
 };
