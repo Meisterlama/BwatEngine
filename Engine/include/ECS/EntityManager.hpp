@@ -2,7 +2,7 @@
 #define ENGINE_ECS_ENTITY_MANAGER_HPP
 #include "Core.hpp"
 #include "Debug/Logger.hpp"
-#include <vector>
+#include <array>
 #include <queue>
 #include <cassert>
 
@@ -10,37 +10,30 @@ namespace BwatEngine
 {
     class EntityManager
     {
-        std::queue<Entity> availableEntities{};
-        Entity nextEntity{};
-        // TODO: Manage vector reallocation to handle more entities than default MAX_ENTITIES
-        std::vector<Signature> signatures{};
+        std::queue<EntityType> availableEntities{};
+        std::array<Signature, MAX_ENTITIES> signatures{};
         int livingEntityCount{};
 
     public:
         EntityManager()
         {
-            signatures.reserve(MAX_ENTITIES);
+            for (EntityType entity = 0; entity < MAX_ENTITIES; entity++)
+            {
+                availableEntities.push(entity);
+            }
         }
 
-        Entity CreateEntity()
+        EntityType CreateEntity()
         {
             assert(livingEntityCount < MAX_ENTITIES && "Too many entities in existence.");
-            Entity id = nextEntity;
-            if (!availableEntities.empty())
-            {
-                id = availableEntities.front();
-                availableEntities.pop();
-            }
-            else
-            {
-                nextEntity++;
-            }
+            EntityType id = availableEntities.front();
+            availableEntities.pop();
             livingEntityCount++;
 
             return id;
         }
 
-        void DestroyEntity(Entity entity)
+        void DestroyEntity(EntityType entity)
         {
             assert(entity < MAX_ENTITIES && "Entity out of range.");
 
@@ -50,14 +43,14 @@ namespace BwatEngine
             livingEntityCount--;
         }
 
-        void SetSignature(Entity entity, Signature signature)
+        void SetSignature(EntityType entity, Signature signature)
         {
             assert(entity < MAX_ENTITIES && "Entity out of range.");
 
             signatures[entity] = signature;
         }
 
-        Signature GetSignature(Entity entity)
+        Signature GetSignature(EntityType entity)
         {
             assert(entity < MAX_ENTITIES && "Entity out of range.");
             return signatures[entity];

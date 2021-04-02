@@ -9,7 +9,7 @@ namespace BwatEngine
     class System
     {
     public:
-        std::set<Entity> entities;
+        std::set<EntityType> entities;
     };
 }
 #endif //ENGINE_ECS_SYSTEM_HPP

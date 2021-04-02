@@ -39,24 +39,24 @@ namespace BwatEngine
         }
 
         template<typename T>
-        void AddComponent(Entity entity, T component = {})
+        void AddComponent(EntityType entity, T component = {})
         {
             GetComponentArray<T>()->InsertData(entity, component);
         }
 
         template<typename T>
-        void RemoveComponent(Entity entity)
+        void RemoveComponent(EntityType entity)
         {
             GetComponentArray<T>()->RemoveData(entity);
         }
 
         template<typename T>
-        T& GetComponent(Entity entity)
+        T& GetComponent(EntityType entity)
         {
             return GetComponentArray<T>()->GetData(entity);
         }
 
-        void EntityDestroyed(Entity entity)
+        void EntityDestroyed(EntityType entity)
         {            for (auto const& pair : componentArrays)
             {
                 auto const& component = pair.second;

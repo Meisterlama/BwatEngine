@@ -4,6 +4,7 @@
 #include <vector>
 
 #include "Rendering/Light.hpp"
+#include "ECS/Entity.hpp"
 
 class World
 {

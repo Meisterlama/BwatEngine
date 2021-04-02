@@ -21,8 +21,9 @@ namespace BwatEngine
             }
             if (lockMouse) {
                 for (auto &entityId : entities) {
-                    auto coordinator = Coordinator::GetInstance();
-                    auto &transform = coordinator->GetComponent<TransformComponent>(entityId).transform;
+                    Entity entity{entityId};
+
+                    auto &transform = entity.GetComponent<TransformComponent>().transform;
 
                     Math::Vec2f mouseDelta = InputHandler::GetMouseDelta();
                     float sensitivity_mouse = 0.1f;

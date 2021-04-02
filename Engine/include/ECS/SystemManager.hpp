@@ -32,7 +32,7 @@ namespace BwatEngine
             signatures.insert({typeName, signature});
         }
 
-        void EntityDestroyed(Entity entity)
+        void EntityDestroyed(EntityType entity)
         {
             for (auto const& pair : systems)
             {
@@ -41,7 +41,7 @@ namespace BwatEngine
             }
         }
 
-        void EntitySignatureChanged(Entity entity, Signature entitySignature)
+        void EntitySignatureChanged(EntityType entity, Signature entitySignature)
         {
             for (auto const& pair : systems)
             {

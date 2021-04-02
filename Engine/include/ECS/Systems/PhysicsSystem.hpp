@@ -2,9 +2,6 @@
 #define ENGINE_ECS_SYSTEMS_PHYSICS_HPP
 
 #include "ECS/System.hpp"
-#include "ECS/Components/RigidBodyComponent.hpp"
-#include "ECS/Components/TransformComponent.hpp"
-#include "ECS/Components/GravityComponent.hpp"
 
 namespace BwatEngine
 {
@@ -17,10 +14,10 @@ namespace BwatEngine
         {
             for (auto entityID : entities)
             {
-                auto coordinator = Coordinator::GetInstance();
-                auto& rigidBody = coordinator->GetComponent<RigidBodyComponent>(entityID);
-                auto& transform = coordinator->GetComponent<TransformComponent>(entityID).transform;
-                auto const& gravity = coordinator->GetComponent<GravityComponent>(entityID);
+                Entity entity{ entityID };
+                auto& rigidBody = entity.GetComponent<RigidBodyComponent>();
+                auto& transform = entity.GetComponent<TransformComponent>().transform;
+                auto const& gravity = entity.GetComponent<GravityComponent>();
 
                 transform.position += rigidBody.velocity * dt;
                 rigidBody.velocity += gravity.force * dt;

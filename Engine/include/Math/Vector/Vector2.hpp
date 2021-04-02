@@ -146,7 +146,7 @@ namespace BwatEngine::Math
     template<typename T>
     ML_FUNC_DECL float Internal::Vector2<T>::Length() const
     {
-        return Sqrt(Amplitude());
+        return std::sqrt(Amplitude());
     }
 
     template<typename T>

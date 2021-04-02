@@ -1,6 +1,9 @@
 #define BMATH_IMPLEMENTATION
 #include "Math/Math.hpp"
 
+#define ENTITY_IMPLEMENTATION
+#include "ECS/Entity.hpp"
+
 #include "Engine.hpp"
 #include "EditorInterface.hpp"
 

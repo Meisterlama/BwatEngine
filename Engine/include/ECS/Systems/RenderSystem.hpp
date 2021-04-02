@@ -4,13 +4,11 @@
 #include "Math/Vector/Vector3.hpp"
 
 #include "ECS/System.hpp"
+#include "ECS/Entity.hpp"
 #include "Rendering/Shader.hpp"
 #include "Rendering/Model.hpp"
 #include "Window.hpp"
 #include "World.hpp"
-#include "ECS/Components/CameraComponent.hpp"
-#include "ECS/Components/TransformComponent.hpp"
-#include "ECS/Components/RenderableComponent.hpp"
 
 namespace BwatEngine
 {
@@ -20,7 +18,7 @@ namespace BwatEngine
     {
         Rendering::Shader shader;
         Window* window;
-        Entity camera = -1;
+        Entity* camera;
 
 
     public:
@@ -34,14 +32,14 @@ namespace BwatEngine
             World::AddLight(mylight);
         }
 
-        void SetCamera(Entity _camera)
+        void SetCamera(Entity* _camera)
         {
             camera = _camera;
         }
 
         void Update(float dt)
         {
-            if (camera == -1)
+            if (!camera)
                 return;
 
             glEnable(GL_DEPTH_TEST);
@@ -49,10 +47,8 @@ namespace BwatEngine
             glClearColor(clearColor[0], clearColor[1], clearColor[2], 1.f);
             glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
-            auto coordinator = Coordinator::GetInstance();
-
-            auto& cameraTransform = coordinator->GetComponent<TransformComponent>(camera).transform;
-            auto& cameraProjection = coordinator->GetComponent<CameraComponent>(camera).projectionMat;
+            auto& cameraTransform = camera->GetComponent<TransformComponent>().transform;
+            auto& cameraProjection = camera->GetComponent<CameraComponent>().projectionMat;
 
             shader.use();
             shader.setMat4("view", Math::Mat4f::CreateTRSMat(cameraTransform.position, cameraTransform.rotation, cameraTransform.scale).Invert());
@@ -66,8 +62,9 @@ namespace BwatEngine
             }
             for (auto entityID : entities)
             {
-                auto entityTransform = coordinator->GetComponent<TransformComponent>(entityID).transform;
-                auto renderableComponent = coordinator->GetComponent<RenderableComponent>(entityID);
+                Entity entity{entityID};
+                auto entityTransform = entity.GetComponent<TransformComponent>().transform;
+                auto renderableComponent = entity.GetComponent<RenderableComponent>();
                 shader.setMat4("model", Math::Mat4f::CreateTRSMat(entityTransform.position, entityTransform.rotation, entityTransform.scale));
 
                 renderableComponent.model->Draw(shader);
