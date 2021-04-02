@@ -7,20 +7,11 @@
 
 namespace BwatEngine
 {
-    struct SceneNode
-    {
-        SceneNode* parent = nullptr;
-        Entity id = -1;
-        std::vector<SceneNode*> children{};
-    };
-
     class Coordinator
     {
         std::unique_ptr<ComponentManager> componentManager;
         std::unique_ptr<EntityManager> entityManager;
         std::unique_ptr<SystemManager> systemManager;
-
-        std::unordered_map<Entity, SceneNode> sceneMap;
 
         Coordinator() = default;
         ~Coordinator()
@@ -51,9 +42,7 @@ namespace BwatEngine
 
         Entity CreateEntity()
         {
-            auto entity = entityManager->CreateEntity();
-            sceneMap[entity].id = entity;
-            return entity;
+            return entityManager->CreateEntity();
         }
 
         void DestroyEntity(Entity entity)
@@ -63,13 +52,6 @@ namespace BwatEngine
             componentManager->EntityDestroyed(entity);
 
             systemManager->EntityDestroyed(entity);
-
-            sceneMap[entity].parent = nullptr;
-            sceneMap[entity].id = -1;
-            for (auto& node : sceneMap[entity].children)
-            {
-                node->parent = nullptr;
-            }
         }
 
         template<typename T>
@@ -126,39 +108,9 @@ namespace BwatEngine
             systemManager->SetSignature<T>(signature);
         }
 
-        Signature GetEntitySignature(Entity entity)
+        Signature GetEntitySignature(EntityType entity)
         {
             return entityManager->GetSignature(entity);
-        }
-
-        void SetParent(Entity entity, Entity parent)
-        {
-            if (parent == -1)
-            {
-                sceneMap[entity].parent = nullptr;
-                return;
-            }
-                sceneMap[entity].parent = &sceneMap[parent];
-                sceneMap[parent].children.push_back(&sceneMap[entity]);
-        }
-
-        SceneNode& GetNode(Entity entity)
-        {
-            return sceneMap[entity];
-        }
-
-        //TODO: Better way to get root entities
-        std::vector<Entity> GetRootEntities()
-        {
-            std::vector<Entity> rootEntities;
-            for (auto& [id, node] : sceneMap)
-            {
-                if (node.parent == nullptr)
-                {
-                    rootEntities.push_back(id);
-                }
-            }
-            return rootEntities;
         }
     };
 }

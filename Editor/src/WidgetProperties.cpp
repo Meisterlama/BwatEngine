@@ -2,14 +2,12 @@
 #include <ECS/Components/RenderableComponent.hpp>
 #include <ECS/Components/RigidBodyComponent.hpp>
 
-#include "ECS/Coordinator.hpp"
-
 
 #include <Rendering/Model.hpp>
 
 #include "WidgetProperties.hpp"
 
-BwatEngine::Entity WidgetProperties::currentEntity = 0;
+BwatEngine::Entity* WidgetProperties::currentEntity = nullptr;
 
 WidgetProperties::WidgetProperties(EditorInterface *editor) : Widget(editor)
 {
@@ -51,22 +49,24 @@ void WidgetProperties::TickVisible()
 {
     using namespace BwatEngine;
 
-        Coordinator& coordinator = *Coordinator::GetInstance();
-        Signature entitySignature = coordinator.GetEntitySignature(currentEntity);
+    if (currentEntity)
+    {
+        Signature entitySignature = Entity::GetCoordinator().GetEntitySignature(currentEntity->GetID());
 
-        if (entitySignature.test(coordinator.GetComponentType<TransformComponent>()))
-            ShowComponent(coordinator.GetComponent<TransformComponent>(currentEntity));
+        if (entitySignature.test(Entity::GetComponentType<TransformComponent>()))
+            ShowComponent(currentEntity->GetComponent<TransformComponent>());
 
-        if (entitySignature.test(coordinator.GetComponentType<RenderableComponent>()))
-            ShowComponent(coordinator.GetComponent<RenderableComponent>(currentEntity));
+        if (entitySignature.test(Entity::GetComponentType<RenderableComponent>()))
+            ShowComponent(currentEntity->GetComponent<RenderableComponent>());
 
-        if (entitySignature.test(coordinator.GetComponentType<RigidBodyComponent>()))
-            ShowComponent(coordinator.GetComponent<RigidBodyComponent>(currentEntity));
+        if (entitySignature.test(Entity::GetComponentType<RigidBodyComponent>()))
+            ShowComponent(currentEntity->GetComponent<RigidBodyComponent>());
+    }
 }
 
-void WidgetProperties::Inspect(BwatEngine::Entity& entity)
+void WidgetProperties::Inspect(BwatEngine::Entity &entity)
 {
-    currentEntity = entity;
+    currentEntity = &entity;
 }
 
 
