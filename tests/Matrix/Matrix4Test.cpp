@@ -4,9 +4,41 @@
 #include <glm/gtc/matrix_transform.hpp>
 #include "Math/Math.hpp"
 
-#include "../GlmBwatComparison.hpp"
-
 using namespace BwatEngine::Math;
+
+bool operator==(Mat4f Bmat, glm::mat4 Gmat)
+{
+    for (int i = 0; i < 16; i++) {
+        if (Bmat[i] != Gmat[i / 4][i % 4])
+            return false;
+    }
+    return true;
+}
+
+glm::mat4 BMatToGMat(Mat4f bmat)
+{
+    return glm::mat4(
+        bmat.v0, bmat.v1, bmat.v2, bmat.v3,
+        bmat.v4, bmat.v5, bmat.v6, bmat.v7,
+        bmat.v8, bmat.v9, bmat.v10, bmat.v11,
+        bmat.v12, bmat.v13, bmat.v14, bmat.v15
+    );
+}
+Mat4f GMatToBMat(glm::mat4 gmat)
+{
+    Mat4f retMat{0};
+    for (int i = 0; i < 16; i++) {
+        retMat[i] = gmat[i / 4][i % 4];
+    }
+    return retMat;
+}
+
+#define ASSERT_MAT_EQ(mat1, mat2) \
+    for (int i = 0; i < 16; i++){ \
+    ASSERT_FLOAT_EQ(mat1[i], mat2[i]);}
+
+
+const Mat4f MatEPS = {EPSILON};
 
 TEST(Matrix4, Constructors)
 {
@@ -96,7 +128,7 @@ TEST(Matrix4, TRS)
     Rx = 4; Ry = 5; Rz = 6;
     Sx = 1; Sy = 1; Sz = 1;
 
-    mat = Mat4f::CreateTRSMat({Tx, Ty, Tz}, Vec3f{Rx, Ry, Rz}, {Sx, Sy, Sz});
+    mat = Mat4f::CreateTRSMat({Tx, Ty, Tz}, {Rx, Ry, Rz}, {Sx, Sy, Sz});
 
     gmatT = glm::translate(glm::mat4(1), {Tx, Ty, Tz});
     gmatR = glm::rotate(glm::mat4{1}, Ry, {0, 1, 0}) *
@@ -112,7 +144,7 @@ TEST(Matrix4, TRS)
     Rx = 7; Ry = 4; Rz = 12;
     Sx = 3; Sy = 9; Sz = 2;
 
-    mat = Mat4f::CreateTRSMat({Tx, Ty, Tz}, Vec3f{Rx, Ry, Rz}, {Sx, Sy, Sz});
+    mat = Mat4f::CreateTRSMat({Tx, Ty, Tz}, {Rx, Ry, Rz}, {Sx, Sy, Sz});
 
     gmatT = glm::translate(glm::mat4(1), {Tx, Ty, Tz});
     gmatR = glm::rotate(glm::mat4{1}, Ry, {0, 1, 0}) *
@@ -128,7 +160,7 @@ TEST(Matrix4, TRS)
     Rx = 3; Ry = 1; Rz = 6;
     Sx = 6; Sy = 7; Sz = 5;
 
-    mat = Mat4f::CreateTRSMat({Tx, Ty, Tz}, Vec3f{Rx, Ry, Rz}, {Sx, Sy, Sz});
+    mat = Mat4f::CreateTRSMat({Tx, Ty, Tz}, {Rx, Ry, Rz}, {Sx, Sy, Sz});
 
     gmatT = glm::translate(glm::mat4(1), {Tx, Ty, Tz});
     gmatR = glm::rotate(glm::mat4{1}, Ry, {0, 1, 0}) *
@@ -158,7 +190,7 @@ TEST(Matrix4, SRT)
     Rx = 4; Ry = 5; Rz = 6;
     Sx = 1; Sy = 1; Sz = 1;
 
-    mat = Mat4f::CreateSRTMat({Tx, Ty, Tz}, Vec3f{Rx, Ry, Rz}, {Sx, Sy, Sz});
+    mat = Mat4f::CreateSRTMat({Tx, Ty, Tz}, {Rx, Ry, Rz}, {Sx, Sy, Sz});
 
     gmatT = glm::translate(glm::mat4(1), {Tx, Ty, Tz});
     gmatR = glm::rotate(glm::mat4{1}, Ry, {0, 1, 0}) *
@@ -174,7 +206,7 @@ TEST(Matrix4, SRT)
     Rx = 7; Ry = 4; Rz = 12;
     Sx = 3; Sy = 9; Sz = 2;
 
-    mat = Mat4f::CreateSRTMat({Tx, Ty, Tz}, Vec3f{Rx, Ry, Rz}, {Sx, Sy, Sz});
+    mat = Mat4f::CreateSRTMat({Tx, Ty, Tz}, {Rx, Ry, Rz}, {Sx, Sy, Sz});
 
     gmatT = glm::translate(glm::mat4(1), {Tx, Ty, Tz});
     gmatR = glm::rotate(glm::mat4{1}, Ry, {0, 1, 0}) *
@@ -190,7 +222,7 @@ TEST(Matrix4, SRT)
     Rx = 3; Ry = 1; Rz = 6;
     Sx = 6; Sy = 7; Sz = 5;
 
-    mat = Mat4f::CreateSRTMat({Tx, Ty, Tz}, Vec3f{Rx, Ry, Rz}, {Sx, Sy, Sz});
+    mat = Mat4f::CreateSRTMat({Tx, Ty, Tz}, {Rx, Ry, Rz}, {Sx, Sy, Sz});
 
     gmatT = glm::translate(glm::mat4(1), {Tx, Ty, Tz});
     gmatR = glm::rotate(glm::mat4{1}, Ry, {0, 1, 0}) *

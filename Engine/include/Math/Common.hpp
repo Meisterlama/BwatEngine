@@ -14,8 +14,6 @@ namespace BwatEngine::Math
 
     [[nodiscard]] ML_FUNC_DECL float ToDegs(float x);
 
-    [[nodiscard]] ML_FUNC_DECL float Clamp(float x, float minVal, float maxVal);
-
     [[nodiscard]] ML_FUNC_DECL float Sin(float x);
 
     [[nodiscard]] ML_FUNC_DECL float Asin(float x);
@@ -64,11 +62,6 @@ namespace BwatEngine::Math
     [[nodiscard]] ML_FUNC_DECL float ToDegs(float x)
     {
         return (x / PI) * 180;
-    }
-
-    [[nodiscard]] ML_FUNC_DECL float Clamp(float x, float minVal, float maxVal)
-    {
-        return std::min(std::max(x, minVal), maxVal);
     }
 
     [[nodiscard]] ML_FUNC_DECL float Sin(float x)
