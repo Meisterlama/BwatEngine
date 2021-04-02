@@ -8,6 +8,7 @@
 #include "WidgetAsset.hpp"
 #include "WidgetViewport.hpp"
 #include "imgui_internal.h"
+#include "Window.hpp"
 
 EditorInterface::EditorInterface()
 {

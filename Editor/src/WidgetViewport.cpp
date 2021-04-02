@@ -1,4 +1,5 @@
 #include "WidgetViewport.hpp"
+#include "glad/glad.h"
 
 WidgetViewport::WidgetViewport(EditorInterface *editor) : Widget(editor)
 {

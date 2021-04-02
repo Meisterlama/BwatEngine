@@ -2,7 +2,7 @@
 #define BWATENGINE_WIDGETVIEWPORT_HPP
 
 #include "Widget.hpp"
-#include "glad/glad.h"
+#include "Rendering/Render.hpp"
 
 class WidgetViewport : public Widget
 {
