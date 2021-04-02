@@ -11,21 +11,16 @@
 #include "ECS/Components/TransformComponent.hpp"
 #include "ECS/Components/ColliderComponent.hpp"
 #include "ECS/Components/StaticActorComponent.hpp"
-#include "ECS/Components/ScriptComponent.hpp"
 
 
 #include "ECS/Systems/InputSystem.hpp"
 #include "ECS/Systems/PhysicsSystem.hpp"
 #include "ECS/Systems/PlayerControlSystem.hpp"
 #include "ECS/Systems/RenderSystem.hpp"
-#include "ECS/Systems/ScriptSystem.hpp"
 #include "Engine.hpp"
 
 #include "Physic/PhysicCast.hpp"
 #include "Rendering/Material.hpp"
-
-// Script include 
-#include "Scripts/ScriptTest.hpp"
 
 //#include "Rendering/Material.hpp"
 
@@ -58,7 +53,6 @@ Scene::Scene(Window& window)
     coordinator.RegisterComponent<PlayerComponent>();
     coordinator.RegisterComponent<ColliderComponent>();
     coordinator.RegisterComponent<StaticActorComponent>();
-    coordinator.RegisterComponent<ScriptComponent>();
 
 
     inputSystem = coordinator.RegisterSystem<InputsSystem>();
@@ -92,16 +86,6 @@ Scene::Scene(Window& window)
         coordinator.SetSystemSignature<RenderSystem>(signature);
     }
     renderSystem->Init();
-
-    // =================================== SCRIPT =================================== //
-
-    scriptSystem = coordinator.RegisterSystem<ScriptSystem>();
-    {
-        Signature signature;
-        signature.set(coordinator.GetComponentType<ScriptComponent>());
-        coordinator.SetSystemSignature<ScriptSystem>(signature);
-    }
-    scriptSystem->Init();
 
     //Rendering::Model mymodel = Rendering::Model{ (std::string) "Assets/bag/backpack.obj" };
     model = Rendering::Model{ (std::string) "Assets/cube.obj" };
@@ -148,7 +132,8 @@ Scene::Scene(Window& window)
                 coordinator.AddComponent<StaticActorComponent>(entities[i],eTransform);
 
                 auto& statActor = coordinator.GetComponent<StaticActorComponent>(entities[i]).staticActor;
-                coordinator.AddComponent<ColliderComponent>(entities[i],{ material, physx::PxBoxGeometry{ ToPxVec3(eTransform.scale / 2.f) } });
+                statActor->userData = (void*)0x1234;
+                /*ColliderComponent& collider = */coordinator.AddComponent<ColliderComponent>(entities[i],{ material, physx::PxBoxGeometry{ ToPxVec3(eTransform.scale / 2.f) } });
                 coordinator.AddComponent<RenderableComponent>(entities[i],{ &model });
 
                 coordinator.GetComponent<StaticActorComponent>(entities[i]).staticActor->attachShape(
@@ -158,9 +143,6 @@ Scene::Scene(Window& window)
 
                 auto& renderableComponent = coordinator.GetComponent<RenderableComponent>(entities[i]);
                 renderableComponent.materials[0] = &myMat;
-
-                ScriptTest* monScript = new ScriptTest;
-                coordinator.AddComponent<ScriptComponent>(entities[i], { monScript });
             }
             else // Cube
             {
@@ -174,8 +156,10 @@ Scene::Scene(Window& window)
                 coordinator.AddComponent<ColliderComponent>(entities[i],{ material, physx::PxBoxGeometry{ ToPxVec3(eTransform.scale / 2) }, eTransform });
                 coordinator.AddComponent<RenderableComponent>(entities[i],{ &model });
 
+                //physx::PxActor* actor = coordinator.GetComponent<ColliderComponent>().staticActorentities[i],;
                 coordinator.GetComponent<RigidBodyComponent>(entities[i]).rigidBody->attachShape(
-                *coordinator.GetComponent<ColliderComponent>(entities[i]).shape);
+                    *coordinator.GetComponent<ColliderComponent>(entities[i]).shape);
+                //actor->userData = (void*)0x1234;
                 scenePhysic->addActor(*coordinator.GetComponent<RigidBodyComponent>(entities[i]).rigidBody);
 
                 auto& renderableComponent = coordinator.GetComponent<RenderableComponent>(entities[i]);

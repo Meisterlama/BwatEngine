@@ -16,7 +16,6 @@
 #include "ECS/Systems/PhysicsSystem.hpp"
 #include "ECS/Systems/PlayerControlSystem.hpp"
 #include "ECS/Systems/RenderSystem.hpp"
-#include "ECS/Systems/ScriptSystem.hpp"
 
 #include "Inputs/InputHandler.hpp"
 
@@ -63,10 +62,6 @@ namespace BwatEngine {
             MainFBO->Unbind();
 
         scene.inputSystem->Update();
-        
-        // if game running update script
-        scene.scriptSystem->Update();
-
         glfwSwapBuffers(GetGLFWwindow());
         
     }
