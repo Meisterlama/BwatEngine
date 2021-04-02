@@ -29,9 +29,6 @@ namespace BwatEngine::Math
                 T values[3];
             };
 
-            /**
-             * @param x Values of all members
-             */
             ML_FUNC_DECL Vector3(T x = 0)
                 : X(x), Y(x), Z(x)
             {}
@@ -50,64 +47,36 @@ namespace BwatEngine::Math
 
             ~Vector3() = default;
 
-            /**
-             * @return The dot product between self and v
-             */
             [[nodiscard]] ML_FUNC_DECL float DotProduct(const Vector3 &v) const;
 
-            /**
-             * @return The cross product between self and v
-             */
             [[nodiscard]] ML_FUNC_DECL Vector3 CrossProduct(const Vector3 &other) const;
 
-            /**
-             * @remark Valid for comparisons, but actually equals to length squared, at the benefits of not computing sqrt
-             * @return The amplitude of the vector
-             */
+            // Compute the amplitude without computing the sqrt
+            // Valid for comparisons, but actually equals to length squared
             [[nodiscard]] ML_FUNC_DECL float Amplitude() const;
 
-            /**
-             * @remark If you only need it for comparison consider using Amplitude()
-             * @return The length of the vector
-             */
+            // Return the length of the vector
+            // If you only need it for comparison consider using Amplitude()
             [[nodiscard]] ML_FUNC_DECL float Length() const;
 
-            /**
-             * @brief Scale the vector in place
-             * @param factor Factor of the uniform scale
-             * @return A reference to self
-             */
+            // Scale in place
             ML_FUNC_DECL Vector3 &Scale(const float &factor);
 
-            /**
-             * @param factor Factor of the uniform scale
-             * @return A scaled copy of the vector
-             */
+            // Get a scaled copy of the vector
             [[nodiscard]] ML_FUNC_DECL Vector3 GetScaled(const float &factor) const;
 
-            /**
-             * @brief Normalize the vector in place
-             * @warning Does not check for length == 0
-             * @return A reference to self
-             */
+            // Normalize in place
             ML_FUNC_DECL Vector3 &Normalize();
 
-            /**
-             * @return A normalized copy of the vector
-             */
+            // Get a normalized copy of the vector
             [[nodiscard]] ML_FUNC_DECL Vector3 GetNormalized() const;
 
-            /**
-             * @brief Normalize the vector in place
-             * @remark If length == 0, does nothing
-             * @return A reference to self
-             */
+            // Normalize in place.
+            // Check for length != 0
             ML_FUNC_DECL Vector3 &SafeNormalize();
 
-            /**
-             * @remark If length == 0, return Vector{0}
-             * @return Return a normalized copy of the vector
-             */
+            // Get a normalized copy of the vector
+            // If vector length == 0, return Vector{0}
             [[nodiscard]] ML_FUNC_DECL Vector3 GetSafeNormalized() const;
 
             [[nodiscard]] ML_FUNC_DECL bool Equals(const Vector3 &rhs) const;

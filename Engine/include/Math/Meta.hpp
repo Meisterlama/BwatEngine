@@ -14,7 +14,6 @@
 namespace BwatEngine::Math
 {
     // Magic numbers
-
     constexpr float PI = 3.1415926535897932;
 
     constexpr float EPSILON = 0.00000001;

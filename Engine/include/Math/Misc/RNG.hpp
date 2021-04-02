@@ -13,7 +13,6 @@ namespace BwatEngine::Math
         RNG(unsigned int seed = 0) : m_seed(seed), m_position(0) {};
 
         // State modifiers
-
         ML_FUNC_DECL void ResetSeed(unsigned int seed, int position = 0) {m_seed = seed; m_position = position;}
         [[nodiscard]] ML_FUNC_DECL unsigned int GetSeed() const { return m_seed; }
         ML_FUNC_DECL void SetCurrentPosition(int position) { m_position = position;}

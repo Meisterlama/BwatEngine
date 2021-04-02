@@ -31,10 +31,7 @@ namespace BwatEngine::Math
                 T values[4 * 4]{0};
             };
 
-            /**
-             * @brief Initialize the diagonal of the matrix
-             * @param x value of the diagonal
-             */
+            // Initialize the diagonal of the matrix
             ML_FUNC_DECL Matrix4(T x = 0)
             {
                 v0  = x;
@@ -43,13 +40,7 @@ namespace BwatEngine::Math
                 v15 = x;
             }
 
-            /**
-             * @brief Initialize the diagonal of the matrix
-             * @param x0
-             * @param x5
-             * @param x10
-             * @param x15
-             */
+            // Initialize the diagonal of the matrix
             ML_FUNC_DECL Matrix4(T x0, T x5, T x10, T x15)
             {
                 v0  = x0;
@@ -58,9 +49,6 @@ namespace BwatEngine::Math
                 v15 = x15;
             }
 
-            /**
-             * @brief Initialize the whole matrix
-             */
             ML_FUNC_DECL Matrix4( T x0, T x1, T x2, T x3,
                                   T x4, T x5, T x6, T x7,
                                   T x8, T x9, T x10, T x11,
@@ -88,147 +76,40 @@ namespace BwatEngine::Math
             ML_FUNC_DECL Matrix4(Matrix4 &&mat) noexcept = default;
             ~Matrix4() = default;
 
-            /**
-             * @brief Transpose the matrix in place
-             * @return A reference to self
-             */
             ML_FUNC_DECL Matrix4 &Transpose();
+            [[nodiscard]] ML_FUNC_DECL Matrix4 GetTranspose() const;
 
-            /**
-             * @return A transposed copy of the matrix
-             */
-            [[nodiscard]] ML_FUNC_DECL Matrix4 GetTransposed() const;
-
-            /**
-             *
-             * @return The determinant of the matrix
-             */
             [[nodiscard]] ML_FUNC_DECL T GetDeterminant();
 
-            /**
-             * @brief Invert the matrix in place
-             * @return A reference to self
-             */
             ML_FUNC_DECL Matrix4 &Invert();
-
-            /**
-             * @return An inverted copy of the matrix
-             */
             [[nodiscard]] ML_FUNC_DECL Matrix4 GetInverted() const;
 
-            /**
-             * @brief Normalize the matrix in place
-             * @return A reference to self
-             */
             ML_FUNC_DECL Matrix4 &Normalize();
-
-            /**
-             * @return An inverted copy of the matrix
-             */
             [[nodiscard]] ML_FUNC_DECL Matrix4 GetNormalized() const;
 
-            // TODO: Implement Properly
             ML_FUNC_DECL Vector4<T> &RotateVector(Vector4<T> &vec) const;
             [[nodiscard]] ML_FUNC_DECL Vector4<T> GetRotatedVector(const Vector4<T> &vec) const;
 
-            // TODO: Implement properly
             ML_FUNC_DECL Vector4<T> &RotateVector(Internal::Vector3<T> &vec) const;
             [[nodiscard]] ML_FUNC_DECL Vector4<T> GetRotatedVector(const Internal::Vector3<T> &vec) const;
 
-            /**
-             * @return A perspective projection matrix
-             */
             static ML_FUNC_DECL Matrix4 CreatePerspective(T left, T right, T bottom, T top, T near, T far);
-
-            /**
-             * @param fovy   Vertical fov of the perspective (in degrees)
-             * @param aspect Aspect ratio (width / height)
-             * @param near   Clipping the objects closer than this
-             * @param far    Clipping the objects farther than this
-             * @return A perspective projection matrix
-             */
             static ML_FUNC_DECL Matrix4 CreatePerspective(T fovy, T aspect, T near, T far);
-
-            /**
-             * @param left   Leftmost of the projection
-             * @param right  Rightmost coordinate of the projection
-             * @param bottom Lowest coordinate of the projection
-             * @param top    Highest coordinate of the projection
-             * @param near   Clipping the objects closer than this
-             * @param far    Clipping the objects farther than this
-             * @return A orthographic projection matrix
-             */
             static ML_FUNC_DECL Matrix4 CreateOrtho(T left, T right, T bottom, T top, T near, T far);
-
-            /**
-             * @param translation Translation vector in XYZ coordinates
-             * @return A matrix that represent the translation given
-             */
             static ML_FUNC_DECL Matrix4 CreateTranslationMat(Internal::Vector3<T> translation);
-
-            /**
-             * @param axis  Axis of the rotation
-             * @param angle Angle of the rotation (in radians)
-             * @return A matrix that represent the rotation of \p angle around the \p axis
-             */
             static ML_FUNC_DECL Matrix4 CreateRotationMat(Internal::Vector3<T> axis, T angle);
-
-            /**
-             * @param angle Euler angle of the rotation (in radians)
-             * @return A matrix that represent a rotation of \p angle around the X axis
-             */
             static ML_FUNC_DECL Matrix4 CreateXRotationMat(T angle);
-
-            /**
-             * @param angle Euler angle of the rotation (in radians)
-             * @return A matrix that represent a rotation of \p angle around the Y axis
-             */
             static ML_FUNC_DECL Matrix4 CreateYRotationMat(T angle);
-
-            /**
-             * @param angle Euler angle of the rotation (in radians)
-             * @return A matrix that represent a rotation of \p angle around the Z axis
-             */
             static ML_FUNC_DECL Matrix4 CreateZRotationMat(T angle);
-
-            /**
-             * @param angles Euler angles of the rotation (in radians)
-             * @return A matrix that represent a rotation given by the Euler angles
-             */
             static ML_FUNC_DECL Matrix4 CreateXYZRotationMat(Internal::Vector3<T> angles);
-
-            /**
-             * @param scale Scale vector in XYZ coordinates
-             * @return A matrix that represent the scale given
-             */
             static ML_FUNC_DECL Matrix4 CreateScaleMat(Internal::Vector3<T> scale);
-
-            /**
-             * @param translation Translation vector in XYZ coordinates
-             * @param rotation Euler angles of the rotation (in radians)
-             * @param scale Scale vector in XYZ coordinates
-             * @return A matrix representing the combination of Translation, RotationXYZ and Scale (in this order)
-             */
             static ML_FUNC_DECL Matrix4 CreateTRSMat(Internal::Vector3<T> translation,
                                                     Internal::Vector3<T> rotation,
                                                     Internal::Vector3<T> scale);
 
-            /**
-             * @param translation Translation vector in XYZ coordinates
-             * @param rotation Euler angles of the rotation (in radians)
-             * @param scale Scale vector in XYZ coordinates
-             * @return A matrix representing the combination of Scale, RotationXYZ and Translation (in this order)
-             */
             static ML_FUNC_DECL Matrix4 CreateSRTMat(Internal::Vector3<T> translation,
                                                      Internal::Vector3<T> rotation,
                                                      Internal::Vector3<T> scale);
-
-            /**
-             * @param origin Origin (eye) of the viewer
-             * @param target Focus point of the viewer
-             * @param upDir Up vector of the viewer
-             * @return A matrix corresponding to the orientation required for \p origin to look at \p target
-             */
             static ML_FUNC_DECL Matrix4
             LookAt(Internal::Vector3<T> origin, Internal::Vector3<T> target, Internal::Vector3<T> upDir);
 
@@ -258,11 +139,9 @@ namespace BwatEngine::Math
             [[nodiscard]] ML_FUNC_DECL Matrix4 operator*(const Matrix4 &other) const;
             ML_FUNC_DECL Matrix4 &operator*=(const Matrix4 &other);
 
-            // TODO: Implement properly
             ML_FUNC_DECL Vector4<T> &Mult(const Vector4<T> &other);
             [[nodiscard]] ML_FUNC_DECL Vector4<T> operator*(const Vector4<T> &other) const;
 
-            // TODO: Implement properly
             ML_FUNC_DECL Vector4<T> &Mult(const Internal::Vector3<T> &other);
             [[nodiscard]] ML_FUNC_DECL Vector4<T> operator*(const Internal::Vector3<T> &other) const;
 
@@ -284,10 +163,6 @@ namespace BwatEngine::Math
     template<typename T>
     [[nodiscard]] ML_FUNC_DECL BwatEngine::Math::Internal::Matrix4<T> operator*(const T& scalar, BwatEngine::Math::Internal::Matrix4<T> rhs);
 
-    /**
-     * @param ratio percentage of the lerp (between 0 and 1)
-     * @return The linear interpolation between \p begin and \p end
-     */
     template<typename T>
     [[nodiscard]] ML_FUNC_DECL BwatEngine::Math::Internal::Matrix4<T> Lerp(BwatEngine::Math::Internal::Matrix4<T> begin,
                                                                            BwatEngine::Math::Internal::Matrix4<T> end,
@@ -314,7 +189,7 @@ namespace BwatEngine::Math
     }
 
     template<typename T>
-    [[nodiscard]] ML_FUNC_DECL Internal::Matrix4<T> Internal::Matrix4<T>::GetTransposed() const
+    [[nodiscard]] ML_FUNC_DECL Internal::Matrix4<T> Internal::Matrix4<T>::GetTranspose() const
     {
         return Internal::Matrix4<T>{*this}.Transpose();
     }
@@ -322,14 +197,12 @@ namespace BwatEngine::Math
     template<typename T>
     [[nodiscard]] ML_FUNC_DECL T Internal::Matrix4<T>::GetDeterminant()
     {
-        T af = values[0*4 + 0] * values[1*4 + 1]; T ag = values[0*4 + 0] * values[1*4 + 2]; T ah = values[0*4 + 0] * values[1*4 + 3];
-        T be = values[0*4 + 1] * values[1*4 + 0]; T bg = values[0*4 + 1] * values[1*4 + 2]; T bh = values[0*4 + 1] * values[1*4 + 3];
-        T ce = values[0*4 + 2] * values[1*4 + 0]; T cf = values[0*4 + 2] * values[1*4 + 1]; T ch = values[0*4 + 2] * values[1*4 + 3];
-        T de = values[0*4 + 3] * values[1*4 + 0]; T df = values[0*4 + 3] * values[1*4 + 1]; T dg = values[0*4 + 3] * values[1*4 + 2];
-        T in = values[2*4 + 0] * values[3*4 + 1]; T io = values[2*4 + 0] * values[3*4 + 2]; T ip = values[2*4 + 0] * values[3*4 + 3];
-        T jm = values[2*4 + 1] * values[3*4 + 0]; T jo = values[2*4 + 1] * values[3*4 + 2]; T jp = values[2*4 + 1] * values[3*4 + 3];
-        T km = values[2*4 + 2] * values[3*4 + 0]; T kn = values[2*4 + 2] * values[3*4 + 1]; T kp = values[2*4 + 2] * values[3*4 + 3];
-        T lm = values[2*4 + 3] * values[3*4 + 0]; T ln = values[2*4 + 3] * values[3*4 + 1]; T lo = values[2*4 + 3] * values[3*4 + 2];
+        T af = values[0*4 + 0]  * values[1*4 + 1];  T ag = values[0*4 + 0]  * values[2*4 + 1];  T ah = values[0*4 + 0]  * values[3*4 + 1]; T be = values[0*4 + 1]  * values[0*4 + 1];
+        T bg = values[1*4 + 0]  * values[2*4 + 1];  T bh = values[1*4 + 0]  * values[3*4 + 1];  T ce = values[2*4 + 0]  * values[0*4 + 1];  T cf = values[2*4 + 0]  * values[1*4 + 1];
+        T ch = values[2*4 + 0]  * values[3*4 + 1];  T de = values[3*4 + 0]  * values[0*4 + 1];  T df = values[3*4 + 0]  * values[1*4 + 1];  T dg = values[3*4 + 0]  * values[2*4 + 1];
+        T in = values[0*4 + 2]  * values[1*4 + 3]; T io = values[0*4 + 2]  * values[2*4 + 3]; T ip = values[0*4 + 2]  * values[3*4 + 3]; T jm = values[1*4 + 2]  * values[0*4 + 3];
+        T jo = values[1*4 + 2]  * values[2*4 + 3]; T jp = values[1*4 + 2]  * values[3*4 + 3]; T km = values[2*4 + 2] * values[0*4 + 3]; T kn = values[2*4 + 2] * values[1*4 + 3];
+        T kp = values[2*4 + 2] * values[3*4 + 3]; T lm = values[3*4 + 2] * values[0*4 + 3]; T ln = values[3*4 + 2] * values[1*4 + 3]; T lo = values[3*4 + 2] * values[2*4 + 3];
 
         return (af*kp - af*lo - ag*jp + ag*ln + ah*jo - ah*kn - be*kp + be*lo +
                 bg*ip - bg*lm - bh*io + bh*km + ce*jp - ce*ln - cf*ip + cf*lm +
@@ -517,9 +390,9 @@ namespace BwatEngine::Math
         T c = Cos(angle);
         T s = Sin(angle);
         return Internal::Matrix4<T>{ c, 0,-s, 0,
-                                     0, 1, 0, 0,
-                                     s, 0, c, 0,
-                                     0, 0, 0, 1};
+                           0, 1, 0, 0,
+                           s, 0, c, 0,
+                           0, 0, 0, 1};
     }
 
     template<typename T>
