@@ -1,5 +1,9 @@
 #include "Audio/Sound.hpp"
 
+#include "Audio/Buffer.hpp"
+#include "Audio/Listener.hpp"
+#include "Audio/Source.hpp"
+
 namespace BwatEngine::Audio
 {
     AudioData LoadWavFile(std::string path)
