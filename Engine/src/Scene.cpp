@@ -60,6 +60,7 @@ Scene::Scene(Window& window)
     coordinator.RegisterComponent<TransformComponent>();
     coordinator.RegisterComponent<PlayerComponent>();
     coordinator.RegisterComponent<ColliderComponent>();
+    coordinator.RegisterComponent<StaticActorComponent>();
     coordinator.RegisterComponent<ScriptComponent>();
     coordinator.RegisterComponent<AudioSourceComponent>();
 
@@ -153,7 +154,7 @@ Scene::Scene(Window& window)
                 coordinator.AddComponent<PlayerComponent>(entities[i], {});
                 renderSystem->SetCamera(entities[i]);
             }
-            else if (i == 1) // ================================= Plane
+            else if (i == 1) // Plane
             {
                 coordinator.AddComponent<TransformComponent>(entities[i],{ Math::Transform{
                     Math::Vec3f{0, -105, 0},
@@ -161,15 +162,18 @@ Scene::Scene(Window& window)
                     Math::Vec3f{300, 1, 300}} });
 
                 Math::Transform& eTransform = coordinator.GetComponent<TransformComponent>(entities[i]).transform;
-                coordinator.AddComponent<RigidBodyComponent>(entities[i], { {eTransform , true} });
+                coordinator.AddComponent<StaticActorComponent>(entities[i],eTransform);
 
-                auto& rigidBody = coordinator.GetComponent<RigidBodyComponent>(entities[i]).rigidBody;
-                coordinator.AddComponent<ColliderComponent>(entities[i], { new BoxCollider{eTransform.scale} });
+                auto& statActor = coordinator.GetComponent<StaticActorComponent>(entities[i]).staticActor;
+                statActor->userData = (void*)0x1234;
+                auto geo = physx::PxBoxGeometry{ ToPxVec3(eTransform.scale / 2.f) };
+                /*ColliderComponent& collider = */coordinator.AddComponent<ColliderComponent>(entities[i],{ material, geo });
                 coordinator.AddComponent<RenderableComponent>(entities[i],{ &model });
 
-                rigidBody.AttachCollider(*coordinator.GetComponent<ColliderComponent>(entities[i]).collider);
+                coordinator.GetComponent<StaticActorComponent>(entities[i]).staticActor->attachShape(
+                    *coordinator.GetComponent<ColliderComponent>(entities[i]).shape);
 
-                rigidBody.AddActor(scenePhysic);
+                scenePhysic->addActor(*statActor);
 
                 auto& renderableComponent = coordinator.GetComponent<RenderableComponent>(entities[i]);
                 renderableComponent.materials[0] = &myMat;
@@ -177,7 +181,7 @@ Scene::Scene(Window& window)
                 ScriptTest* monScript = new ScriptTest;
                 coordinator.AddComponent<ScriptComponent>(entities[i], { monScript });
             }
-            else // ================================= Cube
+            else // Cube
             {
                 coordinator.AddComponent<TransformComponent>(entities[i],{ Math::Transform{
                     Math::Vec3f{randPosition(generator), randPosition(generator), randPosition(generator)},
@@ -185,15 +189,15 @@ Scene::Scene(Window& window)
                     Math::Vec3f{3}
                 } });
                 auto& eTransform = coordinator.GetComponent<TransformComponent>(entities[i]).transform;
-                coordinator.AddComponent<RigidBodyComponent>(entities[i], { {eTransform} });
+                coordinator.AddComponent<RigidBodyComponent>(entities[i],eTransform);
 
-                coordinator.AddComponent<ColliderComponent>(entities[i], { new BoxCollider{eTransform.scale} });
+                auto geo = physx::PxBoxGeometry{ ToPxVec3(eTransform.scale / 2.f) };
+                coordinator.AddComponent<ColliderComponent>(entities[i],{ material, geo, eTransform });
                 coordinator.AddComponent<RenderableComponent>(entities[i],{ &model });
 
-                auto& rigidBody = coordinator.GetComponent<RigidBodyComponent>(entities[i]).rigidBody;
-                rigidBody.AttachCollider(*coordinator.GetComponent<ColliderComponent>(entities[i]).collider);
-
-                rigidBody.AddActor(scenePhysic);
+                coordinator.GetComponent<RigidBodyComponent>(entities[i]).rigidBody->attachShape(
+                *coordinator.GetComponent<ColliderComponent>(entities[i]).shape);
+                scenePhysic->addActor(*coordinator.GetComponent<RigidBodyComponent>(entities[i]).rigidBody);
 
                 auto& renderableComponent = coordinator.GetComponent<RenderableComponent>(entities[i]);
                 renderableComponent.materials[0] = &myMat1;

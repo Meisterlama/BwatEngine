@@ -19,8 +19,11 @@ namespace BwatEngine
     public:
 
         void Init(Scene* scene, const Math::Vec3f &gravity);
+        void BeginSimulation();
         void Update();
+        void SetColliderForRigidbody(Entity entity);
         
+
     private:
 
         Scene* ptrScene = nullptr;
