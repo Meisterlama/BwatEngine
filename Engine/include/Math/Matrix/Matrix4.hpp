@@ -325,7 +325,7 @@ namespace BwatEngine::Math
         return Internal::Matrix4<T>{(near*2)/(right-left), 0                    , (right+left)/(right-left) , 0,
                           0                    , (near*2)/(top-bottom), (top+bottom)/(top-bottom) , 0,
                           0                    , 0                    , -(far+near)/(far-near)    ,-(far * near*2)/(far - near),
-                          0                    , 0                    , -1                        , 0}.Transpose();
+                          0                    , 0                    , -1                        , 0};
     }
 
     template<typename T>
@@ -343,16 +343,16 @@ namespace BwatEngine::Math
         return Internal::Matrix4<T>{2/(right-left), 0             , 0             , -(right+left)/(right-left),
                           0             , 2/(top-bottom), 0             , -(top+bottom)/(top-bottom),
                           0             , 0             ,-2/(far-near)  , -(far+near)/(far-near),
-                          0             , 0             , 0             , 1}.Transpose();
+                          0             , 0             , 0             , 1};
     }
 
     template<typename T>
     ML_FUNC_DECL Internal::Matrix4<T> Internal::Matrix4<T>::CreateTranslationMat(Internal::Vector3<T> translation)
     {
-        return Internal::Matrix4<T>{1, 0, 0, 0,
-                          0, 1, 0, 0,
-                          0, 0, 1, 0,
-                          translation.X, translation.Y, translation.Z, 1};
+        return Internal::Matrix4<T>{1, 0, 0, translation.X,
+                          0, 1, 0, translation.Y,
+                          0, 0, 1, translation.Z,
+                          0, 0, 0, 1};
     }
 
     template<typename T>
@@ -415,11 +415,11 @@ namespace BwatEngine::Math
         float sy = Sin(angles.Y);
         float cx = Cos(angles.X);
         float sx = Sin(angles.X);
-        return CreateYRotationMat(angles.Y) * CreateXRotationMat(angles.X) * CreateZRotationMat(angles.Z);
-//        return Internal::Matrix4<T>{cz * cy, (cz * sy * sx) - (sz * cx), (cz * sy * cx) + (sz * sx), 0,
-//                          sz * cy, (sz * sy * sx) + (cz * cx), (sz * sy * cx) - (cz * sx), 0,
-//                          -sy    , cy * sx                   , cy * cx                   , 0,
-//                          0      , 0                         , 0                          , 1};
+
+        return Internal::Matrix4<T>{cz * cy, (cz * sy * sx) - (sz * cx), (cz * sy * cx) + (sz * sx), 0,
+                          sz * cy, (sz * sy * sx) + (cz * cx), (sz * sy * cx) - (cz * sx), 0,
+                          -sy    , cy * sx                   , cy * cx                   , 0,
+                          0      , 0                         , 0                          , 1};
     }
 
     template<typename T>
@@ -434,7 +434,7 @@ namespace BwatEngine::Math
     template<typename T>
     ML_FUNC_DECL Internal::Matrix4<T> Internal::Matrix4<T>::CreateTRSMat(Internal::Vector3<T> translation, Internal::Vector3<T> rotation, Internal::Vector3<T> scale)
     {
-        return (CreateTranslationMat(translation) * CreateXYZRotationMat(rotation) * CreateScaleMat(scale));
+        return (CreateTranslationMat(translation) * CreateXYZRotationMat(rotation) * CreateScaleMat(scale)).Transpose();
     }
 
 
@@ -605,22 +605,13 @@ namespace BwatEngine::Math
     ML_FUNC_DECL Internal::Matrix4<T>& Internal::Matrix4<T>::operator*=(const Internal::Matrix4<T>& other)
     {
         const Internal::Matrix4<T> oldMat{*this};
-//        for (int i = 0; i < 16; i++)
-//        {
-//            values[(i%4) * 4 + (i/4)] = other.values[(i%4) * 4 + 0] * oldMat.values[0 * 4 + (i/4)]
-//                      + other.values[(i%4) * 4 + 1] * oldMat.values[1 * 4 + (i/4)]
-//                      + other.values[(i%4) * 4 + 2] * oldMat.values[2 * 4 + (i/4)]
-//                      + other.values[(i%4) * 4 + 3] * oldMat.values[3 * 4 + (i/4)];
-//        }
-        for (int i = 0; i < 4; i++)
+
+        for (int i = 0; i < 16; i++)
         {
-            for (int j = 0; j < 4; j++)
-            {
-                values[j * 4 + i] = other.values[j * 4 + 0] * oldMat.values[0 * 4 + i]
-                                  + other.values[j * 4 + 1] * oldMat.values[1 * 4 + i]
-                                  + other.values[j * 4 + 2] * oldMat.values[2 * 4 + i]
-                                  + other.values[j * 4 + 3] * oldMat.values[3 * 4 + i];
-            }
+            values[i] = oldMat.values[(i%4) * 4 + 0] * other.values[0 * 4 + (i/4)]
+                      + oldMat.values[(i%4) * 4 + 1] * other.values[1 * 4 + (i/4)]
+                      + oldMat.values[(i%4) * 4 + 2] * other.values[2 * 4 + (i/4)]
+                      + oldMat.values[(i%4) * 4 + 3] * other.values[3 * 4 + (i/4)];
         }
         return *this;
     }

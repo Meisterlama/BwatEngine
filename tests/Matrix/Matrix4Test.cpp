@@ -100,13 +100,7 @@ TEST(Matrix4, Mult)
     gmat3 = gmat2 * gmat3;
     auto bgmat3 = GMatToBMat(gmat3);
     mat3 = mat2 * mat3;
-
-    ASSERT_MAT_EQ(mat3, bgmat3);
-
-    gmat3 = gmat2 * gmat3;
-    bgmat3 = GMatToBMat(gmat3);
-    mat3 = mat2 * mat3;
-
+//
     ASSERT_MAT_EQ(mat3, bgmat3);
 }
 
@@ -119,35 +113,12 @@ TEST(Matrix4, TRS)
     ASSERT_MAT_EQ(mat, testMat);
 
     Mat4f mat2 = Mat4f::CreateTRSMat({1, 2, 3}, {0}, {1});
-    testMat = {1, 0, 0, 0,
-               0, 1, 0, 0,
-               0, 0, 1, 0,
-               1, 2, 3, 1};
+    testMat = {1, 0, 0, 1,
+               0, 1, 0, 2,
+               0, 0, 1, 3,
+               0, 0, 0, 1};
 
     ASSERT_MAT_EQ(mat2, testMat);
-    glm::mat4 gmat{1};
-    auto bgmat = GMatToBMat(glm::translate(gmat, {1, 2, 3}));
-    ASSERT_MAT_EQ(testMat, bgmat);
-
-    Mat4f matx = Mat4f::CreateXRotationMat(5);
-    glm::mat4 gmatx = glm::rotate(glm::mat4{1}, 5.f, {1, 0, 0});
-    auto bgmatx = GMatToBMat(gmatx);
-    ASSERT_MAT_EQ(matx, bgmatx);
-
-    Mat4f maty = Mat4f::CreateYRotationMat(5);
-    glm::mat4 gmaty = glm::rotate(glm::mat4{1}, 5.f, {0, 1, 0});
-    auto bgmaty = GMatToBMat(gmaty);
-    ASSERT_MAT_EQ(maty, bgmaty);
-
-    Mat4f matz = Mat4f::CreateZRotationMat(5);
-    glm::mat4 gmatz = glm::rotate(glm::mat4{1}, 5.f, {0, 0, 1});
-    auto bgmatz = GMatToBMat(gmatz);
-    ASSERT_MAT_EQ(matz, bgmatz);
-
-    Mat4f matxyz = matx * maty * matz;
-    glm::mat4 gmatxyz = gmatx * gmaty * gmatz;
-    auto bgmatxyz = GMatToBMat(gmatxyz);
-    ASSERT_MAT_EQ(matxyz, bgmatxyz);
 
 }
 

@@ -49,8 +49,8 @@ namespace BwatEngine
             auto& cameraProjection = camera->GetComponent<CameraComponent>().projectionMat;
 
             shader.use();
-            shader.setMat4("view", Math::Mat4f::CreateTRSMat(cameraTransform.position, cameraTransform.rotation, cameraTransform.scale).Invert());
-            shader.setMat4("proj", cameraProjection);
+            shader.setMat4("view", Math::Mat4f::CreateSRTMat(-cameraTransform.position, cameraTransform.rotation, cameraTransform.scale));
+            shader.setMat4("proj", cameraProjection.GetTranspose());
 
             shader.setInt("nbrlights", (int)World::GetWorldLights().size());
             for (unsigned int i = 0; i < World::GetWorldLights().size(); i++)
