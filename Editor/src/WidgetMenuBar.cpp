@@ -1,7 +1,6 @@
 #include "WidgetMenuBar.hpp"
 #include "EditorInterface.hpp"
 #include "Engine.hpp"
-#include "Serialization/Serialization.hpp"
 WidgetMenuBar::WidgetMenuBar(EditorInterface *editor) : Widget(editor)
 {
     title = "MenuBar";
@@ -31,18 +30,6 @@ void WidgetMenuBar::TickAlways()
         if (ImGui::BeginMenu("Options"))
         {
             MenuOption();
-            ImGui::EndMenu();
-        }
-        if (ImGui::BeginMenu("Save Scene"))
-        {
-            BwatEngine::Serializer serializ("test.txt");
-            serializ.SaveScene(editor->engine->GetScene());
-            ImGui::EndMenu();
-        }
-        if (ImGui::BeginMenu("Load Scene"))
-        {
-            BwatEngine::Serializer serializ("test.txt");
-            serializ.LoadData(editor->engine->GetScene());
             ImGui::EndMenu();
         }
         ImGui::EndMainMenuBar();
