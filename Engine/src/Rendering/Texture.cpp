@@ -1,19 +1,18 @@
-
-#include "Rendering/texture.hpp"
-#include "Debug/Logger.hpp"
-
+#include "Rendering/Texture.hpp"
 
 using namespace Rendering;
 
-Texture::Texture(const std::string& path, Type type)
-    : path(path)
-    , type(type)
+unsigned int Texture::TextureFromFile(const char* path, const std::string& directory)
 {
-    glGenTextures(1, &id);
+    std::string filename = std::string(path);
+    filename = directory + '/' + filename;
+
+    unsigned int textureID;
+    glGenTextures(1, &textureID);
 
     int width, height, nrComponents;
     stbi_set_flip_vertically_on_load(1);
-    unsigned char* data = stbi_load(path.c_str(), &width, &height, &nrComponents, 0);
+    unsigned char* data = stbi_load(filename.c_str(), &width, &height, &nrComponents, 0);
     if (data)
     {
         GLenum format;
@@ -24,7 +23,7 @@ Texture::Texture(const std::string& path, Type type)
         else if (nrComponents == 4)
             format = GL_RGBA;
 
-        glBindTexture(GL_TEXTURE_2D, id);
+        glBindTexture(GL_TEXTURE_2D, textureID);
         glTexImage2D(GL_TEXTURE_2D, 0, format, width, height, 0, format, GL_UNSIGNED_BYTE, data);
         glGenerateMipmap(GL_TEXTURE_2D);
 
@@ -34,20 +33,17 @@ Texture::Texture(const std::string& path, Type type)
     }
     else
     {
-        LogError("Texture failed to load at path: %s\n", path.c_str());
+        std::cout << "Texture failed to load at path: " << path << std::endl;
         stbi_image_free(data);
     }
+
+    return textureID;
 }
 
-Texture::~Texture()
-{
-    glDeleteTextures(1, &id);
-}
-/*
-void Texture::GenerateTextureID(const std::string& path)
+void Texture::GenerateTextureID(const char* path, const std::string& directory)
 {
     std::string filename = std::string(path);
-    //filename = directory + '/' + filename;
+    filename = directory + '/' + filename;
 
     unsigned int textureID;
     glGenTextures(1, &textureID);
@@ -80,7 +76,7 @@ void Texture::GenerateTextureID(const std::string& path)
     }
 
     id = textureID;
-}*/
+}
 
 void Texture::GenerateTexture(float width, float height, GLenum format, unsigned char* data)
 {
@@ -118,3 +114,5 @@ void Texture::TextureImage(float width, float height, GLenum format, unsigned ch
 {
     glTexImage2D(GL_TEXTURE_2D, 0, format, width, height, 0, format, GL_UNSIGNED_BYTE, data);
 }
+
+
