@@ -1,5 +1,5 @@
 
-#include "Rendering/Texture.hpp"
+#include "Rendering/texture.hpp"
 #include "Debug/Logger.hpp"
 
 
