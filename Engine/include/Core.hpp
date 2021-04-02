@@ -15,7 +15,7 @@ namespace BwatEngine
 // ECS
     using Entity = uint32_t;
 
-    static constexpr Entity MAX_ENTITIES = 1000;
+    static constexpr Entity MAX_ENTITIES = 10000;
 
     using ComponentType = uint8_t;
 

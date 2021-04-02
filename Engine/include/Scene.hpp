@@ -6,8 +6,8 @@
 
 #include "Rendering/Light.hpp"
 #include "Rendering/Model.hpp"
+#include "ECS/Entity.hpp"
 #include "Physic/Physic.hpp"
-#include "Core.hpp"
 
 
 namespace BwatEngine

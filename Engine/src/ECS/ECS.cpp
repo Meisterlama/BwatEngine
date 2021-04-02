@@ -21,7 +21,7 @@
 
 namespace BwatEngine
 {
-    /*void InitComponents(Context &context)
+    void InitComponents(Context &context)
     {
         BwatEngine::Coordinator::GetInstance()->RegisterComponent<GravityComponent>();
         BwatEngine::Coordinator::GetInstance()->RegisterComponent<RigidBodyComponent>();
@@ -111,5 +111,5 @@ namespace BwatEngine
         Coordinator::GetInstance()->SetParent(context.entities[5], context.entities[3]);
         Coordinator::GetInstance()->SetParent(context.entities[3], context.entities[2]);
 
-    }*/
+    }
 }

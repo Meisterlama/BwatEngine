@@ -27,7 +27,7 @@ namespace BwatEngine
     public:
         ComponentArray()
         {
-            componentArray.resize(MAX_ENTITIES);
+            componentArray.reserve(MAX_ENTITIES);
         }
 
         void InsertData(Entity entity, T component)
