@@ -4,7 +4,7 @@ project(BwatEngine LANGUAGES C CXX)
 
 set(CMAKE_CXX_STANDARD 17)
 
-set(BWAT_ENGINE_TEST_ENABLED ON)
+set(BWAT_ENGINE_TEST_ENABLED OFF)
 set(BWAT_EDITOR_ENABLED ON)
 set(BWAT_EDITOR_DEBUG_ENABLED ON)
 
@@ -19,11 +19,8 @@ if(BWAT_ENGINE_TEST_ENABLED)
     add_subdirectory(tests)
 endif()
 
-#TODO: Include the directory properly
-include_directories(lib/PhysX/physx/include)
-
 add_subdirectory(Engine)
-set(ENGINE_LIBRARY glad glfw assimp flatbuffers imgui OpenAL PhysX stb)
+set(ENGINE_LIBRARY glad glfw assimp flatbuffers imgui OpenAL stb)
 
 add_subdirectory(Game)
 target_link_libraries(Game PUBLIC ${ENGINE_LIBRARY})

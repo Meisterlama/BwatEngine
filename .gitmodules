@@ -16,6 +16,3 @@
 [submodule "lib/glm"]
 	path = lib/glm
 	url = git@github.com:g-truc/glm.git
-[submodule "lib/PhysX"]
-	path = lib/PhysX
-	url = https://github.com/NVIDIAGameWorks/PhysX
