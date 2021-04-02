@@ -14,9 +14,6 @@ namespace BwatEngine
         std::vector<SceneNode*> children{};
     };
 
-    /**
-     * @brief Singleton managing everything related to the ECS
-     */
     class Coordinator
     {
         std::unique_ptr<ComponentManager> componentManager;
@@ -52,10 +49,6 @@ namespace BwatEngine
             systemManager = std::make_unique<SystemManager>();
         }
 
-        /**
-         * @brief Find a valid entity ID, reserve it and return it
-         * @return The created entity ID
-         */
         Entity CreateEntity()
         {
             auto entity = entityManager->CreateEntity();
@@ -63,11 +56,6 @@ namespace BwatEngine
             return entity;
         }
 
-        /**
-         * @brief Destroy the given \p entity from every managers, removing it from the scene hierarchy
-         * @param entity Entity ID
-         * @warning Destroying non existing entity result in undefined behavior
-         */
         void DestroyEntity(Entity entity)
         {
             entityManager->DestroyEntity(entity);
@@ -84,24 +72,12 @@ namespace BwatEngine
             }
         }
 
-        /**
-         * @brief Register the component of type \p T to the ComponentManager
-         * @tparam T Component type to register
-         * @warning Registering a component twice is invalid
-         */
         template<typename T>
         void RegisterComponent()
         {
             componentManager->RegisterComponent<T>();
         }
 
-        /**
-         * @brief Add a component \T to the given \p entity
-         * @tparam T Added component's type
-         * @param entity Entity ID
-         * @param component Component's data (existing one or in place constructor)
-         * @warning Adding a component that an entity already has is invalid
-         */
         template<typename T>
         void AddComponent(Entity entity, T component)
         {
@@ -114,12 +90,6 @@ namespace BwatEngine
             systemManager->EntitySignatureChanged(entity, signature);
         }
 
-        /**
-         * @brief Remove the component \p T from the given \p entity
-         * @tparam T Removed component's type
-         * @param entity Entity ID
-         * @warning Removing inexistant component is not valid
-         */
         template<typename T>
         void RemoveComponent(Entity entity)
         {
@@ -132,64 +102,35 @@ namespace BwatEngine
             systemManager->EntitySignatureChanged(entity, signature);
         }
 
-        /**
-         * @brief Get the component \p T from the \p entity
-         * @tparam T Type of the component to get
-         * @param entity Entity ID
-         * @return A reference to the component
-         */
         template<typename T>
         T &GetComponent(Entity entity)
         {
             return componentManager->GetComponent<T>(entity);
         }
 
-        /**
-         * @tparam T Component's type
-         * @return The component's internal ID
-         */
         template<typename T>
         ComponentType GetComponentType()
         {
             return componentManager->GetComponentType<T>();
         }
 
-        /**
-         * @brief Register the system to the internal manager
-         * @tparam T System's type
-         * @return A pointer to the registered system
-         */
         template<typename T>
         std::shared_ptr<T> RegisterSystem()
         {
             return systemManager->RegisterSystem<T>();
         }
 
-        /**
-         * @brief Set the accepted \p signature for the given system
-         * @tparam T System's type
-         * @param signature Signature accepted by the system
-         */
         template<typename T>
         void SetSystemSignature(Signature signature)
         {
             systemManager->SetSignature<T>(signature);
         }
 
-        /**
-         * @param entity Entity ID
-         * @return The signature of the given \p entity
-         */
         Signature GetEntitySignature(Entity entity)
         {
             return entityManager->GetSignature(entity);
         }
 
-        /**
-         * @brief Set the parent entity in the internal scene graph
-         * @param entity Entity ID
-         * @param parent Parent entity ID
-         */
         void SetParent(Entity entity, Entity parent)
         {
             if (parent == -1)
@@ -201,21 +142,12 @@ namespace BwatEngine
                 sceneMap[parent].children.push_back(&sceneMap[entity]);
         }
 
-        /**
-         * @param entity Entity ID
-         * @return Get the scene graph's node associated to entity
-         */
         SceneNode& GetNode(Entity entity)
         {
             return sceneMap[entity];
         }
 
-
         //TODO: Better way to get root entities
-        /**
-         * @return A std::vector of every entities that does not have a parent
-         * @warning Current implementation iterates over every entities without caching
-         */
         std::vector<Entity> GetRootEntities()
         {
             std::vector<Entity> rootEntities;

@@ -7,18 +7,20 @@ Welcome to BwatEngine's documentation!
 ==========================================
 
 .. toctree::
-   :glob:
-   :titlesonly:
-   :maxdepth: 1
+   :caption: Contents:
 
-   *
+   TaskSystem/quickstart
+   Task/task
 
 Getting Started
-================
+======
 
 HELLO WORLD
 
-Here is the documentation for the BwatEngine
+Here is the documentation for the main.cpp
+
+.. doxygenfile:: Math/Vector/Vector2.hpp
+   :project: BwatEngine
 
 Indices and tables
 ==================
