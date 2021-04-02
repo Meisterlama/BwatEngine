@@ -1,7 +1,7 @@
 #pragma once
 
 #include "Math/Math.hpp"
-#include "Shader.hpp"
+#include "shader.hpp"
 
 namespace Rendering
 {

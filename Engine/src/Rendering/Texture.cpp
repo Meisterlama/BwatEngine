@@ -1,4 +1,4 @@
-#include "Rendering/Texture.hpp"
+#include "Rendering/texture.hpp"
 
 using namespace Rendering;
 

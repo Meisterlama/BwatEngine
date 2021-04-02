@@ -1,11 +1,11 @@
 #pragma once
 
 #include <vector>
-#include "Mesh.hpp"
+#include "mesh.hpp"
 #include "glad/glad.h"
 #include "GLFW/glfw3.h"
-#include "Shader.hpp"
-#include "Light.hpp"
+#include "shader.hpp"
+#include "light.hpp"
 
 #include "Math/Math.hpp"
 
@@ -35,7 +35,7 @@ namespace Rendering
 	public:
 
         Model() = default;
-        Model(std::string path);
+        Model(std::string &path);
 		void Draw(Shader& shader);
 
 	};

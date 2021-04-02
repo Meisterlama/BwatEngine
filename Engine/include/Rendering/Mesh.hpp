@@ -2,10 +2,10 @@
 
 #include <vector>
 #include <string>
-#include "Shader.hpp"
+#include "shader.hpp"
 #include "Math/Math.hpp"
-#include "Texture.hpp"
-#include "Light.hpp"
+#include "texture.hpp"
+#include "light.hpp"
 
 namespace Rendering
 {

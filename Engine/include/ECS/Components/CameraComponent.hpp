@@ -1,7 +1,7 @@
 #ifndef ENGINE_ECS_COMPONENTS_CAMERA_HPP
 #define ENGINE_ECS_COMPONENTS_CAMERA_HPP
 
-#include "Math/Matrix/Matrix4.hpp"
+#include "Math/Matrix/Matrix4.hpp."
 
 namespace BwatEngine
 {

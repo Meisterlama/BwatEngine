@@ -4,7 +4,7 @@
 
 using namespace Rendering;
 
-Model::Model(std::string path)
+Model::Model(std::string &path)
 {
     LoadModel(path);
 };
