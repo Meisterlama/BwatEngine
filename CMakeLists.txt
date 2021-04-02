@@ -37,8 +37,8 @@ endif()
 include_directories(lib/PhysX/physx/include lib/PhysX/pxshared/include/)
 
 add_subdirectory(Engine)
-set(ENGINE_LIBRARY glad glfw assimp flatbuffers imgui OpenAL stb json dirent
-PhysXExtensions PhysX PhysXPvdSDK PhysXVehicle PhysXCharacterKinematic PhysXCooking PhysXCommon PhysXFoundation)
+set(ENGINE_LIBRARY glad glfw assimp flatbuffers imgui OpenAL 
+PhysXExtensions PhysX PhysXPvdSDK PhysXVehicle PhysXCharacterKinematic PhysXCooking PhysXCommon PhysXFoundation stb)
 
 add_subdirectory(Game)
 target_link_libraries(Game PUBLIC ${ENGINE_LIBRARY})
