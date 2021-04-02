@@ -20,7 +20,7 @@ namespace BwatEngine::Math
           rotation(_rotation),
           scale(_scale) {};
 
-        Transform(Vec3f _position = { 0 }, Quatf _rotation = { 0 }, Vec3f _scale = { 1 })
+        Transform(Vec3f _position = { 0 }, Quatf _rotation = {1,0,0,0}, Vec3f _scale = { 1 })
             : position(_position),
             rotation(_rotation),
             scale(_scale) {};

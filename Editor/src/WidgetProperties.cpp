@@ -2,6 +2,7 @@
 #include <ECS/Components/RenderableComponent.hpp>
 #include <ECS/Components/RigidBodyComponent.hpp>
 #include <ECS/Components/AudioSourceComponent.hpp>
+#include <ECS/Components/ColliderComponent.hpp>
 
 #include "ResourceManager/ResourceManager.hpp"
 #include "ECS/Coordinator.hpp"
@@ -114,8 +115,30 @@ void WidgetProperties::ShowComponent<BwatEngine::RigidBodyComponent>(BwatEngine:
 {
     if (ImGui::CollapsingHeader("RigidBody",ImGuiTreeNodeFlags_DefaultOpen))
     {
-        //ImGui::DragFloat3("Velocity", component.velocity.values, 0.01);
-        //ImGui::DragFloat3("Acceleration", component.acceleration.values, 0.01);
+        bool update = false;
+
+        bool isStatic = component.rigidBody.GetIsStatic();
+        update |= ImGui::Checkbox("isStatic", &isStatic);
+
+        if (!isStatic)
+        {
+            bool updateNotStatic = false;
+            float mass = component.rigidBody.GetMass();
+            BwatEngine::Math::Vec3f velocity = component.rigidBody.GetVelocity();
+
+            updateNotStatic |= ImGui::DragFloat("Mass", &mass, 0.1f, 0.0f, 100.f);
+            updateNotStatic |= ImGui::DragFloat3("Velocity", velocity.values, 0.1f);
+
+            if (updateNotStatic)
+            {
+                component.rigidBody.SetMass(mass);
+                component.rigidBody.SetVelocity(velocity);
+            }
+        }
+
+        if (update)
+            component.rigidBody.SetStatic(isStatic);
+        
     }
 }
 
@@ -165,6 +188,7 @@ void WidgetProperties::TickVisible()
         hasComponentAvailable |= AddComponentMenuItem<RigidBodyComponent>(currentEntity);
         hasComponentAvailable |= AddComponentMenuItem<RenderableComponent>(currentEntity);
         hasComponentAvailable |= AddComponentMenuItem<AudioSourceComponent>(currentEntity);
+        hasComponentAvailable |= AddComponentMenuItem<ColliderComponent>(currentEntity);
 
         ImGui::EndMenu();
     }
@@ -173,6 +197,7 @@ void WidgetProperties::TickVisible()
     ShowComponentMenuItem<RenderableComponent>(currentEntity);
     ShowComponentMenuItem<RigidBodyComponent>(currentEntity);
     ShowComponentMenuItem<AudioSourceComponent>(currentEntity);
+    //ShowComponentMenuItem<ColliderComponent>(currentEntity);
 }
 
 void WidgetProperties::Inspect(BwatEngine::Entity &entity)
