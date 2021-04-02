@@ -23,7 +23,7 @@ int main()
 		engine.Update();
 		editor.OnTick();
 	}
-
+	
 	engine.Close();
 
 	return 0;

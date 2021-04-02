@@ -106,9 +106,9 @@ namespace BwatEngine
          * @warning Adding a component that an entity already has is invalid
          */
         template<typename T>
-        void AddComponent(Entity entity, T&& component)
+        void AddComponent(Entity entity, T component)
         {
-            componentManager->AddComponent<T>(entity, std::forward<T>(component));
+            componentManager->AddComponent<T>(entity, component);
 
             auto signature = entityManager->GetSignature(entity);
             signature.set(componentManager->GetComponentType<T>(), true);

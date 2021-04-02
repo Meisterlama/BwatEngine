@@ -12,21 +12,19 @@
 #include "ECS/Components/ColliderComponent.hpp"
 #include "ECS/Components/StaticActorComponent.hpp"
 #include "ECS/Components/ScriptComponent.hpp"
-#include "ECS/Components/AudioSourceComponent.hpp"
 
 
 #include "ECS/Systems/InputSystem.hpp"
 #include "ECS/Systems/PhysicsSystem.hpp"
 #include "ECS/Systems/PlayerControlSystem.hpp"
 #include "ECS/Systems/RenderSystem.hpp"
-#include "ECS/Systems/SoundSystem.hpp"
 #include "ECS/Systems/ScriptSystem.hpp"
 #include "Engine.hpp"
 
 #include "Physic/PhysicCast.hpp"
 #include "Rendering/Material.hpp"
 
-// Script include
+// Script include 
 #include "Scripts/ScriptTest.hpp"
 
 //#include "Rendering/Material.hpp"
@@ -61,7 +59,7 @@ Scene::Scene(Window& window)
     coordinator.RegisterComponent<ColliderComponent>();
     coordinator.RegisterComponent<StaticActorComponent>();
     coordinator.RegisterComponent<ScriptComponent>();
-    coordinator.RegisterComponent<AudioSourceComponent>();
+
 
     inputSystem = coordinator.RegisterSystem<InputsSystem>();
     inputSystem->Init(window);
@@ -105,17 +103,8 @@ Scene::Scene(Window& window)
     }
     scriptSystem->Init();
 
-    soundSystem = coordinator.RegisterSystem<SoundSystem>();
-    {
-        Signature signature;
-        signature.set(coordinator.GetComponentType<AudioSourceComponent>());
-        coordinator.SetSystemSignature<SoundSystem>(signature);
-    }
-    soundSystem->Init();
-
     //Rendering::Model mymodel = Rendering::Model{ (std::string) "Assets/bag/backpack.obj" };
     model = Rendering::Model{ (std::string) "Assets/cube.obj" };
-    Audio::AudioData audioData = Audio::LoadWavFile("Assets/pop.wav");
 
     std::default_random_engine generator;
     std::uniform_real_distribution<float> randPosition(-100.0f, 100.0f);
@@ -159,9 +148,7 @@ Scene::Scene(Window& window)
                 coordinator.AddComponent<StaticActorComponent>(entities[i],eTransform);
 
                 auto& statActor = coordinator.GetComponent<StaticActorComponent>(entities[i]).staticActor;
-                statActor->userData = (void*)0x1234;
-                auto geo = physx::PxBoxGeometry{ ToPxVec3(eTransform.scale / 2.f) };
-                /*ColliderComponent& collider = */coordinator.AddComponent<ColliderComponent>(entities[i],{ material, geo });
+                coordinator.AddComponent<ColliderComponent>(entities[i],{ material, physx::PxBoxGeometry{ ToPxVec3(eTransform.scale / 2.f) } });
                 coordinator.AddComponent<RenderableComponent>(entities[i],{ &model });
 
                 coordinator.GetComponent<StaticActorComponent>(entities[i]).staticActor->attachShape(
@@ -184,9 +171,7 @@ Scene::Scene(Window& window)
                 } });
                 auto& eTransform = coordinator.GetComponent<TransformComponent>(entities[i]).transform;
                 coordinator.AddComponent<RigidBodyComponent>(entities[i],eTransform);
-
-                auto geo = physx::PxBoxGeometry{ ToPxVec3(eTransform.scale / 2.f) };
-                coordinator.AddComponent<ColliderComponent>(entities[i],{ material, geo, eTransform });
+                coordinator.AddComponent<ColliderComponent>(entities[i],{ material, physx::PxBoxGeometry{ ToPxVec3(eTransform.scale / 2) }, eTransform });
                 coordinator.AddComponent<RenderableComponent>(entities[i],{ &model });
 
                 coordinator.GetComponent<RigidBodyComponent>(entities[i]).rigidBody->attachShape(
@@ -196,9 +181,6 @@ Scene::Scene(Window& window)
                 auto& renderableComponent = coordinator.GetComponent<RenderableComponent>(entities[i]);
                 renderableComponent.materials[0] = &myMat1;
 
-                coordinator.AddComponent<AudioSourceComponent>(entities[i], AudioSourceComponent{
-                        audioData
-                });
             }
         }
 }

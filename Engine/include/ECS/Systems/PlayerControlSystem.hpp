@@ -7,8 +7,6 @@
 #include "imgui.h"
 #include "imgui_impl_glfw.h"
 
-#include "AL/al.h"
-
 namespace BwatEngine
 {
     class PlayerControlSystem: public System
@@ -86,29 +84,10 @@ namespace BwatEngine
 
                     Math::Vec3f forwardVec = transform.rotation.Rotate({0, 0, 1}).Normalize();
                     Math::Vec3f rightVec = transform.rotation.Rotate({1, 0, 0}).Normalize();
-                    Math::Vec3f upVec = transform.rotation.Rotate({0, 1,0}).Normalize();
 
                     Math::Vec3f translation = forwardVec * ForwardVelocity + rightVec * StrafeVelocity;
 
                     transform.position += translation;
-
-                    float orientation[6] = {
-                            -forwardVec.X,
-                            -forwardVec.Y,
-                            -forwardVec.Z,
-                            upVec.X,
-                            upVec.Y,
-                            upVec.Z,
-                    };
-
-                    alListenerfv(AL_POSITION, transform.position.values);
-                    alListenerfv(AL_ORIENTATION, orientation);
-
-//                    float vector[3];
-
-//                    alGetListener3f(AL_POSITION, &vector[0], &vector[1], &vector[2]);
-
-//                    LogDebug("%f, %f, %f", vector[0], vector[1], vector[2]);
                 }
             }
         }
