@@ -1,11 +1,9 @@
 #include "Engine.hpp"
 
-#include "imgui_impl_glfw.h"
-#include "imgui_impl_opengl3.h"
-
 #include <random>
 
 #include "Math/Math.hpp"
+#include "ECS/Entity.hpp"
 
 #include "Rendering/Shader.hpp"
 #include "Rendering/Camera.hpp"
@@ -14,6 +12,7 @@
 #include "World.hpp"
 
 #include "Inputs/InputHandler.hpp"
+#include "ECS/Entity.hpp"
 #include "ECS/Components/GravityComponent.hpp"
 #include "ECS/Components/RigidBodyComponent.hpp"
 #include "ECS/Components/CameraComponent.hpp"
@@ -32,16 +31,6 @@ namespace BwatEngine {
     //initialization
     Engine::Engine()
     {
-
-        IMGUI_CHECKVERSION();
-        ImGui::CreateContext();
-        ImGuiIO& io = ImGui::GetIO(); (void)io;
-        io.ConfigFlags |= ImGuiConfigFlags_NavEnableKeyboard;       // Enable Keyboard Controls
-        io.ConfigFlags |= ImGuiConfigFlags_DockingEnable;           // Enable Docking
-
-        ImGui_ImplGlfw_InitForOpenGL(context.window.window, false);
-        ImGui_ImplOpenGL3_Init("#version 330");
-
         Entity::InitCoordinator();
         Entity::GetCoordinator().RegisterComponent<GravityComponent>();
         Entity::GetCoordinator().RegisterComponent<RigidBodyComponent>();
@@ -88,6 +77,8 @@ namespace BwatEngine {
         //Rendering::Model mymodel = Rendering::Model{ (std::string) "Assets/bag/backpack.obj" };
         model = Rendering::Model{ (std::string) "Assets/cube.obj" };
 
+        std::vector<Entity> entities(MAX_ENTITIES);
+
         std::default_random_engine generator;
         std::uniform_real_distribution<float> randPosition(-100.0f, 100.0f);
         std::uniform_real_distribution<float> randRotation(0.0f, 3.0f);
@@ -95,7 +86,7 @@ namespace BwatEngine {
         std::uniform_real_distribution<float> randColor(0.0f, 1.0f);
         std::uniform_real_distribution<float> randGravity(-10.0f, -1.0f);
 
-        entities = std::vector<Entity>(MAX_ENTITIES);
+
         for (EntityType i = 0; i < entities.size(); i++)
         {
             if (i == 0)
@@ -129,6 +120,7 @@ namespace BwatEngine {
                 entities[i].AddComponent<RenderableComponent>({ &model });
             }
         }
+
     }
 
     Engine::~Engine()
@@ -138,21 +130,14 @@ namespace BwatEngine {
     //Main Funtion of engine 
     void Engine::Update()
     {
+       
         glfwPollEvents();
-
-        ImGui_ImplOpenGL3_NewFrame();
-        ImGui_ImplGlfw_NewFrame();
-        ImGui::NewFrame();
 
         //Time
         float currentFrame = glfwGetTime();
         context.deltaTime = currentFrame - context.lastFrame;
         context.lastFrame = currentFrame;
 
-        ImGui::Begin("bonjour");
-
-        ImGui::Text("bonjor");
-        ImGui::End();
 
         //physicsSystem->Update(deltaTime);
         playerControlSystem->Update(context.deltaTime, context.window);
@@ -163,8 +148,6 @@ namespace BwatEngine {
 
         inputSystem->Update(context.deltaTime);
 
-        //ImGui::Render();
-        //ImGui_ImplOpenGL3_RenderDrawData(ImGui::GetDrawData());
 
         glfwSwapBuffers(context.window.window);
         
@@ -174,9 +157,6 @@ namespace BwatEngine {
     //Close all content 
     void Engine::Close()
     {
-        ImGui_ImplGlfw_Shutdown();
-        ImGui_ImplOpenGL3_Shutdown();
-        ImGui::DestroyContext();
         context.window.Close();
     }
 }
