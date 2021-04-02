@@ -3,7 +3,6 @@
 
 #include "Widget.hpp"
 #include "glad/glad.h"
-#include "Rendering/FrameBuffer.hpp"
 
 class WidgetViewport : public Widget
 {
@@ -11,10 +10,10 @@ public:
     WidgetViewport(EditorInterface* editor);
 
     void TickVisible() override;
+    GLuint CreateRenderFBO(int width, int height);
 
 private:
-
-    Rendering::FrameBufferObject fbo;
+    unsigned int fbo;
 };
 
 #endif //BWATENGINE_WIDGETVIEWPORT_HPP

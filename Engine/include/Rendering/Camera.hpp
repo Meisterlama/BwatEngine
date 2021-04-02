@@ -21,9 +21,9 @@ namespace Rendering
         ~Camera();
 
         //method
-        void UseFreeFly(BwatEngine::Window*, float);
-        void MouseMovement(BwatEngine::Window* win, float deltaTime);
-        void CameraMovementFF(BwatEngine::Window* win, float deltaTime);
+        void UseFreeFly(Bwat::Window*, float);
+        void MouseMovement(Bwat::Window* win, float deltaTime);
+        void CameraMovementFF(Bwat::Window* win, float deltaTime);
         BwatEngine::Math::Mat4f GetViewMatrix();
 
     };

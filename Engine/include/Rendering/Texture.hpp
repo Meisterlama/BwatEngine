@@ -12,20 +12,12 @@ namespace Rendering
 {
     struct Texture
     {
-        GLuint id;
+        unsigned int id;
         std::string type;
         std::string path;
 
         unsigned int TextureFromFile(const char* path, const std::string& directory);
         void GenerateTextureID(const char* path, const std::string& directory);
-
-        void GenerateTexture(float width, float height, GLenum format = GL_RGBA, unsigned char* data = nullptr);
-
-        void GenTexture();
-        void BindTexture();
-        void UnbindTexture();
-        void TextureParameter();
-        void TextureImage(float width, float height, GLenum format = GL_RGBA, unsigned char* data = nullptr);
     };
 }
 

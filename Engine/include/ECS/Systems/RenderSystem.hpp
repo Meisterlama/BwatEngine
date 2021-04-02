@@ -8,7 +8,6 @@
 #include "Rendering/Shader.hpp"
 #include "Rendering/Model.hpp"
 #include "Window.hpp"
-#include "World.hpp"
 
 namespace BwatEngine
 {
@@ -17,14 +16,14 @@ namespace BwatEngine
     class RenderSystem : public System
     {
         Rendering::Shader shader;
-        Window* window;
+        Bwat::Window* window;
         Entity* camera;
 
 
     public:
         Math::Vec3f clearColor = { 0.5f, 0.5f, 0.5f };
 
-        void Init(Window* _window)
+        void Init(Bwat::Window* _window)
         {
             window = _window;
             shader = {"Assets/basic.vs", "Assets/multilight.fs"};
@@ -41,7 +40,6 @@ namespace BwatEngine
         {
             if (!camera)
                 return;
-
             glEnable(GL_DEPTH_TEST);
             glViewport(0, 0, window->GetWidth(), window->GetHeight());
             glClearColor(clearColor[0], clearColor[1], clearColor[2], 1.f);

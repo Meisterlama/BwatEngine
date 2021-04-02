@@ -13,7 +13,7 @@ namespace BwatEngine
         void Init()
         {};
 
-        void Update(float dt, Window &win)
+        void Update(float dt, Bwat::Window &win)
         {
             if (InputHandler::GetKeyboardDown(KEY_F1)) {
                 lockMouse = !lockMouse;

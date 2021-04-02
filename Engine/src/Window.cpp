@@ -2,13 +2,13 @@
 #include <cstdio>
 #include <iostream>
 
-using namespace BwatEngine;
+using namespace Bwat;
 
 Window::Window()
 {
 	//Define size of window
-	width = 800;
-	height = 600;
+	width = 1200;
+	height = 720;
 
 	// init context
 	window = InitGLFW();
