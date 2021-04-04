@@ -24,6 +24,7 @@ namespace BwatEngine
 	{
 	private:
 
+		// Is there a good reason to have lights as static ?
 		static std::vector<Rendering::Light> lights;
 
 	public:
@@ -36,7 +37,7 @@ namespace BwatEngine
 		// TODO : resrc manager to load rsrc and stock
 		Rendering::Model model;
 		Rendering::Texture texture;
-		Rendering::Texture texture1;
+		Rendering::Texture texture1; // great name
 		Rendering::Material myMat;
 		Rendering::Material myMat1;
 
@@ -51,7 +52,7 @@ namespace BwatEngine
 
 		// PhysX
 		Physic physic{};
-		physx::PxScene* scenePhysic;
+		physx::PxScene* scenePhysic; // initialize your ptr to nullptr
 
 
 	};

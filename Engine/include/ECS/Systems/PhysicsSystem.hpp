@@ -2,6 +2,10 @@
 #define ENGINE_ECS_SYSTEMS_PHYSICS_HPP
 
 #include "ECS/System.hpp"
+
+// you don't need to include these files in your .hpp
+// be careful of your compile time
+// bad include management can severly increase your compile time
 #include "ECS/Components/RigidBodyComponent.hpp"
 #include "ECS/Components/TransformComponent.hpp"
 #include "ECS/Components/GravityComponent.hpp"

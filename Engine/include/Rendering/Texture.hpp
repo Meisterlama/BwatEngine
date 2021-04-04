@@ -20,7 +20,7 @@ namespace Rendering
             E_HEIGHT
         };
       
-        GLuint id;
+        GLuint id; // texture id being public is not safe
         Type type;
         std::string path;
 
@@ -28,7 +28,7 @@ namespace Rendering
         Texture(const Texture&) = delete;
 
         Texture(const std::string& path, Type type);
-        ~Texture();
+        ~Texture(); // rule of three -> https://en.cppreference.com/w/cpp/language/rule_of_three
 
         Texture(int width, int height);
 

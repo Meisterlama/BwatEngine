@@ -45,8 +45,10 @@ namespace Rendering
 
 
         Light();
-        ~Light() {};
+        ~Light() {}; // = default instead of an empty destructor
 
+				// they are all copy parameters, is it the intended behavior ?
+				// same with functions below ?
         Light(TYPE_LIGHT myType, BwatEngine::Math::Vec3f tmpAmbient, BwatEngine::Math::Vec3f tmpDiffuse, BwatEngine::Math::Vec3f tmpSpecular);
 
         //Methods

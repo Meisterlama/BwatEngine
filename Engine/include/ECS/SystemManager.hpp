@@ -32,6 +32,7 @@ namespace BwatEngine
             signatures.insert({typeName, signature});
         }
 
+				// It should be define in a .cpp
         void EntityDestroyed(Entity entity)
         {
             for (auto const& pair : systems)

@@ -11,6 +11,7 @@ namespace BwatEngine
     class InputsSystem : public System
     {
     public:
+				// why are you defining these functions in .hpp instead of in .cpp ?
         void Init(Window& window)
         {
             BwatEngine::InputHandler::Initialize(window.handler);

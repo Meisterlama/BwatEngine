@@ -21,7 +21,7 @@ namespace BwatEngine::Math
             {
                 struct
                 {
-                    T X;
+                    T X; // should be x/y instead of X/Y ?
                     T Y;
                 };
                 T values[2];
@@ -107,6 +107,7 @@ namespace BwatEngine::Math
             [[nodiscard]] ML_FUNC_DECL bool Equals(const Vector2 &rhs) const;
             [[nodiscard]] ML_FUNC_DECL bool IsZero() const;
 
+						// you are missing the move assignment operator
             ML_FUNC_DECL Vector2 &operator=(const Vector2 &other);
 
             [[nodiscard]] ML_FUNC_DECL bool operator==(const Vector2 &rhs) const;

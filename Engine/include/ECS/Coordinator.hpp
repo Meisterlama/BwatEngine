@@ -19,6 +19,7 @@ namespace BwatEngine
      */
     class Coordinator
     {
+				// Why are you using ptr ?
         std::unique_ptr<ComponentManager> componentManager;
         std::unique_ptr<EntityManager> entityManager;
         std::unique_ptr<SystemManager> systemManager;
@@ -26,6 +27,8 @@ namespace BwatEngine
         std::unordered_map<Entity, SceneNode> sceneMap;
 
         Coordinator() = default;
+
+				// should be in .cpp
         ~Coordinator()
         {
             Coordinator* coordinator = GetInstance();
@@ -43,6 +46,8 @@ namespace BwatEngine
          */
         static Coordinator* GetInstance()
         {
+						// your singleton memory management is not reliable
+						// why are you using a ptr ?
             static Coordinator* coordinator = nullptr;
             if (!coordinator)
                 coordinator = new Coordinator;

@@ -32,7 +32,10 @@ namespace BwatEngine::Audio
 
         retData.length = audioFile.getLengthInSeconds();
 
-        return std::move(retData);
+				// I don't think there is an interest since the return type is fixed
+				// and if you use the result like this "doSomething(LoadWavFile("foo"))"
+				// then the result is an rvalue so a move would be preferred if defined 
+				return std::move(retData);
     }
 
     bool CheckALErrors()

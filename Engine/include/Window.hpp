@@ -10,7 +10,7 @@ namespace BwatEngine
 	{
 	public:
 		Window();
-		~Window();
+		~Window(); // rule of three -> https://en.cppreference.com/w/cpp/language/rule_of_three
 
 		void Close();
 		GLFWwindow* InitGLFW();

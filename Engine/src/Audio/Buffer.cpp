@@ -10,6 +10,7 @@ namespace BwatEngine::Audio
 
     Audio::Buffer::~Buffer()
     {
+			// memory leak ?
 //        alDeleteBuffers(1, &bufferID);
 //        CheckALErrors();
     }

@@ -35,7 +35,7 @@ namespace Rendering
         // Constructor 
         Mesh(std::vector<Vertex> vertices, std::vector<unsigned int> indices, const Material& defaultMaterial);
         Mesh(const Mesh& mesh) = delete;
-        ~Mesh();
+        ~Mesh(); // rule of three / five -> https://en.cppreference.com/w/cpp/language/rule_of_three
 
         void Draw();
     

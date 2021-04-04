@@ -11,7 +11,7 @@ namespace BwatEngine::Audio
 
     public:
         Buffer();
-        ~Buffer();
+        ~Buffer(); // rule of three -> https://en.cppreference.com/w/cpp/language/rule_of_three
 
         void BufferAudioData(const AudioData& audioData);
 

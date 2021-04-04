@@ -16,4 +16,4 @@ namespace BwatEngine
 	};
 }
 
-#endif // !1
+#endif // !1 // MDR

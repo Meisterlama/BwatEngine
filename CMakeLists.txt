@@ -18,11 +18,12 @@ else()
     message(FATAL_ERROR ">>> Not supported platform ${CMAKE_SYSTEM}")
 endif()
 
+# option?
 set(BWAT_ENGINE_TEST_ENABLED OFF)
 set(BWAT_EDITOR_ENABLED ON)
 set(BWAT_EDITOR_DEBUG_ENABLED ON)
 
-
+# ??
 if(BWAT_EDITOR_DEBUG_ENABLED)
     add_compile_definitions(BWATDEBUG)
 endif()
@@ -37,17 +38,23 @@ endif()
 include_directories(lib/PhysX/physx/include lib/PhysX/pxshared/include/)
 
 add_subdirectory(Engine)
+
+#LIBRARIES instead of LIBRARY
+# Why is it not in Engine/CMakeList.txt ?
 set(ENGINE_LIBRARY glad glfw assimp flatbuffers imgui OpenAL stb json dirent AudioFile
 PhysXExtensions PhysX PhysXPvdSDK PhysXVehicle PhysXCharacterKinematic PhysXCooking PhysXCommon PhysXFoundation)
 
 add_subdirectory(Game)
+# useless, if Engine target link these libraries with PUBLIC keyword then they are linked automatically
 target_link_libraries(Game PUBLIC ${ENGINE_LIBRARY})
 target_link_libraries(Game PUBLIC Engine)
 
 add_subdirectory(Editor)
+# useless, if Engine target link these libraries with PUBLIC keyword then they are linked automatically
 target_link_libraries(Editor PUBLIC ${ENGINE_LIBRARY})
 target_link_libraries(Editor PUBLIC Engine)
 
+# Weird to put it here, should be in Engine/CMakeList.txt and why is there a dependency with Game ?
 target_link_libraries(Engine PUBLIC Game ${ENGINE_LIBRARY})
 
 file(GLOB_RECURSE BWATENGINE_ASSETS

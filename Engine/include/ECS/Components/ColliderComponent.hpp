@@ -7,6 +7,8 @@ namespace BwatEngine
 {
 	struct ColliderComponent
 	{
+		// I strongly advise you to initialize your pointer to nullptr
+		// when declaring them. It is an easy way to reduce the risk of bug
 		Collider* collider;
 	};
 }
