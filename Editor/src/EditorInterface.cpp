@@ -15,6 +15,8 @@
 EditorInterface::EditorInterface(BwatEngine::Engine* _engine)
 {
     engine = _engine;
+
+		// why ? When a vector is created, it's already empty 
     widgets.clear();
     widgets.shrink_to_fit();
 }
@@ -65,13 +67,14 @@ void EditorInterface::Initialise()
 void EditorInterface::ApplyStyle() const
 {
     //Future BWAT style here
+		// When ? Is there an issue for this ?
 }
 
 void EditorInterface::BeginWindow()
 {
     const auto windowFlags =    ImGuiWindowFlags_MenuBar                |
                                 ImGuiWindowFlags_NoTitleBar             |
-                                ImGuiWindowFlags_NoDocking              |
+                                ImGuiWindowFlags_NoDocking              | // No docking ? Why are you using this branch of imgui then ?
                                 ImGuiWindowFlags_NoCollapse             |
                                 ImGuiWindowFlags_NoResize               |
                                 ImGuiWindowFlags_NoMove                 |

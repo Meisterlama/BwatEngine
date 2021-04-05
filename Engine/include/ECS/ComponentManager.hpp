@@ -57,7 +57,7 @@ namespace BwatEngine
         }
 
         void EntityDestroyed(Entity entity)
-        {            for (auto const& pair : componentArrays)
+        {            for (auto const& pair : componentArrays) 
             {
                 auto const& component = pair.second;
 

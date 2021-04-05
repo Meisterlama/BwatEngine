@@ -12,6 +12,7 @@ void WidgetMenuBar::TickAlways()
 {
     if (ImGui::BeginMainMenuBar())
     {
+				// To show mostly reliable fps you should use an avg value from a few frames
         ImGui::Text("%f", (BwatEngine::Time::deltaTime != 0) ? 1.f / BwatEngine::Time::deltaTime : 0);
         if (ImGui::BeginMenu("File"))
         {

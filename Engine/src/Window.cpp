@@ -15,6 +15,7 @@ Window::Window()
 	InitGlad();
 }
 
+// it's empty, use "= default"
 Window::~Window()
 {
 }
@@ -42,6 +43,7 @@ GLFWwindow* Window::InitGLFW()
 	glfwWindowHint(GLFW_OPENGL_DEBUG_CONTEXT, GLFW_TRUE);
 	glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE);
 
+	// Will you keep the TestEngine name x) ?
 	GLFWwindow* window = glfwCreateWindow(width, height, "TestEngine", nullptr, nullptr);
 	glfwMakeContextCurrent(window);
 
@@ -52,6 +54,7 @@ void Window::InitGlad()
 {
 	gladLoadGLLoader(reinterpret_cast<GLADloadproc>(glfwGetProcAddress));
 
+	// Use your engine's logger !
 	std::cout << " RENDERER = " << glGetString(GL_RENDERER) << std::endl;
 	std::cout << " VENDOR = " << glGetString(GL_VENDOR) << std::endl;
 	std::cout << " VERSION = " << glGetString(GL_VERSION) << std::endl;

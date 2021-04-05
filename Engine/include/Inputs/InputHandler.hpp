@@ -12,6 +12,12 @@ namespace BwatEngine
         bool down = false;
         bool up = false;
     };
+
+		// It is my opinion so take it with a grain of salt
+		// Static data / functions should be declared first
+		// since non static functions may use them
+		// it is better for the reader to see data / function 
+		// they have already seen declared than not
     class InputHandler
     {
     private:
@@ -25,7 +31,7 @@ namespace BwatEngine
         BwatEngine::Math::Vec2d scrollDelta{};
 
         InputHandler() = default;
-        ~InputHandler() { if (inputHandler) delete inputHandler;}
+				~InputHandler() { if (inputHandler) delete inputHandler;}
 
         InputHandler(InputHandler& other) = delete;
         void operator=(const InputHandler&) = delete;
@@ -38,6 +44,7 @@ namespace BwatEngine
 
 
     protected:
+				// initialize your ptr to nullptr
         static InputHandler* inputHandler;
         GLFWwindow* window;
 

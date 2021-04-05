@@ -17,8 +17,10 @@ namespace BwatEngine
         int livingEntityCount{};
 
     public:
+				// define your functions in .cpp !
         EntityManager()
         {
+						// see ComponentArray.hpp comments
             signatures.resize(MAX_ENTITIES);
         }
 
@@ -33,6 +35,8 @@ namespace BwatEngine
             }
             else
             {
+								// prefer using pre increment instead of post increment
+								// https://softwareengineering.stackexchange.com/questions/358725/pre-increment-vs-post-increment
                 nextEntity++;
             }
             livingEntityCount++;

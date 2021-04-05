@@ -9,6 +9,7 @@
 
 namespace BwatEngine
 {
+	// No destructor although you are using ptr ?
 	class Collider
 	{
 	protected:

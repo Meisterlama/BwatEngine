@@ -16,9 +16,12 @@ namespace BwatEngine
         bool lockMouse = false;
         Math::Vec3f rotation{};
     public:
-        void Init()
+        // why does this function exist ?
+				void Init()
         {};
 
+				// OH GOD WHY ! It is an hpp
+				// It should be define in the cpp
         void Update(float dt, GLFWwindow *win)
         {
             if (InputHandler::GetKeyboardDown(KEY_F1)) {
@@ -101,6 +104,7 @@ namespace BwatEngine
                             upVec.Z,
                     };
 
+										// sound functions should be wrapped
                     alListenerfv(AL_POSITION, transform.position.values);
                     alListenerfv(AL_ORIENTATION, orientation);
 

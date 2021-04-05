@@ -16,7 +16,7 @@ void Model::LoadModel(const std::string path)
 {
     modelPath = path;
 
-    Assimp::Importer import;
+    Assimp::Importer import; // be careful import is a c++ 20 keyword
     const aiScene* scene = import.ReadFile(path, aiProcess_Triangulate | aiProcess_FlipUVs);
 
     if (!scene || scene->mFlags & AI_SCENE_FLAGS_INCOMPLETE || !scene->mRootNode)

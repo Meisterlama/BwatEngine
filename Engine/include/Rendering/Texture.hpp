@@ -12,6 +12,10 @@ namespace Rendering
 {
     struct Texture
     {
+				// These are not exactly 'Type' of textures
+				// It describe how they are used in your shader
+				// prefer using an enum "Format" which describe
+				// what data your texture contains (ie. R, RG, RGB)
         enum class Type
         {
             E_DIFFUSE,
@@ -20,7 +24,7 @@ namespace Rendering
             E_HEIGHT
         };
       
-        GLuint id;
+        GLuint id; // texture id being public is not safe
         Type type;
         std::string path;
 
@@ -28,7 +32,7 @@ namespace Rendering
         Texture(const Texture&) = delete;
 
         Texture(const std::string& path, Type type);
-        ~Texture();
+        ~Texture(); // rule of three -> https://en.cppreference.com/w/cpp/language/rule_of_three
 
         Texture(int width, int height);
 

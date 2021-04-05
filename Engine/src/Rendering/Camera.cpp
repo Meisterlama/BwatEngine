@@ -3,6 +3,8 @@
 
 using namespace Rendering;
 
+// Don't define them if it's empty !
+// use "= default"
 Camera::Camera()
 {
 

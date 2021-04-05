@@ -19,7 +19,7 @@ namespace Rendering
 
         // constructor 
         Shader() {};
-        ~Shader() {};
+        ~Shader() {}; // rule of three -> https://en.cppreference.com/w/cpp/language/rule_of_three
         Shader(const char* vertexPath, const char* fragmentPath);
 
         //create Shader

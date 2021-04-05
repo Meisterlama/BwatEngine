@@ -2,6 +2,7 @@
 
 using namespace Rendering;
 
+// it's empty, use "= default"
 Light::Light() : 
 ambient(0),diffuse(0),specular(0)
 {
@@ -56,6 +57,7 @@ void Light::ApplyOnShader(Shader* shader , const std::string& i) const
 {
     shader->use();
 
+		// you can only use one light ?
     shader->setVec3("light.ambient", ambient.X, ambient.Y, ambient.Z);
     shader->setVec3("light.diffuse", diffuse.X, diffuse.Y, diffuse.Z);
     shader->setVec3("light.specular", specular.X, specular.Y, specular.Z);

@@ -24,7 +24,7 @@ namespace BwatEngine
 	public :
 
 		RigidBody(const Math::Transform& transform = {}, bool isStatic = false);
-		~RigidBody();
+		~RigidBody(); // rule of three -> https://en.cppreference.com/w/cpp/language/rule_of_three
 
 		void SetStatic(bool isStat);
 		void AttachCollider(Collider& collider);

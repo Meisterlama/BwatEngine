@@ -7,6 +7,11 @@
 #include <dirent.h>
 #endif
 
+// Not a good idea to inline this function
+// and the keyword inline is a hint to the compiler
+// it doesn't make the function inline if it doesn't want to make it
+// as a rule of thumb, inline should be used on functions of
+// 10 lines max and without if / loop
 inline std::vector<std::string> SplitStringToVector(const std::string& text, char delimiter, bool pushEmpty)
 {
     std::vector<std::string> arr;
@@ -31,9 +36,10 @@ inline std::vector<std::string> SplitStringToVector(const std::string& text, cha
 
 FileDialog::FileDialog()
 {
-    showDialog = false;
+    showDialog = false; // it's already false by default, this constructor seems useless
 }
 
+// Don't do that here !!! It should be in .hpp
 FileDialog::~FileDialog() = default;
 
 void FileDialog::OpenDialog(const char *aFilters, const std::filesystem::path& aFilePathName)
@@ -90,6 +96,8 @@ void FileDialog::ParseFilters(const char *aFilters)
                     std::string fs = dlgFilters.substr(p, lp - p);
                     auto arr = SplitStringToVector(fs, ',', false);
 
+										// auto by default is a copy
+										// I doubt that you really want to copy each element of your array
                     for (auto a : arr)
                     {
                         infos.collectionFilters.emplace(a);
@@ -178,6 +186,10 @@ void FileDialog::ScanDir(const std::string &aPath)
 
     if (!aPath.empty())
     {
+				// that is a C function which is not standard 
+				// and is supported on linux systems but what about the others ?
+				// why are you not using the filesystem ?
+				// https://en.cppreference.com/w/cpp/filesystem/directory_iterator
         n = scandir(path.c_str(), &files, nullptr, alphasort);
         fileList.clear();
 

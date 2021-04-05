@@ -27,11 +27,16 @@ namespace BwatEngine
     public:
         ComponentArray()
         {
+						// be careful of the memory impact of reserving MAX_ENTITIES
+						// you should aim to reserve the average number of entities used in a game
             componentArray.reserve(MAX_ENTITIES);
         }
 
+				// could use const for your component parameter ?
         void InsertData(Entity entity, T&& component)
         {
+						// it's a pity that your assert doesn't use your logging system
+						// and MAYBE you don't want to keep your assert in a release build
             assert(entityToIndexMap.find(entity) == entityToIndexMap.end() && "Component added to same entity more than once.");
             size_t newIndex = size;
             entityToIndexMap[entity] = newIndex;
@@ -39,7 +44,7 @@ namespace BwatEngine
             if (size < componentArray.size())
                 componentArray[newIndex] = component;
             else
-                componentArray.push_back(component);
+                componentArray.push_back(component); // you should forward your component type
             size++;
         }
 

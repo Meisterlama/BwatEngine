@@ -10,6 +10,7 @@ namespace BwatEngine
     {
         Math::RNG rng;
     public:
+				// why are you defining these functions in .hpp instead of in .cpp ?
         void Init() {
             Audio::InitOpenAL();
             rng.ResetSeed(0);
@@ -18,7 +19,11 @@ namespace BwatEngine
         void Update()
         {
             auto& coordinator = *Coordinator::GetInstance();
-            for (auto entity : entities)
+
+            // auto default behavior is copy
+						// your range for loop copy each of your entity
+						// dunno if it is relevant since I don't know the type
+						for (auto entity : entities)
             {
                 auto& component = coordinator.GetComponent<AudioSourceComponent>(entity);
                 auto& transform = coordinator.GetComponent<TransformComponent>(entity).transform;

@@ -19,14 +19,18 @@ namespace BwatEngine::Audio
             Source();
             Source(const AudioData& audioData);
 
-            ~Source();
+            ~Source(); // rule of three -> https://en.cppreference.com/w/cpp/language/rule_of_three
 
             void SetPitch(float pitch);
             void SetGain(float gain);
+
+						// should be "const Math::Vec3f&" ?
             void SetPosition(Math::Vec3f pos);
             void SetVelocity(Math::Vec3f vel);
             void SetLooping(bool loop);
 
+						// don't forget const keyword when defining functions
+						// getters are almost always const
             float GetPitch();
             float GetGain();
             bool GetLooping();

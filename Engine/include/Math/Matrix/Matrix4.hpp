@@ -36,7 +36,7 @@ namespace BwatEngine::Math
              * @brief Initialize the diagonal of the matrix
              * @param x value of the diagonal
              */
-            ML_FUNC_DECL Matrix4(T x = 0)
+            ML_FUNC_DECL Matrix4(T x = 0) // Don't you want the default matrix to be identity ?
             {
                 v0  = x;
                 v5  = x;
@@ -262,7 +262,8 @@ namespace BwatEngine::Math
             [[nodiscard]] ML_FUNC_DECL bool Equals(const Matrix4 &rhs) const;
             [[nodiscard]] ML_FUNC_DECL bool IsZero() const;
 
-            ML_FUNC_DECL Matrix4 &operator=(const Matrix4 &other);
+						// you are missing the move assignment operator
+            ML_FUNC_DECL Matrix4 &operator=(const Matrix4 &other);i
 
             [[nodiscard]] ML_FUNC_DECL bool operator==(const Matrix4 &other) const;
 

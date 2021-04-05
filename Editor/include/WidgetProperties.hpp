@@ -15,10 +15,18 @@ public:
 
     static void Inspect(BwatEngine::Entity& entity);
 
+		// It's actually okay however it limits the editor to
+		// one entity, it's a pity as there is no interest in
+		// doing so
     static BwatEngine::Entity currentEntity;
 
 private:
-    template<typename T>
+		// Where are the definitions ?
+		// https://stackoverflow.com/questions/115703/storing-c-template-function-definitions-in-a-cpp-file
+    
+		// I don't understand why you are not creating a widget for each component
+		// it will be way simpler to maintain
+		template<typename T>
     void ShowComponent(T& component);
 
     template<typename T>

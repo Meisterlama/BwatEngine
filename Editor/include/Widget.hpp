@@ -9,6 +9,8 @@
 struct ImGuiWindow;
 class EditorInterface;
 
+// Is there a reason to instantiate a Widget ? 
+// If not, why is this class not pure virtual ?
 class Widget
 {
 public:
@@ -17,6 +19,9 @@ public:
 
     void Tick();
 
+		// love them comments but remember you use doxygen !
+		// format your comments so that is available in 
+		// the generated documentation
     virtual void TickAlways();      // Called always
     virtual void TickVisible();     // Called only when the widget is visible
     virtual void OnShow();          // Called when the window becomes visible

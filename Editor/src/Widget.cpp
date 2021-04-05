@@ -41,7 +41,7 @@ void Widget::Tick()
         return;
 
     bool begun = false;
-    {
+    { // why are you creating this scope ?
         if (!isVisible)
             return;
 
@@ -64,6 +64,8 @@ void Widget::Tick()
         }
     }
 
+		// begun is always true
+		// this condition is useless and can safely removed
     if (begun)
     {
         TickVisible();

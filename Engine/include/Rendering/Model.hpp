@@ -25,6 +25,9 @@ namespace Rendering
 	private:
 
 		//Data
+		// you could implace_back mesh instead of using unique_ptr
+		// stack is most of the time a better option that heap
+		// https://stackoverflow.com/questions/79923/what-and-where-are-the-stack-and-heap 
 		std::vector<std::unique_ptr<Mesh>> meshes;
 		std::string directory{};
 

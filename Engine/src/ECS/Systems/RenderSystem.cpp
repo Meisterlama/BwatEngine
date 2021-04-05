@@ -7,7 +7,7 @@ void RenderSystem::Init()
 {
     shader = { "Assets/colors.vs", "Assets/colors.fs" };
     Rendering::Light mylight(Rendering::TYPE_LIGHT::Directional, { 0.5f,0.5f,0.5f }, { 0.5f,0.5f,0.5f }, { 0.5f,0.5f,0.5f });
-    Scene::AddLight(mylight);
+    Scene::AddLight(mylight); // support inplace to avoid useless copy
 }
 
 void RenderSystem::SetCamera(Entity _camera)

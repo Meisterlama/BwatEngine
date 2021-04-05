@@ -9,6 +9,7 @@
 namespace BwatEngine
 {
 
+		// Why are you not defining you class functions in a .cpp ?
     class ResourceManager
     {
     public:
@@ -19,6 +20,7 @@ namespace BwatEngine
 
         static ResourceManager* Instance()
         {
+						// not memory reliable
             static ResourceManager* instance = nullptr;
             if (instance == nullptr)
                 instance = new ResourceManager;
@@ -30,6 +32,7 @@ namespace BwatEngine
 
         /* constructors */
         ResourceManager(const ResourceManager&) = delete;
+				// type, should probably be a ref instead of a copy
         ResourceManager operator=(const ResourceManager) = delete;
 
         /* ************************************************************************* */
@@ -38,12 +41,15 @@ namespace BwatEngine
 
         //template<>
         //void LoadResource<SoundResource>(const std::string& path);
-        Rendering::Model* LoadModel(std::string path)
+        // should forward model constructor parameters
+				// are you sure that using the path as id is a good idea ?
+				Rendering::Model* LoadModel(std::string path)
         {
             auto it = models.emplace(path, std::make_unique<Rendering::Model>(path));
             return it.first->second.get();
         }
 
+        // should forward texture constructor parameters
         Rendering::Texture* LoadTexture(std::string path, Rendering::Texture::Type type)
         {
             auto it = textures.emplace(path, std::make_unique<Rendering::Texture>(path, type));
@@ -95,7 +101,9 @@ namespace BwatEngine
         }
 
         /* ************************************************************************* */
-        std::vector<Rendering::Model*> GetModelList()
+        // Be careful of the user case of this function
+				// don't use it every frame !
+			 	std::vector<Rendering::Model*> GetModelList()
         {
             std::vector<Rendering::Model*> modelList;
             for (auto &it : models)
