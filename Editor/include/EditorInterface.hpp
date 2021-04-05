@@ -16,12 +16,14 @@ class  EditorInterface
 {
 public:
     EditorInterface(BwatEngine::Engine* _engine);
-    ~EditorInterface(){};
+    // if it's empty, use "= default"
+		~EditorInterface(){}; // rule of three -> https://en.cppreference.com/w/cpp/language/rule_of_three
 
     void OnTick();
     void Initialise();
     void DestroyImGui();
 
+		// is it safe to make it public ?
     BwatEngine::Engine* engine = nullptr;
 
 private:

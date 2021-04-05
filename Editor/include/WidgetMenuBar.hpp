@@ -9,6 +9,7 @@ public:
     WidgetMenuBar(EditorInterface* editor);
 
     void TickAlways() override;
+		// why create a function instead of a simple const variable ?
     float GetPadding() { return 8.0f; }
 
 private:
