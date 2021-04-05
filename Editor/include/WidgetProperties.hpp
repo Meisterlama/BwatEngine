@@ -23,7 +23,10 @@ public:
 private:
 		// Where are the definitions ?
 		// https://stackoverflow.com/questions/115703/storing-c-template-function-definitions-in-a-cpp-file
-    template<typename T>
+    
+		// I don't understand why you are not creating a widget for each component
+		// it will be way simpler to maintain
+		template<typename T>
     void ShowComponent(T& component);
 
     template<typename T>
