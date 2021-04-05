@@ -12,6 +12,10 @@ namespace Rendering
 {
     struct Texture
     {
+				// These are not exactly 'Type' of textures
+				// It describe how they are used in your shader
+				// prefer using an enum "Format" which describe
+				// what data your texture contains (ie. R, RG, RGB)
         enum class Type
         {
             E_DIFFUSE,

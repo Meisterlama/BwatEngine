@@ -33,7 +33,8 @@ namespace Rendering
         Material defaultMaterial;
     
         // Constructor 
-        Mesh(std::vector<Vertex> vertices, std::vector<unsigned int> indices, const Material& defaultMaterial);
+        // you copy vertices and indices ?
+				Mesh(std::vector<Vertex> vertices, std::vector<unsigned int> indices, const Material& defaultMaterial);
         Mesh(const Mesh& mesh) = delete;
         ~Mesh(); // rule of three / five -> https://en.cppreference.com/w/cpp/language/rule_of_three
 

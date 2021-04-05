@@ -134,7 +134,8 @@ Scene::Scene(Window& window)
     
     myMat.SetDiffuse(texture);
     myMat1.SetDiffuse(texture1);
-    
+   
+	 			// format issue
         for (Entity i = 0; i < entities.size(); i++)
         {
             entities[i] = coordinator.CreateEntity();

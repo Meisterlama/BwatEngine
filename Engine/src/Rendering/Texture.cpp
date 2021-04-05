@@ -47,6 +47,7 @@ Texture::Texture(const std::string& path, Type type) : path(path), type(type)
     }
     else
     {
+				// use your engine's logger
         std::cout << "Texture failed to load at path: " << path.c_str() << std::endl;
         stbi_image_free(data);
     }

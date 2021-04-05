@@ -85,6 +85,7 @@ namespace BwatEngine
         inputHandler->mouseOldPos = inputHandler->mousePos;
     }
 
+		// at least format this chunk of code
     bool InputHandler::GetKeyboardDown(Keyboard key) {return inputHandler->keyboard[key].down;}
     bool InputHandler::GetKeyboardUp(Keyboard key) {return inputHandler->keyboard[key].up;}
     bool InputHandler::GetKeyboard(Keyboard key) {return inputHandler->keyboard[key].pressed;}

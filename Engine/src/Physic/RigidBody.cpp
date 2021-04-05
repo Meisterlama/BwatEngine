@@ -12,6 +12,7 @@ RigidBody::RigidBody(const Math::Transform& transform, bool isStatic) : oldTrans
 
 RigidBody::~RigidBody()
 {
+	// memory leak ?
 	//if (isStatic)
 	//	staticActor->release();
 	//else
@@ -100,6 +101,7 @@ void RigidBody::AddActor(physx::PxScene* scene)
 
 bool RigidBody::CompareOldTransform(const Math::Transform& trans)
 {
+	// There should an equality operator defined in Math::Transform
 	return (oldTransform.position == trans.position && oldTransform.rotation == trans.rotation);
 }
 

@@ -43,6 +43,8 @@ namespace BwatEngine {
     {
         glfwPollEvents();
 
+				// Why is this here ?
+				// It should be in Editor ?
         ImGui_ImplOpenGL3_NewFrame();
         ImGui_ImplGlfw_NewFrame();
         ImGui::NewFrame();
@@ -52,6 +54,7 @@ namespace BwatEngine {
         Time::deltaTime = currentFrame - lastFrame;
         lastFrame = currentFrame;
 
+				// should not be in packaged game
         static bool updatePhysics = false;
         if (InputHandler::GetKeyboardDown(KEY_F2))
         {
@@ -111,6 +114,7 @@ namespace BwatEngine {
         GetWindow().Close();
     }
 
+		// It's empty, use "= default"
     Engine::~Engine()
     {
 

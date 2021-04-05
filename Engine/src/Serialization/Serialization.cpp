@@ -8,7 +8,6 @@
 #include "iomanip"
 #include "Debug/Logger.hpp"
 
-
 using json = nlohmann::json;
 using ordered_json = nlohmann::ordered_json;
 
@@ -30,7 +29,9 @@ namespace BwatEngine {
         for (int i = 0; i < toSave.entities.size(); i++)
         {
             TransformComponent transform = coordinator.GetComponent<TransformComponent>(toSave.entities[i]);
-            js["Entity"] +=
+            // it's hard coded, your serialization system
+						// is not easily expandable and maintainable
+						js["Entity"] +=
                     json{
                             {"transform",
                                     {
@@ -64,9 +65,10 @@ namespace BwatEngine {
             file << std::setw(4) << js << std::endl;
         }
 
+				// the format is weird, it should not happen !
         void Serializer::LoadData(Scene &toLoad) {
             std::ifstream file(path);
-
+						// you don't check if you cannot open the file
 
             json js;
             file >> js;
