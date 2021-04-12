@@ -6,6 +6,7 @@
 #include "Inputs/InputHandler.hpp"
 #include "imgui.h"
 #include "imgui_impl_glfw.h"
+#include "ECS/Components/TransformComponent.hpp"
 
 #include "AL/al.h"
 

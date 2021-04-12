@@ -49,6 +49,8 @@ std::vector<Rendering::Light>& Scene::GetLights()
 Scene::Scene(Window& window)
     : texture("Assets/image/moteur.jpg",Rendering::Texture::Type::E_DIFFUSE), texture1("Assets/image/green.png", Rendering::Texture::Type::E_DIFFUSE)
 {
+    scenePhysic.Init(physic);
+
     Coordinator& coordinator = *Coordinator::GetInstance();
     coordinator.Init();
 
@@ -73,7 +75,7 @@ Scene::Scene(Window& window)
         signature.set(coordinator.GetComponentType<ColliderComponent>());
         coordinator.SetSystemSignature<PhysicsSystem>(signature);
     }
-    physicsSystem->Init(this, { 0, -10, 0 });
+    physicsSystem->Init(&scenePhysic);
 
     playerControlSystem = coordinator.RegisterSystem<PlayerControlSystem>();
     {

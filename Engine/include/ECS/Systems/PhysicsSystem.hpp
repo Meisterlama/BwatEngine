@@ -2,15 +2,8 @@
 #define ENGINE_ECS_SYSTEMS_PHYSICS_HPP
 
 #include "ECS/System.hpp"
-#include "ECS/Components/RigidBodyComponent.hpp"
-#include "ECS/Components/TransformComponent.hpp"
-#include "ECS/Components/GravityComponent.hpp"
 
-#include "ECS/Components/GravityComponent.hpp"
-#include "ECS/Components/RigidBodyComponent.hpp"
-#include "ECS/Components/TransformComponent.hpp"
-
-#include "Scene.hpp"
+#include "Physic/PhysicScene.hpp"
 
 namespace BwatEngine
 {
@@ -18,12 +11,12 @@ namespace BwatEngine
     {
     public:
 
-        void Init(Scene* scene, const Math::Vec3f &gravity);
+        void Init(PhysicScene* physicScene);
         void Update();
         
     private:
 
-        Scene* ptrScene = nullptr;
+        PhysicScene* ptrPhysicScene = nullptr;
     };
 }
 

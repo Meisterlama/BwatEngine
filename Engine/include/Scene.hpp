@@ -6,7 +6,7 @@
 
 #include "Rendering/Light.hpp"
 #include "Rendering/Model.hpp"
-#include "Physic/Physic.hpp"
+#include "Physic/PhysicScene.hpp"
 #include "Core.hpp"
 
 
@@ -51,7 +51,7 @@ namespace BwatEngine
 
 		// PhysX
 		Physic physic{};
-		physx::PxScene* scenePhysic;
+		PhysicScene scenePhysic;
 
 
 	};

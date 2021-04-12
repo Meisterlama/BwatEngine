@@ -3,19 +3,15 @@
 #include "Physic/PhysicCast.hpp"
 #include "ECS/Components/ColliderComponent.hpp"
 #include "ECS/Coordinator.hpp"
+#include "ECS/Components/RigidBodyComponent.hpp"
+#include "ECS/Components/TransformComponent.hpp"
+
 
 using namespace BwatEngine;
 
-void PhysicsSystem::Init(Scene* scene, const Math::Vec3f& gravity)  
+void PhysicsSystem::Init(PhysicScene* scene)  
 {
-    ptrScene = scene;
-
-    physx::PxSceneDesc SceneDesc(ptrScene->physic.GetPhysics()->getTolerancesScale());
-    SceneDesc.gravity = ToPxVec3(gravity);
-    SceneDesc.cpuDispatcher = ptrScene->physic.GetCPUDispatcher();
-    SceneDesc.filterShader = physx::PxDefaultSimulationFilterShader;
-
-    ptrScene->scenePhysic = (ptrScene->physic.GetPhysics()->createScene(SceneDesc));
+    ptrPhysicScene = scene;
 }
 
 void PhysicsSystem::Update()
@@ -35,7 +31,7 @@ void PhysicsSystem::Update()
             }
 
             rigidBody.AttachCollider(*collider);
-            rigidBody.AddActor(ptrScene->scenePhysic);
+            rigidBody.AddActor(ptrPhysicScene->GetPhysicScene());
         }
 
         if (rigidBody.CompareOldTransform(transform))
@@ -49,6 +45,6 @@ void PhysicsSystem::Update()
         }
     }
 
-    ptrScene->scenePhysic->simulate(Time::deltaTime);
-    ptrScene->scenePhysic->fetchResults(true);
+    ptrPhysicScene->GetPhysicScene()->simulate(Time::deltaTime);
+    ptrPhysicScene->GetPhysicScene()->fetchResults(true);
 };

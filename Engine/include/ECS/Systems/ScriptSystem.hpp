@@ -16,4 +16,4 @@ namespace BwatEngine
 	};
 }
 
-#endif // !1
+#endif // SCRIPT_SYSTEM_HPP

@@ -5,16 +5,16 @@ class Script
 {
 public :
 	
-	virtual void Update() {};
-	virtual void Start() {};
+	virtual void Update() = 0;
+	virtual void Start() = 0;
 };
 
 namespace BwatEngine
 {
 	struct ScriptComponent
 	{
-		Script* script;
+		Script* script = nullptr;
 	};
 }
 
-#endif
+#endif //SCRIPT_COMPONENT_HPP

@@ -7,7 +7,7 @@ namespace BwatEngine
 {
 	struct ColliderComponent
 	{
-		Collider* collider;
+		Collider* collider = nullptr;
 	};
 }
 
