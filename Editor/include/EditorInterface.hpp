@@ -28,7 +28,7 @@ private:
     void ApplyStyle() const;
     void BeginWindow();
 
-    std::vector<std::shared_ptr<Widget>> widgets;
+    std::vector<std::unique_ptr<Widget>> widgets;
     bool initialised = false;
     bool editorBegun = false;
 
