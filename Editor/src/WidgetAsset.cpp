@@ -10,9 +10,5 @@ WidgetAsset::WidgetAsset(EditorInterface *editor) : Widget(editor)
 
 void WidgetAsset::TickVisible()
 {
-    if (ImGui::Button("Import"))
-    {
-
-    }
     assetDirectory.ShowList();
 }

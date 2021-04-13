@@ -1,4 +1,6 @@
 #include "FileDialog.hpp"
+#include "ResourceManager/ResourceManager.hpp"
+#include "Rendering/texture.hpp"
 #include "imgui.h"
 
 inline std::vector<std::string> SplitStringToVector(const std::string& text, char delimiter, bool pushEmpty)
@@ -211,11 +213,28 @@ void FileDialog::ShowList()
     {
         if(ImGui::Selectable(fileList[i].fileName.c_str()))
         {
-            if (!dir.has_extension())
+            if (fileList[i].ext == "")
             {
                 OpenDialog("", fileList[i].filePath);
             }
+            else
+            {
+                LoadOnResources(fileList[i]);
+            }
         }
+    }
+}
+
+void FileDialog::LoadOnResources(FileInfoStruct file)
+{
+    if (file.ext == ".obj" || ".fbx")
+    {
+        BwatEngine::ResourceManager::Instance()->GetOrLoadModel(file.filePath);
+    }
+
+    if (file.ext == ".png" || ".jpg")
+    {
+        BwatEngine::ResourceManager::Instance()->GetOrLoadTexture(file.filePath, Rendering::Texture::Type::E_DIFFUSE);
     }
 }
 
