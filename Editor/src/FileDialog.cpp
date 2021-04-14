@@ -1,7 +1,6 @@
 #include "FileDialog.hpp"
-#include "ResourceManager/ResourceManager.hpp"
-#include "Rendering/texture.hpp"
 #include "imgui.h"
+#include "ResourceManager/ResourceManager.hpp"
 
 inline std::vector<std::string> SplitStringToVector(const std::string& text, char delimiter, bool pushEmpty)
 {
@@ -13,13 +12,13 @@ inline std::vector<std::string> SplitStringToVector(const std::string& text, cha
         while (end != std::string::npos)
         {
             std::string token = text.substr(start, end - start);
-            if (!token.empty() || (token.empty() && pushEmpty)) //-V728
+            if (!token.empty() || (token.empty() && pushEmpty))
                 arr.push_back(token);
             start = end + 1;
             end = text.find(delimiter, start);
         }
         std::string token = text.substr(start);
-        if (!token.empty() || (token.empty() && pushEmpty)) //-V728
+        if (!token.empty() || (token.empty() && pushEmpty))
             arr.push_back(token);
     }
     return arr;
@@ -29,8 +28,6 @@ FileDialog::FileDialog()
 {
     showDialog = false;
 }
-
-FileDialog::~FileDialog() = default;
 
 void FileDialog::OpenDialog(const char *aFilters, const std::filesystem::path& aFilePathName)
 {
@@ -189,7 +186,7 @@ void FileDialog::ScanDir(const std::string &aPath)
                 if (!dlgFilters.empty())
                 {
                     if (!selectedFilter.Empty() &&
-                    (!selectedFilter.FilterExist(infos.ext) && selectedFilter.filter != ".*"))
+                        (!selectedFilter.FilterExist(infos.ext) && selectedFilter.filter != ".*"))
                     {
                         continue;
                     }
@@ -227,14 +224,11 @@ void FileDialog::ShowList()
 
 void FileDialog::LoadOnResources(FileInfoStruct file)
 {
-    if (file.ext == ".obj" || ".fbx")
+    if (file.ext == ".obj" || file.ext == ".fbx" || file.ext == ".png" || file.ext == ".jpg")
     {
-        BwatEngine::ResourceManager::Instance()->GetOrLoadModel(file.filePath);
-    }
-
-    if (file.ext == ".png" || ".jpg")
-    {
-        BwatEngine::ResourceManager::Instance()->GetOrLoadTexture(file.filePath, Rendering::Texture::Type::E_DIFFUSE);
+        //if (BwatEngine::ResourceManager::Instance().
+        chargeMe = true;
+        chargeFile = file;
     }
 }
 

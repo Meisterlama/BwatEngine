@@ -34,17 +34,18 @@ void WidgetProperties::ShowComponent<BwatEngine::RenderableComponent>(BwatEngine
 {
     if (ImGui::CollapsingHeader("Renderable",ImGuiTreeNodeFlags_DefaultOpen))
     {
-        const char* modelName = component.model->modelPath.filename().string().c_str();
+        std::string modelName = component.model->modelPath.filename().string();
         ImGui::Text("Mesh");
         ImGui::SameLine();
-        if(ImGui::BeginCombo("##Mesh", modelName))
+        if(ImGui::BeginCombo("##Mesh", modelName.c_str()))
         {
             auto meshList = BwatEngine::ResourceManager::Instance()->GetModelList();
 
             for(auto &model : meshList)
             {
-                bool selected = (modelName == model.c_str());
-                if(ImGui::Selectable(model.c_str(), selected))
+                std::filesystem::path path = model;
+                bool selected = (modelName == path.filename().string());
+                if(ImGui::Selectable(path.string().c_str(), selected))
                 {
                     component.model = BwatEngine::ResourceManager::Instance()->GetOrLoadModel(model);
                 }

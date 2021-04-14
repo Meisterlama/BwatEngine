@@ -116,7 +116,7 @@ Scene::Scene(Window& window)
     //Rendering::Model mymodel = Rendering::Model{ (std::string) "Assets/bag/backpack.obj" };
     model = BwatEngine::ResourceManager::Instance()->GetOrLoadModel("Assets/cube.obj");;
 
-    BwatEngine::ResourceManager::Instance()->GetOrLoadModel("Assets/sphere.obj");
+    //BwatEngine::ResourceManager::Instance()->GetOrLoadModel("Assets/sphere.obj");
     BwatEngine::ResourceManager::Instance()->GetOrLoadTexture("Assets/image/green.png", Rendering::Texture::Type::E_DIFFUSE);
     BwatEngine::ResourceManager::Instance()->GetOrLoadTexture("Assets/image/moteur.jpg", Rendering::Texture::Type::E_DIFFUSE);
     Audio::AudioData audioData = Audio::LoadWavFile("Assets/pop.wav");
@@ -149,7 +149,7 @@ Scene::Scene(Window& window)
                     { Math::Mat4f::CreatePerspective(80.f,
                         window.GetWidth() / window.GetHeight(), 0.1f, 1000.0f)
                     });
-                coordinator.AddComponent<PlayerComponent>(entities[i]);
+                coordinator.AddComponent<PlayerComponent>(entities[i], {});
                 renderSystem->SetCamera(entities[i]);
             }
             else if (i == 1) // ================================= Plane
