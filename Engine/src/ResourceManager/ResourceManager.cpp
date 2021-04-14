@@ -19,7 +19,7 @@ namespace BwatEngine
         return it.first->second.get();
     }
 
-    Rendering::Texture* ResourceManager::LoadTexture(std::string path, Rendering::Texture::Format type)
+    Rendering::Texture* ResourceManager::LoadTexture(std::string path, Rendering::Texture::Type type)
     {
         auto it = textures.emplace(path, std::make_unique<Rendering::Texture>(path, type));
         dirtyTextures = true;
@@ -32,7 +32,7 @@ namespace BwatEngine
         return (res != nullptr) ? res : LoadModel(path);
     }
 
-    Rendering::Texture* ResourceManager::GetOrLoadTexture(std::string path, Rendering::Texture::Format type)
+    Rendering::Texture* ResourceManager::GetOrLoadTexture(std::string path, Rendering::Texture::Type type)
     {
         Rendering::Texture* res = ResourceManager::Instance()->GetTexture(path);
         return (res != nullptr) ? res : LoadTexture(path, type);

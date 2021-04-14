@@ -49,7 +49,7 @@ std::vector<Rendering::Light>& Scene::GetLights()
 
 
 Scene::Scene(Window& window)
-    : texture(BwatEngine::ResourceManager::Instance()->GetOrLoadTexture("Assets/image/moteur.jpg",Rendering::Texture::Format::E_DIFFUSE)), texture1(BwatEngine::ResourceManager::Instance()->GetOrLoadTexture("Assets/image/green.png", Rendering::Texture::Format::E_DIFFUSE))
+    : texture(BwatEngine::ResourceManager::Instance()->GetOrLoadTexture("Assets/image/moteur.jpg",Rendering::Texture::Type::E_DIFFUSE)), texture1(BwatEngine::ResourceManager::Instance()->GetOrLoadTexture("Assets/image/green.png", Rendering::Texture::Type::E_DIFFUSE))
 {
     Coordinator& coordinator = *Coordinator::GetInstance();
     coordinator.Init();
@@ -118,8 +118,8 @@ Scene::Scene(Window& window)
     model = BwatEngine::ResourceManager::Instance()->GetOrLoadModel("Assets/cube.obj");;
 
     BwatEngine::ResourceManager::Instance()->GetOrLoadModel("Assets/sphere.obj");
-    BwatEngine::ResourceManager::Instance()->GetOrLoadTexture("Assets/image/green.png", Rendering::Texture::Format::E_DIFFUSE);
-    BwatEngine::ResourceManager::Instance()->GetOrLoadTexture("Assets/image/moteur.jpg", Rendering::Texture::Format::E_DIFFUSE);
+    BwatEngine::ResourceManager::Instance()->GetOrLoadTexture("Assets/image/green.png", Rendering::Texture::Type::E_DIFFUSE);
+    BwatEngine::ResourceManager::Instance()->GetOrLoadTexture("Assets/image/moteur.jpg", Rendering::Texture::Type::E_DIFFUSE);
     Audio::AudioData audioData = Audio::LoadWavFile("Assets/pop.wav");
 
     std::default_random_engine generator;

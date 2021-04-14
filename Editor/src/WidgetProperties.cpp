@@ -73,7 +73,7 @@ void WidgetProperties::ShowComponent<BwatEngine::RenderableComponent>(BwatEngine
                     bool selected = (DiffName == text.c_str());
                     if(ImGui::Selectable(text.c_str(), selected))
                     {
-                        component.materials[i]->diffuse = BwatEngine::ResourceManager::Instance()->GetOrLoadTexture(text, Rendering::Texture::Format::E_DIFFUSE);
+                        component.materials[i]->diffuse = BwatEngine::ResourceManager::Instance()->GetOrLoadTexture(text, Rendering::Texture::Type::E_DIFFUSE);
                     }
                     if(selected)
                         ImGui::SetItemDefaultFocus();
@@ -98,7 +98,7 @@ void WidgetProperties::ShowComponent<BwatEngine::RenderableComponent>(BwatEngine
                     bool selected = (SpecName == text.c_str());
                     if(ImGui::Selectable(text.c_str(), selected))
                     {
-                        component.materials[i]->specular = BwatEngine::ResourceManager::Instance()->GetOrLoadTexture(text, Rendering::Texture::Format::E_SPECULAR);;
+                        component.materials[i]->specular = BwatEngine::ResourceManager::Instance()->GetOrLoadTexture(text, Rendering::Texture::Type::E_SPECULAR);;
                     }
                     if(selected)
                         ImGui::SetItemDefaultFocus();

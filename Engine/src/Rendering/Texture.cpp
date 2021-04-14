@@ -14,7 +14,7 @@ Texture::Texture(int width, int height)
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
 }
 
-Texture::Texture(const std::string& path, Format type) : path(path), type(type)
+Texture::Texture(const std::string& path, Type type) : path(path), type(type)
 {
     glGenTextures(1, &id);
     glBindTexture(GL_TEXTURE_2D, id);
