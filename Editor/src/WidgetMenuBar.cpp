@@ -35,14 +35,14 @@ void WidgetMenuBar::TickAlways()
         }
         if (ImGui::BeginMenu("Save Scene"))
         {
-            BwatEngine::Serializer serializ("test.txt");
-            serializ.SaveScene(editor->engine->GetScene());
+
+            BwatEngine::Serializer::SaveScene(editor->engine->GetScene(), "test.txt");
             ImGui::EndMenu();
         }
         if (ImGui::BeginMenu("Load Scene"))
         {
-            BwatEngine::Serializer serializ("test.txt");
-            serializ.LoadData(editor->engine->GetScene());
+
+            BwatEngine::Serializer::LoadScene(editor->engine->GetScene(), "test.txt");
             ImGui::EndMenu();
         }
         ImGui::EndMainMenuBar();
