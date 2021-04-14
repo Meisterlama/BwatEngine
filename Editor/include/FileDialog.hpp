@@ -49,5 +49,6 @@ protected:	    // set default file name
     void SetSelectedFilterWithExt(const std::string& aFilter);
     void SetPath(const std::string& aPath);
     void ScanDir(const std::string& aPath);
+    void LoadOnResources(FileInfoStruct file);
 };
 #endif //BWATENGINE_FILEDIALOG_H
