@@ -11,7 +11,7 @@
 
 #include "WidgetProperties.hpp"
 
-BwatEngine::Entity WidgetProperties::currentEntity = 0;
+BwatEngine::EntityID WidgetProperties::currentEntity = 0;
 
 WidgetProperties::WidgetProperties(EditorInterface *editor) : Widget(editor)
 {
@@ -23,9 +23,9 @@ void WidgetProperties::ShowComponent<BwatEngine::TransformComponent>(BwatEngine:
 {
     if (ImGui::CollapsingHeader("Transform",ImGuiTreeNodeFlags_DefaultOpen))
     {
-        ImGui::DragFloat3("Position", component.transform.position.values, 0.01);
-        ImGui::DragFloat3("Rotation", component.transform.rotation.values, 0.01);
-        ImGui::DragFloat3("Scale", component.transform.scale.values, 0.01);
+        ImGui::DragFloat3("Position", component.position.values, 0.01);
+        ImGui::DragFloat3("Rotation", component.rotation.values, 0.01);
+        ImGui::DragFloat3("Scale", component.scale.values, 0.01);
     }
 }
 
@@ -117,27 +117,27 @@ void WidgetProperties::ShowComponent<BwatEngine::RigidBodyComponent>(BwatEngine:
     {
         bool update = false;
 
-        bool isStatic = component.rigidBody.GetIsStatic();
+        bool isStatic = component.GetIsStatic();
         update |= ImGui::Checkbox("isStatic", &isStatic);
 
         if (!isStatic)
         {
             bool updateNotStatic = false;
-            float mass = component.rigidBody.GetMass();
-            BwatEngine::Math::Vec3f velocity = component.rigidBody.GetVelocity();
+            float mass = component.GetMass();
+            BwatEngine::Math::Vec3f velocity = component.GetVelocity();
 
             updateNotStatic |= ImGui::DragFloat("Mass", &mass, 0.1f, 0.0f, 100.f);
             updateNotStatic |= ImGui::DragFloat3("Velocity", velocity.values, 0.1f);
 
             if (updateNotStatic)
             {
-                component.rigidBody.SetMass(mass);
-                component.rigidBody.SetVelocity(velocity);
+                component.SetMass(mass);
+                component.SetVelocity(velocity);
             }
         }
 
         if (update)
-            component.rigidBody.SetStatic(isStatic);
+            component.SetStatic(isStatic);
         
     }
 }
@@ -172,7 +172,7 @@ void WidgetProperties::TickVisible()
 {
     using namespace BwatEngine;
 
-    Coordinator &coordinator = *Coordinator::GetInstance();
+    Coordinator &coordinator = Coordinator::GetInstance();
     if (ImGui::Button("Create Entity"))
     {
         coordinator.CreateEntity();
@@ -200,15 +200,15 @@ void WidgetProperties::TickVisible()
     //ShowComponentMenuItem<ColliderComponent>(currentEntity);
 }
 
-void WidgetProperties::Inspect(BwatEngine::Entity &entity)
+void WidgetProperties::Inspect(BwatEngine::EntityID entity)
 {
     currentEntity = entity;
 }
 
 template<typename T>
-bool WidgetProperties::AddComponentMenuItem(BwatEngine::Entity entity)
+bool WidgetProperties::AddComponentMenuItem(BwatEngine::EntityID entity)
 {
-    BwatEngine::Coordinator &coordinator = *BwatEngine::Coordinator::GetInstance();
+    BwatEngine::Coordinator &coordinator = BwatEngine::Coordinator::GetInstance();
     BwatEngine::Signature entitySignature = coordinator.GetEntitySignature(entity);
 
     if (!entitySignature.test(coordinator.GetComponentType<T>()))
@@ -224,9 +224,9 @@ bool WidgetProperties::AddComponentMenuItem(BwatEngine::Entity entity)
 
 
 template<typename T>
-bool WidgetProperties::ShowComponentMenuItem(BwatEngine::Entity entity)
+bool WidgetProperties::ShowComponentMenuItem(BwatEngine::EntityID entity)
 {
-    BwatEngine::Coordinator &coordinator = *BwatEngine::Coordinator::GetInstance();
+    BwatEngine::Coordinator &coordinator = BwatEngine::Coordinator::GetInstance();
     BwatEngine::Signature entitySignature = coordinator.GetEntitySignature(entity);
 
     if (entitySignature.test(coordinator.GetComponentType<T>()))
