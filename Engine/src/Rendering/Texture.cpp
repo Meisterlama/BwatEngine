@@ -14,7 +14,7 @@ Texture::Texture(int width, int height)
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
 }
 
-Texture::Texture(const std::string& path, Type type) : path(path), type(type)
+Texture::Texture(const std::string& path, Format type) : path(path), type(type)
 {
     glGenTextures(1, &id);
     glBindTexture(GL_TEXTURE_2D, id);
@@ -47,7 +47,7 @@ Texture::Texture(const std::string& path, Type type) : path(path), type(type)
     }
     else
     {
-        std::cout << "Texture failed to load at path: " << path.c_str() << std::endl;
+        LogError("Texture failed to load at path: %s", path.c_str());
         stbi_image_free(data);
     }
 }
