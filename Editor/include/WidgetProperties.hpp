@@ -2,9 +2,7 @@
 #define BWATENGINE_WIDGETPROPERTIES_H
 
 #include "Widget.hpp"
-#include <memory>
-#include "Core.hpp"
-#include <ECS/Components/TransformComponent.hpp>
+#include "ECS/ECS.hpp"
 
 class WidgetProperties : public Widget
 {
@@ -13,19 +11,19 @@ public:
 
     void TickVisible() override;
 
-    static void Inspect(BwatEngine::Entity& entity);
+    static void Inspect(BwatEngine::EntityID entity);
 
-    static BwatEngine::Entity currentEntity;
+    static BwatEngine::EntityID currentEntity;
 
 private:
     template<typename T>
     void ShowComponent(T& component);
 
     template<typename T>
-    bool AddComponentMenuItem(BwatEngine::Entity entity);
+    bool AddComponentMenuItem(BwatEngine::EntityID entity);
 
     template<typename T>
-    bool ShowComponentMenuItem(BwatEngine::Entity entity);
+    bool ShowComponentMenuItem(BwatEngine::EntityID entity);
 
 };
 

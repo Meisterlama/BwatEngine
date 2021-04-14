@@ -1,19 +1,18 @@
 #ifndef ENGINE_ECS_ECS_HPP
 #define ENGINE_ECS_ECS_HPP
-#include "ECS/Coordinator.hpp"
-
-namespace Rendering
-{
-    class Model;
-}
+#include <bitset>
 
 namespace BwatEngine
 {
-    struct Context;
-    //void InitComponents(Context& context);
-    //void InitSystems(Context& context);
-    //
-    //void InitSampleScene(Context &context, Rendering::Model& model);
+    typedef uint32_t IDType;
+
+    typedef IDType EntityID;
+    static constexpr IDType MAX_ENTITIES = 5000;
+
+    typedef IDType ComponentTypeID;
+    static constexpr ComponentTypeID MAX_COMPONENTS = 32;
+
+    using Signature = std::bitset<MAX_COMPONENTS>;
 }
 
 #endif //ENGINE_ECS_ECS_HPP

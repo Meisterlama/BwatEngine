@@ -5,10 +5,7 @@
 
 namespace BwatEngine
 {
-    struct TransformComponent
-    {
-        Math::Transform transform;
-    };
+    typedef Math::Transform TransformComponent;
 }
 
 #endif //ENGINE_ECS_COMPONENTS_TRANSFORM_HPP

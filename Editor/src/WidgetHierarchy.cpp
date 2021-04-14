@@ -2,7 +2,6 @@
 #include "WidgetProperties.hpp"
 #include "Engine.hpp"
 #include "EditorInterface.hpp"
-
 #include "ECS/Coordinator.hpp"
 
 WidgetHierarchy::WidgetHierarchy(EditorInterface *editor) : Widget(editor)
@@ -11,11 +10,11 @@ WidgetHierarchy::WidgetHierarchy(EditorInterface *editor) : Widget(editor)
     flags |= ImGuiWindowFlags_HorizontalScrollbar;
 }
 
-void ShowEntity(BwatEngine::Entity entity)
+void ShowEntity(BwatEngine::EntityID entity)
 {
-    auto &coordinator = *BwatEngine::Coordinator::GetInstance();
+    auto &coordinator = BwatEngine::Coordinator::GetInstance();
     auto &node = coordinator.GetNode(entity);
-    std::string entityName = "Entity_" + std::to_string(entity);
+    std::string entityName = "Entity_" + std::to_string(node.id);
 
     ImGuiTreeNodeFlags flags =
             ImGuiTreeNodeFlags_SpanAvailWidth | ImGuiTreeNodeFlags_OpenOnDoubleClick | ImGuiTreeNodeFlags_OpenOnArrow;
@@ -41,7 +40,7 @@ void ShowEntity(BwatEngine::Entity entity)
 
 void WidgetHierarchy::TickVisible()
 {
-    auto &coordinator = *BwatEngine::Coordinator::GetInstance();
+    auto &coordinator = BwatEngine::Coordinator::GetInstance();
 
     for (auto &entity : coordinator.GetRootEntities())
     {

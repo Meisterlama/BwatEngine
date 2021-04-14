@@ -49,8 +49,7 @@ std::vector<Rendering::Light>& Scene::GetLights()
 Scene::Scene(Window& window)
     : texture("Assets/image/moteur.jpg",Rendering::Texture::Type::E_DIFFUSE), texture1("Assets/image/green.png", Rendering::Texture::Type::E_DIFFUSE)
 {
-    Coordinator& coordinator = *Coordinator::GetInstance();
-    coordinator.Init();
+    Coordinator& coordinator = Coordinator::GetInstance();
 
     coordinator.RegisterComponent<GravityComponent>();
     coordinator.RegisterComponent<RigidBodyComponent>();
@@ -130,37 +129,37 @@ Scene::Scene(Window& window)
 
     physx::PxMaterial* material = Physic::GetPhysics()->createMaterial(0,0,0);
 
-    entities = std::vector<Entity>(50);
+    entities = std::vector<EntityID>(50);
     
     myMat.SetDiffuse(texture);
     myMat1.SetDiffuse(texture1);
     
-        for (Entity i = 0; i < entities.size(); i++)
+        for (EntityID i = 0; i < entities.size(); i++)
         {
             entities[i] = coordinator.CreateEntity();
             if (i == 0)
             {
-                coordinator.AddComponent<TransformComponent>(entities[i],{ Math::Transform{
-                    Math::Vec3f {0.f, 0.f, 200.f},
-                    Math::Vec3f {0.f},
-                    Math::Vec3f {1.f}
-                } });
+                coordinator.AddComponent<TransformComponent>(entities[i],
+                    Math::Vec3f{0.f, 0.f, 200.f},
+                     Math::Vec3f{0.f},
+                     Math::Vec3f{1.f}
+                    );
                 coordinator.AddComponent<CameraComponent>(entities[i],
                     { Math::Mat4f::CreatePerspective(80.f,
                         window.GetWidth() / window.GetHeight(), 0.1f, 1000.0f)
                     });
-                coordinator.AddComponent<PlayerComponent>(entities[i], {});
+                coordinator.AddComponent<PlayerComponent>(entities[i]);
                 renderSystem->SetCamera(entities[i]);
             }
             else if (i == 1) // ================================= Plane
             {
-                coordinator.AddComponent<TransformComponent>(entities[i],{ Math::Transform{
+                coordinator.AddComponent<TransformComponent>(entities[i],
                     Math::Vec3f{0, -105, 0},
                     Math::Vec3f{0, 0, 0},
-                    Math::Vec3f{300, 1, 300}} });
+                    Math::Vec3f{300, 1, 300});
 
-                Math::Transform& eTransform = coordinator.GetComponent<TransformComponent>(entities[i]).transform;
-                coordinator.AddComponent<RigidBodyComponent>(entities[i], { {eTransform , true} });
+                auto eTransform = coordinator.GetComponent<TransformComponent>(entities[i]);
+                coordinator.AddComponent<RigidBodyComponent>(entities[i], eTransform , true);
 
                 coordinator.AddComponent<ColliderComponent>(entities[i], { new BoxCollider{eTransform.scale} });
                 coordinator.AddComponent<RenderableComponent>(entities[i],{ &model });
@@ -173,13 +172,12 @@ Scene::Scene(Window& window)
             }
             else // ================================= Cube
             {
-                coordinator.AddComponent<TransformComponent>(entities[i],{ Math::Transform{
+                coordinator.AddComponent<TransformComponent>(entities[i],
                     Math::Vec3f{randPosition(generator), randPosition(generator), randPosition(generator)},
                     Math::Vec3f{randRotation(generator), randRotation(generator), randRotation(generator)},
-                    Math::Vec3f{3}
-                } });
-                auto& eTransform = coordinator.GetComponent<TransformComponent>(entities[i]).transform;
-                coordinator.AddComponent<RigidBodyComponent>(entities[i], { {eTransform} });
+                    Math::Vec3f{3});
+                auto eTransform = coordinator.GetComponent<TransformComponent>(entities[i]);
+                coordinator.AddComponent<RigidBodyComponent>(entities[i], eTransform);
 
                 coordinator.AddComponent<ColliderComponent>(entities[i], { new BoxCollider{eTransform.scale} });
                 coordinator.AddComponent<RenderableComponent>(entities[i],{ &model });

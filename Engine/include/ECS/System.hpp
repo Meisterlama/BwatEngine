@@ -1,7 +1,7 @@
 #ifndef ENGINE_ECS_SYSTEM_HPP
 #define ENGINE_ECS_SYSTEM_HPP
 
-#include "Core.hpp"
+#include "ECS.hpp"
 #include <set>
 
 namespace BwatEngine
@@ -9,7 +9,7 @@ namespace BwatEngine
     class System
     {
     public:
-        std::set<Entity> entities;
+        std::set<EntityID> entities;
     };
 }
 #endif //ENGINE_ECS_SYSTEM_HPP

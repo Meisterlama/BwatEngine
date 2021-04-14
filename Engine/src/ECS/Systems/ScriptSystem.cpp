@@ -13,7 +13,7 @@ void ScriptSystem::Update()
 {
 	for (auto entity : entities)
 	{
-		auto& scriptComponent = Coordinator::GetInstance()->GetComponent<ScriptComponent>(entity);
+		auto& scriptComponent = Coordinator::GetInstance().GetComponent<ScriptComponent>(entity);
 
 		scriptComponent.script->Update();
 	}
