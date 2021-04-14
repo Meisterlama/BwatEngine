@@ -1,10 +1,9 @@
 #ifndef ENGINE_ECS_COMPONENT_ARRAY_HPP
 #define ENGINE_ECS_COMPONENT_ARRAY_HPP
 
-#include "Core.hpp"
-#include <cassert>
 #include <unordered_map>
 #include <vector>
+#include <stdexcept>
 
 namespace BwatEngine
 {
@@ -12,16 +11,16 @@ namespace BwatEngine
     {
     public:
         virtual ~IComponentArray() = default;
-        virtual void EntityDestroyed(Entity entity) = 0;
+        virtual void EntityDestroyed(EntityID entity) = 0;
     };
 
-    template<typename T>
+    template<typename C>
     class ComponentArray: public IComponentArray
     {
         // TODO: Manage vector reallocation to handle more entities than default MAX_ENTITIES
-        std::vector<T> componentArray{};
-        std::unordered_map<Entity, size_t> entityToIndexMap{};
-        std::unordered_map<size_t, Entity> indexToEntityMap{};
+        std::vector<C> componentArray{};
+        std::unordered_map<EntityID, size_t> entityToIndexMap{};
+        std::unordered_map<size_t, EntityID> indexToEntityMap{};
         size_t size{};
 
     public:
@@ -30,10 +29,31 @@ namespace BwatEngine
             componentArray.reserve(MAX_ENTITIES);
         }
 
-        void InsertData(Entity entity, T&& component)
+        template<typename... Args>
+        void InsertData(EntityID entity, Args&&... args)
         {
-            assert(entityToIndexMap.find(entity) == entityToIndexMap.end() && "Component added to same entity more than once.");
+            if(entityToIndexMap.find(entity) != entityToIndexMap.end())
+            {
+                LogError("Component added to same entity more than once.");
+                return;
+            }
             size_t newIndex = size;
+            entityToIndexMap[entity] = newIndex;
+            indexToEntityMap[newIndex] = entity;
+            if (size < componentArray.size())
+                componentArray[newIndex] = C{args...};
+            else
+                componentArray.emplace_back(args...);
+            size++;
+        }
+
+        void InsertData(EntityID entity, C&& component)
+        {
+            if(entityToIndexMap.find(entity) != entityToIndexMap.end())
+            {
+                LogError("Component added to same entity more than once.");
+                return;
+            }            size_t newIndex = size;
             entityToIndexMap[entity] = newIndex;
             indexToEntityMap[newIndex] = entity;
             if (size < componentArray.size())
@@ -43,15 +63,19 @@ namespace BwatEngine
             size++;
         }
 
-        void RemoveData(Entity entity)
+        void RemoveData(EntityID entity)
         {
-            assert(entityToIndexMap.find(entity) != entityToIndexMap.end() && "Removing non-existent component.");
+            if(entityToIndexMap.find(entity) == entityToIndexMap.end())
+            {
+                LogError("Removing non-existent component.");
+                return;
+            }
 
             size_t indexOfRemovedEntity = entityToIndexMap[entity];
             size_t indexOfLastElement = size - 1;
             componentArray[indexOfRemovedEntity] = componentArray[indexOfLastElement];
 
-            Entity entityOfLastElement = indexToEntityMap[indexOfLastElement];
+            EntityID entityOfLastElement = indexToEntityMap[indexOfLastElement];
             entityToIndexMap[entityOfLastElement] = indexOfRemovedEntity;
             indexToEntityMap[indexOfRemovedEntity] = entityOfLastElement;
 
@@ -61,13 +85,18 @@ namespace BwatEngine
             size--;
         }
 
-        T& GetData(Entity entity)
+        C& GetData(EntityID entity)
         {
-            assert(entityToIndexMap.find(entity) != entityToIndexMap.end() && "Retrieving non-existent component.");
+            if(entityToIndexMap.find(entity) == entityToIndexMap.end())
+            {
+                // TODO: Better assertion
+                LogFatal("Retrieving non-existent component.");
+                throw std::runtime_error("ECS Crashed");
+            }
             return componentArray[entityToIndexMap[entity]];
         }
 
-        void EntityDestroyed(Entity entity) override
+        void EntityDestroyed(EntityID entity) override
         {
             if (entityToIndexMap.find(entity) != entityToIndexMap.end())
             {

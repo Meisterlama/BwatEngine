@@ -1,5 +1,11 @@
-#include "ECS/Systems/RenderSystem.hpp"
 #include "ECS/Coordinator.hpp"
+#include "ECS/Systems/RenderSystem.hpp"
+#include "ECS/Components/TransformComponent.hpp"
+#include "ECS/Components/CameraComponent.hpp"
+#include "ECS/Components/RenderableComponent.hpp"
+
+#include "Rendering/Light.hpp"
+#include "Scene.hpp"
 
 using namespace BwatEngine;
 
@@ -10,14 +16,14 @@ void RenderSystem::Init()
     Scene::AddLight(mylight);
 }
 
-void RenderSystem::SetCamera(Entity _camera)
+void RenderSystem::SetCamera(EntityID _camera)
 {
     camera = _camera;
 }
 
 void RenderSystem::Update(Window& win)
 {
-    if (camera == -1)
+    if (camera == 0)
         return;
 
     glEnable(GL_DEPTH_TEST);
@@ -25,10 +31,10 @@ void RenderSystem::Update(Window& win)
     glClearColor(clearColor[0], clearColor[1], clearColor[2], 1.f);
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
-    auto coordinator = Coordinator::GetInstance();
+    auto& coordinator = Coordinator::GetInstance();
 
-    auto& cameraTransform = coordinator->GetComponent<TransformComponent>(camera).transform;
-    auto& cameraProjection = coordinator->GetComponent<CameraComponent>(camera).projectionMat;
+    auto& cameraTransform = coordinator.GetComponent<TransformComponent>(camera);
+    auto& cameraProjection = coordinator.GetComponent<CameraComponent>(camera).projectionMat;
 
     shader.use();
     shader.setMat4("view", Math::Mat4f::CreateTRSMat(cameraTransform.position, cameraTransform.rotation, cameraTransform.scale).Invert());
@@ -43,8 +49,8 @@ void RenderSystem::Update(Window& win)
 
     for (auto entity : entities)
     {
-        auto entityTransform = coordinator->GetComponent<TransformComponent>(entity).transform;
-        auto renderableComponent = coordinator->GetComponent<RenderableComponent>(entity);
+        auto entityTransform = coordinator.GetComponent<TransformComponent>(entity);
+        auto renderableComponent = coordinator.GetComponent<RenderableComponent>(entity);
          shader.setMat4("model", Math::Mat4f::CreateTRSMat(entityTransform.position, entityTransform.rotation, entityTransform.scale));
 
         renderableComponent.model->Draw(&renderableComponent.materials);
