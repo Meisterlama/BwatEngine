@@ -43,10 +43,10 @@ void WidgetProperties::ShowComponent<BwatEngine::RenderableComponent>(BwatEngine
 
             for(auto &model : meshList)
             {
-                bool selected = (modelName == model->modelPath.filename());
-                if(ImGui::Selectable(model->modelPath.filename().string().c_str(), selected))
+                bool selected = (modelName == model.c_str());
+                if(ImGui::Selectable(model.c_str(), selected))
                 {
-                    component.model = model;
+                    component.model = BwatEngine::ResourceManager::Instance()->GetOrLoadModel(model);
                 }
                 if(selected)
                     ImGui::SetItemDefaultFocus();
@@ -70,10 +70,10 @@ void WidgetProperties::ShowComponent<BwatEngine::RenderableComponent>(BwatEngine
 
                 for(auto &text : textList)
                 {
-                    bool selected = (DiffName == text->path);
-                    if(ImGui::Selectable(text->path.c_str(), selected))
+                    bool selected = (DiffName == text.c_str());
+                    if(ImGui::Selectable(text.c_str(), selected))
                     {
-                        component.materials[i]->diffuse = text;
+                        component.materials[i]->diffuse = BwatEngine::ResourceManager::Instance()->GetOrLoadTexture(text, Rendering::Texture::Type::E_DIFFUSE);
                     }
                     if(selected)
                         ImGui::SetItemDefaultFocus();
@@ -95,10 +95,10 @@ void WidgetProperties::ShowComponent<BwatEngine::RenderableComponent>(BwatEngine
 
                 for(auto &text : textList)
                 {
-                    bool selected = (SpecName == text->path);
-                    if(ImGui::Selectable(text->path.c_str(), selected))
+                    bool selected = (SpecName == text.c_str());
+                    if(ImGui::Selectable(text.c_str(), selected))
                     {
-                        component.materials[i]->specular = text;
+                        component.materials[i]->specular = BwatEngine::ResourceManager::Instance()->GetOrLoadTexture(text, Rendering::Texture::Type::E_SPECULAR);;
                     }
                     if(selected)
                         ImGui::SetItemDefaultFocus();

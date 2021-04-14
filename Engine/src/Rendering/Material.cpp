@@ -1,5 +1,6 @@
 #include "Rendering/Material.hpp"
 #include <assimp/material.h>
+#include "ResourceManager/ResourceManager.hpp"
 
 using namespace Rendering;
 
@@ -8,13 +9,13 @@ Material::Material(const aiMaterial& from)
     {
         aiString path;
         if (from.GetTexture(aiTextureType_DIFFUSE, 0, &path) == aiReturn_SUCCESS)
-            diffuse = new Texture(path.C_Str(), Rendering::Texture::Type::E_DIFFUSE); // TODO: use resrc manager 
+            diffuse =  BwatEngine::ResourceManager::Instance()->GetOrLoadTexture(path.C_Str(), Rendering::Texture::Type::E_DIFFUSE);
             
     }
     {
         aiString path;
         if (from.GetTexture(aiTextureType_SPECULAR, 0, &path) == aiReturn_SUCCESS)
-            specular = new Texture(path.C_Str(), Rendering::Texture::Type::E_SPECULAR);
+            specular = BwatEngine::ResourceManager::Instance()->GetOrLoadTexture(path.C_Str(), Rendering::Texture::Type::E_SPECULAR);
     }
     {
         //aiColor3D diffuseColor;

@@ -6,6 +6,9 @@
 #include <unordered_map>
 #include "Rendering/Model.hpp"
 
+
+
+
 namespace BwatEngine
 {
 
@@ -13,18 +16,9 @@ namespace BwatEngine
     {
     public:
 
-
-
         /* the instance for the singleton */
 
-        static ResourceManager* Instance()
-        {
-            static ResourceManager* instance = nullptr;
-            if (instance == nullptr)
-                instance = new ResourceManager;
-
-            return instance;
-        }
+        static ResourceManager* Instance();
 
         /* ************************************************************************* */
 
@@ -34,91 +28,33 @@ namespace BwatEngine
 
         /* ************************************************************************* */
 
-        /* All the load resources with template to call and stock on the good map */
+        /* All the load resources to call and stock on the good map */
 
-        //template<>
-        //void LoadResource<SoundResource>(const std::string& path);
-        Rendering::Model* LoadModel(std::string path)
-        {
-            auto it = models.emplace(path, std::make_unique<Rendering::Model>(path));
-            return it.first->second.get();
-        }
+        Rendering::Model* LoadModel(std::string path);
 
-        Rendering::Texture* LoadTexture(std::string path, Rendering::Texture::Type type)
-        {
-            auto it = textures.emplace(path, std::make_unique<Rendering::Texture>(path, type));
-            return it.first->second.get();
-        }
+        Rendering::Texture* LoadTexture(std::string path, Rendering::Texture::Type type);
 
         /* ************************************************************************* */
 
-        /* get the resources with the template type */
+        /* get the resources with the type */
 
-        /*template<>
-        //T* GetResource<SoundResource>(const char* path)
-        {
-            if (sounds.find(path) != sounds.cend())
-                return sounds[path];
+        Rendering::Model* GetOrLoadModel(std::string path);
 
-            return nullptr;
-        }
-        */
-
-        Rendering::Model* GetModel(std::string path)
-        {
-            auto it = models.find(path);
-            if (it != models.cend())
-                return it->second.get();
-
-            return nullptr;
-        }
-
-        Rendering::Model* GetOrLoadModel(std::string path)
-        {
-            Rendering::Model* res = ResourceManager::Instance()->GetModel(path);
-            return (res != nullptr) ? res : LoadModel(path);
-        }
-
-        Rendering::Texture* GetTexture(std::string path)
-        {
-            auto it = textures.find(path);
-            if (it != textures.cend())
-                return it->second.get();
-
-            return nullptr;
-        }
-
-        Rendering::Texture* GetOrLoadTexture(std::string path, Rendering::Texture::Type type)
-        {
-            Rendering::Texture* res = ResourceManager::Instance()->GetTexture(path);
-            return (res != nullptr) ? res : LoadTexture(path, type);
-        }
+        Rendering::Texture* GetOrLoadTexture(std::string path, Rendering::Texture::Type type);
 
         /* ************************************************************************* */
-        std::vector<Rendering::Model*> GetModelList()
-        {
-            std::vector<Rendering::Model*> modelList;
-            for (auto &it : models)
-            {
-                modelList.push_back(it.second.get());
-            }
-            return modelList;
-        }
 
-        std::vector<Rendering::Texture*> GetTextList()
-        {
-            std::vector<Rendering::Texture*> textList;
-            for (auto &it : textures)
-            {
-                textList.push_back(it.second.get());
-            }
-            return textList;
-        }
+        std::vector<std::string>& GetModelList();
+
+        std::vector<std::string>& GetTextList();
 
     private:
 
         ResourceManager() = default;
         static ResourceManager* instance;
+
+        bool dirtyModels = false;
+        bool dirtyTextures = false;
 
         /* all the maps that stores the resources */
         // add the rig for skinning animation
@@ -128,6 +64,14 @@ namespace BwatEngine
         std::unordered_map<std::string, std::unique_ptr<Rendering::Texture>> textures;
 
         /* ************************************************************************* */
+        std::vector<std::string> modelsKey;
+        void UpdateModelsKey();
+        std::vector<std::string> texturesKey;
+        void UpdateTexturesKey();
+
+        Rendering::Texture* GetTexture(std::string path);
+        Rendering::Model* GetModel(std::string path);
+
 
     };
 }
