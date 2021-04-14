@@ -22,13 +22,17 @@ namespace BwatEngine
      */
     class Coordinator
     {
-        ComponentManager componentManager;
-        EntityManager entityManager;
-        SystemManager systemManager;
+        ComponentManager componentManager{};
+        EntityManager entityManager{};
+        SystemManager systemManager{};
 
-        std::unordered_map<EntityID, SceneNode> sceneMap;
+        std::vector<EntityID> entities{};
+        std::unordered_map<EntityID, SceneNode> sceneMap{};
 
-        Coordinator() = default;
+        Coordinator()
+        {
+            entities.reserve(MAX_ENTITIES);
+        }
         ~Coordinator() = default;
 
     public:
@@ -53,6 +57,11 @@ namespace BwatEngine
          * @warning Destroying non existing entity result in undefined behavior
          */
         void DestroyEntity(EntityID entity);
+
+        /**
+         * @return a copy of the entity list
+         */
+        std::vector<EntityID> GetEntitiesList() const;
 
         /**
          * @brief Register the component of type \p C to the ComponentManager

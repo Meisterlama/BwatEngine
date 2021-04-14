@@ -8,7 +8,6 @@
 
 namespace BwatEngine
 {
-    class Entity;
     class System;
     class SystemManager
     {

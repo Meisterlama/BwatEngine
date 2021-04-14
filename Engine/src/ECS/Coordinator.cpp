@@ -11,6 +11,7 @@ namespace BwatEngine
     EntityID Coordinator::CreateEntity()
     {
             auto entity = entityManager.CreateEntity();
+            entities.push_back(entity);
             sceneMap[entity].id = entity;
             return entity;
     }
@@ -23,12 +24,19 @@ namespace BwatEngine
 
         systemManager.EntityDestroyed(entity);
 
-        sceneMap[entity].parent = nullptr;
-        sceneMap[entity].id = 0;
+        entities[entity] = entities.back();
+        entities.pop_back();
+
         for (auto& node : sceneMap[entity].children)
         {
             node->parent = nullptr;
         }
+        sceneMap.erase(entity);
+    }
+
+    std::vector<EntityID> Coordinator::GetEntitiesList() const
+    {
+        return entities;
     }
 
     Signature Coordinator::GetEntitySignature(EntityID entity)
