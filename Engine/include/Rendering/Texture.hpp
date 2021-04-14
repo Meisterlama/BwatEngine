@@ -12,7 +12,7 @@ namespace Rendering
 {
     struct Texture
     {
-        enum class Type
+        enum class Format
         {
             E_DIFFUSE,
             E_SPECULAR,
@@ -21,13 +21,13 @@ namespace Rendering
         };
       
         GLuint id;
-        Type type;
+        Format type;
         std::string path;
 
         Texture() = delete;
         Texture(const Texture&) = delete;
 
-        Texture(const std::string& path, Type type);
+        Texture(const std::string& path, Format type);
         ~Texture();
 
         Texture(int width, int height);

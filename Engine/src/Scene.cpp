@@ -46,8 +46,10 @@ std::vector<Rendering::Light>& Scene::GetLights()
 	return lights;
 }
 
+
+
 Scene::Scene(Window& window)
-    : texture("Assets/image/moteur.jpg",Rendering::Texture::Type::E_DIFFUSE), texture1("Assets/image/green.png", Rendering::Texture::Type::E_DIFFUSE)
+    : texture(BwatEngine::ResourceManager::Instance()->GetOrLoadTexture("Assets/image/moteur.jpg",Rendering::Texture::Format::E_DIFFUSE)), texture1(BwatEngine::ResourceManager::Instance()->GetOrLoadTexture("Assets/image/green.png", Rendering::Texture::Format::E_DIFFUSE))
 {
     Coordinator& coordinator = *Coordinator::GetInstance();
     coordinator.Init();
@@ -113,12 +115,11 @@ Scene::Scene(Window& window)
     soundSystem->Init();
 
     //Rendering::Model mymodel = Rendering::Model{ (std::string) "Assets/bag/backpack.obj" };
-    model = Rendering::Model{"Assets/cube.obj" };
+    model = BwatEngine::ResourceManager::Instance()->GetOrLoadModel("Assets/cube.obj");;
 
-    BwatEngine::ResourceManager::Instance()->GetOrLoadModel("Assets/cube.obj");
-   // BwatEngine::ResourceManager::Instance()->GetOrLoadModel("Assets/sphere.obj");
-    BwatEngine::ResourceManager::Instance()->GetOrLoadTexture("Assets/image/green.png", Rendering::Texture::Type::E_DIFFUSE);
-    BwatEngine::ResourceManager::Instance()->GetOrLoadTexture("Assets/image/moteur.jpg", Rendering::Texture::Type::E_DIFFUSE);
+    BwatEngine::ResourceManager::Instance()->GetOrLoadModel("Assets/sphere.obj");
+    BwatEngine::ResourceManager::Instance()->GetOrLoadTexture("Assets/image/green.png", Rendering::Texture::Format::E_DIFFUSE);
+    BwatEngine::ResourceManager::Instance()->GetOrLoadTexture("Assets/image/moteur.jpg", Rendering::Texture::Format::E_DIFFUSE);
     Audio::AudioData audioData = Audio::LoadWavFile("Assets/pop.wav");
 
     std::default_random_engine generator;
@@ -132,8 +133,8 @@ Scene::Scene(Window& window)
 
     entities = std::vector<Entity>(50);
     
-    myMat.SetDiffuse(texture);
-    myMat1.SetDiffuse(texture1);
+    myMat.SetDiffuse(*texture);
+    myMat1.SetDiffuse(*texture1);
     
         for (Entity i = 0; i < entities.size(); i++)
         {
@@ -163,7 +164,7 @@ Scene::Scene(Window& window)
                 coordinator.AddComponent<RigidBodyComponent>(entities[i], { {eTransform , true} });
 
                 coordinator.AddComponent<ColliderComponent>(entities[i], { new BoxCollider{eTransform.scale} });
-                coordinator.AddComponent<RenderableComponent>(entities[i],{ &model });
+                coordinator.AddComponent<RenderableComponent>(entities[i],{ model });
 
                 auto& renderableComponent = coordinator.GetComponent<RenderableComponent>(entities[i]);
                 renderableComponent.materials[0] = &myMat;
@@ -182,7 +183,7 @@ Scene::Scene(Window& window)
                 coordinator.AddComponent<RigidBodyComponent>(entities[i], { {eTransform} });
 
                 coordinator.AddComponent<ColliderComponent>(entities[i], { new BoxCollider{eTransform.scale} });
-                coordinator.AddComponent<RenderableComponent>(entities[i],{ &model });
+                coordinator.AddComponent<RenderableComponent>(entities[i],{ model });
 
                 auto& renderableComponent = coordinator.GetComponent<RenderableComponent>(entities[i]);
                 renderableComponent.materials[0] = &myMat1;

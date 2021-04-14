@@ -32,7 +32,7 @@ namespace BwatEngine
 
         Rendering::Model* LoadModel(std::string path);
 
-        Rendering::Texture* LoadTexture(std::string path, Rendering::Texture::Type type);
+        Rendering::Texture* LoadTexture(std::string path, Rendering::Texture::Format type);
 
         /* ************************************************************************* */
 
@@ -40,7 +40,7 @@ namespace BwatEngine
 
         Rendering::Model* GetOrLoadModel(std::string path);
 
-        Rendering::Texture* GetOrLoadTexture(std::string path, Rendering::Texture::Type type);
+        Rendering::Texture* GetOrLoadTexture(std::string path, Rendering::Texture::Format type);
 
         /* ************************************************************************* */
 
