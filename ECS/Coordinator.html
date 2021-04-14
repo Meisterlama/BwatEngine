@@ -176,199 +176,192 @@
 <dt id="_CPPv4N10BwatEngine11Coordinator12CreateEntityEv">
 <span id="_CPPv3N10BwatEngine11Coordinator12CreateEntityEv"></span><span id="_CPPv2N10BwatEngine11Coordinator12CreateEntityEv"></span><span id="BwatEngine::Coordinator::CreateEntity"></span><span class="target" id="classBwatEngine_1_1Coordinator_1a06ac96e7d3f8b79caf5f566aee86f522"></span><em class="property"><span class="pre">inline</span></em> <span class="pre">Entity</span> <code class="sig-name descname"><span class="pre">CreateEntity</span></code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#_CPPv4N10BwatEngine11Coordinator12CreateEntityEv" title="Permalink to this definition">¶</a><br /></dt>
 <dd><p>Find a valid entity ID, reserve it and return it. </p>
-<p><dl class="simple">
-<dt><strong>Return</strong></dt><dd><p>The created entity ID </p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns</dt>
+<dd class="field-odd"><p>The created entity ID </p>
 </dd>
 </dl>
-</p>
 </dd></dl>
 
 <dl class="cpp function">
 <dt id="_CPPv4N10BwatEngine11Coordinator13DestroyEntityE6Entity">
 <span id="_CPPv3N10BwatEngine11Coordinator13DestroyEntityE6Entity"></span><span id="_CPPv2N10BwatEngine11Coordinator13DestroyEntityE6Entity"></span><span id="BwatEngine::Coordinator::DestroyEntity__Entity"></span><span class="target" id="classBwatEngine_1_1Coordinator_1a3a4a232fc8e6d8d950ea3366835ecdc0"></span><em class="property"><span class="pre">inline</span></em> <span class="pre">void</span> <code class="sig-name descname"><span class="pre">DestroyEntity</span></code><span class="sig-paren">(</span><span class="pre">Entity</span> <em><span class="pre">entity</span></em><span class="sig-paren">)</span><a class="headerlink" href="#_CPPv4N10BwatEngine11Coordinator13DestroyEntityE6Entity" title="Permalink to this definition">¶</a><br /></dt>
 <dd><p>Destroy the given <code class="docutils literal notranslate"><span class="pre">entity</span></code> from every managers, removing it from the scene hierarchy. </p>
-<p><dl class="simple">
-<dt><strong>Warning</strong></dt><dd><p>Destroying non existing entity result in undefined behavior </p>
-</dd>
-<dt><strong>Parameters</strong></dt><dd><ul class="breatheparameterlist simple">
-<li><p><code class="docutils literal notranslate"><span class="pre">entity</span></code>: Entity ID </p></li>
-</ul>
+<div class="admonition warning">
+<p class="admonition-title">Warning</p>
+<p>Destroying non existing entity result in undefined behavior </p>
+</div>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>entity</strong> – Entity ID </p>
 </dd>
 </dl>
-</p>
 </dd></dl>
 
 <dl class="cpp function">
 <dt id="_CPPv4I0EN10BwatEngine11Coordinator17RegisterComponentEvv">
 <span id="_CPPv3I0EN10BwatEngine11Coordinator17RegisterComponentEv"></span><span id="_CPPv2I0EN10BwatEngine11Coordinator17RegisterComponentEv"></span><span class="pre">template&lt;</span><span class="pre">typename</span> <code class="sig-name descname"><span class="pre">T</span></code><span class="pre">&gt;</span><br /><span class="target" id="classBwatEngine_1_1Coordinator_1a37506f96fc4581137e613e277344e366"></span><em class="property"><span class="pre">inline</span></em> <span class="pre">void</span> <code class="sig-name descname"><span class="pre">RegisterComponent</span></code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#_CPPv4I0EN10BwatEngine11Coordinator17RegisterComponentEvv" title="Permalink to this definition">¶</a><br /></dt>
 <dd><p>Register the component of type <code class="docutils literal notranslate"><span class="pre">T</span></code> to the ComponentManager. </p>
-<p><dl class="simple">
-<dt><strong>Warning</strong></dt><dd><p>Registering a component twice is invalid </p>
-</dd>
-<dt><strong>Template Parameters</strong></dt><dd><ul class="breatheparameterlist simple">
-<li><p><code class="docutils literal notranslate"><span class="pre">T</span></code>: Component type to register </p></li>
-</ul>
+<div class="admonition warning">
+<p class="admonition-title">Warning</p>
+<p>Registering a component twice is invalid </p>
+</div>
+<dl class="field-list simple">
+<dt class="field-odd">Template Parameters</dt>
+<dd class="field-odd"><p><strong>T</strong> – Component type to register </p>
 </dd>
 </dl>
-</p>
 </dd></dl>
 
 <dl class="cpp function">
 <dt id="_CPPv4I0EN10BwatEngine11Coordinator12AddComponentEv6EntityRR1T">
 <span id="_CPPv3I0EN10BwatEngine11Coordinator12AddComponentE6EntityRR1T"></span><span id="_CPPv2I0EN10BwatEngine11Coordinator12AddComponentE6EntityRR1T"></span><span class="pre">template&lt;</span><span class="pre">typename</span> <code class="sig-name descname"><span class="pre">T</span></code><span class="pre">&gt;</span><br /><span class="target" id="classBwatEngine_1_1Coordinator_1aef8fcec1f314509347f53025db7b02c1"></span><em class="property"><span class="pre">inline</span></em> <span class="pre">void</span> <code class="sig-name descname"><span class="pre">AddComponent</span></code><span class="sig-paren">(</span><span class="pre">Entity</span> <em><span class="pre">entity</span></em>, <a class="reference internal" href="#_CPPv4I0EN10BwatEngine11Coordinator12AddComponentEv6EntityRR1T" title="BwatEngine::Coordinator::AddComponent::T"><span class="pre">T</span></a> <span class="pre">&amp;</span><span class="pre">&amp;</span><em><span class="pre">component</span></em><span class="sig-paren">)</span><a class="headerlink" href="#_CPPv4I0EN10BwatEngine11Coordinator12AddComponentEv6EntityRR1T" title="Permalink to this definition">¶</a><br /></dt>
 <dd><p>Add a component \T to the given <code class="docutils literal notranslate"><span class="pre">entity</span></code>. </p>
-<p><dl class="simple">
-<dt><strong>Warning</strong></dt><dd><p>Adding a component that an entity already has is invalid </p>
+<div class="admonition warning">
+<p class="admonition-title">Warning</p>
+<p>Adding a component that an entity already has is invalid </p>
+</div>
+<dl class="field-list simple">
+<dt class="field-odd">Template Parameters</dt>
+<dd class="field-odd"><p><strong>T</strong> – Added component’s type </p>
 </dd>
-<dt><strong>Template Parameters</strong></dt><dd><ul class="breatheparameterlist simple">
-<li><p><code class="docutils literal notranslate"><span class="pre">T</span></code>: Added component’s type </p></li>
-</ul>
-</dd>
-<dt><strong>Parameters</strong></dt><dd><ul class="breatheparameterlist simple">
-<li><p><code class="docutils literal notranslate"><span class="pre">entity</span></code>: Entity ID </p></li>
-<li><p><code class="docutils literal notranslate"><span class="pre">component</span></code>: Component’s data (existing one or in place constructor) </p></li>
+<dt class="field-even">Parameters</dt>
+<dd class="field-even"><ul class="simple">
+<li><p><strong>entity</strong> – Entity ID </p></li>
+<li><p><strong>component</strong> – Component’s data (existing one or in place constructor) </p></li>
 </ul>
 </dd>
 </dl>
-</p>
 </dd></dl>
 
 <dl class="cpp function">
 <dt id="_CPPv4I0EN10BwatEngine11Coordinator15RemoveComponentEv6Entity">
 <span id="_CPPv3I0EN10BwatEngine11Coordinator15RemoveComponentE6Entity"></span><span id="_CPPv2I0EN10BwatEngine11Coordinator15RemoveComponentE6Entity"></span><span class="pre">template&lt;</span><span class="pre">typename</span> <code class="sig-name descname"><span class="pre">T</span></code><span class="pre">&gt;</span><br /><span class="target" id="classBwatEngine_1_1Coordinator_1a738cd3906276f7d7b0869e63e1782666"></span><em class="property"><span class="pre">inline</span></em> <span class="pre">void</span> <code class="sig-name descname"><span class="pre">RemoveComponent</span></code><span class="sig-paren">(</span><span class="pre">Entity</span> <em><span class="pre">entity</span></em><span class="sig-paren">)</span><a class="headerlink" href="#_CPPv4I0EN10BwatEngine11Coordinator15RemoveComponentEv6Entity" title="Permalink to this definition">¶</a><br /></dt>
 <dd><p>Remove the component <code class="docutils literal notranslate"><span class="pre">T</span></code> from the given <code class="docutils literal notranslate"><span class="pre">entity</span></code>. </p>
-<p><dl class="simple">
-<dt><strong>Warning</strong></dt><dd><p>Removing inexistant component is not valid </p>
+<div class="admonition warning">
+<p class="admonition-title">Warning</p>
+<p>Removing inexistant component is not valid </p>
+</div>
+<dl class="field-list simple">
+<dt class="field-odd">Template Parameters</dt>
+<dd class="field-odd"><p><strong>T</strong> – Removed component’s type </p>
 </dd>
-<dt><strong>Template Parameters</strong></dt><dd><ul class="breatheparameterlist simple">
-<li><p><code class="docutils literal notranslate"><span class="pre">T</span></code>: Removed component’s type </p></li>
-</ul>
-</dd>
-<dt><strong>Parameters</strong></dt><dd><ul class="breatheparameterlist simple">
-<li><p><code class="docutils literal notranslate"><span class="pre">entity</span></code>: Entity ID </p></li>
-</ul>
+<dt class="field-even">Parameters</dt>
+<dd class="field-even"><p><strong>entity</strong> – Entity ID </p>
 </dd>
 </dl>
-</p>
 </dd></dl>
 
 <dl class="cpp function">
 <dt id="_CPPv4I0EN10BwatEngine11Coordinator12GetComponentER1T6Entity">
 <span id="_CPPv3I0EN10BwatEngine11Coordinator12GetComponentE6Entity"></span><span id="_CPPv2I0EN10BwatEngine11Coordinator12GetComponentE6Entity"></span><span class="pre">template&lt;</span><span class="pre">typename</span> <code class="sig-name descname"><span class="pre">T</span></code><span class="pre">&gt;</span><br /><span class="target" id="classBwatEngine_1_1Coordinator_1a0ab3a7062a868c782ee197a1d2b94b28"></span><em class="property"><span class="pre">inline</span></em> <a class="reference internal" href="#_CPPv4I0EN10BwatEngine11Coordinator12GetComponentER1T6Entity" title="BwatEngine::Coordinator::GetComponent::T"><span class="pre">T</span></a> <span class="pre">&amp;</span><code class="sig-name descname"><span class="pre">GetComponent</span></code><span class="sig-paren">(</span><span class="pre">Entity</span> <em><span class="pre">entity</span></em><span class="sig-paren">)</span><a class="headerlink" href="#_CPPv4I0EN10BwatEngine11Coordinator12GetComponentER1T6Entity" title="Permalink to this definition">¶</a><br /></dt>
 <dd><p>Get the component <code class="docutils literal notranslate"><span class="pre">T</span></code> from the <code class="docutils literal notranslate"><span class="pre">entity</span></code>. </p>
-<p><dl class="simple">
-<dt><strong>Return</strong></dt><dd><p>A reference to the component </p>
+<dl class="field-list simple">
+<dt class="field-odd">Template Parameters</dt>
+<dd class="field-odd"><p><strong>T</strong> – Type of the component to get </p>
 </dd>
-<dt><strong>Template Parameters</strong></dt><dd><ul class="breatheparameterlist simple">
-<li><p><code class="docutils literal notranslate"><span class="pre">T</span></code>: Type of the component to get </p></li>
-</ul>
+<dt class="field-even">Parameters</dt>
+<dd class="field-even"><p><strong>entity</strong> – Entity ID </p>
 </dd>
-<dt><strong>Parameters</strong></dt><dd><ul class="breatheparameterlist simple">
-<li><p><code class="docutils literal notranslate"><span class="pre">entity</span></code>: Entity ID </p></li>
-</ul>
+<dt class="field-odd">Returns</dt>
+<dd class="field-odd"><p>A reference to the component </p>
 </dd>
 </dl>
-</p>
 </dd></dl>
 
 <dl class="cpp function">
 <dt id="_CPPv4I0EN10BwatEngine11Coordinator16GetComponentTypeE13ComponentTypev">
 <span id="_CPPv3I0EN10BwatEngine11Coordinator16GetComponentTypeEv"></span><span id="_CPPv2I0EN10BwatEngine11Coordinator16GetComponentTypeEv"></span><span class="pre">template&lt;</span><span class="pre">typename</span> <code class="sig-name descname"><span class="pre">T</span></code><span class="pre">&gt;</span><br /><span class="target" id="classBwatEngine_1_1Coordinator_1aaeb0787e3b00d078f8b344e8131e49b5"></span><em class="property"><span class="pre">inline</span></em> <span class="pre">ComponentType</span> <code class="sig-name descname"><span class="pre">GetComponentType</span></code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#_CPPv4I0EN10BwatEngine11Coordinator16GetComponentTypeE13ComponentTypev" title="Permalink to this definition">¶</a><br /></dt>
-<dd><p><dl class="simple">
-<dt><strong>Return</strong></dt><dd><p>The component’s internal ID </p>
+<dd><dl class="field-list simple">
+<dt class="field-odd">Template Parameters</dt>
+<dd class="field-odd"><p><strong>T</strong> – Component’s type </p>
 </dd>
-<dt><strong>Template Parameters</strong></dt><dd><ul class="breatheparameterlist simple">
-<li><p><code class="docutils literal notranslate"><span class="pre">T</span></code>: Component’s type </p></li>
-</ul>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>The component’s internal ID </p>
 </dd>
 </dl>
-</p>
 </dd></dl>
 
 <dl class="cpp function">
 <dt id="_CPPv4I0EN10BwatEngine11Coordinator14RegisterSystemENSt10shared_ptrI1TEEv">
 <span id="_CPPv3I0EN10BwatEngine11Coordinator14RegisterSystemEv"></span><span id="_CPPv2I0EN10BwatEngine11Coordinator14RegisterSystemEv"></span><span class="pre">template&lt;</span><span class="pre">typename</span> <code class="sig-name descname"><span class="pre">T</span></code><span class="pre">&gt;</span><br /><span class="target" id="classBwatEngine_1_1Coordinator_1a718a243fcc89082d5f1acf722adaeaa7"></span><em class="property"><span class="pre">inline</span></em> <span class="pre">std</span><span class="pre">::</span><span class="pre">shared_ptr</span><span class="pre">&lt;</span><a class="reference internal" href="#_CPPv4I0EN10BwatEngine11Coordinator14RegisterSystemENSt10shared_ptrI1TEEv" title="BwatEngine::Coordinator::RegisterSystem::T"><span class="pre">T</span></a><span class="pre">&gt;</span> <code class="sig-name descname"><span class="pre">RegisterSystem</span></code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#_CPPv4I0EN10BwatEngine11Coordinator14RegisterSystemENSt10shared_ptrI1TEEv" title="Permalink to this definition">¶</a><br /></dt>
 <dd><p>Register the system to the internal manager. </p>
-<p><dl class="simple">
-<dt><strong>Return</strong></dt><dd><p>A pointer to the registered system </p>
+<dl class="field-list simple">
+<dt class="field-odd">Template Parameters</dt>
+<dd class="field-odd"><p><strong>T</strong> – System’s type </p>
 </dd>
-<dt><strong>Template Parameters</strong></dt><dd><ul class="breatheparameterlist simple">
-<li><p><code class="docutils literal notranslate"><span class="pre">T</span></code>: System’s type </p></li>
-</ul>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>A pointer to the registered system </p>
 </dd>
 </dl>
-</p>
 </dd></dl>
 
 <dl class="cpp function">
 <dt id="_CPPv4I0EN10BwatEngine11Coordinator18SetSystemSignatureEv9Signature">
 <span id="_CPPv3I0EN10BwatEngine11Coordinator18SetSystemSignatureE9Signature"></span><span id="_CPPv2I0EN10BwatEngine11Coordinator18SetSystemSignatureE9Signature"></span><span class="pre">template&lt;</span><span class="pre">typename</span> <code class="sig-name descname"><span class="pre">T</span></code><span class="pre">&gt;</span><br /><span class="target" id="classBwatEngine_1_1Coordinator_1ab4a80cdfc367ba8ea95963c6ebc5f1b3"></span><em class="property"><span class="pre">inline</span></em> <span class="pre">void</span> <code class="sig-name descname"><span class="pre">SetSystemSignature</span></code><span class="sig-paren">(</span><span class="pre">Signature</span> <em><span class="pre">signature</span></em><span class="sig-paren">)</span><a class="headerlink" href="#_CPPv4I0EN10BwatEngine11Coordinator18SetSystemSignatureEv9Signature" title="Permalink to this definition">¶</a><br /></dt>
 <dd><p>Set the accepted <code class="docutils literal notranslate"><span class="pre">signature</span></code> for the given system. </p>
-<p><dl class="simple">
-<dt><strong>Template Parameters</strong></dt><dd><ul class="breatheparameterlist simple">
-<li><p><code class="docutils literal notranslate"><span class="pre">T</span></code>: System’s type </p></li>
-</ul>
+<dl class="field-list simple">
+<dt class="field-odd">Template Parameters</dt>
+<dd class="field-odd"><p><strong>T</strong> – System’s type </p>
 </dd>
-<dt><strong>Parameters</strong></dt><dd><ul class="breatheparameterlist simple">
-<li><p><code class="docutils literal notranslate"><span class="pre">signature</span></code>: Signature accepted by the system </p></li>
-</ul>
+<dt class="field-even">Parameters</dt>
+<dd class="field-even"><p><strong>signature</strong> – Signature accepted by the system </p>
 </dd>
 </dl>
-</p>
 </dd></dl>
 
 <dl class="cpp function">
 <dt id="_CPPv4N10BwatEngine11Coordinator18GetEntitySignatureE6Entity">
 <span id="_CPPv3N10BwatEngine11Coordinator18GetEntitySignatureE6Entity"></span><span id="_CPPv2N10BwatEngine11Coordinator18GetEntitySignatureE6Entity"></span><span id="BwatEngine::Coordinator::GetEntitySignature__Entity"></span><span class="target" id="classBwatEngine_1_1Coordinator_1a955ba8d43602ce366f306c6df022d37d"></span><em class="property"><span class="pre">inline</span></em> <span class="pre">Signature</span> <code class="sig-name descname"><span class="pre">GetEntitySignature</span></code><span class="sig-paren">(</span><span class="pre">Entity</span> <em><span class="pre">entity</span></em><span class="sig-paren">)</span><a class="headerlink" href="#_CPPv4N10BwatEngine11Coordinator18GetEntitySignatureE6Entity" title="Permalink to this definition">¶</a><br /></dt>
-<dd><p><dl class="simple">
-<dt><strong>Return</strong></dt><dd><p>The signature of the given <code class="docutils literal notranslate"><span class="pre">entity</span></code> </p>
+<dd><dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>entity</strong> – Entity ID </p>
 </dd>
-<dt><strong>Parameters</strong></dt><dd><ul class="breatheparameterlist simple">
-<li><p><code class="docutils literal notranslate"><span class="pre">entity</span></code>: Entity ID </p></li>
-</ul>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>The signature of the given <code class="docutils literal notranslate"><span class="pre">entity</span></code> </p>
 </dd>
 </dl>
-</p>
 </dd></dl>
 
 <dl class="cpp function">
 <dt id="_CPPv4N10BwatEngine11Coordinator9SetParentE6Entity6Entity">
 <span id="_CPPv3N10BwatEngine11Coordinator9SetParentE6Entity6Entity"></span><span id="_CPPv2N10BwatEngine11Coordinator9SetParentE6Entity6Entity"></span><span id="BwatEngine::Coordinator::SetParent__Entity.Entity"></span><span class="target" id="classBwatEngine_1_1Coordinator_1ac9af2c5a0eb56977e7940ea700d4243b"></span><em class="property"><span class="pre">inline</span></em> <span class="pre">void</span> <code class="sig-name descname"><span class="pre">SetParent</span></code><span class="sig-paren">(</span><span class="pre">Entity</span> <em><span class="pre">entity</span></em>, <span class="pre">Entity</span> <em><span class="pre">parent</span></em><span class="sig-paren">)</span><a class="headerlink" href="#_CPPv4N10BwatEngine11Coordinator9SetParentE6Entity6Entity" title="Permalink to this definition">¶</a><br /></dt>
 <dd><p>Set the parent entity in the internal scene graph. </p>
-<p><dl class="simple">
-<dt><strong>Parameters</strong></dt><dd><ul class="breatheparameterlist simple">
-<li><p><code class="docutils literal notranslate"><span class="pre">entity</span></code>: Entity ID </p></li>
-<li><p><code class="docutils literal notranslate"><span class="pre">parent</span></code>: Parent entity ID </p></li>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>entity</strong> – Entity ID </p></li>
+<li><p><strong>parent</strong> – Parent entity ID </p></li>
 </ul>
 </dd>
 </dl>
-</p>
 </dd></dl>
 
 <dl class="cpp function">
 <dt id="_CPPv4N10BwatEngine11Coordinator7GetNodeE6Entity">
 <span id="_CPPv3N10BwatEngine11Coordinator7GetNodeE6Entity"></span><span id="_CPPv2N10BwatEngine11Coordinator7GetNodeE6Entity"></span><span id="BwatEngine::Coordinator::GetNode__Entity"></span><span class="target" id="classBwatEngine_1_1Coordinator_1a43be1a85c58d5b70cd226140f8cc0b77"></span><em class="property"><span class="pre">inline</span></em> <span class="pre">SceneNode</span> <span class="pre">&amp;</span><code class="sig-name descname"><span class="pre">GetNode</span></code><span class="sig-paren">(</span><span class="pre">Entity</span> <em><span class="pre">entity</span></em><span class="sig-paren">)</span><a class="headerlink" href="#_CPPv4N10BwatEngine11Coordinator7GetNodeE6Entity" title="Permalink to this definition">¶</a><br /></dt>
-<dd><p><dl class="simple">
-<dt><strong>Return</strong></dt><dd><p>Get the scene graph’s node associated to entity </p>
+<dd><dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>entity</strong> – Entity ID </p>
 </dd>
-<dt><strong>Parameters</strong></dt><dd><ul class="breatheparameterlist simple">
-<li><p><code class="docutils literal notranslate"><span class="pre">entity</span></code>: Entity ID </p></li>
-</ul>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>Get the scene graph’s node associated to entity </p>
 </dd>
 </dl>
-</p>
 </dd></dl>
 
 <dl class="cpp function">
 <dt id="_CPPv4N10BwatEngine11Coordinator15GetRootEntitiesEv">
 <span id="_CPPv3N10BwatEngine11Coordinator15GetRootEntitiesEv"></span><span id="_CPPv2N10BwatEngine11Coordinator15GetRootEntitiesEv"></span><span id="BwatEngine::Coordinator::GetRootEntities"></span><span class="target" id="classBwatEngine_1_1Coordinator_1a84f5d0f2c511d0f16eb74af50db339e6"></span><em class="property"><span class="pre">inline</span></em> <span class="pre">std</span><span class="pre">::</span><span class="pre">vector</span><span class="pre">&lt;</span><span class="pre">Entity</span><span class="pre">&gt;</span> <code class="sig-name descname"><span class="pre">GetRootEntities</span></code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#_CPPv4N10BwatEngine11Coordinator15GetRootEntitiesEv" title="Permalink to this definition">¶</a><br /></dt>
-<dd><p><dl class="simple">
-<dt><strong>Return</strong></dt><dd><p>A std::vector of every entities that does not have a parent </p>
-</dd>
-<dt><strong>Warning</strong></dt><dd><p>Current implementation iterates over every entities without caching </p>
+<dd><div class="admonition warning">
+<p class="admonition-title">Warning</p>
+<p>Current implementation iterates over every entities without caching </p>
+</div>
+<dl class="field-list simple">
+<dt class="field-odd">Returns</dt>
+<dd class="field-odd"><p>A std::vector of every entities that does not have a parent </p>
 </dd>
 </dl>
-</p>
 </dd></dl>
 
 </div>
@@ -377,11 +370,11 @@
 <dl class="cpp function">
 <dt id="_CPPv4N10BwatEngine11Coordinator11GetInstanceEv">
 <span id="_CPPv3N10BwatEngine11Coordinator11GetInstanceEv"></span><span id="_CPPv2N10BwatEngine11Coordinator11GetInstanceEv"></span><span id="BwatEngine::Coordinator::GetInstance"></span><span class="target" id="classBwatEngine_1_1Coordinator_1a0f2751e7c0cc8f45d153b276bbc6c82d"></span><em class="property"><span class="pre">static</span></em> <em class="property"><span class="pre">inline</span></em> <a class="reference internal" href="#_CPPv4N10BwatEngine11CoordinatorE" title="BwatEngine::Coordinator"><span class="pre">Coordinator</span></a> <span class="pre">*</span><code class="sig-name descname"><span class="pre">GetInstance</span></code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#_CPPv4N10BwatEngine11Coordinator11GetInstanceEv" title="Permalink to this definition">¶</a><br /></dt>
-<dd><p><dl class="simple">
-<dt><strong>Return</strong></dt><dd><p>A handle to the <a class="reference internal" href="../ECSQuickstart.html#classBwatEngine_1_1Coordinator"><span class="std std-ref">Coordinator</span></a> instance </p>
+<dd><dl class="field-list simple">
+<dt class="field-odd">Returns</dt>
+<dd class="field-odd"><p>A handle to the <a class="reference internal" href="../ECSQuickstart.html#classBwatEngine_1_1Coordinator"><span class="std std-ref">Coordinator</span></a> instance </p>
 </dd>
 </dl>
-</p>
 </dd></dl>
 
 </div>
