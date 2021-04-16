@@ -1,7 +1,7 @@
 #ifndef SCRIPT_COMPONENT_HPP
 #define SCRIPT_COMPONENT_HPP
 
-#include "Core.hpp"
+#include "ECS/ECS.hpp"
 namespace BwatEngine
 {
 
@@ -11,7 +11,7 @@ public :
 
 	bool isStarted = false;
 
-	Entity  entity;
+	EntityID  entity;
 
 	virtual void Update() = 0;
 	virtual void Start() = 0;

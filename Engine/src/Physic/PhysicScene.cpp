@@ -10,27 +10,33 @@ using namespace BwatEngine;
 
 void ContactReportCallback::onContact(const PxContactPairHeader& pairHeader, const PxContactPair* pairs, PxU32 nbPairs)
 {
-	PX_UNUSED((pairHeader));
+	contacts.push_back({ pairHeader, pairs[0].flags });
+}
 
-	BwatEngine::RigidBody* actor0 = (BwatEngine::RigidBody*)pairHeader.actors[0]->userData;
-	BwatEngine::RigidBody* actor1 = (BwatEngine::RigidBody*)pairHeader.actors[1]->userData;
-	
-	if (pairs[0].flags.isSet(PxContactPairFlag::Enum::eACTOR_PAIR_HAS_FIRST_TOUCH))
+void ContactReportCallback::Flush()
+{
+	for (const Contact& contact : contacts)
 	{
-		actor1->OnContact(*actor0, COLLISION_TYPE::OnEnterCollision);
-		actor0->OnContact(*actor1, COLLISION_TYPE::OnEnterCollision);
+		BwatEngine::RigidBody& actor0 = *(BwatEngine::RigidBody*)contact.pairHeader.actors[0]->userData;
+		BwatEngine::RigidBody& actor1 = *(BwatEngine::RigidBody*)contact.pairHeader.actors[1]->userData;
+
+		if (contact.flags.isSet(PxContactPairFlag::Enum::eACTOR_PAIR_HAS_FIRST_TOUCH))
+		{
+			actor1.OnContact(actor0, COLLISION_TYPE::OnEnterCollision);
+			actor0.OnContact(actor1, COLLISION_TYPE::OnEnterCollision);
+		}
+
+		actor1.OnContact(actor0, COLLISION_TYPE::OnStayCollision);
+		actor0.OnContact(actor1, COLLISION_TYPE::OnStayCollision);
+
+		if (contact.flags.isSet(PxContactPairFlag::Enum::eACTOR_PAIR_LOST_TOUCH))
+		{
+			actor1.OnContact(actor0, COLLISION_TYPE::OnExitCollision);
+			actor0.OnContact(actor1, COLLISION_TYPE::OnExitCollision);
+		}
 	}
 
-	actor1->OnContact(*actor0, COLLISION_TYPE::OnStayCollision);
-	actor0->OnContact(*actor1, COLLISION_TYPE::OnStayCollision);
-
-	if (pairs[0].flags.isSet(PxContactPairFlag::Enum::eACTOR_PAIR_LOST_TOUCH))
-	{
-		actor1->OnContact(*actor0, COLLISION_TYPE::OnExitCollision);
-		actor0->OnContact(*actor1, COLLISION_TYPE::OnExitCollision);
-	}
-
-	
+	contacts.clear();
 }
 
 PxFilterFlags contactReportFilterShader(PxFilterObjectAttributes attributes0, PxFilterData filterData0,
@@ -48,7 +54,8 @@ PxFilterFlags contactReportFilterShader(PxFilterObjectAttributes attributes0, Px
 	pairFlags = PxPairFlag::eSOLVE_CONTACT | PxPairFlag::eDETECT_DISCRETE_CONTACT
 		| PxPairFlag::eNOTIFY_TOUCH_FOUND
 		| PxPairFlag::eNOTIFY_TOUCH_PERSISTS
-		| PxPairFlag::eNOTIFY_CONTACT_POINTS | PxPairFlag::eNOTIFY_TOUCH_LOST; 
+		| PxPairFlag::eNOTIFY_CONTACT_POINTS 
+		| PxPairFlag::eNOTIFY_TOUCH_LOST; 
 	return PxFilterFlag::eDEFAULT;
 }
 

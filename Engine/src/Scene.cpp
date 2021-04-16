@@ -136,7 +136,7 @@ Scene::Scene(Window& window)
     myMat.SetDiffuse(*texture);
     myMat1.SetDiffuse(*texture1);
     
-        for (int i = 0; i < MAX_ENTITIES; i++)
+        for (int i = 0; i < MAX_ENTITIES - 1; i++)
         {
             auto entity = coordinator.CreateEntity();
             if (i == 0)
@@ -150,7 +150,7 @@ Scene::Scene(Window& window)
                     { Math::Mat4f::CreatePerspective(80.f,
                         window.GetWidth() / window.GetHeight(), 0.1f, 1000.0f)
                     });
-                coordinator.AddComponent<PlayerComponent>(entity);
+                coordinator.AddComponent<PlayerComponent>(entity, {});
                 renderSystem->SetCamera(entity);
             }
             else if (i == 1) // ================================= Plane
@@ -181,8 +181,8 @@ Scene::Scene(Window& window)
                 coordinator.AddComponent<TransformComponent>(entity,
                     Math::Vec3f{randPosition(generator), randPosition(generator), randPosition(generator)},
                     Math::Vec3f{randRotation(generator), randRotation(generator), randRotation(generator)},
-
                     Math::Vec3f{3});
+
                 auto eTransform = coordinator.GetComponent<TransformComponent>(entity);
                 coordinator.AddComponent<RigidBodyComponent>(entity, eTransform);
 

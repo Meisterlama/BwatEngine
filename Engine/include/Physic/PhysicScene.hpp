@@ -13,9 +13,21 @@
 using namespace physx;
 
 
+
 class ContactReportCallback : public PxSimulationEventCallback
 {
+
+private : 
+	
+	struct Contact
+	{
+		PxContactPairHeader pairHeader;
+		PxContactPairFlags flags;
+	};
+
 	bool enter = false; 
+
+	std::vector<Contact> contacts;
 
 	void onConstraintBreak(PxConstraintInfo* constraints, PxU32 count) { PX_UNUSED(constraints); PX_UNUSED(count);}
 	void onWake(PxActor** actors, PxU32 count) { PX_UNUSED(actors); PX_UNUSED(count);}
@@ -23,6 +35,10 @@ class ContactReportCallback : public PxSimulationEventCallback
 	void onTrigger(PxTriggerPair* pairs, PxU32 count) { PX_UNUSED(pairs); PX_UNUSED(count);}
 	void onAdvance(const PxRigidBody* const*, const PxTransform*, const PxU32) {}
 	void onContact(const PxContactPairHeader& pairHeader, const PxContactPair* pairs, PxU32 nbPairs);
+
+public:
+
+	void Flush();
 };
 
 namespace BwatEngine
@@ -35,11 +51,10 @@ namespace BwatEngine
 		physx::PxScene* physicScene;
 		Math::Vec3f gravity{ 0, -10, 0 };
 
-		ContactReportCallback gContactReportCallback;
-
-
 	public:
 	
+		ContactReportCallback gContactReportCallback;
+
 		void Init(Physic& physic);
 		void SetGravity(Math::Vec3f gravity);
 		physx::PxScene* GetPhysicScene() { return physicScene; }

@@ -28,7 +28,7 @@ Physic::Physic()
 	PxInitExtensions(*gPhysics, nullptr);
 
 	PxU32 numCores = 1;
-	gDispatcher = PxDefaultCpuDispatcherCreate(numCores == 0 ? 0 : numCores - 1);
+	gDispatcher = PxDefaultCpuDispatcherCreate(1);
 
 	if (!PxInitExtensions(*gPhysics, gPvd))
 		LogError("PxCreatePhysics failed!");;

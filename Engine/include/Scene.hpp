@@ -8,6 +8,7 @@
 #include "Rendering/Model.hpp"
 #include "Physic/Physic.hpp"
 #include "ECS/ECS.hpp"
+#include "Physic/PhysicScene.hpp"
 
 
 namespace BwatEngine

@@ -15,12 +15,11 @@ namespace BwatEngine
 		virtual void Update() override;
 		virtual void Start() override;
 
-		void OnCollisionEnter(RigidBody& other);
+		void OnCollisionEnter(RigidBody& other) ;
 
 
 	private:
 
-		RigidBody* rb;
 		float timer = 5.f;
 		float initTImer = 5.f;
 	};

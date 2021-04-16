@@ -18,10 +18,10 @@ RigidBody::RigidBody(const Math::Transform& transform, bool isStatic) : oldTrans
 
 RigidBody::~RigidBody()
 {
-	if (isStatic)
-		staticActor->release();
-	else
-		rigidBody->release();
+	//if (isStatic)
+	//	staticActor->release();
+	//else
+	//	rigidBody->release();
 }
 
 void RigidBody::SetStatic(bool isStat)
