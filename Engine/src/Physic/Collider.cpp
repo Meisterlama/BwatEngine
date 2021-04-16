@@ -4,7 +4,6 @@ using namespace BwatEngine;
 
 // ================================ Mother Function ================================ //
 
-
 void Collider::SetFriction(float friction)
 {
 	material->setStaticFriction(friction);
@@ -16,11 +15,11 @@ void Collider::SetFriction(float friction)
 BoxCollider::BoxCollider(Math::Vec3f scale)
 {
 	material = Physic::GetPhysics()->createMaterial(0, 0, 0);
-	shape = Physic::GetPhysics()->createShape(physx::PxBoxGeometry{ ToPxVec3(scale / 2.f) }, *material);
+	shape = Physic::GetPhysics()->createShape(physx::PxBoxGeometry{ ToPxVec3(scale / 2.f) }, *material, true);
 }
 
 SphereCollider::SphereCollider(float radius)
 {
 	material = Physic::GetPhysics()->createMaterial(0, 0, 0);
-	shape = Physic::GetPhysics()->createShape(physx::PxSphereGeometry(radius), *material);
+	shape = Physic::GetPhysics()->createShape(physx::PxSphereGeometry(radius), *material, true);
 }

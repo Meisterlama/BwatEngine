@@ -51,6 +51,8 @@ std::vector<Rendering::Light>& Scene::GetLights()
 Scene::Scene(Window& window)
     : texture(BwatEngine::ResourceManager::Instance()->GetOrLoadTexture("Assets/image/moteur.jpg",Rendering::Texture::Type::E_DIFFUSE)), texture1(BwatEngine::ResourceManager::Instance()->GetOrLoadTexture("Assets/image/green.png", Rendering::Texture::Type::E_DIFFUSE))
 {
+    scenePhysic.Init(physic);
+
     Coordinator& coordinator = Coordinator::GetInstance();
 
     coordinator.RegisterComponent<GravityComponent>();
@@ -74,7 +76,7 @@ Scene::Scene(Window& window)
         signature.set(coordinator.GetComponentType<ColliderComponent>());
         coordinator.SetSystemSignature<PhysicsSystem>(signature);
     }
-    physicsSystem->Init(this, { 0, -10, 0 });
+    physicsSystem->Init(&scenePhysic);
 
     playerControlSystem = coordinator.RegisterSystem<PlayerControlSystem>();
     {
@@ -130,6 +132,7 @@ Scene::Scene(Window& window)
 
     physx::PxMaterial* material = Physic::GetPhysics()->createMaterial(0,0,0);
 
+
     myMat.SetDiffuse(*texture);
     myMat1.SetDiffuse(*texture1);
     
@@ -157,8 +160,10 @@ Scene::Scene(Window& window)
                     Math::Vec3f{0, 0, 0},
                     Math::Vec3f{300, 1, 300});
 
+
                 auto eTransform = coordinator.GetComponent<TransformComponent>(entity);
                 coordinator.AddComponent<RigidBodyComponent>(entity, eTransform , true);
+
 
                 coordinator.AddComponent<ColliderComponent>(entity, { new BoxCollider{eTransform.scale} });
                 coordinator.AddComponent<RenderableComponent>(entity,{ model });
@@ -167,13 +172,16 @@ Scene::Scene(Window& window)
                 renderableComponent.materials[0] = &myMat;
 
                 ScriptTest* monScript = new ScriptTest;
+                monScript->entity = entity;
                 coordinator.AddComponent<ScriptComponent>(entity, { monScript });
+
             }
             else // ================================= Cube
             {
                 coordinator.AddComponent<TransformComponent>(entity,
                     Math::Vec3f{randPosition(generator), randPosition(generator), randPosition(generator)},
                     Math::Vec3f{randRotation(generator), randRotation(generator), randRotation(generator)},
+
                     Math::Vec3f{3});
                 auto eTransform = coordinator.GetComponent<TransformComponent>(entity);
                 coordinator.AddComponent<RigidBodyComponent>(entity, eTransform);

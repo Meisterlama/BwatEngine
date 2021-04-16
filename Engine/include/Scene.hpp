@@ -49,7 +49,7 @@ namespace BwatEngine
 
 		// PhysX
 		Physic physic{};
-		physx::PxScene* scenePhysic;
+		PhysicScene scenePhysic;
 
 
 	};

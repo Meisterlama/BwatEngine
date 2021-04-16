@@ -27,9 +27,7 @@ Physic::Physic()
 	gPhysics = PxCreatePhysics(PX_PHYSICS_VERSION, *gFoundation, PxTolerancesScale(), true);
 	PxInitExtensions(*gPhysics, nullptr);
 
-	//gCooking = PxCreateCooking(PX_PHYSICS_VERSION, *gFoundation, PxCookingParams(gPhysics->getTolerancesScale()));
-
-	PxU32 numCores = 4;
+	PxU32 numCores = 1;
 	gDispatcher = PxDefaultCpuDispatcherCreate(numCores == 0 ? 0 : numCores - 1);
 
 	if (!PxInitExtensions(*gPhysics, gPvd))
@@ -43,10 +41,13 @@ Physic::Physic()
 
 Physic::~Physic()
 {
-	gDispatcher->release();
-	//gCooking->release();
-	gPhysics->release();
-	gPvd->release();
-	gFoundation->release();
+	if (gDispatcher)
+		gDispatcher->release();
+	if (gPhysics)
+		gPhysics->release();
+	if (gPvd)
+		gPvd->release();
+	if (gFoundation)
+		gFoundation->release();
 }
 
