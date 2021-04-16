@@ -8,6 +8,7 @@
 #include "Rendering/Model.hpp"
 #include "Physic/Physic.hpp"
 #include "ECS/ECS.hpp"
+#include "Physic/PhysicScene.hpp"
 
 
 namespace BwatEngine
@@ -40,8 +41,6 @@ namespace BwatEngine
 		Rendering::Material myMat;
 		Rendering::Material myMat1;
 
-		std::vector<EntityID> entities;
-
 		std::shared_ptr<InputsSystem> inputSystem = nullptr;
 		std::shared_ptr<PhysicsSystem> physicsSystem = nullptr;
 		std::shared_ptr<PlayerControlSystem> playerControlSystem = nullptr;
@@ -51,7 +50,7 @@ namespace BwatEngine
 
 		// PhysX
 		Physic physic{};
-		physx::PxScene* scenePhysic;
+		PhysicScene scenePhysic;
 
 
 	};

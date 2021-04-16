@@ -2,20 +2,27 @@
 #define SCRIPT_TEST_HPP
 
 #include "ECS/Components/ScriptComponent.hpp"
+#include "Physic/RigidBody.hpp"
 
-class ScriptTest : public Script
+namespace BwatEngine
 {
 
-public:
+	class ScriptTest : public Script
+	{
 
-	virtual void Update() override;
-	virtual void Start() override;
-	
+	public:
 
-private:
+		virtual void Update() override;
+		virtual void Start() override;
 
-	float timer = 5.f ;
-	float initTImer = 5.f;
-};
+		void OnCollisionEnter(RigidBody& other) ;
+
+
+	private:
+
+		float timer = 5.f;
+		float initTImer = 5.f;
+	};
+}
 
 #endif // !1

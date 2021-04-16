@@ -1,20 +1,27 @@
 #ifndef SCRIPT_COMPONENT_HPP
 #define SCRIPT_COMPONENT_HPP
 
+#include "ECS/ECS.hpp"
+namespace BwatEngine
+{
+
 class Script 
 {
 public :
-	
-	virtual void Update() {};
-	virtual void Start() {};
+
+	bool isStarted = false;
+
+	EntityID  entity;
+
+	virtual void Update() = 0;
+	virtual void Start() = 0;
 };
 
-namespace BwatEngine
-{
+
 	struct ScriptComponent
 	{
-		Script* script;
+		Script* script = nullptr;
 	};
 }
 
-#endif
+#endif //SCRIPT_COMPONENT_HPP

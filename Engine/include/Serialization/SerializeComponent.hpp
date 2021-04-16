@@ -7,7 +7,6 @@ using ordered_json = nlohmann::ordered_json;
 namespace BwatEngine
 {
 
-    typedef TransformComponent;
 namespace Serializable
 {
     template<typename T>

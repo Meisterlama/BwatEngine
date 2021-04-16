@@ -15,6 +15,12 @@ void ScriptSystem::Update()
 	{
 		auto& scriptComponent = Coordinator::GetInstance().GetComponent<ScriptComponent>(entity);
 
+		if (scriptComponent.script->isStarted == false)
+		{
+			scriptComponent.script->Start();
+			scriptComponent.script->isStarted = true;
+		}
+
 		scriptComponent.script->Update();
 	}
 }

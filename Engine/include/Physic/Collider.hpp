@@ -18,6 +18,7 @@ namespace BwatEngine
 
 	public:
 
+		~Collider() = default;
 		physx::PxShape* GetShape() { return shape; }
 		void SetFriction(float friction);
 

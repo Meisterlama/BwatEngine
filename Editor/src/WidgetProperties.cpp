@@ -129,7 +129,6 @@ void WidgetProperties::ShowComponent<BwatEngine::RigidBodyComponent>(BwatEngine:
     if (ImGui::CollapsingHeader("RigidBody",ImGuiTreeNodeFlags_DefaultOpen))
     {
         bool update = false;
-
         bool isStatic = component.GetIsStatic();
         update |= ImGui::Checkbox("isStatic", &isStatic);
 

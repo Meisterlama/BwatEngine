@@ -11,9 +11,10 @@ namespace BwatEngine
 
 	public:
 
+
 		void Init();
 		void Update();
 	};
 }
 
-#endif // !1
+#endif // SCRIPT_SYSTEM_HPP

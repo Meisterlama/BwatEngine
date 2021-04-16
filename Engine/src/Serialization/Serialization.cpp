@@ -18,11 +18,11 @@ namespace BwatEngine {
 
         json js;
         Coordinator &coordinator = Coordinator::GetInstance();
+        auto entities = coordinator.GetEntitiesList();
 
-
-        for (int i = 0; i < toSave.entities.size(); i++)
+        for (int i = 0; i < entities.size(); i++)
         {
-            TransformComponent transform = coordinator.GetComponent<TransformComponent>(toSave.entities[i]);
+            TransformComponent transform = coordinator.GetComponent<TransformComponent>(entities[i]);
             Serializable::SaveComponent<TransformComponent>(transform, js["Entity"]);
 
 
@@ -45,20 +45,20 @@ namespace BwatEngine {
             file >> js;
 
             Coordinator &coordinator = Coordinator::GetInstance();
+            auto entities = coordinator.GetEntitiesList();
 
-
-            for (int i = 0; i < toLoad.entities.size(); i++) {
+            for (int i = 0; i < entities.size(); i++) {
 
                 json transform  = js["Entity"][i]["transform"];
                 json position   = transform.at("position");
                 json rotation   = transform.at("rotation");
                 json scale      = transform.at("scale");
 
-                coordinator.GetComponent<TransformComponent>(toLoad.entities[i]) = {Math::Transform{
+                coordinator.GetComponent<TransformComponent>(entities[i]) = Math::Transform{
                         Math::Vec3f{position.at("X").get<float>(), position.at("Y").get<float>(),position.at("Z").get<float>()},
                         Math::Vec3f{rotation.at("X").get<float>(),rotation.at("Y").get<float>(),rotation.at("Z").get<float>()},
                         Math::Vec3f{scale.at("X").get<float>(), scale.at("Y").get<float>(), scale.at("Z").get<float>()}
-                }};
+                };
             }
 
         }
