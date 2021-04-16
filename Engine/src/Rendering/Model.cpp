@@ -123,3 +123,9 @@ std::vector<Material*> Model::GetDefaultMaterials() const
         materials.push_back(&mesh->defaultMaterial);
     return materials;
 }
+
+void Model::AddMesh(std::vector<Vertex> vertices, std::vector<unsigned int> indices, const Material& material)
+{
+    meshes.emplace_back(std::make_unique<Mesh>(vertices, indices, material));
+}
+
