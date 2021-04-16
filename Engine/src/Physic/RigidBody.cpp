@@ -5,17 +5,23 @@ using namespace BwatEngine;
 RigidBody::RigidBody(const Math::Transform& transform, bool isStatic) : oldTransform(transform), isStatic(isStatic)
 {
 	if (isStatic)
+	{
 		staticActor = Physic::GetPhysics()->createRigidStatic(ToPxTransform(transform));
+		staticActor->userData = this;
+	}
 	else
+	{
 		rigidBody = Physic::GetPhysics()->createRigidDynamic(ToPxTransform(transform));
+		rigidBody->userData = this;
+	}
 }
 
 RigidBody::~RigidBody()
 {
-	//if (isStatic)
-	//	staticActor->release();
-	//else
-	//	rigidBody->release();
+	if (isStatic)
+		staticActor->release();
+	else
+		rigidBody->release();
 }
 
 void RigidBody::SetStatic(bool isStat)
@@ -35,6 +41,7 @@ void RigidBody::SetStatic(bool isStat)
 		}
 
 		staticActor = Physic::GetPhysics()->createRigidStatic(ToPxTransform(oldTransform));
+		staticActor->userData = this;
 	}
 	else
 	{
@@ -47,6 +54,7 @@ void RigidBody::SetStatic(bool isStat)
 		}
 
 		rigidBody = Physic::GetPhysics()->createRigidDynamic(ToPxTransform(oldTransform));
+		rigidBody->userData = this;
 	}
 
 	shouldRegister = true;
@@ -130,4 +138,14 @@ Math::Vec3f RigidBody::GetVelocity()
 {
 	if (!isStatic)
 		return ToBwatVec3(rigidBody->getLinearVelocity());
+}
+
+void RigidBody::OnContact(RigidBody& actor2, COLLISION_TYPE colType)
+{
+	if (collisionFunction[colType]) collisionFunction[colType](actor2);
+}
+
+void RigidBody::setContactFunc(COLLISION_TYPE colType, OnCollisionFunction&& func)
+{
+	collisionFunction[colType] = std::move(func);
 }

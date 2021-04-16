@@ -27,7 +27,7 @@ Physic::Physic()
 	gPhysics = PxCreatePhysics(PX_PHYSICS_VERSION, *gFoundation, PxTolerancesScale(), true);
 	PxInitExtensions(*gPhysics, nullptr);
 
-	PxU32 numCores = 4;
+	PxU32 numCores = 1;
 	gDispatcher = PxDefaultCpuDispatcherCreate(numCores == 0 ? 0 : numCores - 1);
 
 	if (!PxInitExtensions(*gPhysics, gPvd))

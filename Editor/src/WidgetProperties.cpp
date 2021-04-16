@@ -117,27 +117,27 @@ void WidgetProperties::ShowComponent<BwatEngine::RigidBodyComponent>(BwatEngine:
     {
         bool update = false;
 
-        bool isStatic = component.rigidBody.GetIsStatic();
+        bool isStatic = component.rigidBody->GetIsStatic();
         update |= ImGui::Checkbox("isStatic", &isStatic);
 
         if (!isStatic)
         {
             bool updateNotStatic = false;
-            float mass = component.rigidBody.GetMass();
-            BwatEngine::Math::Vec3f velocity = component.rigidBody.GetVelocity();
+            float mass = component.rigidBody->GetMass();
+            BwatEngine::Math::Vec3f velocity = component.rigidBody->GetVelocity();
 
             updateNotStatic |= ImGui::DragFloat("Mass", &mass, 0.1f, 0.0f, 100.f);
             updateNotStatic |= ImGui::DragFloat3("Velocity", velocity.values, 0.1f);
 
             if (updateNotStatic)
             {
-                component.rigidBody.SetMass(mass);
-                component.rigidBody.SetVelocity(velocity);
+                component.rigidBody->SetMass(mass);
+                component.rigidBody->SetVelocity(velocity);
             }
         }
 
         if (update)
-            component.rigidBody.SetStatic(isStatic);
+            component.rigidBody->SetStatic(isStatic);
         
     }
 }

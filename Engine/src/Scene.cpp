@@ -132,7 +132,7 @@ Scene::Scene(Window& window)
 
     physx::PxMaterial* material = Physic::GetPhysics()->createMaterial(0,0,0);
 
-    entities = std::vector<Entity>(50);
+    entities = std::vector<Entity>(5);
     
     myMat.SetDiffuse(texture);
     myMat1.SetDiffuse(texture1);
@@ -162,7 +162,7 @@ Scene::Scene(Window& window)
                     Math::Vec3f{300, 1, 300}} });
 
                 Math::Transform& eTransform = coordinator.GetComponent<TransformComponent>(entities[i]).transform;
-                coordinator.AddComponent<RigidBodyComponent>(entities[i], { {eTransform , true} });
+                coordinator.AddComponent<RigidBodyComponent>(entities[i], { new RigidBody{eTransform , true} });
 
                 coordinator.AddComponent<ColliderComponent>(entities[i], { new BoxCollider{eTransform.scale} });
                 coordinator.AddComponent<RenderableComponent>(entities[i],{ &model });
@@ -171,6 +171,7 @@ Scene::Scene(Window& window)
                 renderableComponent.materials[0] = &myMat;
 
                 ScriptTest* monScript = new ScriptTest;
+                monScript->entity = entities[i];
                 coordinator.AddComponent<ScriptComponent>(entities[i], { monScript });
             }
             else // ================================= Cube
@@ -181,7 +182,7 @@ Scene::Scene(Window& window)
                     Math::Vec3f{3}
                 } });
                 auto& eTransform = coordinator.GetComponent<TransformComponent>(entities[i]).transform;
-                coordinator.AddComponent<RigidBodyComponent>(entities[i], { {eTransform} });
+                coordinator.AddComponent<RigidBodyComponent>(entities[i], { new RigidBody{eTransform} });
 
                 coordinator.AddComponent<ColliderComponent>(entities[i], { new BoxCollider{eTransform.scale} });
                 coordinator.AddComponent<RenderableComponent>(entities[i],{ &model });

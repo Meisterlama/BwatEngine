@@ -11,6 +11,7 @@ namespace BwatEngine
 
 	public:
 
+
 		void Init();
 		void Update();
 	};

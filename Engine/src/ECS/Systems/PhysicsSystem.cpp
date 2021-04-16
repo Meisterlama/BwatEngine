@@ -22,7 +22,7 @@ void PhysicsSystem::Update()
         auto& transform = Coordinator::GetInstance()->GetComponent<TransformComponent>(entity).transform;
         auto& collider = Coordinator::GetInstance()->GetComponent<ColliderComponent>(entity).collider;
 
-        if (rigidBody.ShouldRegister())
+        if (rigidBody->ShouldRegister())
         {
             if(!collider)
             {
@@ -30,18 +30,18 @@ void PhysicsSystem::Update()
                 collider = boxCollider;
             }
 
-            rigidBody.AttachCollider(*collider);
-            rigidBody.AddActor(ptrPhysicScene->GetPhysicScene());
+            rigidBody->AttachCollider(*collider);
+            rigidBody->AddActor(ptrPhysicScene->GetPhysicScene());
         }
 
-        if (rigidBody.CompareOldTransform(transform))
+        if (rigidBody->CompareOldTransform(transform))
         {
-            transform.position = rigidBody.GetPosition();
-            transform.rotation = rigidBody.GetRotation();
+            transform.position = rigidBody->GetPosition();
+            transform.rotation = rigidBody->GetRotation();
         }
         else
         {
-            rigidBody.SetTransform(transform);
+            rigidBody->SetTransform(transform);
         }
     }
 

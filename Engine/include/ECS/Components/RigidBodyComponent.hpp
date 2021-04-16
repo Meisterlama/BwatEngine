@@ -7,7 +7,7 @@ namespace BwatEngine
 {
     struct RigidBodyComponent
     {
-        RigidBody rigidBody;
+        RigidBody* rigidBody = nullptr;
     };
 }
 
