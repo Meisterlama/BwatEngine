@@ -12,6 +12,7 @@ public:
     FileDialog assetDirectory;
 
     void TickVisible() override;
+    void LoadResources(FileDialog::FileInfoStruct file);
 };
 
 #endif //BWATENGINE_WIDGETASSET_H

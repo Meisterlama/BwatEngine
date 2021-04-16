@@ -106,7 +106,7 @@ void Model::Draw(std::vector<Material*>* materials)
 {
     for (unsigned int i = 0; i < meshes.size(); i++)
     {
-        if (materials)
+        if (materials->size() != 0)
             (*materials)[i]->Bind();
         else
             meshes[i]->defaultMaterial.Bind();

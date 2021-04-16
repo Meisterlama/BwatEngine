@@ -1,4 +1,6 @@
 #include "WidgetAsset.hpp"
+#include "ResourceManager/ResourceManager.hpp"
+#include "Rendering/Texture.hpp"
 
 WidgetAsset::WidgetAsset(EditorInterface *editor) : Widget(editor)
 {
@@ -10,5 +12,26 @@ WidgetAsset::WidgetAsset(EditorInterface *editor) : Widget(editor)
 
 void WidgetAsset::TickVisible()
 {
+    if (assetDirectory.chargeMe)
+    {
+        if (ImGui::Button("Load Resources"))
+        {
+            LoadResources(assetDirectory.chargeFile);
+            assetDirectory.chargeMe = false;
+        }
+    }
+
     assetDirectory.ShowList();
+}
+
+void WidgetAsset::LoadResources(FileDialog::FileInfoStruct file)
+{
+    if (file.ext == ".obj" || file.ext == ".fbx")
+    {
+        BwatEngine::ResourceManager::Instance()->GetOrLoadModel(file.filePath);
+    }
+    if (file.ext == ".png" || file.ext == ".jpg")
+    {
+        BwatEngine::ResourceManager::Instance()->GetOrLoadTexture(file.filePath, Rendering::Texture::Type::E_DIFFUSE);
+    }
 }

@@ -118,7 +118,7 @@ Scene::Scene(Window& window)
     //Rendering::Model mymodel = Rendering::Model{ (std::string) "Assets/bag/backpack.obj" };
     model = BwatEngine::ResourceManager::Instance()->GetOrLoadModel("Assets/cube.obj");;
 
-    BwatEngine::ResourceManager::Instance()->GetOrLoadModel("Assets/sphere.obj");
+    //BwatEngine::ResourceManager::Instance()->GetOrLoadModel("Assets/sphere.obj");
     BwatEngine::ResourceManager::Instance()->GetOrLoadTexture("Assets/image/green.png", Rendering::Texture::Type::E_DIFFUSE);
     BwatEngine::ResourceManager::Instance()->GetOrLoadTexture("Assets/image/moteur.jpg", Rendering::Texture::Type::E_DIFFUSE);
     Audio::AudioData audioData = Audio::LoadWavFile("Assets/pop.wav");

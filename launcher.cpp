@@ -6,6 +6,17 @@
 #include "Engine.hpp"
 #include "EditorInterface.hpp"
 
+#if defined(_MSC_VER) || defined(__MINGW32__)
+#define DLLEXPORT __declspec(dllexport)
+#else
+#define DLLEXPORT
+#endif
+
+extern "C"
+{
+DLLEXPORT int NvOptimusEnablement = 1;
+DLLEXPORT int AmdPowerXpressRequestHighPerformance = 1;
+}
 
 int main()
 {

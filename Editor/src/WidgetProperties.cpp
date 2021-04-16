@@ -34,17 +34,23 @@ void WidgetProperties::ShowComponent<BwatEngine::RenderableComponent>(BwatEngine
 {
     if (ImGui::CollapsingHeader("Renderable",ImGuiTreeNodeFlags_DefaultOpen))
     {
-        const char* modelName = component.model->modelPath.filename().string().c_str();
+        std::string modelName;
+        if (component.model != nullptr)
+            modelName = component.model->modelPath.filename().string();
+        else
+            modelName = "";
+
         ImGui::Text("Mesh");
         ImGui::SameLine();
-        if(ImGui::BeginCombo("##Mesh", modelName))
+        if(ImGui::BeginCombo("##Mesh", modelName.c_str()))
         {
             auto meshList = BwatEngine::ResourceManager::Instance()->GetModelList();
 
             for(auto &model : meshList)
             {
-                bool selected = (modelName == model.c_str());
-                if(ImGui::Selectable(model.c_str(), selected))
+                std::filesystem::path path = model;
+                bool selected = (modelName == path.filename().string());
+                if(ImGui::Selectable(path.string().c_str(), selected))
                 {
                     component.model = BwatEngine::ResourceManager::Instance()->GetOrLoadModel(model);
                 }
@@ -54,17 +60,25 @@ void WidgetProperties::ShowComponent<BwatEngine::RenderableComponent>(BwatEngine
             ImGui::EndCombo();
         }
 
+        if (ImGui::Button("Add Materials"))
+        {
+            auto material = new Rendering::Material;
+            material->SetDiffuse(*BwatEngine::ResourceManager::Instance()
+                    ->GetOrLoadTexture("Assets/image/moteur.jpg",Rendering::Texture::Type::E_DIFFUSE));
+            component.materials.push_back(material);
+        }
+
         for (int i = 0; i < component.materials.size(); i++)
         {
-            const char* DiffName;
+            std::string DiffName;
             if (component.materials[i]->diffuse != nullptr)
-                DiffName = component.materials[i]->diffuse->path.c_str();
+                DiffName = component.materials[i]->diffuse->path;
             else
                 DiffName = "";
 
             ImGui::Text("Diffuse Texture");
             ImGui::SameLine();
-            if(ImGui::BeginCombo("##Diff", DiffName))
+            if(ImGui::BeginCombo("##Diff", DiffName.c_str()))
             {
                 auto textList = BwatEngine::ResourceManager::Instance()->GetTextList();
 
@@ -81,15 +95,15 @@ void WidgetProperties::ShowComponent<BwatEngine::RenderableComponent>(BwatEngine
                 ImGui::EndCombo();
             }
 
-            const char* SpecName;
+            std::string SpecName;
             if (component.materials[i]->specular != nullptr)
-                SpecName = component.materials[i]->specular->path.c_str();
+                SpecName = component.materials[i]->specular->path;
             else
                 SpecName = "";
 
             ImGui::Text("Specular Texture");
             ImGui::SameLine();
-            if(ImGui::BeginCombo("##Spec", SpecName))
+            if(ImGui::BeginCombo("##Spec", SpecName.c_str()))
             {
                 auto textList = BwatEngine::ResourceManager::Instance()->GetTextList();
 
@@ -106,7 +120,6 @@ void WidgetProperties::ShowComponent<BwatEngine::RenderableComponent>(BwatEngine
                 ImGui::EndCombo();
             }
         }
-
     }
 }
 
