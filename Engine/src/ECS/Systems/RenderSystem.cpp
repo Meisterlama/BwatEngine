@@ -53,7 +53,8 @@ void RenderSystem::Update(Window& win)
         auto renderableComponent = coordinator.GetComponent<RenderableComponent>(entity);
          shader.setMat4("model", Math::Mat4f::CreateTRSMat(entityTransform.position, entityTransform.rotation, entityTransform.scale));
 
-        renderableComponent.model->Draw(&renderableComponent.materials);
+         if (renderableComponent.model != nullptr)
+            renderableComponent.model->Draw(&renderableComponent.materials);
     }
 
 }
