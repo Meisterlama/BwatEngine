@@ -34,7 +34,7 @@ void EditorInterface::OnTick()
 
     BeginWindow();
 
-    for (std::shared_ptr<Widget>& widget : widgets)
+    for (std::unique_ptr<Widget>& widget : widgets)
     {
         widget->Tick();
     }
@@ -55,11 +55,11 @@ void EditorInterface::Initialise()
     ApplyStyle();
 
     //Push widget here
-    widgets.emplace_back(std::make_shared<WidgetMenuBar>(this));
-    widgets.emplace_back(std::make_shared<WidgetHierarchy>(this));
-    widgets.emplace_back(std::make_shared<WidgetAsset>(this));
-    widgets.emplace_back(std::make_shared<WidgetViewport>(this));
-    widgets.emplace_back(std::make_shared<WidgetProperties>(this));
+    widgets.emplace_back(std::make_unique<WidgetMenuBar>(this));
+    widgets.emplace_back(std::make_unique<WidgetHierarchy>(this));
+    widgets.emplace_back(std::make_unique<WidgetAsset>(this));
+    widgets.emplace_back(std::make_unique<WidgetViewport>(this));
+    widgets.emplace_back(std::make_unique<WidgetProperties>(this));
 }
 
 void EditorInterface::ApplyStyle() const

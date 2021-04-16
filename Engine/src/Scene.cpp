@@ -46,13 +46,14 @@ std::vector<Rendering::Light>& Scene::GetLights()
 	return lights;
 }
 
+
+
 Scene::Scene(Window& window)
-    : texture("Assets/image/moteur.jpg",Rendering::Texture::Type::E_DIFFUSE), texture1("Assets/image/green.png", Rendering::Texture::Type::E_DIFFUSE)
+    : texture(BwatEngine::ResourceManager::Instance()->GetOrLoadTexture("Assets/image/moteur.jpg",Rendering::Texture::Type::E_DIFFUSE)), texture1(BwatEngine::ResourceManager::Instance()->GetOrLoadTexture("Assets/image/green.png", Rendering::Texture::Type::E_DIFFUSE))
 {
     scenePhysic.Init(physic);
 
-    Coordinator& coordinator = *Coordinator::GetInstance();
-    coordinator.Init();
+    Coordinator& coordinator = Coordinator::GetInstance();
 
     coordinator.RegisterComponent<GravityComponent>();
     coordinator.RegisterComponent<RigidBodyComponent>();
@@ -115,10 +116,9 @@ Scene::Scene(Window& window)
     soundSystem->Init();
 
     //Rendering::Model mymodel = Rendering::Model{ (std::string) "Assets/bag/backpack.obj" };
-    model = Rendering::Model{"Assets/cube.obj" };
+    model = BwatEngine::ResourceManager::Instance()->GetOrLoadModel("Assets/cube.obj");;
 
-    BwatEngine::ResourceManager::Instance()->GetOrLoadModel("Assets/cube.obj");
-   // BwatEngine::ResourceManager::Instance()->GetOrLoadModel("Assets/sphere.obj");
+    BwatEngine::ResourceManager::Instance()->GetOrLoadModel("Assets/sphere.obj");
     BwatEngine::ResourceManager::Instance()->GetOrLoadTexture("Assets/image/green.png", Rendering::Texture::Type::E_DIFFUSE);
     BwatEngine::ResourceManager::Instance()->GetOrLoadTexture("Assets/image/moteur.jpg", Rendering::Texture::Type::E_DIFFUSE);
     Audio::AudioData audioData = Audio::LoadWavFile("Assets/pop.wav");
@@ -132,67 +132,69 @@ Scene::Scene(Window& window)
 
     physx::PxMaterial* material = Physic::GetPhysics()->createMaterial(0,0,0);
 
-    entities = std::vector<Entity>(5);
+
+    myMat.SetDiffuse(*texture);
+    myMat1.SetDiffuse(*texture1);
     
-    myMat.SetDiffuse(texture);
-    myMat1.SetDiffuse(texture1);
-    
-        for (Entity i = 0; i < entities.size(); i++)
+        for (int i = 0; i < MAX_ENTITIES; i++)
         {
-            entities[i] = coordinator.CreateEntity();
+            auto entity = coordinator.CreateEntity();
             if (i == 0)
             {
-                coordinator.AddComponent<TransformComponent>(entities[i],{ Math::Transform{
-                    Math::Vec3f {0.f, 0.f, 200.f},
-                    Math::Vec3f {0.f},
-                    Math::Vec3f {1.f}
-                } });
-                coordinator.AddComponent<CameraComponent>(entities[i],
+                coordinator.AddComponent<TransformComponent>(entity,
+                    Math::Vec3f{0.f, 0.f, 200.f},
+                     Math::Vec3f{0.f},
+                     Math::Vec3f{1.f}
+                    );
+                coordinator.AddComponent<CameraComponent>(entity,
                     { Math::Mat4f::CreatePerspective(80.f,
                         window.GetWidth() / window.GetHeight(), 0.1f, 1000.0f)
                     });
-                coordinator.AddComponent<PlayerComponent>(entities[i], {});
-                renderSystem->SetCamera(entities[i]);
+                coordinator.AddComponent<PlayerComponent>(entity);
+                renderSystem->SetCamera(entity);
             }
             else if (i == 1) // ================================= Plane
             {
-                coordinator.AddComponent<TransformComponent>(entities[i],{ Math::Transform{
+                coordinator.AddComponent<TransformComponent>(entity,
                     Math::Vec3f{0, -105, 0},
                     Math::Vec3f{0, 0, 0},
-                    Math::Vec3f{300, 1, 300}} });
+                    Math::Vec3f{300, 1, 300});
 
-                Math::Transform& eTransform = coordinator.GetComponent<TransformComponent>(entities[i]).transform;
-                coordinator.AddComponent<RigidBodyComponent>(entities[i], { new RigidBody{eTransform , true} });
 
-                coordinator.AddComponent<ColliderComponent>(entities[i], { new BoxCollider{eTransform.scale} });
-                coordinator.AddComponent<RenderableComponent>(entities[i],{ &model });
+                auto eTransform = coordinator.GetComponent<TransformComponent>(entity);
+                coordinator.AddComponent<RigidBodyComponent>(entity, eTransform , true);
 
-                auto& renderableComponent = coordinator.GetComponent<RenderableComponent>(entities[i]);
+
+                coordinator.AddComponent<ColliderComponent>(entity, { new BoxCollider{eTransform.scale} });
+                coordinator.AddComponent<RenderableComponent>(entity,{ model });
+
+                auto& renderableComponent = coordinator.GetComponent<RenderableComponent>(entity);
                 renderableComponent.materials[0] = &myMat;
 
                 ScriptTest* monScript = new ScriptTest;
-                monScript->entity = entities[i];
-                coordinator.AddComponent<ScriptComponent>(entities[i], { monScript });
+                monScript->entity = entity;
+                coordinator.AddComponent<ScriptComponent>(entity, { monScript });
+
             }
             else // ================================= Cube
             {
-                coordinator.AddComponent<TransformComponent>(entities[i],{ Math::Transform{
+                coordinator.AddComponent<TransformComponent>(entity,
                     Math::Vec3f{randPosition(generator), randPosition(generator), randPosition(generator)},
                     Math::Vec3f{randRotation(generator), randRotation(generator), randRotation(generator)},
-                    Math::Vec3f{3}
-                } });
-                auto& eTransform = coordinator.GetComponent<TransformComponent>(entities[i]).transform;
-                coordinator.AddComponent<RigidBodyComponent>(entities[i], { new RigidBody{eTransform} });
 
-                coordinator.AddComponent<ColliderComponent>(entities[i], { new BoxCollider{eTransform.scale} });
-                coordinator.AddComponent<RenderableComponent>(entities[i],{ &model });
+                    Math::Vec3f{3});
+                auto eTransform = coordinator.GetComponent<TransformComponent>(entity);
+                coordinator.AddComponent<RigidBodyComponent>(entity, eTransform);
 
-                auto& renderableComponent = coordinator.GetComponent<RenderableComponent>(entities[i]);
+                coordinator.AddComponent<ColliderComponent>(entity, { new BoxCollider{eTransform.scale} });
+                coordinator.AddComponent<RenderableComponent>(entity,{ model });
+
+                auto& renderableComponent = coordinator.GetComponent<RenderableComponent>(entity);
                 renderableComponent.materials[0] = &myMat1;
 
-                coordinator.AddComponent<AudioSourceComponent>(entities[i], AudioSourceComponent{
-                        audioData
-                });
+//                coordinator.AddComponent<AudioSourceComponent>(entity, AudioSourceComponent{
+//                        audioData
+//                });
             }
         }
 }

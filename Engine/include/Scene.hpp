@@ -6,8 +6,8 @@
 
 #include "Rendering/Light.hpp"
 #include "Rendering/Model.hpp"
-#include "Physic/PhysicScene.hpp"
-#include "Core.hpp"
+#include "Physic/Physic.hpp"
+#include "ECS/ECS.hpp"
 
 
 namespace BwatEngine
@@ -34,13 +34,11 @@ namespace BwatEngine
 		Scene(Window& window);
 
 		// TODO : resrc manager to load rsrc and stock
-		Rendering::Model model;
-		Rendering::Texture texture;
-		Rendering::Texture texture1;
+		Rendering::Model* model;
+		Rendering::Texture* texture;
+		Rendering::Texture* texture1;
 		Rendering::Material myMat;
 		Rendering::Material myMat1;
-
-		std::vector<Entity> entities;
 
 		std::shared_ptr<InputsSystem> inputSystem = nullptr;
 		std::shared_ptr<PhysicsSystem> physicsSystem = nullptr;

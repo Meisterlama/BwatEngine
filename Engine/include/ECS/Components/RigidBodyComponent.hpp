@@ -5,10 +5,7 @@
 
 namespace BwatEngine
 {
-    struct RigidBodyComponent
-    {
-        RigidBody* rigidBody = nullptr;
-    };
+    typedef RigidBody RigidBodyComponent;
 }
 
 #endif //ENGINE_ECS_COMPONENTS_RIGID_BODY_HPP

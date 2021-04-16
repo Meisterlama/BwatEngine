@@ -1,16 +1,19 @@
 #ifndef ENGINE_ECS_COORDINATOR_HPP
 #define ENGINE_ECS_COORDINATOR_HPP
 
+#include "ECS.hpp"
 #include "EntityManager.hpp"
 #include "ComponentManager.hpp"
 #include "SystemManager.hpp"
+
+#include "Debug/Logger.hpp"
 
 namespace BwatEngine
 {
     struct SceneNode
     {
         SceneNode* parent = nullptr;
-        Entity id = -1;
+        EntityID id = 0;
         std::vector<SceneNode*> children{};
     };
 
@@ -19,199 +22,171 @@ namespace BwatEngine
      */
     class Coordinator
     {
-        std::unique_ptr<ComponentManager> componentManager;
-        std::unique_ptr<EntityManager> entityManager;
-        std::unique_ptr<SystemManager> systemManager;
+        ComponentManager componentManager{};
+        EntityManager entityManager{};
+        SystemManager systemManager{};
 
-        std::unordered_map<Entity, SceneNode> sceneMap;
+        std::vector<EntityID> entities{};
+        std::unordered_map<EntityID, SceneNode> sceneMap{};
 
-        Coordinator() = default;
-        ~Coordinator()
+        Coordinator()
         {
-            Coordinator* coordinator = GetInstance();
-            if (coordinator)
-                delete coordinator;
+            entities.reserve(MAX_ENTITIES);
         }
-
-
-        Coordinator(Coordinator& other) = delete;
-        void operator=(const Coordinator&) = delete;
+        ~Coordinator() = default;
 
     public:
+
+        Coordinator(Coordinator& other) = default;
+        Coordinator& operator=(const Coordinator&) = default;
+
         /**
          * @return A handle to the Coordinator instance
          */
-        static Coordinator* GetInstance()
-        {
-            static Coordinator* coordinator = nullptr;
-            if (!coordinator)
-                coordinator = new Coordinator;
-            return coordinator;
-        }
-        void Init()
-        {
-            componentManager = std::make_unique<ComponentManager>();
-            entityManager = std::make_unique<EntityManager>();
-            systemManager = std::make_unique<SystemManager>();
-        }
+        static Coordinator& GetInstance();
 
         /**
          * @brief Find a valid entity ID, reserve it and return it
          * @return The created entity ID
          */
-        Entity CreateEntity()
-        {
-            auto entity = entityManager->CreateEntity();
-            sceneMap[entity].id = entity;
-            return entity;
-        }
+        EntityID CreateEntity();
 
         /**
          * @brief Destroy the given \p entity from every managers, removing it from the scene hierarchy
-         * @param entity Entity ID
+         * @param entity EntityID ID
          * @warning Destroying non existing entity result in undefined behavior
          */
-        void DestroyEntity(Entity entity)
-        {
-            entityManager->DestroyEntity(entity);
-
-            componentManager->EntityDestroyed(entity);
-
-            systemManager->EntityDestroyed(entity);
-
-            sceneMap[entity].parent = nullptr;
-            sceneMap[entity].id = -1;
-            for (auto& node : sceneMap[entity].children)
-            {
-                node->parent = nullptr;
-            }
-        }
+        void DestroyEntity(EntityID entity);
 
         /**
-         * @brief Register the component of type \p T to the ComponentManager
-         * @tparam T Component type to register
+         * @return a copy of the entity list
+         */
+        std::vector<EntityID> GetEntitiesList() const;
+
+        /**
+         * @brief Register the component of type \p C to the ComponentManager
+         * @tparam C Component type to register
          * @warning Registering a component twice is invalid
          */
-        template<typename T>
+        template<class C>
         void RegisterComponent()
         {
-            componentManager->RegisterComponent<T>();
+            LogInfo("Registered component %s", typeid(C).name());
+            componentManager.RegisterComponent<C>();
         }
 
         /**
-         * @brief Add a component \T to the given \p entity
-         * @tparam T Added component's type
-         * @param entity Entity ID
+         * @brief Add a component \C to the given \p entity
+         * @tparam C Added component's type
+         * @param entity EntityID ID
          * @param component Component's data (existing one or in place constructor)
          * @warning Adding a component that an entity already has is invalid
          */
-        template<typename T>
-        void AddComponent(Entity entity, T&& component)
+        template<class C, typename... Args>
+        void AddComponent(EntityID entity, Args&&... args)
         {
-            componentManager->AddComponent<T>(entity, std::forward<T>(component));
+            componentManager.AddComponent<C>(entity, std::forward<Args>(args)...);
 
-            auto signature = entityManager->GetSignature(entity);
-            signature.set(componentManager->GetComponentType<T>(), true);
-            entityManager->SetSignature(entity, signature);
+            auto signature = entityManager.GetSignature(entity);
+            signature.set(componentManager.GetComponentType<C>(), true);
+            entityManager.SetSignature(entity, signature);
 
-            systemManager->EntitySignatureChanged(entity, signature);
+            systemManager.EntitySignatureChanged(entity, signature);
+        }
+
+        template<class C>
+        void AddComponent(EntityID entity, C&& component)
+        {
+            componentManager.AddComponent<C>(entity, std::forward<C>(component));
+
+            auto signature = entityManager.GetSignature(entity);
+            signature.set(componentManager.GetComponentType<C>(), true);
+            entityManager.SetSignature(entity, signature);
+
+            systemManager.EntitySignatureChanged(entity, signature);
         }
 
         /**
-         * @brief Remove the component \p T from the given \p entity
-         * @tparam T Removed component's type
-         * @param entity Entity ID
+         * @brief Remove the component \p C from the given \p entity
+         * @tparam C Removed component's type
+         * @param entity EntityID ID
          * @warning Removing inexistant component is not valid
          */
-        template<typename T>
-        void RemoveComponent(Entity entity)
+        template<class C>
+        void RemoveComponent(EntityID entity)
         {
-            componentManager->RemoveComponent<T>(entity);
+            componentManager.RemoveComponent<C>(entity);
 
-            auto signature = entityManager->GetSignature(entity);
-            signature.set(componentManager->GetComponentType<T>(), false);
-            entityManager->SetSignature(entity, signature);
+            auto signature = entityManager.GetSignature(entity);
+            signature.set(componentManager.GetComponentType<C>(), false);
+            entityManager.SetSignature(entity, signature);
 
-            systemManager->EntitySignatureChanged(entity, signature);
+            systemManager.EntitySignatureChanged(entity, signature);
         }
 
         /**
-         * @brief Get the component \p T from the \p entity
-         * @tparam T Type of the component to get
-         * @param entity Entity ID
+         * @brief Get the component \p C from the \p entity
+         * @tparam C Type of the component to get
+         * @param entity EntityID ID
          * @return A reference to the component
          */
-        template<typename T>
-        T &GetComponent(Entity entity)
+        template<class C>
+        C &GetComponent(EntityID entity)
         {
-            return componentManager->GetComponent<T>(entity);
+            return componentManager.GetComponent<C>(entity);
         }
 
         /**
-         * @tparam T Component's type
+         * @tparam C Component's type
          * @return The component's internal ID
          */
-        template<typename T>
-        ComponentType GetComponentType()
+        template<class C>
+        ComponentTypeID GetComponentType()
         {
-            return componentManager->GetComponentType<T>();
+            return componentManager.GetComponentType<C>();
         }
 
         /**
          * @brief Register the system to the internal manager
-         * @tparam T System's type
+         * @tparam S System's type
          * @return A pointer to the registered system
          */
-        template<typename T>
-        std::shared_ptr<T> RegisterSystem()
+        template<class S>
+        std::shared_ptr<S> RegisterSystem()
         {
-            return systemManager->RegisterSystem<T>();
+            LogInfo("Registered system %s", typeid(S).name());
+            return systemManager.RegisterSystem<S>();
         }
 
         /**
          * @brief Set the accepted \p signature for the given system
-         * @tparam T System's type
+         * @tparam S System's type
          * @param signature Signature accepted by the system
          */
-        template<typename T>
+        template<class S>
         void SetSystemSignature(Signature signature)
         {
-            systemManager->SetSignature<T>(signature);
+            systemManager.SetSignature<S>(signature);
         }
 
         /**
-         * @param entity Entity ID
+         * @param entity EntityID ID
          * @return The signature of the given \p entity
          */
-        Signature GetEntitySignature(Entity entity)
-        {
-            return entityManager->GetSignature(entity);
-        }
+        Signature GetEntitySignature(EntityID entity);
 
         /**
          * @brief Set the parent entity in the internal scene graph
-         * @param entity Entity ID
+         * @param entity EntityID ID
          * @param parent Parent entity ID
          */
-        void SetParent(Entity entity, Entity parent)
-        {
-            if (parent == -1)
-            {
-                sceneMap[entity].parent = nullptr;
-                return;
-            }
-                sceneMap[entity].parent = &sceneMap[parent];
-                sceneMap[parent].children.push_back(&sceneMap[entity]);
-        }
+        void SetParent(EntityID entity, EntityID parent);
 
         /**
-         * @param entity Entity ID
+         * @param entity EntityID ID
          * @return Get the scene graph's node associated to entity
          */
-        SceneNode& GetNode(Entity entity)
-        {
-            return sceneMap[entity];
-        }
+        SceneNode& GetNode(EntityID entity);
 
 
         //TODO: Better way to get root entities
@@ -219,18 +194,7 @@ namespace BwatEngine
          * @return A std::vector of every entities that does not have a parent
          * @warning Current implementation iterates over every entities without caching
          */
-        std::vector<Entity> GetRootEntities()
-        {
-            std::vector<Entity> rootEntities;
-            for (auto& [id, node] : sceneMap)
-            {
-                if (node.parent == nullptr)
-                {
-                    rootEntities.push_back(id);
-                }
-            }
-            return rootEntities;
-        }
+        std::vector<EntityID> GetRootEntities();
     };
 }
 #endif //ENGINE_ECS_COORDINATOR_HPP

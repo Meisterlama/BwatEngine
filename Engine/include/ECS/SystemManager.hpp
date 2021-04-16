@@ -1,64 +1,49 @@
 #ifndef ENGINE_ECS_SYSTEM_MANAGER_HPP
 #define ENGINE_ECS_SYSTEM_MANAGER_HPP
 
-#include "Core.hpp"
-#include "System.hpp"
-
+#include "ECS.hpp"
+#include "Debug/Logger.hpp"
 #include <unordered_map>
+#include <memory>
 
 namespace BwatEngine
 {
+    class System;
     class SystemManager
     {
         std::unordered_map<const char*, Signature> signatures{};
         std::unordered_map<const char*, std::shared_ptr<System>> systems{};
     public:
-        template<typename T>
-        std::shared_ptr<T> RegisterSystem()
+        template<class S>
+        std::shared_ptr<S> RegisterSystem()
         {
-            const char* typeName = typeid(T).name();
-            assert(systems.find(typeName) == systems.end() && "Registering system more than once.");
+            const char* typeName = typeid(S).name();
+            if (systems.find(typeName) != systems.end())
+            {
+                LogError("Registering system more than once.");
+                return nullptr;
+            }
 
-            std::shared_ptr<T> system = std::make_shared<T>();
+            std::shared_ptr<S> system = std::make_shared<S>();
             systems.insert({typeName, system});
             return system;
         }
 
-        template<typename T>
+        template<class S>
         void SetSignature(Signature signature)
         {
-            const char* typeName = typeid(T).name();
-            assert(systems.find(typeName) != systems.end() && "System used before registered.");
+            const char* typeName = typeid(S).name();
+            if(systems.find(typeName) == systems.end())
+            {
+                LogError("Register your system before using it !");
+                return;
+            }
             signatures.insert({typeName, signature});
         }
 
-        void EntityDestroyed(Entity entity)
-        {
-            for (auto const& pair : systems)
-            {
-                auto const& system = pair.second;
-                system->entities.erase(entity);
-            }
-        }
+        void EntityDestroyed(EntityID entity);
 
-        void EntitySignatureChanged(Entity entity, Signature entitySignature)
-        {
-            for (auto const& pair : systems)
-            {
-                auto const& type = pair.first;
-                auto const& system = pair.second;
-                auto const& systemSignature = signatures[type];
-
-                if ((entitySignature & systemSignature) == systemSignature)
-                {
-                    system->entities.insert(entity);
-                }
-                else
-                {
-                    system->entities.erase(entity);
-                }
-            }
-        }
+        void EntitySignatureChanged(EntityID entity, Signature entitySignature);
     };
 }
 

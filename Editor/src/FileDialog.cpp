@@ -1,11 +1,7 @@
 #include "FileDialog.hpp"
+#include "ResourceManager/ResourceManager.hpp"
+#include "Rendering/texture.hpp"
 #include "imgui.h"
-
-#if WIN32
-#include <direntWin32.h>
-#else
-#include <dirent.h>
-#endif
 
 inline std::vector<std::string> SplitStringToVector(const std::string& text, char delimiter, bool pushEmpty)
 {
@@ -171,73 +167,74 @@ void FileDialog::SetPath(const std::string &aPath)
 
 void FileDialog::ScanDir(const std::string &aPath)
 {
-    struct dirent** files = nullptr;
-    int i = 0;
-    int n = 0;
-    std::string path = aPath;
+
+    std::filesystem::path path = aPath;
 
     if (!aPath.empty())
     {
-        n = scandir(path.c_str(), &files, nullptr, alphasort);
         fileList.clear();
 
-        if (n > 0)
+        for (auto& p: std::filesystem::directory_iterator(aPath))
         {
-            for (i = 0; i < n; i++)
+
+            FileInfoStruct infos;
+
+            infos.filePath = p.path().string();
+            infos.fileName = p.path().filename().string();
+
+            if (infos.fileName != ".")
             {
-                struct dirent* ent = files[i];
+                infos.ext = p.path().extension().string();
 
-                FileInfoStruct infos;
-
-                infos.filePath = path;
-                infos.fileName = ent->d_name;
-
-                if (infos.fileName != ".")
+                if (!dlgFilters.empty())
                 {
-                    size_t lpt = infos.fileName.find_last_of('.');
-
-                    if (lpt != std::string::npos)
+                    if (!selectedFilter.Empty() &&
+                    (!selectedFilter.FilterExist(infos.ext) && selectedFilter.filter != ".*"))
                     {
-                        infos.ext = infos.fileName.substr(lpt);
-                    }
-
-                    if (!dlgFilters.empty())
-                    {
-                        if (!selectedFilter.Empty() &&
-                        (!selectedFilter.FilterExist(infos.ext) && selectedFilter.filter != ".*"))
-                        {
-                            continue;
-                        }
+                        continue;
                     }
                 }
-
-                fileList.push_back(infos);
             }
 
-            for (i = 0; i < n; i++)
-            {
-                free(files[i]);
-            }
-
-            free(files);
+            fileList.push_back(infos);
         }
     }
 }
 
 void FileDialog::ShowList()
 {
+    std::filesystem::path dir = currentPath;
+    if (ImGui::Button("Back"))
+    {
+        OpenDialog("", dir.parent_path());
+    }
+
     for (int i = 0; i < fileList.size(); i++)
     {
         if(ImGui::Selectable(fileList[i].fileName.c_str()))
         {
-            std::filesystem::path dir = fileList[i].filePath + fileList[i].fileName;
-            if (fileList[i].fileName == "..")
-                OpenDialog("", dir.parent_path());
-            else if (!dir.has_extension())
+            if (fileList[i].ext == "")
             {
-                OpenDialog("",fileList[i].filePath + "/" + fileList[i].fileName);
+                OpenDialog("", fileList[i].filePath);
+            }
+            else
+            {
+                LoadOnResources(fileList[i]);
             }
         }
+    }
+}
+
+void FileDialog::LoadOnResources(FileInfoStruct file)
+{
+    if (file.ext == ".obj" || ".fbx")
+    {
+        BwatEngine::ResourceManager::Instance()->GetOrLoadModel(file.filePath);
+    }
+
+    if (file.ext == ".png" || ".jpg")
+    {
+        BwatEngine::ResourceManager::Instance()->GetOrLoadTexture(file.filePath, Rendering::Texture::Type::E_DIFFUSE);
     }
 }
 

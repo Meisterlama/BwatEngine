@@ -9,7 +9,7 @@
 
 using namespace BwatEngine;
 
-void PhysicsSystem::Init(PhysicScene* scene)  
+void PhysicsSystem::Init(PhysicScene* scene) 
 {
     ptrPhysicScene = scene;
 }
@@ -18,9 +18,9 @@ void PhysicsSystem::Update()
 {
     for (auto entity : entities)
     {
-        auto& rigidBody = Coordinator::GetInstance()->GetComponent<RigidBodyComponent>(entity).rigidBody;
-        auto& transform = Coordinator::GetInstance()->GetComponent<TransformComponent>(entity).transform;
-        auto& collider = Coordinator::GetInstance()->GetComponent<ColliderComponent>(entity).collider;
+        auto& rigidBody = Coordinator::GetInstance().GetComponent<RigidBodyComponent>(entity);
+        auto& transform = Coordinator::GetInstance().GetComponent<TransformComponent>(entity);
+        auto& collider = Coordinator::GetInstance().GetComponent<ColliderComponent>(entity).collider;
 
         if (rigidBody->ShouldRegister())
         {

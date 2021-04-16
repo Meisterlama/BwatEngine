@@ -3,10 +3,11 @@
 
 #include "Math/Common.hpp"
 #include "ECS/System.hpp"
+#include "ECS/Coordinator.hpp"
+#include "ECS/Components/TransformComponent.hpp"
 #include "Inputs/InputHandler.hpp"
 #include "imgui.h"
-#include "imgui_impl_glfw.h"
-#include "ECS/Components/TransformComponent.hpp"
+
 
 #include "AL/al.h"
 
@@ -25,11 +26,15 @@ namespace BwatEngine
             if (InputHandler::GetKeyboardDown(KEY_F1)) {
                 lockMouse = !lockMouse;
                 glfwSetInputMode(win, GLFW_CURSOR, (lockMouse) ? GLFW_CURSOR_DISABLED : GLFW_CURSOR_NORMAL);
+                for (auto& entityId: entities)
+                {
+                    rotation = Coordinator::GetInstance().GetComponent<TransformComponent>(entityId).rotation.GetEulerAngles();
+                }
             }
             if (lockMouse) {
                 for (auto &entityId : entities) {
-                    auto coordinator = Coordinator::GetInstance();
-                    auto &transform = coordinator->GetComponent<TransformComponent>(entityId).transform;
+                    auto& coordinator = Coordinator::GetInstance();
+                    auto &transform = coordinator.GetComponent<TransformComponent>(entityId);
 
                     Math::Vec2f mouseDelta = InputHandler::GetMouseDelta();
                     float sensitivity_mouse = -0.1f;

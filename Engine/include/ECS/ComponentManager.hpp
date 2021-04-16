@@ -1,6 +1,5 @@
 #ifndef ENGINE_ECS_COMPONENT_MANAGER_HPP
 #define ENGINE_ECS_COMPONENT_MANAGER_HPP
-#include "Core.hpp"
 #include "ComponentArray.hpp"
 
 #include <unordered_map>
@@ -10,53 +9,80 @@ namespace BwatEngine
 {
     class ComponentManager
     {
-        std::unordered_map<const char*, ComponentType> componentTypes{};
+        std::unordered_map<const char*, ComponentTypeID> componentTypes{};
 
         std::unordered_map<const char*, std::shared_ptr<IComponentArray>> componentArrays{};
 
-        ComponentType nextComponentType{};
+        ComponentTypeID nextComponentType = 1;
     public:
-        template<typename T>
+        template<class C>
         void RegisterComponent()
         {
-            const char* typeName = typeid(T).name();
+            const char* typeName = typeid(C).name();
 
-            assert(componentTypes.find(typeName) == componentTypes.end() && "Registering component type more than once.");
+            if(componentTypes.find(typeName) != componentTypes.end())
+            {
+                LogError("Registering component type more than once.");
+                return;
+            }
 
             componentTypes.insert({typeName, nextComponentType});
-            componentArrays.insert({typeName, std::make_shared<ComponentArray<T>>()});
+            componentArrays.insert({typeName, std::make_shared<ComponentArray<C>>()});
 
             nextComponentType++;
         }
 
-        template<typename T>
-        ComponentType GetComponentType()
+        template<class C>
+        ComponentTypeID GetComponentType()
         {
-            const char* typeName = typeid(T).name();
-            assert(componentTypes.find(typeName) != componentTypes.end() && "Component not registered before use.");
+            const char* typeName = typeid(C).name();
+
+            if(componentTypes.find(typeName) == componentTypes.end())
+            {
+                LogError("Component not registered before use.");
+                return 0;
+            }
 
             return componentTypes[typeName];
         }
 
-        template<typename T>
-        void AddComponent(Entity entity, T&& component = {})
+        template<class C, typename... Args>
+        void AddComponent(EntityID entity, Args&&... args)
         {
-            GetComponentArray<T>()->InsertData(entity, std::forward<T>(component));
+            if(!GetComponentType<C>())
+                return;
+            GetComponentArray<C>()->InsertData(entity, std::forward<Args>(args)...);
         }
 
-        template<typename T>
-        void RemoveComponent(Entity entity)
+        template<class C>
+        void AddComponent(EntityID entity, C&& component = {})
         {
-            GetComponentArray<T>()->RemoveData(entity);
+            if(!GetComponentType<C>())
+                return;
+            GetComponentArray<C>()->InsertData(entity, std::forward<C>(component));
         }
 
-        template<typename T>
-        T& GetComponent(Entity entity)
+        template<class C>
+        void RemoveComponent(EntityID entity)
         {
-            return GetComponentArray<T>()->GetData(entity);
+            if(!GetComponentType<C>())
+                return;
+            GetComponentArray<C>()->RemoveData(entity);
         }
 
-        void EntityDestroyed(Entity entity)
+        template<class C>
+        C& GetComponent(EntityID entity)
+        {
+            if(!GetComponentType<C>())
+            {
+                // TODO: Better assertion
+                LogFatal("Getting unregistered component.");
+                throw std::runtime_error("ECS Crashed");
+            }
+            return GetComponentArray<C>()->GetData(entity);
+        }
+
+        void EntityDestroyed(EntityID entity)
         {            for (auto const& pair : componentArrays)
             {
                 auto const& component = pair.second;
@@ -66,13 +92,16 @@ namespace BwatEngine
         }
 
     private:
-        template<typename T>
-        std::shared_ptr<ComponentArray<T>> GetComponentArray()
+        template<class C>
+        std::shared_ptr<ComponentArray<C>> GetComponentArray()
         {
-            const char* typeName = typeid(T).name();
-            assert(componentTypes.find(typeName) != componentTypes.end() && "Component not registered before use.");
-
-            return std::static_pointer_cast<ComponentArray<T>>(componentArrays[typeName]);
+            const char* typeName = typeid(C).name();
+            if(componentTypes.find(typeName) == componentTypes.end())
+            {
+                LogError("Component not registered before use.");
+                return nullptr;
+            }
+            return std::static_pointer_cast<ComponentArray<C>>(componentArrays[typeName]);
         }
 
     };
