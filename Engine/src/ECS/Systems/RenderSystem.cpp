@@ -12,6 +12,18 @@ using namespace BwatEngine;
 void RenderSystem::Init()
 {
     shader = { "Assets/colors.vs", "Assets/colors.fs" };
+    skyboxShader = { "Assets/cubeMap.vs", "Assets/cubeMap.fs" };
+
+    cubeMap.faces = {
+        "Assets/cubemap/right.jpg",
+        "Assets/cubemap/left.jpg",
+        "Assets/cubemap/top.jpg",
+        "Assets/cubemap/bottom.jpg",
+        "Assets/cubemap/front.jpg",
+        "Assets/cubemap/back.jpg",
+    };
+
+    cubeMap.LoadCubeMap();
     Rendering::Light mylight(Rendering::TYPE_LIGHT::Directional, { 0.5f,0.5f,0.5f }, { 0.5f,0.5f,0.5f }, { 0.5f,0.5f,0.5f });
     Scene::AddLight(mylight);
 }
@@ -44,6 +56,16 @@ void RenderSystem::Update(Window& win)
     auto& cameraTransform = coordinator.GetComponent<TransformComponent>(camera);
     auto& cameraComponent = coordinator.GetComponent<CameraComponent>(camera);
 
+    //glDepthFunc(GL_LEQUAL);
+    glDepthMask(GL_FALSE);
+    skyboxShader.use();
+    skyboxShader.setMat4("view", Math::Mat4f::CreateTRSMat(Math::Vec3f(0, 0, 0), cameraTransform.rotation, cameraTransform.scale).Invert());
+    skyboxShader.setMat4("projection", cameraComponent.GetProjectionMatrix());
+    glBindVertexArray(cubeMap.skyboxVAO);
+    cubeMap.BindCubeMap();
+    glDepthMask(GL_TRUE);
+    //glDepthFunc(GL_LESS);
+
     shader.use();
     shader.setMat4("view", Math::Mat4f::CreateTRSMat(cameraTransform.position, cameraTransform.rotation, cameraTransform.scale).Invert());
     shader.setMat4("proj", cameraComponent.GetProjectionMatrix());
@@ -66,4 +88,6 @@ void RenderSystem::Update(Window& win)
             renderableComponent.model->Draw(&renderableComponent.materials);
     }
 
+
+    
 }

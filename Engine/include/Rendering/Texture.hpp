@@ -4,6 +4,7 @@
 #include <string>
 #include <stb_image.h>
 #include <iostream>
+#include <vector>
 
 #include "glad/glad.h"
 #include "GLFW/glfw3.h"
@@ -17,7 +18,8 @@ namespace Rendering
             E_DIFFUSE,
             E_SPECULAR,
             E_NORMAL,
-            E_HEIGHT
+            E_HEIGHT,
+
         };
       
         GLuint id;

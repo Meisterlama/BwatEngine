@@ -7,6 +7,7 @@
 #include "ECS/ECS.hpp"
 #include "Rendering/Shader.hpp"
 #include "Window.hpp"
+#include "Rendering/CubeMap.hpp"
 
 namespace BwatEngine
 {
@@ -14,7 +15,10 @@ namespace BwatEngine
     {
 
         Rendering::Shader shader;
-        Window* window;
+        Rendering::Shader skyboxShader;
+        Rendering::CubeMap cubeMap;
+
+        Window* window = nullptr;
         EntityID camera = 0;
 
     public:

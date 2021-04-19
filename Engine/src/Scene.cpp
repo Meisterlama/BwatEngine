@@ -53,6 +53,8 @@ Scene::Scene(Window& window)
 {
     scenePhysic.Init(physic);
 
+    
+
     Coordinator& coordinator = Coordinator::GetInstance();
 
     coordinator.RegisterComponent<GravityComponent>();
@@ -135,7 +137,7 @@ Scene::Scene(Window& window)
     myMat.SetDiffuse(*texture);
     myMat1.SetDiffuse(*texture1);
     
-        for (int i = 0; i < 10; i++)
+        for (int i = 0; i < 4; i++)
         {
             auto entity = coordinator.CreateEntity();
             if (i == 0)
