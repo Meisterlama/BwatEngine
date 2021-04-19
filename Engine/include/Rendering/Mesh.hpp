@@ -15,7 +15,7 @@ namespace Rendering
     {
         BwatEngine::Math::Vec3f position;
         BwatEngine::Math::Vec3f normal;
-        BwatEngine::Math::Vec2f texCoords;
+        BwatEngine::Math::Vec2f texCoord;
     };
     
     class Mesh

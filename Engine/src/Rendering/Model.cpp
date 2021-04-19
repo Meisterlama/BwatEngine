@@ -77,11 +77,11 @@ void Model::ProcessMesh(aiMesh* mesh, const aiScene* scene)
             BwatEngine::Math::Vec2f vec;
             vec.X = mesh->mTextureCoords[0][i].x;
             vec.Y = mesh->mTextureCoords[0][i].y;
-            vertex.texCoords = vec;
+            vertex.texCoord = vec;
            
         }
         else
-            vertex.texCoords = BwatEngine::Math::Vec2f(0.0f, 0.0f);
+            vertex.texCoord = BwatEngine::Math::Vec2f(0.0f, 0.0f);
 
         vertices.push_back(vertex);
     }

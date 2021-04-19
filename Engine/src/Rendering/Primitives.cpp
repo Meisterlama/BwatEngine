@@ -129,7 +129,7 @@ Model CreateCube()
         Vertex vertex;
         vertex.position = position[i];
         vertex.normal = normales[i];
-        vertex.texCoords = uvs[i];
+        vertex.texCoord = uvs[i];
 
         vertices.push_back(vertex);
     }
@@ -146,7 +146,7 @@ Model CreateSphere(int latitudeCount , int longitudeCount )
     // position all point of sphere
     float z = 1.f;
     float subdiv = Math::PI / latitudeCount;
-    float rayon;
+    float radius;
     float x, y;
 
 
@@ -162,10 +162,10 @@ Model CreateSphere(int latitudeCount , int longitudeCount )
     {
         for (int j = 0; j < longitudeCount; j++)
         {
-            rayon = sin(i * subdiv);
+            radius = sin(i * subdiv);
             y = cos(i * subdiv);
-            x = cos(j * (2 * Math::PI) / longitudeCount) * rayon;
-            z = sin(j * (2 * Math::PI) / longitudeCount) * rayon;
+            x = cos(j * (2 * Math::PI) / longitudeCount) * radius;
+            z = sin(j * (2 * Math::PI) / longitudeCount) * radius;
             positions.push_back(Math::Vec3f(x, y, z));
         }
     }
@@ -235,7 +235,7 @@ Model CreateSphere(int latitudeCount , int longitudeCount )
         Vertex vertex;
         vertex.position = positions[i];
         vertex.normal = normals[i];
-        vertex.texCoords = uvs[i];
+        vertex.texCoord = uvs[i];
 
         vertices.push_back(vertex);
     }
@@ -272,10 +272,10 @@ Model CreatePlan()
         }
     }
  
-    Math::Vec3f  normales[4];
+    Math::Vec3f  normals[4];
 
     for (int n = 0; n < 4; n++)
-        normales[n] = position[n].Normalize();
+        normals[n] = position[n].Normalize();
 
     Math::Vec2f uvs[4]; 
 
@@ -309,8 +309,8 @@ Model CreatePlan()
     {
         Vertex vertex;
         vertex.position = position[i];
-        vertex.normal = normales[i];
-        vertex.texCoords = uvs[i];
+        vertex.normal = normals[i];
+        vertex.texCoord = uvs[i];
 
         vertices.push_back(vertex);
     }
