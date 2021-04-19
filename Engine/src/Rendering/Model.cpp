@@ -60,7 +60,7 @@ void Model::ProcessMesh(aiMesh* mesh, const aiScene* scene)
         vector.X = mesh->mVertices[i].x;
         vector.Y = mesh->mVertices[i].y;
         vector.Z = mesh->mVertices[i].z;
-        vertex.postion = vector;
+        vertex.position = vector;
 
         // normals
         if (mesh->HasNormals())
@@ -77,11 +77,11 @@ void Model::ProcessMesh(aiMesh* mesh, const aiScene* scene)
             BwatEngine::Math::Vec2f vec;
             vec.X = mesh->mTextureCoords[0][i].x;
             vec.Y = mesh->mTextureCoords[0][i].y;
-            vertex.texCoords = vec;
+            vertex.texCoord = vec;
            
         }
         else
-            vertex.texCoords = BwatEngine::Math::Vec2f(0.0f, 0.0f);
+            vertex.texCoord = BwatEngine::Math::Vec2f(0.0f, 0.0f);
 
         vertices.push_back(vertex);
     }
@@ -123,3 +123,9 @@ std::vector<Material*> Model::GetDefaultMaterials() const
         materials.push_back(&mesh->defaultMaterial);
     return materials;
 }
+
+void Model::AddMesh(std::vector<Vertex> vertices, std::vector<unsigned int> indices,Material material)
+{
+    meshes.emplace_back(std::make_unique<Mesh>(vertices, indices, material));
+}
+
