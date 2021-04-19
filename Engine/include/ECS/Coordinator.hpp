@@ -52,6 +52,12 @@ namespace BwatEngine
         EntityID CreateEntity();
 
         /**
+         * @param entity Entity ID
+         * @return True if the entity ID is valid
+         */
+        bool IsValid(EntityID entity);
+
+        /**
          * @brief Destroy the given \p entity from every managers, removing it from the scene hierarchy
          * @param entity EntityID ID
          * @warning Destroying non existing entity result in undefined behavior
@@ -62,6 +68,18 @@ namespace BwatEngine
          * @return a copy of the entity list
          */
         std::vector<EntityID> GetEntitiesList() const;
+
+        /**
+         * @param signature Entities's signature wanted
+         * @return A std::vector containing all entities with a given signature
+         * @warning This function iterates over **every** entities created. It should be used with care.
+         */
+        std::vector<EntityID> GetEntitiesWithSignature(Signature signature);
+
+        /**
+         * @brief Destroy all entities created with the coordinator
+         */
+        void DestroyAllEntities();
 
         /**
          * @brief Register the component of type \p C to the ComponentManager
@@ -76,11 +94,11 @@ namespace BwatEngine
         }
 
         /**
-         * @brief Add a component \C to the given \p entity
+         * @brief Construct in place a component \p C to the given \p entity
          * @tparam C Added component's type
-         * @param entity EntityID ID
-         * @param component Component's data (existing one or in place constructor)
-         * @warning Adding a component that an entity already has is invalid
+         * @tparam Args Entity's constructor arguments types
+         * @param entity Entity's ID
+         * @param args Entity's constructor arguments
          */
         template<class C, typename... Args>
         void AddComponent(EntityID entity, Args&&... args)
@@ -94,6 +112,13 @@ namespace BwatEngine
             systemManager.EntitySignatureChanged(entity, signature);
         }
 
+        /**
+         * @brief Add a component \C to the given \p entity
+         * @tparam C Added component's type
+         * @param entity EntityID ID
+         * @param component Component's data (existing one)
+         * @warning Adding a component that an entity already has is invalid
+         */
         template<class C>
         void AddComponent(EntityID entity, C&& component)
         {
@@ -110,7 +135,7 @@ namespace BwatEngine
          * @brief Remove the component \p C from the given \p entity
          * @tparam C Removed component's type
          * @param entity EntityID ID
-         * @warning Removing inexistant component is not valid
+         * @warning Removing non-existent component is not valid
          */
         template<class C>
         void RemoveComponent(EntityID entity)
@@ -147,6 +172,30 @@ namespace BwatEngine
         }
 
         /**
+         * @brief Check if the \p entity have the component \p C
+         * @tparam C Component's type
+         * @param entity Entity ID
+         * @return true if the entity have the component
+         */
+        template<class C>
+        bool HaveComponent(EntityID entity)
+        {
+            return entityManager.GetSignature(entity).test(GetComponentType<C>());
+        }
+
+        /**
+         * @brief Get the entity ID from a component reference
+         * @tparam C Component's type
+         * @param component Component's data
+         * @return Entity's ID if found, 0 if a problem occurred
+         */
+        template<class C>
+        EntityID GetEntityIDFrom(C& component)
+        {
+             return componentManager.GetEntityIDFrom(component);
+        }
+
+        /**
          * @brief Register the system to the internal manager
          * @tparam S System's type
          * @return A pointer to the registered system
@@ -173,7 +222,7 @@ namespace BwatEngine
          * @param entity EntityID ID
          * @return The signature of the given \p entity
          */
-        Signature GetEntitySignature(EntityID entity);
+        Signature GetEntitySignature(EntityID entity) const;
 
         /**
          * @brief Set the parent entity in the internal scene graph
@@ -194,7 +243,7 @@ namespace BwatEngine
          * @return A std::vector of every entities that does not have a parent
          * @warning Current implementation iterates over every entities without caching
          */
-        std::vector<EntityID> GetRootEntities();
+        std::vector<EntityID> GetRootEntities() const;
     };
 }
 #endif //ENGINE_ECS_COORDINATOR_HPP

@@ -3,6 +3,8 @@
 #include <ECS/Components/RigidBodyComponent.hpp>
 #include <ECS/Components/AudioSourceComponent.hpp>
 #include <ECS/Components/ColliderComponent.hpp>
+#include <ECS/Components/CameraComponent.hpp>
+#include <ECS/Components/PlayerComponent.hpp>
 
 #include "ResourceManager/ResourceManager.hpp"
 #include "ECS/Coordinator.hpp"
@@ -180,6 +182,29 @@ void WidgetProperties::ShowComponent<BwatEngine::AudioSourceComponent>(BwatEngin
     }
 }
 
+template<>
+void WidgetProperties::ShowComponent<BwatEngine::CameraComponent>(BwatEngine::CameraComponent &component)
+{
+    if (ImGui::CollapsingHeader("Camera Component", ImGuiTreeNodeFlags_DefaultOpen))
+    {
+        if (component.isOrtho)
+        {
+            ImGui::DragFloat("Left", &component.left);
+            ImGui::DragFloat("Right", &component.right);
+            ImGui::DragFloat("Top", &component.top);
+            ImGui::DragFloat("Bottom", &component.bottom);
+
+        }
+        else
+        {
+            ImGui::DragFloat("Field of view", &component.fov);
+            ImGui::DragFloat("Aspect", &component.aspect, 0.001);
+        }
+        ImGui::DragFloat("Near", &component.near);
+        ImGui::DragFloat("Far", &component.far);
+    }
+}
+
 void WidgetProperties::TickVisible()
 {
     using namespace BwatEngine;
@@ -201,6 +226,8 @@ void WidgetProperties::TickVisible()
         hasComponentAvailable |= AddComponentMenuItem<RenderableComponent>(currentEntity);
         hasComponentAvailable |= AddComponentMenuItem<AudioSourceComponent>(currentEntity);
         hasComponentAvailable |= AddComponentMenuItem<ColliderComponent>(currentEntity);
+        hasComponentAvailable |= AddComponentMenuItem<CameraComponent>(currentEntity);
+        hasComponentAvailable |= AddComponentMenuItem<PlayerComponent>(currentEntity);
 
         ImGui::EndMenu();
     }
@@ -209,6 +236,7 @@ void WidgetProperties::TickVisible()
     ShowComponentMenuItem<RenderableComponent>(currentEntity);
     ShowComponentMenuItem<RigidBodyComponent>(currentEntity);
     ShowComponentMenuItem<AudioSourceComponent>(currentEntity);
+    ShowComponentMenuItem<CameraComponent>(currentEntity);
     //ShowComponentMenuItem<ColliderComponent>(currentEntity);
 }
 
@@ -223,7 +251,7 @@ bool WidgetProperties::AddComponentMenuItem(BwatEngine::EntityID entity)
     BwatEngine::Coordinator &coordinator = BwatEngine::Coordinator::GetInstance();
     BwatEngine::Signature entitySignature = coordinator.GetEntitySignature(entity);
 
-    if (!entitySignature.test(coordinator.GetComponentType<T>()))
+    if (!coordinator.HaveComponent<T>(entity))
     {
         //TODO: proper component name
         if (ImGui::MenuItem(typeid(T).name()))

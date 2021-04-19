@@ -82,6 +82,12 @@ namespace BwatEngine
             return GetComponentArray<C>()->GetData(entity);
         }
 
+        template<class C>
+        EntityID GetEntityIDFrom(C& component)
+        {
+            return GetComponentArray<C>()->GetEntityIDFrom(component);
+        }
+
         void EntityDestroyed(EntityID entity)
         {            for (auto const& pair : componentArrays)
             {
