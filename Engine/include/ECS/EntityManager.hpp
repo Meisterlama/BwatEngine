@@ -2,13 +2,15 @@
 #define ENGINE_ECS_ENTITY_MANAGER_HPP
 #include <vector>
 #include <queue>
+#include <algorithm>
 #include "Debug/Logger.hpp"
 
 namespace BwatEngine
 {
     class EntityManager
     {
-        std::queue<EntityID> availableEntities{};
+        //TODO: Custom Queue
+        std::vector<EntityID> availableEntities{};
         EntityID nextEntity = 1;
         // TODO: Manage vector reallocation to handle more entities than default MAX_ENTITIES
         std::vector<Signature> signatures{};
@@ -30,8 +32,8 @@ namespace BwatEngine
             EntityID id = nextEntity;
             if (!availableEntities.empty())
             {
-                id = availableEntities.front();
-                availableEntities.pop();
+                id = availableEntities.back();
+                availableEntities.pop_back();
             }
             else
             {
@@ -40,6 +42,21 @@ namespace BwatEngine
             livingEntityCount++;
 
             return id;
+        }
+
+        bool IsValid(EntityID entity)
+        {
+            if (entity == 0
+            || entity > nextEntity
+            || std::any_of(
+                    availableEntities.cbegin(),
+                    availableEntities.cend(),
+                    [&entity](EntityID freeID){ return freeID == entity;}))
+            {
+                return false;
+            }
+
+            return true;
         }
 
         void DestroyEntity(EntityID entity)
@@ -52,7 +69,7 @@ namespace BwatEngine
 
             signatures[entity].reset();
 
-            availableEntities.push(entity);
+            availableEntities.push_back(entity);
             livingEntityCount--;
         }
 
@@ -67,7 +84,7 @@ namespace BwatEngine
             signatures[entity] = signature;
         }
 
-        Signature GetSignature(EntityID entity)
+        Signature GetSignature(EntityID entity) const
         {
             if(entity > MAX_ENTITIES)
             {

@@ -96,6 +96,16 @@ namespace BwatEngine
             return componentArray[entityToIndexMap[entity]];
         }
 
+        EntityID GetEntityIDFrom(C& component)
+        {
+            for (size_t i = 0; i < size; i++)
+            {
+                if (&componentArray[i] == &component)
+                    return indexToEntityMap[i];
+            }
+            return 0;
+        }
+
         void EntityDestroyed(EntityID entity) override
         {
             if (entityToIndexMap.find(entity) != entityToIndexMap.end())
