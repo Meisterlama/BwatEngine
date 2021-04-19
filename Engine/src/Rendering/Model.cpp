@@ -60,7 +60,7 @@ void Model::ProcessMesh(aiMesh* mesh, const aiScene* scene)
         vector.X = mesh->mVertices[i].x;
         vector.Y = mesh->mVertices[i].y;
         vector.Z = mesh->mVertices[i].z;
-        vertex.positions = vector;
+        vertex.position = vector;
 
         // normals
         if (mesh->HasNormals())

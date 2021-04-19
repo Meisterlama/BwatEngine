@@ -127,7 +127,7 @@ Model CreateCube()
     for (int i = 0; i < maxIndex; i++)
     {
         Vertex vertex;
-        vertex.positions = position[i];
+        vertex.position = position[i];
         vertex.normal = normales[i];
         vertex.texCoords = uvs[i];
 
@@ -233,7 +233,7 @@ Model CreateSphere(int latitudeCount , int longitudeCount )
     for (int i = 0; i < positions.size() ; i++)
     {
         Vertex vertex;
-        vertex.positions = positions[i];
+        vertex.position = positions[i];
         vertex.normal = normals[i];
         vertex.texCoords = uvs[i];
 
@@ -308,7 +308,7 @@ Model CreatePlan()
     for (int i = 0; i < 4; i++)
     {
         Vertex vertex;
-        vertex.positions = position[i];
+        vertex.position = position[i];
         vertex.normal = normales[i];
         vertex.texCoords = uvs[i];
 

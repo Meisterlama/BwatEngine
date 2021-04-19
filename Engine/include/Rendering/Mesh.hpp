@@ -13,7 +13,7 @@ namespace Rendering
 
     struct Vertex
     {
-        BwatEngine::Math::Vec3f positions;
+        BwatEngine::Math::Vec3f position;
         BwatEngine::Math::Vec3f normal;
         BwatEngine::Math::Vec2f texCoords;
     };
