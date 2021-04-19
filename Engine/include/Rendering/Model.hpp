@@ -39,7 +39,7 @@ namespace Rendering
         Model() = default;
         Model(const std::string path);
 
-		void AddMesh(std::vector<Vertex> vertices, std::vector<unsigned int> indices, const Material& material);
+		void AddMesh(std::vector<Vertex> vertices, std::vector<unsigned int> indices,Material material);
 		std::vector<Material*> GetDefaultMaterials() const;
 		void Draw(std::vector<Material*>* materials = nullptr);
 	};

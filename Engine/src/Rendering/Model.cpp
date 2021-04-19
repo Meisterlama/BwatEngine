@@ -60,7 +60,7 @@ void Model::ProcessMesh(aiMesh* mesh, const aiScene* scene)
         vector.X = mesh->mVertices[i].x;
         vector.Y = mesh->mVertices[i].y;
         vector.Z = mesh->mVertices[i].z;
-        vertex.postion = vector;
+        vertex.positions = vector;
 
         // normals
         if (mesh->HasNormals())
@@ -124,7 +124,7 @@ std::vector<Material*> Model::GetDefaultMaterials() const
     return materials;
 }
 
-void Model::AddMesh(std::vector<Vertex> vertices, std::vector<unsigned int> indices, const Material& material)
+void Model::AddMesh(std::vector<Vertex> vertices, std::vector<unsigned int> indices,Material material)
 {
     meshes.emplace_back(std::make_unique<Mesh>(vertices, indices, material));
 }

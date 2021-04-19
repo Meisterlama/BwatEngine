@@ -13,7 +13,7 @@ namespace Rendering
 
     struct Vertex
     {
-        BwatEngine::Math::Vec3f postion;
+        BwatEngine::Math::Vec3f positions;
         BwatEngine::Math::Vec3f normal;
         BwatEngine::Math::Vec2f texCoords;
     };
@@ -33,7 +33,7 @@ namespace Rendering
         Material defaultMaterial;
     
         // Constructor 
-        Mesh(std::vector<Vertex> vertices, std::vector<unsigned int> indices, const Material& defaultMaterial);
+        Mesh(std::vector<Vertex> vertices, std::vector<unsigned int> indices, Material defaultMaterial);
         Mesh(const Mesh& mesh) = delete;
         ~Mesh();
 
