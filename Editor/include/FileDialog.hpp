@@ -21,7 +21,7 @@ public:
     void ShowList();
 
     bool loadMe = false;
-    FileInfoStruct chargeFile;
+    FileInfoStruct loadFile;
 
 private:
     struct FilterInfoStruct

@@ -12,12 +12,12 @@ WidgetAsset::WidgetAsset(EditorInterface *editor) : Widget(editor)
 
 void WidgetAsset::TickVisible()
 {
-    if (assetDirectory.chargeMe)
+    if (assetDirectory.loadMe)
     {
         if (ImGui::Button("Load Resources"))
         {
-            LoadResources(assetDirectory.chargeFile);
-            assetDirectory.chargeMe = false;
+            LoadResources(assetDirectory.loadFile);
+            assetDirectory.loadMe = false;
         }
     }
 
