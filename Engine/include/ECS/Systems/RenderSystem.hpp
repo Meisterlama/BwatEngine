@@ -29,7 +29,7 @@ namespace BwatEngine
 
         void Init(Window& win);
         void SetCamera(EntityID _camera);
-        void Update(Window& win,Rendering::FrameBufferObject* fbo);
+        void Update(Window& win);
         void ManageCubeMap();
         void ManageEntitiesAndLights();
         void CheckCameraValid();

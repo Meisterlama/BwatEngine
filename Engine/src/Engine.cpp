@@ -73,20 +73,11 @@ void Engine::Update()
 
     scene.playerControlSystem->Update(Time::deltaTime, GetGLFWwindow());
 
-    if (MainFBO)
-    {
-        MainFBO->UseAndBind();
-    }
-
-    scene.renderSystem->Update(GetWindow(), MainFBO);
+    ManageRenderAndPostProcess();
 
     if (updateAudio)
     {
         scene.soundSystem->Update();
-    }
-    if (MainFBO)
-    {
-        MainFBO->Unbind();
     }
 
     static bool updateScript = false;
@@ -130,7 +121,7 @@ void Engine::ManageRenderAndPostProcess()
     else
         MainFBO->UseAndBind();
 
-    scene.renderSystem->Update(GetWindow(), MainFBO);
+    scene.renderSystem->Update(GetWindow());
 
     if (isPostProcess)
     {

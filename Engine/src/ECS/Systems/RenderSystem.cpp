@@ -37,7 +37,7 @@ void RenderSystem::SetCamera(EntityID _camera)
     camera = _camera;
 }
 
-void RenderSystem::Update(Window& win, Rendering::FrameBufferObject* fbo)
+void RenderSystem::Update(Window& win)
 {
     
     CheckCameraValid();
