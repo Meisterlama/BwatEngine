@@ -19,6 +19,7 @@
 #include "ECS/Systems/RenderSystem.hpp"
 #include "ECS/Systems/SoundSystem.hpp"
 #include "ECS/Systems/ScriptSystem.hpp"
+#include "ECS/Systems/PostProcessSystem.hpp"
 #include "Engine.hpp"
 
 #include "Physic/PhysicCast.hpp"
@@ -51,6 +52,8 @@ Scene::Scene(Window& window)
     : texture(BwatEngine::ResourceManager::Instance()->GetOrLoadTexture("Assets/image/moteur.jpg",Rendering::Texture::Type::E_DIFFUSE)), texture1(BwatEngine::ResourceManager::Instance()->GetOrLoadTexture("Assets/image/green.png", Rendering::Texture::Type::E_DIFFUSE))
 {
     scenePhysic.Init(physic);
+
+    
 
     Coordinator& coordinator = Coordinator::GetInstance();
 
@@ -91,7 +94,7 @@ Scene::Scene(Window& window)
         signature.set(coordinator.GetComponentType<TransformComponent>());
         coordinator.SetSystemSignature<RenderSystem>(signature);
     }
-    renderSystem->Init();
+    renderSystem->Init(window);
 
     // =================================== SCRIPT =================================== //
 
@@ -103,6 +106,7 @@ Scene::Scene(Window& window)
     }
     scriptSystem->Init();
 
+    // =================================== SOUND =================================== //
     soundSystem = coordinator.RegisterSystem<SoundSystem>();
     {
         Signature signature;
@@ -110,6 +114,13 @@ Scene::Scene(Window& window)
         coordinator.SetSystemSignature<SoundSystem>(signature);
     }
     soundSystem->Init();
+
+    // =================================== POST PROCESS =================================== //
+    postProcessSystem = coordinator.RegisterSystem<PostProcessSystem>();
+    postProcessSystem->Init();
+
+    
+
 
     //Rendering::Model mymodel = Rendering::Model{ (std::string) "Assets/bag/backpack.obj" };
     model = BwatEngine::ResourceManager::Instance()->GetOrLoadModel("Assets/cube.obj");;
@@ -131,7 +142,7 @@ Scene::Scene(Window& window)
     myMat.SetDiffuse(*texture);
     myMat1.SetDiffuse(*texture1);
     
-        for (int i = 0; i < 10; i++)
+        for (int i = 0; i < 4; i++)
         {
             auto entity = coordinator.CreateEntity();
             if (i == 0)

@@ -66,3 +66,11 @@ void Texture::UnBind()
 {
     glBindTexture(GL_TEXTURE_2D, 0);
 }
+
+
+void Texture::Resize(int width, int height)
+{
+    glBindTexture(GL_TEXTURE_2D, id);
+    glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, width, height, 0, GL_RGBA, GL_UNSIGNED_BYTE, nullptr);
+}
+

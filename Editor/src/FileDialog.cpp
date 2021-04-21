@@ -227,7 +227,7 @@ void FileDialog::LoadOnResources(FileInfoStruct file)
     if (file.ext == ".obj" || file.ext == ".fbx" || file.ext == ".png" || file.ext == ".jpg")
     {
         //if (BwatEngine::ResourceManager::Instance().
-        chargeMe = true;
+        loadMe = true;
         chargeFile = file;
     }
 }
