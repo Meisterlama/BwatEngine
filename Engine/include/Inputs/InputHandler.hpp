@@ -21,6 +21,7 @@ namespace BwatEngine
         BwatEngine::Math::Vec2d mouseDelta{};
         BwatEngine::Math::Vec2d mousePos{};
         BwatEngine::Math::Vec2d mouseOldPos{};
+        MouseStatus mouseStatus;
 
         BwatEngine::Math::Vec2d scrollDelta{};
 
@@ -54,6 +55,10 @@ namespace BwatEngine
         static BwatEngine::Math::Vec2d GetMousePos();
         static BwatEngine::Math::Vec2d GetMouseDelta();
         static BwatEngine::Math::Vec2d GetScrollDelta();
+
+        //TODO: Disabling cursor while it is outside of the window causes delta mouse to freak out 3 frames after
+        static void SetMouseStatus(MouseStatus status);
+        static MouseStatus GetMouseStatus();
     };
 }
 
