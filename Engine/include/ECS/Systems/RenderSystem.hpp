@@ -17,10 +17,9 @@ namespace BwatEngine
     {
         Rendering::FrameBufferObject mainRenderFBO;
         Rendering::Shader shader;
-        Rendering::Shader skyboxShader;
+
         Rendering::CubeMap cubeMap;
 
-        Rendering::PostProcess postProcess;
         Window* window = nullptr;
         EntityID camera = 0;
 
@@ -35,8 +34,11 @@ namespace BwatEngine
         void ManageEntitiesAndLights();
         void CheckCameraValid();
         void OptionAndClear(Window& win);
-        
 
+        GLuint GetRenderTextureID() { return mainRenderFBO.textureColor.id; }
+        void BindMainRenderFBO() { mainRenderFBO.UseAndBind(); }
+
+      
     };
 }
 

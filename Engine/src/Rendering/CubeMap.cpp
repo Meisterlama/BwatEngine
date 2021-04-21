@@ -58,6 +58,8 @@ void CubeMap::Init()
     glBufferData(GL_ARRAY_BUFFER, sizeof(skyboxVertices), &skyboxVertices, GL_STATIC_DRAW);
     glEnableVertexAttribArray(0);
     glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 3 * sizeof(float), (void*)0);
+
+    shader = { "Assets/cubeMap.vs", "Assets/cubeMap.fs" };
 }
 
 void CubeMap::LoadCubeMap()

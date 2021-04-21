@@ -12,7 +12,6 @@ namespace Rendering
 		void Init();
 		void Apply(GLuint texColorFBO);
 
-		Shader shader;
 		unsigned int quadVAO, quadVBO ;
 	};
 }

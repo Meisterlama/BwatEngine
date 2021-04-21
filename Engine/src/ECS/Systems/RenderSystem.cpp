@@ -12,8 +12,7 @@ using namespace BwatEngine;
 void RenderSystem::Init(Window& win)
 {
     mainRenderFBO.Rezise(win.GetWidth(),win.GetHeight());
-    shader = { "Assets/colors.vs", "Assets/colors.fs" };
-    skyboxShader = { "Assets/cubeMap.vs", "Assets/cubeMap.fs" };
+    shader = { "Assets/Shaders/colors.vs", "Assets/Shaders/colors.fs" };
 
     cubeMap.faces = {
         "Assets/cubemap/right.jpg",
@@ -25,7 +24,6 @@ void RenderSystem::Init(Window& win)
     };
 
     cubeMap.LoadCubeMap();
-    postProcess.Init();
 
     Rendering::Light mylight(Rendering::TYPE_LIGHT::Directional, { 0.5f,0.5f,0.5f }, { 0.5f,0.5f,0.5f }, { 0.5f,0.5f,0.5f });
     Scene::AddLight(mylight);
@@ -41,13 +39,7 @@ void RenderSystem::SetCamera(EntityID _camera)
 
 void RenderSystem::Update(Window& win, Rendering::FrameBufferObject* fbo)
 {
-    bool isPostProcess = true;
-
-    if (isPostProcess)
-        mainRenderFBO.UseAndBind();
-    else
-        fbo->UseAndBind();
-
+    
     CheckCameraValid();
     OptionAndClear(win);
 
@@ -57,19 +49,6 @@ void RenderSystem::Update(Window& win, Rendering::FrameBufferObject* fbo)
     ManageCubeMap();
     ManageEntitiesAndLights();
 
-    if (isPostProcess)
-    {
-        // Post Process ... 
-        fbo->UseAndBind();
-        glDisable(GL_DEPTH_TEST);
-        //glClearColor(1.0f, 1.0f, 1.0f, 1.0f);
-
-        postProcess.Apply(mainRenderFBO.textureColor.id);
-
-        glBindFramebuffer(GL_FRAMEBUFFER, 0);
-    }
-    else
-        fbo->Unbind();
 }
 
 void RenderSystem::ManageCubeMap()
@@ -81,9 +60,9 @@ void RenderSystem::ManageCubeMap()
     auto& cameraComponent = coordinator.GetComponent<CameraComponent>(camera);
 
     glDepthMask(GL_FALSE);
-    skyboxShader.use();
-    skyboxShader.setMat4("view", Math::Mat4f::CreateTRSMat(Math::Vec3f(0, 0, 0), cameraTransform.rotation, cameraTransform.scale).Invert());
-    skyboxShader.setMat4("projection", cameraComponent.GetProjectionMatrix());
+    cubeMap.shader.use();
+    cubeMap.shader.setMat4("view", Math::Mat4f::CreateTRSMat(Math::Vec3f(0, 0, 0), cameraTransform.rotation, cameraTransform.scale).Invert());
+    cubeMap.shader.setMat4("projection", cameraComponent.GetProjectionMatrix());
     glBindVertexArray(cubeMap.skyboxVAO);
     cubeMap.BindCubeMap();
     glDepthMask(GL_TRUE);

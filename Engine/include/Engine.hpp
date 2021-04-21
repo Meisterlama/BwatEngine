@@ -34,6 +34,8 @@ namespace BwatEngine
 
 		Rendering::FrameBufferObject* MainFBO = nullptr;
 
+		void ManageRenderAndPostProcess();
+
 	private:
 		float lastFrame = 0.0f;
 

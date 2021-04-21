@@ -20,6 +20,7 @@
 #include "ECS/Systems/RenderSystem.hpp"
 #include "ECS/Systems/SoundSystem.hpp"
 #include "ECS/Systems/ScriptSystem.hpp"
+#include "ECS/Systems/PostProcessSystem.hpp"
 #include "Engine.hpp"
 
 #include "Physic/PhysicCast.hpp"
@@ -109,6 +110,7 @@ Scene::Scene(Window& window)
     }
     scriptSystem->Init();
 
+    // =================================== SOUND =================================== //
     soundSystem = coordinator.RegisterSystem<SoundSystem>();
     {
         Signature signature;
@@ -116,6 +118,13 @@ Scene::Scene(Window& window)
         coordinator.SetSystemSignature<SoundSystem>(signature);
     }
     soundSystem->Init();
+
+    // =================================== POST PROCESS =================================== //
+    postProcessSystem = coordinator.RegisterSystem<PostProcessSystem>();
+    postProcessSystem->Init();
+
+    
+
 
     //Rendering::Model mymodel = Rendering::Model{ (std::string) "Assets/bag/backpack.obj" };
     model = BwatEngine::ResourceManager::Instance()->GetOrLoadModel("Assets/cube.obj");;

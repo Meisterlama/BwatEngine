@@ -4,8 +4,6 @@ using namespace Rendering;
 
 void PostProcess::Init()
 {
-    shader = { "Assets/postProcess.vs","Assets/postProcess.fs" };
-
     float quadVertices[] = { 
         // positions   // texCoords
         -1.0f,  1.0f,  0.0f, 1.0f,
@@ -32,8 +30,7 @@ void PostProcess::Init()
 
 void PostProcess::Apply(GLuint texColorFBO)
 {
-    shader.use();
     glBindVertexArray(quadVAO);
-    glBindTexture(GL_TEXTURE_2D, texColorFBO);	// use the color attachment texture as the texture of the quad plane
+    glBindTexture(GL_TEXTURE_2D, texColorFBO);	
     glDrawArrays(GL_TRIANGLES, 0, 6);
 }

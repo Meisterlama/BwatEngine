@@ -6,6 +6,7 @@
 
 #include "glad/glad.h"
 #include "GLFW/glfw3.h"
+#include "Rendering/Shader.hpp"
 
 namespace Rendering
 {
@@ -14,6 +15,7 @@ namespace Rendering
 		GLuint id;
 		std::vector<std::string> faces;
 		unsigned int skyboxVAO, skyboxVBO;
+		Shader shader;
 
 		void Init();
 		void LoadCubeMap();
