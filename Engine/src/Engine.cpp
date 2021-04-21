@@ -12,7 +12,6 @@
 #include "EditorInterface.hpp"
 
 #include "ECS/ECS.hpp"
-#include "ECS/Systems/InputSystem.hpp"
 #include "ECS/Systems/PhysicsSystem.hpp"
 #include "ECS/Systems/PlayerControlSystem.hpp"
 #include "ECS/Systems/RenderSystem.hpp"
@@ -36,12 +35,13 @@ namespace BwatEngine {
         ImGui_ImplGlfw_InitForOpenGL(GetGLFWwindow(), false);
         ImGui_ImplOpenGL3_Init("#version 330");
 
+        InputHandler::Initialize(GetGLFWwindow());
     }
 
     //Main Funtion of engine 
     void Engine::Update()
     {
-        glfwPollEvents();
+        InputHandler::Update();
 
         ImGui_ImplOpenGL3_NewFrame();
         ImGui_ImplGlfw_NewFrame();
@@ -56,11 +56,13 @@ namespace BwatEngine {
         if (InputHandler::GetKeyboardDown(KEY_F2))
         {
             updatePhysics = !updatePhysics;
-                    
+
         }
         static bool updateAudio = false;
         if (InputHandler::GetKeyboardDown(KEY_F3))
+        {
             updateAudio = !updateAudio;
+        }
 
         if (updatePhysics)
         {
@@ -68,38 +70,38 @@ namespace BwatEngine {
         }
 
         scene.playerControlSystem->Update(Time::deltaTime, GetGLFWwindow());
-        
-        if (MainFBO)
-            MainFBO->UseAndBind();
 
-         scene.renderSystem->Update(GetWindow());
+        if (MainFBO)
+        {
+            MainFBO->UseAndBind();
+        }
+
+        scene.renderSystem->Update(GetWindow());
 
         if (updateAudio)
         {
             scene.soundSystem->Update();
         }
-         if (MainFBO)
-            MainFBO->Unbind();
+        if (MainFBO)
+         {
+             MainFBO->Unbind();
+         }
 
-         static bool updateScript = false;
-         if (InputHandler::GetKeyboardDown(KEY_F4))
+        static bool updateScript = false;
+        if (InputHandler::GetKeyboardDown(KEY_F4))
          {
              LogDebug("ScriptOn");
              updateScript = !updateScript;
 
          }
-         if (updateScript)
+        if (updateScript)
          {
              scene.scriptSystem->Update();
          }
 
-        scene.inputSystem->Update();
-
-       
-        
 
         glfwSwapBuffers(GetGLFWwindow());
-        
+
     }
 
     //Close all content 
