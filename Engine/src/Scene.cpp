@@ -14,7 +14,6 @@
 #include "ECS/Components/AudioSourceComponent.hpp"
 
 
-#include "ECS/Systems/InputSystem.hpp"
 #include "ECS/Systems/PhysicsSystem.hpp"
 #include "ECS/Systems/PlayerControlSystem.hpp"
 #include "ECS/Systems/RenderSystem.hpp"
@@ -67,9 +66,6 @@ Scene::Scene(Window& window)
     coordinator.RegisterComponent<ColliderComponent>();
     coordinator.RegisterComponent<ScriptComponent>();
     coordinator.RegisterComponent<AudioSourceComponent>();
-
-    inputSystem = coordinator.RegisterSystem<InputsSystem>();
-    inputSystem->Init(window);
 
     physicsSystem = coordinator.RegisterSystem<PhysicsSystem>();
     {

@@ -12,7 +12,6 @@
 #include "EditorInterface.hpp"
 
 #include "ECS/ECS.hpp"
-#include "ECS/Systems/InputSystem.hpp"
 #include "ECS/Systems/PhysicsSystem.hpp"
 #include "ECS/Systems/PlayerControlSystem.hpp"
 #include "ECS/Systems/RenderSystem.hpp"
@@ -36,7 +35,8 @@ Engine::Engine() : scene(window)
 
     ImGui_ImplGlfw_InitForOpenGL(GetGLFWwindow(), false);
     ImGui_ImplOpenGL3_Init("#version 330");
-
+  
+    InputHandler::Initialize(GetGLFWwindow());
 }
 
 //Main Funtion of engine 
@@ -56,8 +56,67 @@ void Engine::Update()
     static bool updatePhysics = false;
     if (InputHandler::GetKeyboardDown(KEY_F2))
     {
-        updatePhysics = !updatePhysics;
-                
+        InputHandler::Update();
+
+        ImGui_ImplOpenGL3_NewFrame();
+        ImGui_ImplGlfw_NewFrame();
+        ImGui::NewFrame();
+
+
+        float currentFrame = glfwGetTime();
+        Time::deltaTime = currentFrame - lastFrame;
+        lastFrame = currentFrame;
+
+        static bool updatePhysics = false;
+        if (InputHandler::GetKeyboardDown(KEY_F2))
+        {
+            updatePhysics = !updatePhysics;
+
+        }
+        static bool updateAudio = false;
+        if (InputHandler::GetKeyboardDown(KEY_F3))
+        {
+            updateAudio = !updateAudio;
+        }
+
+        if (updatePhysics)
+        {
+            scene.physicsSystem->Update();
+        }
+
+        scene.playerControlSystem->Update(Time::deltaTime, GetGLFWwindow());
+
+        if (MainFBO)
+        {
+            MainFBO->UseAndBind();
+        }
+
+        scene.renderSystem->Update(GetWindow());
+
+        if (updateAudio)
+        {
+            scene.soundSystem->Update();
+        }
+        if (MainFBO)
+         {
+             MainFBO->Unbind();
+         }
+
+        static bool updateScript = false;
+        if (InputHandler::GetKeyboardDown(KEY_F4))
+         {
+             LogDebug("ScriptOn");
+             updateScript = !updateScript;
+
+         }
+        if (updateScript)
+         {
+             scene.scriptSystem->Update();
+         }
+
+
+        glfwSwapBuffers(GetGLFWwindow());
+
     }
     static bool updateAudio = false;
     if (InputHandler::GetKeyboardDown(KEY_F3))

@@ -42,7 +42,6 @@ namespace BwatEngine
 		Rendering::Material myMat;
 		Rendering::Material myMat1;
 
-		std::shared_ptr<InputsSystem> inputSystem = nullptr;
 		std::shared_ptr<PhysicsSystem> physicsSystem = nullptr;
 		std::shared_ptr<PlayerControlSystem> playerControlSystem = nullptr;
 		std::shared_ptr<RenderSystem> renderSystem = nullptr;
