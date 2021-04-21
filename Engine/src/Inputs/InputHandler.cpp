@@ -1,3 +1,4 @@
+#include <algorithm>
 #include "Inputs/InputHandler.hpp"
 #include "Debug/Logger.hpp"
 
@@ -9,9 +10,12 @@ namespace BwatEngine
 
     void InputHandler::KeyCallback(GLFWwindow *window, int key, int scancode, int action, int mods)
     {
-        inputHandler->keyboard[(Keyboard)key].pressed = (action == GLFW_PRESS) || (action == GLFW_REPEAT);
-        inputHandler->keyboard[(Keyboard)key].down = (action == GLFW_PRESS);
-        inputHandler->keyboard[(Keyboard)key].up = (action == GLFW_RELEASE);
+        inputHandler->keyboard[static_cast<Keyboard>(key)].pressed = (action == GLFW_PRESS) || (action == GLFW_REPEAT);
+        inputHandler->keyboard[static_cast<Keyboard>(key)].down = (action == GLFW_PRESS);
+        inputHandler->keyboard[static_cast<Keyboard>(key)].up = (action == GLFW_RELEASE);
+
+        if ((action == GLFW_PRESS) || (action == GLFW_REPEAT))
+            inputHandler->lastPressed = static_cast<Keyboard>(key);
 
         ImGui_ImplGlfw_KeyCallback(window, key, scancode, action, mods);
 //        LogTrace("Mod: %i; Key: %s(%i) %s",
@@ -19,9 +23,9 @@ namespace BwatEngine
     }
     void InputHandler::MouseButtonCallback(GLFWwindow *window, int button, int action, int mods)
     {
-        inputHandler->mouse[(Mouse)button].pressed = (action == GLFW_PRESS) || (action == GLFW_REPEAT);
-        inputHandler->mouse[(Mouse)button].down = (action == GLFW_PRESS);
-        inputHandler->mouse[(Mouse)button].up = (action == GLFW_RELEASE);
+        inputHandler->mouse[static_cast<Mouse>(button)].pressed = (action == GLFW_PRESS) || (action == GLFW_REPEAT);
+        inputHandler->mouse[static_cast<Mouse>(button)].down = (action == GLFW_PRESS);
+        inputHandler->mouse[static_cast<Mouse>(button)].up = (action == GLFW_RELEASE);
 
         ImGui_ImplGlfw_MouseButtonCallback(window, button, action, mods);
 //        LogTrace("Mouse button %i(mod %i) %s",
@@ -87,6 +91,17 @@ namespace BwatEngine
     bool InputHandler::GetKeyboardDown(Keyboard key) {return inputHandler->keyboard[key].down;}
     bool InputHandler::GetKeyboardUp(Keyboard key) {return inputHandler->keyboard[key].up;}
     bool InputHandler::GetKeyboard(Keyboard key) {return inputHandler->keyboard[key].pressed;}
+    bool InputHandler::GetAnyKeyDown()
+    {
+        return std::any_of(inputHandler->keyboard.cbegin(), inputHandler->keyboard.cend(),
+                           [](std::pair<Keyboard, InputState> keystate)
+                           {
+                                return keystate.second.down;
+                           }
+        );
+    }
+
+    Keyboard InputHandler::GetLastKeyPressed() {return inputHandler->lastPressed;};
     bool InputHandler::GetMouseButtonDown(Mouse button) {return inputHandler->mouse[button].down;}
     bool InputHandler::GetMouseButtonUp(Mouse button) {return inputHandler->mouse[button].up;}
     bool InputHandler::GetMouseButton(Mouse button) {return inputHandler->mouse[button].pressed;}

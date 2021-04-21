@@ -16,6 +16,7 @@ namespace BwatEngine
     {
     private:
         std::map<Keyboard, InputState> keyboard{};
+        Keyboard lastPressed;
         std::map<Mouse, InputState> mouse{};
 
         BwatEngine::Math::Vec2d mouseDelta{};
@@ -49,6 +50,8 @@ namespace BwatEngine
         static bool GetKeyboardDown(Keyboard key);
         static bool GetKeyboardUp(Keyboard key);
         static bool GetKeyboard(Keyboard key);
+        static bool GetAnyKeyDown();
+        static Keyboard GetLastKeyPressed();
         static bool GetMouseButtonDown(Mouse button);
         static bool GetMouseButtonUp(Mouse button);
         static bool GetMouseButton(Mouse button);
