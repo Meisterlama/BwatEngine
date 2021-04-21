@@ -35,14 +35,14 @@ Engine::Engine() : scene(window)
 
     ImGui_ImplGlfw_InitForOpenGL(GetGLFWwindow(), false);
     ImGui_ImplOpenGL3_Init("#version 330");
-  
+
     InputHandler::Initialize(GetGLFWwindow());
 }
 
 //Main Funtion of engine 
 void Engine::Update()
 {
-    glfwPollEvents();
+    InputHandler::Update();
 
     ImGui_ImplOpenGL3_NewFrame();
     ImGui_ImplGlfw_NewFrame();
@@ -53,74 +53,18 @@ void Engine::Update()
     Time::deltaTime = currentFrame - lastFrame;
     lastFrame = currentFrame;
 
+
     static bool updatePhysics = false;
     if (InputHandler::GetKeyboardDown(KEY_F2))
     {
-        InputHandler::Update();
-
-        ImGui_ImplOpenGL3_NewFrame();
-        ImGui_ImplGlfw_NewFrame();
-        ImGui::NewFrame();
-
-
-        float currentFrame = glfwGetTime();
-        Time::deltaTime = currentFrame - lastFrame;
-        lastFrame = currentFrame;
-
-        static bool updatePhysics = false;
-        if (InputHandler::GetKeyboardDown(KEY_F2))
-        {
-            updatePhysics = !updatePhysics;
-
-        }
-        static bool updateAudio = false;
-        if (InputHandler::GetKeyboardDown(KEY_F3))
-        {
-            updateAudio = !updateAudio;
-        }
-
-        if (updatePhysics)
-        {
-            scene.physicsSystem->Update();
-        }
-
-        scene.playerControlSystem->Update(Time::deltaTime, GetGLFWwindow());
-
-        if (MainFBO)
-        {
-            MainFBO->UseAndBind();
-        }
-
-        scene.renderSystem->Update(GetWindow());
-
-        if (updateAudio)
-        {
-            scene.soundSystem->Update();
-        }
-        if (MainFBO)
-         {
-             MainFBO->Unbind();
-         }
-
-        static bool updateScript = false;
-        if (InputHandler::GetKeyboardDown(KEY_F4))
-         {
-             LogDebug("ScriptOn");
-             updateScript = !updateScript;
-
-         }
-        if (updateScript)
-         {
-             scene.scriptSystem->Update();
-         }
-
-
-        glfwSwapBuffers(GetGLFWwindow());
+        updatePhysics = !updatePhysics;
 
     }
     static bool updateAudio = false;
     if (InputHandler::GetKeyboardDown(KEY_F3))
+    {
         updateAudio = !updateAudio;
+    }
 
     if (updatePhysics)
     {
@@ -128,30 +72,38 @@ void Engine::Update()
     }
 
     scene.playerControlSystem->Update(Time::deltaTime, GetGLFWwindow());
-    
-    ManageRenderAndPostProcess();
+
+    if (MainFBO)
+    {
+        MainFBO->UseAndBind();
+    }
+
+    scene.renderSystem->Update(GetWindow(), MainFBO);
 
     if (updateAudio)
     {
         scene.soundSystem->Update();
     }
+    if (MainFBO)
+    {
+        MainFBO->Unbind();
+    }
 
-     static bool updateScript = false;
-     if (InputHandler::GetKeyboardDown(KEY_F4))
-     {
-         LogDebug("ScriptOn");
-         updateScript = !updateScript;
+    static bool updateScript = false;
+    if (InputHandler::GetKeyboardDown(KEY_F4))
+    {
+        LogDebug("ScriptOn");
+        updateScript = !updateScript;
 
-     }
-     if (updateScript)
-     {
-         scene.scriptSystem->Update();
-     }
+    }
+    if (updateScript)
+    {
+        scene.scriptSystem->Update();
+    }
 
-    scene.inputSystem->Update();
 
     glfwSwapBuffers(GetGLFWwindow());
-    
+
 }
 
 //Close all content 
@@ -167,7 +119,6 @@ Engine::~Engine()
 {
 
 }
-    
 
 
 void Engine::ManageRenderAndPostProcess()
@@ -185,7 +136,7 @@ void Engine::ManageRenderAndPostProcess()
     {
         // Post Process ... 
         MainFBO->UseAndBind();
-        scene.postProcessSystem->Update(scene.renderSystem->GetRenderTextureID(),POSTPROCESS_SHADER::INVERSION); 
+        scene.postProcessSystem->Update(scene.renderSystem->GetRenderTextureID(), POSTPROCESS_SHADER::INVERSION);
     }
 
     MainFBO->Unbind();
