@@ -14,8 +14,8 @@ namespace BwatEngine
         inputHandler->keyboard[(Keyboard)key].up = (action == GLFW_RELEASE);
 
         ImGui_ImplGlfw_KeyCallback(window, key, scancode, action, mods);
-        LogTrace("Mod: %i; Key: %s(%i) %s",
-                 mods, glfwGetKeyName(key, 0), key, (action == 0) ? "released" : ((action == 1) ? "pressed" : "repeated"));
+//        LogTrace("Mod: %i; Key: %s(%i) %s",
+//                 mods, glfwGetKeyName(key, 0), key, (action == 0) ? "released" : ((action == 1) ? "pressed" : "repeated"));
     }
     void InputHandler::MouseButtonCallback(GLFWwindow *window, int button, int action, int mods)
     {
