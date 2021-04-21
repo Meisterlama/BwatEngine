@@ -34,6 +34,7 @@ namespace Rendering
 
         Texture(int width, int height);
 
+        void Resize(int width, int height);
         void Use();
         void UnBind();
     };

@@ -69,17 +69,12 @@ namespace BwatEngine {
 
         scene.playerControlSystem->Update(Time::deltaTime, GetGLFWwindow());
         
-        if (MainFBO)
-            MainFBO->UseAndBind();
-
-         scene.renderSystem->Update(GetWindow());
+        scene.renderSystem->Update(GetWindow(),MainFBO);
 
         if (updateAudio)
         {
             scene.soundSystem->Update();
         }
-         if (MainFBO)
-            MainFBO->Unbind();
 
          static bool updateScript = false;
          if (InputHandler::GetKeyboardDown(KEY_F4))
@@ -94,9 +89,6 @@ namespace BwatEngine {
          }
 
         scene.inputSystem->Update();
-
-       
-        
 
         glfwSwapBuffers(GetGLFWwindow());
         

@@ -97,7 +97,7 @@ Scene::Scene(Window& window)
         signature.set(coordinator.GetComponentType<TransformComponent>());
         coordinator.SetSystemSignature<RenderSystem>(signature);
     }
-    renderSystem->Init();
+    renderSystem->Init(window);
 
     // =================================== SCRIPT =================================== //
 

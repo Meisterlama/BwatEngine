@@ -42,7 +42,7 @@ GLFWwindow* Window::InitGLFW()
 	glfwWindowHint(GLFW_OPENGL_DEBUG_CONTEXT, GLFW_TRUE);
 	glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE);
 
-	GLFWwindow* window = glfwCreateWindow(width, height, "TestEngine", nullptr, nullptr);
+	GLFWwindow* window = glfwCreateWindow(width, height, "BwatEngine", nullptr, nullptr);
 	glfwMakeContextCurrent(window);
 
 	return window;
