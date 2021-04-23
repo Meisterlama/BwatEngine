@@ -20,6 +20,7 @@ namespace BwatEngine
 
 		~Collider() = default;
 		physx::PxShape* GetShape() { return shape; }
+        physx::PxMaterial* GetMaterial() { return material; }
 		void SetFriction(float friction);
 
 	};
