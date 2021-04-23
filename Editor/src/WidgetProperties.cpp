@@ -5,6 +5,7 @@
 #include <ECS/Components/ColliderComponent.hpp>
 #include <ECS/Components/CameraComponent.hpp>
 #include <ECS/Components/PlayerComponent.hpp>
+#include <ECS/Components/LightComponent.hpp>
 
 #include "ResourceManager/ResourceManager.hpp"
 #include "ECS/Coordinator.hpp"
@@ -228,6 +229,7 @@ void WidgetProperties::TickVisible()
         hasComponentAvailable |= AddComponentMenuItem<ColliderComponent>(currentEntity);
         hasComponentAvailable |= AddComponentMenuItem<CameraComponent>(currentEntity);
         hasComponentAvailable |= AddComponentMenuItem<PlayerComponent>(currentEntity);
+        hasComponentAvailable |= AddComponentMenuItem<LightComponent>(currentEntity);
 
         ImGui::EndMenu();
     }
@@ -238,6 +240,7 @@ void WidgetProperties::TickVisible()
     ShowComponentMenuItem<AudioSourceComponent>(currentEntity);
     ShowComponentMenuItem<CameraComponent>(currentEntity);
     //ShowComponentMenuItem<ColliderComponent>(currentEntity);
+    ShowComponentMenuItem<LightComponent>(currentEntity);
 }
 
 void WidgetProperties::Inspect(BwatEngine::EntityID entity)
@@ -275,4 +278,87 @@ bool WidgetProperties::ShowComponentMenuItem(BwatEngine::EntityID entity)
         return true;
     }
     return false;
+}
+
+
+template<>
+void WidgetProperties::ShowComponent<BwatEngine::LightComponent>(BwatEngine::LightComponent& component)
+{
+    if (ImGui::CollapsingHeader("Light", ImGuiTreeNodeFlags_DefaultOpen))
+    {
+        bool update = false;
+        BwatEngine::Math::Vec3f position = component.position;
+        BwatEngine::Math::Vec3f direction = component.direction;
+        BwatEngine::Math::Vec3f ambient = component.ambient;
+        BwatEngine::Math::Vec3f specular = component.specular;
+        BwatEngine::Math::Vec3f diffuse = component.diffuse;
+
+        const char* items[] = { "Directional", "Point", "Spot", };
+        static const char* current_item = NULL;
+
+        if (ImGui::BeginCombo("##Typeoflight", current_item))
+        {
+            for (int n = 0; n < IM_ARRAYSIZE(items); n++)
+            {
+                bool is_selected = (current_item == items[n]); 
+                if (ImGui::Selectable(items[n], is_selected))
+                {
+                    current_item = items[n];
+                    component.typeoflight = (Rendering::TYPE_LIGHT)n;
+                }
+                if (is_selected)
+                    ImGui::SetItemDefaultFocus();   
+            }
+            ImGui::EndCombo();
+        }
+
+        update |= ImGui::DragFloat3("Position", position.values, 0.1f);
+        update |= ImGui::DragFloat3("Direction", direction.values, 0.1f);
+
+        update |= ImGui::ColorEdit3("Ambient", ambient.values, ImGuiColorEditFlags_Float);
+        update |= ImGui::ColorEdit3("Specular", specular.values, ImGuiColorEditFlags_Float);
+        update |= ImGui::ColorEdit3("Diffuse", diffuse.values, ImGuiColorEditFlags_Float);
+
+
+        float constant = component.constant;
+        float linear = component.linear;
+        float quadratic = component.quadratic;
+
+        float cutOff = component.cutoff;
+        float outerCutOff = component.outerCutoff;
+
+        if (component.typeoflight == Rendering::TYPE_LIGHT::Point || component.typeoflight == Rendering::TYPE_LIGHT::Spot)
+        {
+
+            update |= ImGui::DragFloat("Constant", &constant , 0.1f, 0.0f);
+            update |= ImGui::DragFloat("linear", &linear, 0.1f, 0.0f);
+            update |= ImGui::DragFloat("quadratic", &quadratic, 0.1f, 0.0f);
+
+            if (component.typeoflight == Rendering::TYPE_LIGHT::Spot)
+            {
+                update |= ImGui::DragFloat("cutOff", &cutOff, 0.1f, 0.0f);
+                update |= ImGui::DragFloat("outerCutOff", &outerCutOff, 0.1f, 0.0f);
+            }
+        }
+
+        if (update)
+        {
+            component.position = position;
+            component.direction = direction;
+
+            component.ambient = ambient;
+            component.specular = specular;
+            component.diffuse = diffuse;
+
+
+            component.constant     = constant;
+            component.linear       = linear;
+            component.quadratic    = quadratic;
+
+            component.cutoff       = cutOff;
+            component.outerCutoff  = outerCutOff;
+
+        }
+
+    }
 }

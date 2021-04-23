@@ -26,12 +26,8 @@ namespace BwatEngine
 	{
 	private:
 
-		static std::vector<Rendering::Light> lights;
 
 	public:
-
-		static void AddLight(Rendering::Light& newlight);
-		static std::vector<Rendering::Light>& GetLights();
 
 		Scene(Window& window);
 
@@ -52,8 +48,6 @@ namespace BwatEngine
 		// PhysX
 		Physic physic{};
 		PhysicScene scenePhysic;
-
-
 	};
 
 }

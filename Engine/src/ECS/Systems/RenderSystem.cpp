@@ -3,6 +3,7 @@
 #include "ECS/Components/TransformComponent.hpp"
 #include "ECS/Components/CameraComponent.hpp"
 #include "ECS/Components/RenderableComponent.hpp"
+#include "ECS/Components/LightComponent.hpp"
 
 #include "Rendering/Light.hpp"
 #include "Scene.hpp"
@@ -12,7 +13,7 @@ using namespace BwatEngine;
 void RenderSystem::Init(Window& win)
 {
     mainRenderFBO.Rezise(win.GetWidth(),win.GetHeight());
-    shader = { "Assets/Shaders/colors.vs", "Assets/Shaders/colors.fs" };
+    shader = { "Assets/Shaders/colors.vs", "Assets/Shaders/multilight.fs" };
 
     cubeMap.faces = {
         "Assets/cubemap/right.jpg",
@@ -24,9 +25,6 @@ void RenderSystem::Init(Window& win)
     };
 
     cubeMap.LoadCubeMap();
-
-    Rendering::Light mylight(Rendering::TYPE_LIGHT::Directional, { 0.5f,0.5f,0.5f }, { 0.5f,0.5f,0.5f }, { 0.5f,0.5f,0.5f });
-    Scene::AddLight(mylight);
 
     shader.use();
     shader.setInt("skybox", 0);
@@ -76,15 +74,20 @@ void RenderSystem::ManageEntitiesAndLights()
     auto& cameraTransform = coordinator.GetComponent<TransformComponent>(camera);
     auto& cameraComponent = coordinator.GetComponent<CameraComponent>(camera);
 
+    Signature signature;
+    signature.set(coordinator.GetComponentType<LightComponent>());
+    auto lights = coordinator.GetEntitiesWithSignature(signature);
+
+
     shader.use();
     shader.setMat4("view", Math::Mat4f::CreateTRSMat(cameraTransform.position, cameraTransform.rotation, cameraTransform.scale).Invert());
     shader.setMat4("proj", cameraComponent.GetProjectionMatrix());
-    shader.setInt("nbrlights", (int)Scene::GetLights().size());
+    shader.setInt("nbrlights", (int)lights.size());
 
-    for (unsigned int i = 0; i < Scene::GetLights().size(); i++)
+    for (unsigned int i = 0; i < lights.size(); i++)
     {
         std::string index = std::to_string(i);
-        Scene::GetLights()[i].ApplyOnShader(&shader, index);
+        coordinator.GetComponent<LightComponent>(lights[i]).ApplyOnShader(&shader, index);
     }
 
     for (auto entity : entities)
