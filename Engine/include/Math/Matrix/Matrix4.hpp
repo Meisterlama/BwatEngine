@@ -16,6 +16,8 @@ namespace BwatEngine::Math
         template<typename T>
         class Vector4;
         template<typename T>
+        class Quaternion;
+        template<typename T>
         class Matrix4
         {
         public:
@@ -298,6 +300,8 @@ namespace BwatEngine::Math
 
             [[nodiscard]] ML_FUNC_DECL Matrix4 operator/(const T &scalar) const;
             ML_FUNC_DECL Matrix4 &operator/=(const T &scalar);
+
+            ML_FUNC_DECL bool DecomposeTransform(BwatEngine::Math::Internal::Vector3<T>& translation, BwatEngine::Math::Internal::Quaternion<T>& rotation, BwatEngine::Math::Internal::Vector3<T>& scale);
         };
     }
 
@@ -841,6 +845,93 @@ namespace BwatEngine::Math
             values[i] /= scalar;
         }
         return *this;
+    }
+
+    template<typename T>
+    ML_FUNC_DECL bool Internal::Matrix4<T>::DecomposeTransform(BwatEngine::Math::Internal::Vector3<T>& translation, BwatEngine::Math::Internal::Quaternion<T>& rotation, BwatEngine::Math::Internal::Vector3<T>& scale)
+    {
+        // Normalize the matrix.
+        if (values[15] == 0)
+            return false;
+
+        // First, isolate perspective.  This is the messiest.
+        if (
+                values[3] != 0 ||
+                values[7] != 0 ||
+                values[11] != 0)
+        {
+            // Clear the perspective partition
+            values[3] = values[7] = values[11] = 0.0f;
+            values[15] = 1;
+        }
+
+        // Next take care of translation (easy).
+        translation = BwatEngine::Math::Internal::Vector3<T>(values[12], values[13], values[14]);
+        values[12] =  values[13] = values[14] = 0.0f;
+
+        BwatEngine::Math::Internal::Vector3<T> Row[3], Pdum3;
+
+        // Now get scale and shear.
+        for (size_t i = 0; i < 3; ++i)
+        {
+
+            Row[i].X = values[(4*i)];
+            Row[i].Y = values[(4*i)+1];
+            Row[i].Z = values[(4*i)+2];
+        }
+        // Compute X scale factor and normalize first row.
+        scale.X = Row[0].Length();
+        Row[0] = Row[0].GetNormalized();//detail::scale(Row[0], static_cast<T>(1));
+        scale.Y = Row[1].Length();
+        Row[1] = Row[1].GetNormalized();
+        scale.Z = Row[2].Length();;
+        Row[2] = Row[2].GetNormalized();
+        Pdum3 = Row[1].CrossProduct(Row[2]); // v3Cross(row[1], row[2], Pdum3);
+        if (Row[0].DotProduct(Pdum3) < 0)
+        {
+            scale *= static_cast<T>(-1);
+            for (size_t i = 0; i < 3; i++)
+            {
+                Row[i] *= static_cast<T>(-1);
+            }
+        }
+
+        float tr = Row[0].X + Row[1].Y + Row[2].Z;
+        if(tr > 0)
+        {
+            float s = BwatEngine::Math::Sqrt(tr + 1) * 2;
+            rotation.W = 0.25f * s;
+            rotation.X = (Row[2].Y - Row[1].Z) / s;
+            rotation.Y = (Row[0].Z - Row[2].X) / s;
+            rotation.Z = (Row[1].X - Row[0].Y) / s;
+
+        }
+        else if((Row[0].X > Row[1].Y) && (Row[0].X > Row[2].Z))
+        {
+            float s = BwatEngine::Math::Sqrt(1 + Row[0].X - Row[1].Y - Row[2].Z) * 2;
+            rotation.W = (Row[2].Y - Row[1].Z) / s;
+            rotation.X = 0.25f * s;
+            rotation.Y = (Row[0].Y + Row[1].X) / s;
+            rotation.Z = (Row[0].Z + Row[2].X) / s;
+        }
+        else if((Row[1].Y > Row[2].Z))
+        {
+            float s = BwatEngine::Math::Sqrt(1 + Row[1].Y - Row[0].X - Row[2].Z) * 2;
+            rotation.W = (Row[0].Z - Row[2].X) / s;
+            rotation.X = (Row[0].Y + Row[1].X) / s;
+            rotation.Y = 0.25f * s;
+            rotation.Z = (Row[1].Z + Row[2].Y) / s;
+        }
+        else
+        {
+            float s = BwatEngine::Math::Sqrt(1 + Row[2].Z - Row[1].Y - Row[0].X) * 2;
+            rotation.W = (Row[1].X - Row[0].Y) / s;
+            rotation.X = (Row[0].Z + Row[2].X) / s;
+            rotation.Y = (Row[1].Z + Row[2].Y) / s;
+            rotation.Z = 0.25f * s;
+        }
+
+        return true;
     }
 
 }

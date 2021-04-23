@@ -12,7 +12,8 @@ public:
     WidgetViewport(EditorInterface* editor);
 
     void TickVisible() override;
-    ImGuizmo::MODE guizmoMode = ImGuizmo::MODE::LOCAL;
+
+    ImGuizmo::MODE guizmoMode = ImGuizmo::MODE::WORLD;
     ImGuizmo::OPERATION guizmoOperation = ImGuizmo::OPERATION::TRANSLATE;
 
 private:
