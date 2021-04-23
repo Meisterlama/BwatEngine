@@ -39,13 +39,13 @@ void RenderSystem::SetCamera(EntityID _camera)
 
 void RenderSystem::Update(Window& win)
 {
-    
+
     CheckCameraValid();
     OptionAndClear(win);
 
-    if (camera == 0)
+    if (camera == 0 )
         return;
-    
+
     ManageCubeMap();
     ManageEntitiesAndLights();
 
@@ -103,7 +103,7 @@ void RenderSystem::CheckCameraValid()
 {
     auto& coordinator = Coordinator::GetInstance();
 
-    if (!coordinator.IsValid(camera))
+    if (!coordinator.IsValid(camera) || coordinator.GetEntitySignature(camera) != signature)
     {
         Signature signature;
         signature.set(coordinator.GetComponentType<CameraComponent>());
