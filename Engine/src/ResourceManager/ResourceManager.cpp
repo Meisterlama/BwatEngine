@@ -26,6 +26,13 @@ namespace BwatEngine
         return it.first->second.get();
     }
 
+    Audio::AudioData *ResourceManager::LoadAudio(std::string path)
+    {
+        auto it = audio.emplace(path, std::make_unique<Audio::AudioData>(path));
+        dirtyAudio = true;
+        return it.first->second.get();
+    }
+
     Rendering::Model* ResourceManager::GetOrLoadModel(std::string path)
     {
         Rendering::Model* res = ResourceManager::Instance()->GetModel(path);
@@ -36,6 +43,12 @@ namespace BwatEngine
     {
         Rendering::Texture* res = ResourceManager::Instance()->GetTexture(path);
         return (res != nullptr) ? res : LoadTexture(path, type);
+    }
+
+    Audio::AudioData *ResourceManager::GetOrLoadAudio(std::string path)
+    {
+        Audio::AudioData* res = ResourceManager::Instance()->GetAudio(path);
+        return (res != nullptr) ? res : LoadAudio(path);
     }
 
     std::vector<std::string>& ResourceManager::GetModelList()
@@ -50,6 +63,13 @@ namespace BwatEngine
         if (dirtyTextures)
             UpdateTexturesKey();
         return texturesKey;
+    }
+
+    std::vector<std::string> &ResourceManager::getAudioList()
+    {
+        if (dirtyAudio)
+            UpdateAudioKey();
+        return audioKey;
     }
 
     void ResourceManager::UpdateModelsKey()
@@ -72,6 +92,17 @@ namespace BwatEngine
         dirtyTextures = false;
     }
 
+    void ResourceManager::UpdateAudioKey()
+    {
+        audioKey.clear();
+        for (auto &it : textures)
+        {
+            texturesKey.push_back(it.first);
+        }
+
+        dirtyAudio = false;
+    }
+
     Rendering::Texture* ResourceManager::GetTexture(std::string path)
     {
         auto it = textures.find(path);
@@ -85,6 +116,15 @@ namespace BwatEngine
     {
         auto it = models.find(path);
         if (it != models.cend())
+            return it->second.get();
+
+        return nullptr;
+    }
+
+    Audio::AudioData *ResourceManager::GetAudio(std::string path)
+    {
+        auto it = audio.find(path);
+        if (it != audio.cend())
             return it->second.get();
 
         return nullptr;

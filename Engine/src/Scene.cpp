@@ -128,7 +128,7 @@ Scene::Scene(Window& window)
     //BwatEngine::ResourceManager::Instance()->GetOrLoadModel("Assets/sphere.obj");
     BwatEngine::ResourceManager::Instance()->GetOrLoadTexture("Assets/image/green.png", Rendering::Texture::Type::E_DIFFUSE);
     BwatEngine::ResourceManager::Instance()->GetOrLoadTexture("Assets/image/moteur.jpg", Rendering::Texture::Type::E_DIFFUSE);
-    Audio::AudioData audioData = Audio::LoadWavFile("Assets/pop.wav");
+    Audio::AudioData* audioData = BwatEngine::ResourceManager::Instance()->GetOrLoadAudio("Assets/pop.wav");
 
     std::default_random_engine generator;
     std::uniform_real_distribution<float> randPosition(-100.0f, 100.0f);
@@ -190,9 +190,7 @@ Scene::Scene(Window& window)
                 auto& renderableComponent = coordinator.GetComponent<RenderableComponent>(entity);
                 renderableComponent.materials[0] = &myMat1;
 
-//                coordinator.AddComponent<AudioSourceComponent>(entity, AudioSourceComponent{
-//                        audioData
-//                });
+                coordinator.AddComponent<AudioSourceComponent>(entity, AudioSourceComponent{*audioData});
             }
         }
 }
