@@ -2,6 +2,13 @@
 
 namespace BwatEngine::Audio
 {
+
+
+    AudioData::AudioData(std::string path)
+    {
+        *this = LoadWavFile(path);
+    }
+
     AudioData LoadWavFile(std::string path)
     {
         AudioData retData;
