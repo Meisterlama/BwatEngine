@@ -331,18 +331,19 @@ void WidgetProperties::ShowComponent<BwatEngine::LightComponent>(BwatEngine::Lig
         {
 
             update |= ImGui::DragFloat("Constant", &constant , 0.1f, 0.0f);
-            update |= ImGui::DragFloat("linear", &linear, 0.1f, 0.0f);
-            update |= ImGui::DragFloat("quadratic", &quadratic, 0.1f, 0.0f);
+            update |= ImGui::DragFloat("linear", &linear, 0.01f, 0.0f);
+            update |= ImGui::DragFloat("quadratic", &quadratic, 0.001f, 0.0f);
 
             if (component.typeoflight == Rendering::TYPE_LIGHT::Spot)
             {
-                update |= ImGui::DragFloat("cutOff", &cutOff, 0.1f, 0.0f);
-                update |= ImGui::DragFloat("outerCutOff", &outerCutOff, 0.1f, 0.0f);
+                update |= ImGui::DragFloat("cutOff",&cutOff , 0.01f, 0.0f);
+                update |= ImGui::DragFloat("outerCutOff", &outerCutOff, 0.01f, 0.0f);
             }
         }
 
         if (update)
         {
+            //Directional Light 
             component.position = position;
             component.direction = direction;
 
@@ -350,11 +351,12 @@ void WidgetProperties::ShowComponent<BwatEngine::LightComponent>(BwatEngine::Lig
             component.specular = specular;
             component.diffuse = diffuse;
 
-
+            // Point Light 
             component.constant     = constant;
             component.linear       = linear;
             component.quadratic    = quadratic;
 
+            // Spot Light 
             component.cutoff       = cutOff;
             component.outerCutoff  = outerCutOff;
 

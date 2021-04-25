@@ -27,8 +27,8 @@ void Light::ApplyOnShader(Shader* shader , const std::string& i) const
 
         if (typeoflight == TYPE_LIGHT::Spot)
         {
-            shader->setFloat("light[" + i + "].cutOff", cutoff);
-            shader->setFloat("light[" + i + "].outerCutOff", outerCutoff);
+            shader->setFloat("light[" + i + "].cutOff", BwatEngine::Math::Cos(cutoff));
+            shader->setFloat("light[" + i + "].outerCutOff", BwatEngine::Math::Cos(outerCutoff));
         }
     }
 

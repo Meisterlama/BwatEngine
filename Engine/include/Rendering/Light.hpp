@@ -25,17 +25,12 @@ namespace Rendering
 
         // attenuation
         float constant = 1.f;
-        float linear = 1.f;
-        float quadratic = 1.f;
-
-        //material
-        int matDiffuse = 0;
-        int matSpecular = 1;
-        float matShininess = 32.0f;
+        float linear = 0.09f;
+        float quadratic = 0.032f;
 
         //spotlight 
-        float cutoff = 0.f;
-        float outerCutoff = 0.f;
+        float cutoff = 12.5f;
+        float outerCutoff = 15.f;
 
         //nbr light and type ;
         TYPE_LIGHT typeoflight = Directional;

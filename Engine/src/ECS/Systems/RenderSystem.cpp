@@ -81,6 +81,7 @@ void RenderSystem::ManageEntitiesAndLights()
 
     shader.use();
     shader.setMat4("view", Math::Mat4f::CreateTRSMat(cameraTransform.position, cameraTransform.rotation, cameraTransform.scale).Invert());
+    shader.setVec3("viewPos", cameraTransform.position.X, cameraTransform.position.Y, cameraTransform.position.Z);
     shader.setMat4("proj", cameraComponent.GetProjectionMatrix());
     shader.setInt("nbrlights", (int)lights.size());
 
@@ -96,6 +97,13 @@ void RenderSystem::ManageEntitiesAndLights()
         auto& entityTransform = coordinator.GetComponent<TransformComponent>(entity);
         auto& renderableComponent = coordinator.GetComponent<RenderableComponent>(entity);
         shader.setMat4("model", Math::Mat4f::CreateTRSMat(entityTransform.position, entityTransform.rotation, entityTransform.scale));
+
+        shader.setFloat("material.shininess", renderableComponent.materials[0]->shininess);
+        
+        //if (renderableComponent.materials[0]->diffuse != nullptr)
+        //    shader.setInt("material.diffuse", renderableComponent.materials[0]->diffuse->id);
+        //if (renderableComponent.materials[0]->specular != nullptr)
+        //    shader.setInt("material.specular", renderableComponent.materials[0]->specular->id);
 
         if (renderableComponent.model != nullptr)
             renderableComponent.model->Draw(&renderableComponent.materials);

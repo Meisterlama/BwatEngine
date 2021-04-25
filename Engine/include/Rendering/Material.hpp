@@ -16,6 +16,7 @@ namespace Rendering
 		Texture* diffuse = nullptr;
 		Texture* specular = nullptr;
 
+		float shininess = 32.f;
 		//BwatEngine::Math::Vec3f color;
 
 		void Bind();
