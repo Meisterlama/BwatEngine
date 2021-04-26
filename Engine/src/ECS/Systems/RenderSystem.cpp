@@ -30,6 +30,7 @@ void RenderSystem::Init(Window& win)
 
     shader.use();
     shader.setInt("skybox", 0);
+    signature.set(Coordinator::GetInstance().GetComponentType<CameraComponent>());
 }
 
 void RenderSystem::SetCamera(EntityID _camera)
@@ -105,8 +106,6 @@ void RenderSystem::CheckCameraValid()
 
     if (!coordinator.IsValid(camera) || coordinator.GetEntitySignature(camera) != signature)
     {
-        Signature signature;
-        signature.set(coordinator.GetComponentType<CameraComponent>());
         auto cameras = coordinator.GetEntitiesWithSignature(signature);
         camera = (!cameras.empty()) ? cameras[0] : 0;
     }
