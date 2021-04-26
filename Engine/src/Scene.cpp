@@ -26,8 +26,6 @@
 #include "Rendering/Material.hpp"
 
 #include "ResourceManager/ResourceManager.hpp"
-// Script include
-#include "Scripts/ScriptTest.hpp"
 
 //#include "Rendering/Material.hpp"
 
@@ -53,7 +51,7 @@ Scene::Scene(Window& window)
 {
     scenePhysic.Init(physic);
 
-    
+
 
     Coordinator& coordinator = Coordinator::GetInstance();
 
@@ -142,7 +140,7 @@ Scene::Scene(Window& window)
     myMat.SetDiffuse(*texture);
     myMat1.SetDiffuse(*texture1);
     
-        for (int i = 0; i < 4; i++)
+        for (int i = 0; i < 200; i++)
         {
             auto entity = coordinator.CreateEntity();
             if (i == 0)
@@ -172,8 +170,6 @@ Scene::Scene(Window& window)
                 auto& renderableComponent = coordinator.GetComponent<RenderableComponent>(entity);
                 renderableComponent.materials[0] = &myMat;
 
-                ScriptTest* monScript = new ScriptTest;
-                coordinator.AddComponent<ScriptComponent>(entity, { monScript });
             }
             else // ================================= Cube
             {
@@ -191,6 +187,8 @@ Scene::Scene(Window& window)
                 renderableComponent.materials[0] = &myMat1;
 
                 coordinator.AddComponent<AudioSourceComponent>(entity, AudioSourceComponent{*audioData});
+                coordinator.AddComponent<ScriptComponent>(entity, "Assets/script/start.lua", "Assets/script/update.lua");
+
             }
         }
 }
