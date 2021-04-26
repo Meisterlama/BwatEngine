@@ -13,7 +13,7 @@ public:
 
     void TickVisible() override;
 
-    ImGuizmo::MODE guizmoMode = ImGuizmo::MODE::WORLD;
+    ImGuizmo::MODE guizmoMode = ImGuizmo::MODE::LOCAL;
     ImGuizmo::OPERATION guizmoOperation = ImGuizmo::OPERATION::TRANSLATE;
 
 private:

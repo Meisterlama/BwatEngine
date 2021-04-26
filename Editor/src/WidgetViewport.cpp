@@ -30,7 +30,19 @@ void WidgetViewport::TickVisible()
     ImGui::SameLine();
     if (ImGui::ImageButton((ImTextureID)BwatEngine::ResourceManager::Instance()->GetOrLoadTexture("Assets/image/scale.png",Rendering::Texture::Type::E_DIFFUSE)->id, ImVec2(50.f, 50.f)))
     {
-        guizmoOperation= ImGuizmo::OPERATION::SCALE;
+        guizmoOperation = ImGuizmo::OPERATION::SCALE;
+    }
+
+    ImGui::SameLine();
+    ImGui::SetCursorPosX(ImGui::GetWindowWidth() - 125);
+    if (ImGui::ImageButton((ImTextureID)BwatEngine::ResourceManager::Instance()->GetOrLoadTexture("Assets/image/world.png",Rendering::Texture::Type::E_DIFFUSE)->id, ImVec2(50.f, 50.f)))
+    {
+        guizmoMode = ImGuizmo::MODE::WORLD;
+    }
+    ImGui::SameLine();
+    if (ImGui::ImageButton((ImTextureID)BwatEngine::ResourceManager::Instance()->GetOrLoadTexture("Assets/image/local.png",Rendering::Texture::Type::E_DIFFUSE)->id, ImVec2(50.f, 50.f)))
+    {
+        guizmoMode = ImGuizmo::MODE::LOCAL;
     }
 
     ImGui::GetWindowDrawList()->AddImage(
@@ -50,21 +62,31 @@ void WidgetViewport::TickVisible()
     auto& cameraComponent = coordinator.GetComponent<BwatEngine::CameraComponent>(cameras[0]);
     BwatEngine::Math::Mat4f view = BwatEngine::Math::Mat4f::CreateTRSMat(cameraTransform.position, cameraTransform.rotation, cameraTransform.scale).Invert();
 
-    if (coordinator.HaveComponent<BwatEngine::TransformComponent>(WidgetProperties::currentEntity))
+    BwatEngine::EntityID entity = editor->GetEditedEntity();
+    if (coordinator.HaveComponent<BwatEngine::TransformComponent>(entity))
     {
-        auto& entityTransform = coordinator.GetComponent<BwatEngine::TransformComponent>(WidgetProperties::currentEntity);
-        BwatEngine::Math::Mat4f entityMat = BwatEngine::Math::Mat4f::CreateTRSMat(entityTransform.position, entityTransform.rotation, entityTransform.scale);
+        auto& entityTransform = coordinator.GetComponent<BwatEngine::TransformComponent>(entity);
+
+        BwatEngine::Math::Vec3f& eulerAngles = editor->widgetProperties->eulersInDegrees;
+        BwatEngine::Math::Mat4f entityMat;
+        ImGuizmo::RecomposeMatrixFromComponents(
+                entityTransform.position.values,
+                eulerAngles.values,
+                entityTransform.scale.values,
+                entityMat.values);
+
         BwatEngine::Math::Mat4f proj = cameraComponent.GetProjectionMatrix();
 
-        ImGuizmo::Manipulate(view.values, proj.values, guizmoOperation, guizmoMode, entityMat.values);
-
-        if(ImGuizmo::IsUsing())
+        if (ImGuizmo::Manipulate(view.values, proj.values, guizmoOperation, guizmoMode, entityMat.values))
         {
             BwatEngine::Math::Vec3f pos;
-            BwatEngine::Math::Quatf rot;
             BwatEngine::Math::Vec3f sca;
-
-            entityMat.DecomposeTransform(pos, rot, sca);
+            ImGuizmo::DecomposeMatrixToComponents(
+                    entityMat.values,
+                    pos.values,
+                    eulerAngles.values,
+                    sca.values
+                    );
 
             switch (guizmoOperation)
             {
@@ -73,7 +95,13 @@ void WidgetViewport::TickVisible()
                     break;
 
                 case ImGuizmo::OPERATION::ROTATE:
-                    entityTransform.rotation = rot;
+                    {
+                        BwatEngine::Math::Vec3f radEulers;
+                        radEulers.X = BwatEngine::Math::ToRads(eulerAngles.X);
+                        radEulers.Y = BwatEngine::Math::ToRads(eulerAngles.Y);
+                        radEulers.Z = BwatEngine::Math::ToRads(eulerAngles.Z);
+                        entityTransform.rotation = BwatEngine::Math::Quatf(radEulers);
+                    }
                     break;
 
                 case ImGuizmo::OPERATION::SCALE:

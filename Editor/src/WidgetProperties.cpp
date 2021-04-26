@@ -9,11 +9,7 @@
 #include "ResourceManager/ResourceManager.hpp"
 #include "ECS/Coordinator.hpp"
 
-#include <Rendering/Model.hpp>
-
 #include "WidgetProperties.hpp"
-
-BwatEngine::EntityID WidgetProperties::currentEntity = 0;
 
 WidgetProperties::WidgetProperties(EditorInterface *editor) : Widget(editor)
 {
@@ -26,7 +22,17 @@ void WidgetProperties::ShowComponent<BwatEngine::TransformComponent>(BwatEngine:
     if (ImGui::CollapsingHeader("Transform",ImGuiTreeNodeFlags_DefaultOpen))
     {
         ImGui::DragFloat3("Position", component.position.values, 0.01);
-        ImGui::DragFloat3("Rotation", component.rotation.values, 0.01);
+
+        // Handle rotation
+        if (ImGui::DragFloat3("Rotation", eulersInDegrees.values, 1.0))
+        {
+            BwatEngine::Math::Vec3f radEulers;
+            radEulers.X = BwatEngine::Math::ToRads(eulersInDegrees.X);
+            radEulers.Y = BwatEngine::Math::ToRads(eulersInDegrees.Y);
+            radEulers.Z = BwatEngine::Math::ToRads(eulersInDegrees.Z);
+            component.rotation = BwatEngine::Math::Quatf(radEulers);
+        }
+
         ImGui::DragFloat3("Scale", component.scale.values, 0.01);
     }
 }
@@ -243,6 +249,16 @@ void WidgetProperties::TickVisible()
 void WidgetProperties::Inspect(BwatEngine::EntityID entity)
 {
     currentEntity = entity;
+
+    BwatEngine::Coordinator &coordinator = BwatEngine::Coordinator::GetInstance();
+    if (coordinator.HaveComponent<BwatEngine::TransformComponent>(entity))
+    {
+        auto transform = coordinator.GetComponent<BwatEngine::TransformComponent>(currentEntity);
+        eulersInDegrees = transform.rotation.GetEulerAngles();
+        eulersInDegrees.X = BwatEngine::Math::ToDegs(eulersInDegrees.X);
+        eulersInDegrees.Y = BwatEngine::Math::ToDegs(eulersInDegrees.Y);
+        eulersInDegrees.Z = BwatEngine::Math::ToDegs(eulersInDegrees.Z);
+    }
 }
 
 template<typename T>
