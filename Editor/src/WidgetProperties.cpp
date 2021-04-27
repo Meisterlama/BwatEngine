@@ -203,6 +203,9 @@ void WidgetProperties::ShowComponent<BwatEngine::CameraComponent>(BwatEngine::Ca
         }
         ImGui::DragFloat("Near", &component.near);
         ImGui::DragFloat("Far", &component.far);
+
+        ImGui::Checkbox("isGamma", &component.isGamma);
+        ImGui::DragFloat("Gamma", &component.gamma);
     }
 }
 

@@ -36,7 +36,6 @@ namespace Rendering
         TYPE_LIGHT typeoflight = Directional;
         int nbrlights = 1;
 
-
         Light();
         ~Light() {};
 

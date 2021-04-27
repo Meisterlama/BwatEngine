@@ -61,6 +61,8 @@ void RenderSystem::ManageCubeMap()
     cubeMap.shader.use();
     cubeMap.shader.setMat4("view", Math::Mat4f::CreateTRSMat(Math::Vec3f(0, 0, 0), cameraTransform.rotation, cameraTransform.scale).Invert());
     cubeMap.shader.setMat4("projection", cameraComponent.GetProjectionMatrix());
+    shader.setFloat("gamma", cameraComponent.gamma);
+    shader.setBool("isGamma", cameraComponent.isGamma);
     glBindVertexArray(cubeMap.skyboxVAO);
     cubeMap.BindCubeMap();
     glDepthMask(GL_TRUE);
@@ -84,11 +86,14 @@ void RenderSystem::ManageEntitiesAndLights()
     shader.setVec3("viewPos", cameraTransform.position.X, cameraTransform.position.Y, cameraTransform.position.Z);
     shader.setMat4("proj", cameraComponent.GetProjectionMatrix());
     shader.setInt("nbrlights", (int)lights.size());
-
+    shader.setFloat("gamma", cameraComponent.gamma);
+    shader.setBool("isGamma", cameraComponent.isGamma);
+    
     for (unsigned int i = 0; i < lights.size(); i++)
     {
         std::string index = std::to_string(i);
-        coordinator.GetComponent<LightComponent>(lights[i]).ApplyOnShader(&shader, index);
+        auto& light = coordinator.GetComponent<LightComponent>(lights[i]);
+        light.ApplyOnShader(&shader, index);
     }
 
     for (auto entity : entities)
@@ -125,6 +130,8 @@ void RenderSystem::CheckCameraValid()
 
 void RenderSystem::OptionAndClear(Window& win)
 {
+
+    glEnable(GL_FRAMEBUFFER_SRGB);
     glEnable(GL_DEPTH_TEST);
     glViewport(0, 0, win.GetWidth(), win.GetHeight());
     glClearColor(clearColor[0], clearColor[1], clearColor[2], 1.f);

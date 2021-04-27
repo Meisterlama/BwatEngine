@@ -130,5 +130,6 @@ void Engine::ManageRenderAndPostProcess()
         scene.postProcessSystem->Update(scene.renderSystem->GetRenderTextureID(), POSTPROCESS_SHADER::INVERSION);
     }
 
+    glDisable(GL_FRAMEBUFFER_SRGB);
     MainFBO->Unbind();
 }
