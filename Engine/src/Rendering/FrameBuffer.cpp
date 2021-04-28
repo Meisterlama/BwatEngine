@@ -41,3 +41,10 @@ void FrameBufferObject::Unbind()
 {
 	glBindFramebuffer(GL_FRAMEBUFFER, 0);
 }
+
+void FrameBufferObject::Rezise(float width, float height)
+{
+    glBindRenderbuffer(GL_RENDERBUFFER, depthRenderbuffer);
+    glRenderbufferStorage(GL_RENDERBUFFER, GL_DEPTH_COMPONENT, width, height);
+    textureColor.Resize(width, height);
+}

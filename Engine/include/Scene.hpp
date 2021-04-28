@@ -20,6 +20,7 @@ namespace BwatEngine
 	class ScriptSystem;
 	class SoundSystem;
 	class Window;
+	class PostProcessSystem;
 
 	class Scene
 	{
@@ -41,12 +42,12 @@ namespace BwatEngine
 		Rendering::Material myMat;
 		Rendering::Material myMat1;
 
-		std::shared_ptr<InputsSystem> inputSystem = nullptr;
 		std::shared_ptr<PhysicsSystem> physicsSystem = nullptr;
 		std::shared_ptr<PlayerControlSystem> playerControlSystem = nullptr;
 		std::shared_ptr<RenderSystem> renderSystem = nullptr;
 		std::shared_ptr<SoundSystem> soundSystem = nullptr;
 		std::shared_ptr<ScriptSystem> scriptSystem = nullptr;
+		std::shared_ptr<PostProcessSystem> postProcessSystem = nullptr;
 
 		// PhysX
 		Physic physic{};

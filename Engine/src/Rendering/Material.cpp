@@ -34,6 +34,8 @@ void Material::Bind()
     glActiveTexture(GL_TEXTURE1);
     if (specular)
         specular->Use();
+
+    glActiveTexture(GL_TEXTURE0);
 }
 
 void Material::SetDiffuse(Texture& texture)

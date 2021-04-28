@@ -14,12 +14,12 @@
 #include "ECS/Components/AudioSourceComponent.hpp"
 
 
-#include "ECS/Systems/InputSystem.hpp"
 #include "ECS/Systems/PhysicsSystem.hpp"
 #include "ECS/Systems/PlayerControlSystem.hpp"
 #include "ECS/Systems/RenderSystem.hpp"
 #include "ECS/Systems/SoundSystem.hpp"
 #include "ECS/Systems/ScriptSystem.hpp"
+#include "ECS/Systems/PostProcessSystem.hpp"
 #include "Engine.hpp"
 
 #include "Physic/PhysicCast.hpp"
@@ -53,6 +53,8 @@ Scene::Scene(Window& window)
 {
     scenePhysic.Init(physic);
 
+    
+
     Coordinator& coordinator = Coordinator::GetInstance();
 
     coordinator.RegisterComponent<GravityComponent>();
@@ -64,9 +66,6 @@ Scene::Scene(Window& window)
     coordinator.RegisterComponent<ColliderComponent>();
     coordinator.RegisterComponent<ScriptComponent>();
     coordinator.RegisterComponent<AudioSourceComponent>();
-
-    inputSystem = coordinator.RegisterSystem<InputsSystem>();
-    inputSystem->Init(window);
 
     physicsSystem = coordinator.RegisterSystem<PhysicsSystem>();
     {
@@ -95,7 +94,7 @@ Scene::Scene(Window& window)
         signature.set(coordinator.GetComponentType<TransformComponent>());
         coordinator.SetSystemSignature<RenderSystem>(signature);
     }
-    renderSystem->Init();
+    renderSystem->Init(window);
 
     // =================================== SCRIPT =================================== //
 
@@ -107,6 +106,7 @@ Scene::Scene(Window& window)
     }
     scriptSystem->Init();
 
+    // =================================== SOUND =================================== //
     soundSystem = coordinator.RegisterSystem<SoundSystem>();
     {
         Signature signature;
@@ -115,13 +115,20 @@ Scene::Scene(Window& window)
     }
     soundSystem->Init();
 
+    // =================================== POST PROCESS =================================== //
+    postProcessSystem = coordinator.RegisterSystem<PostProcessSystem>();
+    postProcessSystem->Init();
+
+    
+
+
     //Rendering::Model mymodel = Rendering::Model{ (std::string) "Assets/bag/backpack.obj" };
     model = BwatEngine::ResourceManager::Instance()->GetOrLoadModel("Assets/cube.obj");;
 
     //BwatEngine::ResourceManager::Instance()->GetOrLoadModel("Assets/sphere.obj");
     BwatEngine::ResourceManager::Instance()->GetOrLoadTexture("Assets/image/green.png", Rendering::Texture::Type::E_DIFFUSE);
     BwatEngine::ResourceManager::Instance()->GetOrLoadTexture("Assets/image/moteur.jpg", Rendering::Texture::Type::E_DIFFUSE);
-    Audio::AudioData audioData = Audio::LoadWavFile("Assets/pop.wav");
+    Audio::AudioData* audioData = BwatEngine::ResourceManager::Instance()->GetOrLoadAudio("Assets/pop.wav");
 
     std::default_random_engine generator;
     std::uniform_real_distribution<float> randPosition(-100.0f, 100.0f);
@@ -135,7 +142,7 @@ Scene::Scene(Window& window)
     myMat.SetDiffuse(*texture);
     myMat1.SetDiffuse(*texture1);
     
-        for (int i = 0; i < 10; i++)
+        for (int i = 0; i < 4; i++)
         {
             auto entity = coordinator.CreateEntity();
             if (i == 0)
@@ -183,9 +190,7 @@ Scene::Scene(Window& window)
                 auto& renderableComponent = coordinator.GetComponent<RenderableComponent>(entity);
                 renderableComponent.materials[0] = &myMat1;
 
-//                coordinator.AddComponent<AudioSourceComponent>(entity, AudioSourceComponent{
-//                        audioData
-//                });
+                coordinator.AddComponent<AudioSourceComponent>(entity, AudioSourceComponent{*audioData});
             }
         }
 }
