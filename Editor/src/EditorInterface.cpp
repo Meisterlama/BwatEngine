@@ -19,19 +19,8 @@ EditorInterface::EditorInterface(BwatEngine::Engine* _engine)
     widgets.shrink_to_fit();
 }
 
-void EditorInterface::DestroyImGui()
-{
-    //ImGui_ImplGlfw_Shutdown();
-    //ImGui_ImplOpenGL3_Shutdown();
-    //ImGui::DestroyContext();
-}
-
 void EditorInterface::OnTick()
 {
-    //ImGui_ImplOpenGL3_NewFrame();
-    //ImGui_ImplGlfw_NewFrame();
-    //ImGui::NewFrame();
-
     BeginWindow();
 
     for (std::unique_ptr<Widget>& widget : widgets)
@@ -60,6 +49,7 @@ void EditorInterface::Initialise()
     widgets.emplace_back(std::make_unique<WidgetAsset>(this));
     widgets.emplace_back(std::make_unique<WidgetViewport>(this));
     widgets.emplace_back(std::make_unique<WidgetProperties>(this));
+    widgetProperties = static_cast<WidgetProperties*>(widgets.back().get());
 }
 
 void EditorInterface::ApplyStyle() const
@@ -112,4 +102,10 @@ void EditorInterface::BeginWindow()
 
         ImGui::DockSpace(windowID, ImVec2(0.0f, 0.0f), ImGuiDockNodeFlags_PassthruCentralNode);
     }
+}
+
+void EditorInterface::SetEditedEntity(BwatEngine::EntityID entity)
+{
+    editedEntity = entity;
+    widgetProperties->Inspect(editedEntity);
 }

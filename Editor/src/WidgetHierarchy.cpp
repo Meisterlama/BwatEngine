@@ -10,7 +10,7 @@ WidgetHierarchy::WidgetHierarchy(EditorInterface *editor) : Widget(editor)
     flags |= ImGuiWindowFlags_HorizontalScrollbar;
 }
 
-void ShowEntity(BwatEngine::EntityID entity)
+void WidgetHierarchy::ShowEntity(BwatEngine::EntityID entity)
 {
     auto &coordinator = BwatEngine::Coordinator::GetInstance();
     auto &node = coordinator.GetNode(entity);
@@ -26,7 +26,7 @@ void ShowEntity(BwatEngine::EntityID entity)
 
     if (ImGui::IsItemClicked())
     {
-        WidgetProperties::Inspect(entity);
+        editor->SetEditedEntity(entity);
     }
     if (isOpen)
     {

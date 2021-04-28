@@ -16,6 +16,8 @@ namespace BwatEngine::Math
         template<typename T>
         class Vector4;
         template<typename T>
+        class Quaternion;
+        template<typename T>
         class Matrix4
         {
         public:
@@ -842,7 +844,6 @@ namespace BwatEngine::Math
         }
         return *this;
     }
-
 }
 template<typename T>
 [[nodiscard]] ML_FUNC_DECL BwatEngine::Math::Internal::Matrix4<T> operator-(BwatEngine::Math::Internal::Matrix4<T> mat)

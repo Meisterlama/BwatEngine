@@ -4,6 +4,7 @@
 #include <vector>
 #include <memory>
 
+#include "ECS/ECS.hpp"
 #include "Widget.hpp"
 #include "Window.hpp"
 
@@ -11,6 +12,8 @@ namespace BwatEngine
 {
     class Engine;
 }
+
+class WidgetProperties;
 
 class  EditorInterface
 {
@@ -20,18 +23,21 @@ public:
 
     void OnTick();
     void Initialise();
-    void DestroyImGui();
+
+    void SetEditedEntity(BwatEngine::EntityID entity);
+    BwatEngine::EntityID GetEditedEntity() { return editedEntity; }
 
     BwatEngine::Engine* engine = nullptr;
+    WidgetProperties* widgetProperties = nullptr;
 
 private:
     void ApplyStyle() const;
     void BeginWindow();
 
+    BwatEngine::EntityID editedEntity = 0;
     std::vector<std::unique_ptr<Widget>> widgets;
     bool initialised = false;
     bool editorBegun = false;
-
 };
 
 

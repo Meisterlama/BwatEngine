@@ -16,7 +16,7 @@ void WidgetAsset::TickVisible()
     {
         if (ImGui::Button("Load Resources"))
         {
-            LoadResources(assetDirectory.chargeFile);
+            LoadResources(assetDirectory.loadFile);
             assetDirectory.loadMe = false;
         }
     }
