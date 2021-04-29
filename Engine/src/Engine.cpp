@@ -114,6 +114,8 @@ Engine::~Engine()
 
 void Engine::ManageRenderAndPostProcess()
 {
+    scene.renderSystem->UpdateShadow();
+
     bool isPostProcess = false;
 
     if (isPostProcess)

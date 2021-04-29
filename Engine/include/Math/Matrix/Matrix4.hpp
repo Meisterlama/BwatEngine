@@ -637,7 +637,7 @@ namespace BwatEngine::Math
 
         Internal::Vector3<T> up = forward.CrossProduct(left);
 
-        T m12 = -left.x * origin.X - left.Y * origin.Y - left.Z * origin.Z;
+        T m12 = -left.X * origin.X - left.Y * origin.Y - left.Z * origin.Z;
         T m13 = -up.X * origin.X - up.Y * origin.Y - up.Z * origin.Z;
         T m14 = -forward.X * origin.X - forward.Y * origin.Y - forward.Z * origin.Z;
 
