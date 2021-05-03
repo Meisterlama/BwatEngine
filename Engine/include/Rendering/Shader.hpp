@@ -35,6 +35,7 @@ namespace Rendering
         void setVec2(const std::string& name, float x, float y) const;
         void setVec3(const std::string& name, float x, float y, float z) const;
         void setMat4(const std::string &name, const BwatEngine::Math::Mat4f &mat) const;
+        void SetTexture(const std::string& name, int value, int idTexture);
         
 
     };

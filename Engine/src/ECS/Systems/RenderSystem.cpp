@@ -37,25 +37,24 @@ void RenderSystem::SetCamera(EntityID _camera)
 
 void RenderSystem::UpdateShadow()
 {
+    glViewport(0, 0, shadowMap.width, shadowMap.height);
+    glBindFramebuffer(GL_FRAMEBUFFER, shadowMap.depthMapFbo);
+    glClear(GL_DEPTH_BUFFER_BIT);
+
     glClearColor(0.1f, 0.1f, 0.1f, 1.0f);
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
     Math::Mat4f lightProjection, lightView;
 
-    float near_plane = 1.0f, far_plane = 7.5f;
-    
+    float near_plane = 0.0f, far_plane = 1000.f;
+
     // Bug : Matrix need to check
-    lightProjection = Math::Mat4f::CreateOrtho(-10.0f, 10.0f, -10.0f, 10.0f, near_plane, far_plane);
-    lightView = Math::Mat4f::LookAt(Math::Vec3f(0.0f,1.0f,0.0f), Math::Vec3f(0.0f), Math::Vec3f(0.0, 1.0, 0.0));
-    lightSpaceMatrix = lightProjection * lightView;
+    lightProjection = Math::Mat4f::CreateOrtho(-150.0f, 150.0f, -150.0f, 150.0f, near_plane, far_plane);
+    lightView = Math::Mat4f::CreateTRSMat({ 0,100,0 }, Math::Vec3f{ Math::ToRads(-90),0,0 }, { 1 }).GetInverted();
+    lightSpaceMatrix    = lightProjection * lightView;
 
     shadowMap.shader.use();
     shadowMap.shader.setMat4("lightSpaceMatrix", lightSpaceMatrix);
-
-    glViewport(0, 0, shadowMap.width, shadowMap.height);
-    glBindFramebuffer(GL_FRAMEBUFFER, shadowMap.depthMapFbo);
-    glClear(GL_DEPTH_BUFFER_BIT);
-
 
     auto& coordinator = Coordinator::GetInstance();
 
@@ -70,7 +69,7 @@ void RenderSystem::UpdateShadow()
     }
 
     glBindFramebuffer(GL_FRAMEBUFFER, 0);
-
+    
 }
 
 void RenderSystem::Update(Window& win)
@@ -82,7 +81,7 @@ void RenderSystem::Update(Window& win)
     if (camera == 0)
         return;
     
-    ManageCubeMap();
+    //ManageCubeMap();
     ManageEntitiesAndLights();
 
 }
@@ -126,9 +125,10 @@ void RenderSystem::ManageEntitiesAndLights()
     shader.setInt("nbrlights", (int)lights.size());
     shader.setFloat("gamma", cameraComponent.gamma);
     shader.setBool("isGamma", cameraComponent.isGamma);
-    shader.setInt("shadowMap", shadowMap.depthMap);
 
-    // To Do : change for multi lighting
+
+    shader.SetTexture("shadowMap", 10 , shadowMap.depthMap);
+
     shader.setMat4("lightSpaceMatrix", lightSpaceMatrix);
     
     for (unsigned int i = 0; i < lights.size(); i++)
@@ -136,23 +136,20 @@ void RenderSystem::ManageEntitiesAndLights()
         std::string index = std::to_string(i);
         auto& light = coordinator.GetComponent<LightComponent>(lights[i]);
         light.ApplyOnShader(&shader, index);
-
     }
-
+    
     for (auto entity : entities)
     {
-
         auto& entityTransform = coordinator.GetComponent<TransformComponent>(entity);
         auto& renderableComponent = coordinator.GetComponent<RenderableComponent>(entity);
         shader.setMat4("model", Math::Mat4f::CreateTRSMat(entityTransform.position, entityTransform.rotation, entityTransform.scale));
 
         shader.setFloat("material.shininess", renderableComponent.materials[0]->shininess);
         
-        //To do ! Why doesn't work need help
-        //if (renderableComponent.materials[0]->diffuse != nullptr)
-        //    shader.setInt("material.diffuse", renderableComponent.materials[0]->diffuse->id);
-        //if (renderableComponent.materials[0]->specular != nullptr)
-        //    shader.setInt("material.specular", renderableComponent.materials[0]->specular->id);
+        if (renderableComponent.materials[0]->diffuse != nullptr)
+            shader.setInt("material.diffuse",0);
+        if (renderableComponent.materials[0]->specular != nullptr)
+            shader.setInt("material.specular", 1);
 
         if (renderableComponent.model != nullptr)
             renderableComponent.model->Draw(&renderableComponent.materials);

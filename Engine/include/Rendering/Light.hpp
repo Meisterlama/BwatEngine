@@ -15,7 +15,7 @@ namespace Rendering
 
     struct Light
     {
-        BwatEngine::Math::Vec3f position{ 0,0,0 };
+        BwatEngine::Math::Vec3f position{ 0,0,1 };
         BwatEngine::Math::Vec3f direction{ 0,-1,0 };
 
         // classic
