@@ -316,7 +316,7 @@ void WidgetProperties::ShowComponent<BwatEngine::LightComponent>(BwatEngine::Lig
         }
 
         update |= ImGui::DragFloat3("Position", position.values, 0.1f);
-        update |= ImGui::DragFloat3("Direction", direction.values, 0.1f);
+        update |= ImGui::DragFloat3("Direction", direction.values, 0.01f,-2.0f,2.f);
 
         update |= ImGui::ColorEdit3("Ambient", ambient.values, ImGuiColorEditFlags_Float);
         update |= ImGui::ColorEdit3("Specular", specular.values, ImGuiColorEditFlags_Float);

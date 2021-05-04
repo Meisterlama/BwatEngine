@@ -36,7 +36,7 @@
 using namespace BwatEngine;
 
 Scene::Scene(Window& window)
-    : texture(BwatEngine::ResourceManager::Instance()->GetOrLoadTexture("Assets/image/moteur.jpg",Rendering::Texture::Type::E_DIFFUSE)), texture1(BwatEngine::ResourceManager::Instance()->GetOrLoadTexture("Assets/image/green.png", Rendering::Texture::Type::E_DIFFUSE))
+    : texture(BwatEngine::ResourceManager::Instance()->GetOrLoadTexture("Assets/image/brickwall.jpg",Rendering::Texture::Type::E_DIFFUSE)), texture1(BwatEngine::ResourceManager::Instance()->GetOrLoadTexture("Assets/image/green.png", Rendering::Texture::Type::E_DIFFUSE))
 {
     scenePhysic.Init(physic);
 
@@ -120,7 +120,7 @@ Scene::Scene(Window& window)
     Audio::AudioData audioData = Audio::LoadWavFile("Assets/pop.wav");
 
     std::default_random_engine generator;
-    std::uniform_real_distribution<float> randPosition(-10.0f, 100.0f);
+    std::uniform_real_distribution<float> randPosition(-5.0f, 20.0f);
     std::uniform_real_distribution<float> randRotation(0.0f, 3.0f);
     std::uniform_real_distribution<float> randScale(3.0f, 5.0f);
     std::uniform_real_distribution<float> randColor(0.0f, 1.0f);

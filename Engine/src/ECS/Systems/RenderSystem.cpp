@@ -35,42 +35,8 @@ void RenderSystem::SetCamera(EntityID _camera)
     camera = _camera;
 }
 
-void RenderSystem::UpdateShadow()
-{
-    glViewport(0, 0, shadowMap.width, shadowMap.height);
-    glBindFramebuffer(GL_FRAMEBUFFER, shadowMap.depthMapFbo);
-    glClear(GL_DEPTH_BUFFER_BIT);
+// ===================================== MAIN RENDERER ===================================== //
 
-    glClearColor(0.1f, 0.1f, 0.1f, 1.0f);
-    glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-
-    Math::Mat4f lightProjection, lightView;
-
-    float near_plane = 0.0f, far_plane = 1000.f;
-
-    // Bug : Matrix need to check
-    lightProjection = Math::Mat4f::CreateOrtho(-150.0f, 150.0f, -150.0f, 150.0f, near_plane, far_plane);
-    lightView = Math::Mat4f::CreateTRSMat({ 0,100,0 }, Math::Vec3f{ Math::ToRads(-90),0,0 }, { 1 }).GetInverted();
-    lightSpaceMatrix    = lightProjection * lightView;
-
-    shadowMap.shader.use();
-    shadowMap.shader.setMat4("lightSpaceMatrix", lightSpaceMatrix);
-
-    auto& coordinator = Coordinator::GetInstance();
-
-    for (auto entity : entities)
-    {
-        auto& entityTransform = coordinator.GetComponent<TransformComponent>(entity);
-        auto& renderableComponent = coordinator.GetComponent<RenderableComponent>(entity);
-        shadowMap.shader.setMat4("model", Math::Mat4f::CreateTRSMat(entityTransform.position, entityTransform.rotation, entityTransform.scale));
-
-        if (renderableComponent.model != nullptr)
-            renderableComponent.model->Draw(&renderableComponent.materials);
-    }
-
-    glBindFramebuffer(GL_FRAMEBUFFER, 0);
-    
-}
 
 void RenderSystem::Update(Window& win)
 {
@@ -81,7 +47,7 @@ void RenderSystem::Update(Window& win)
     if (camera == 0)
         return;
     
-    //ManageCubeMap();
+    ManageCubeMap();
     ManageEntitiesAndLights();
 
 }
@@ -177,4 +143,59 @@ void RenderSystem::OptionAndClear(Window& win)
     glViewport(0, 0, win.GetWidth(), win.GetHeight());
     glClearColor(clearColor[0], clearColor[1], clearColor[2], 1.f);
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+}
+
+// ===================================== SHADOW ===================================== //
+
+void RenderSystem::OptionAndClearShadow()
+{
+    glViewport(0, 0, shadowMap.width, shadowMap.height);
+    glBindFramebuffer(GL_FRAMEBUFFER, shadowMap.depthMapFbo);
+    glClear(GL_DEPTH_BUFFER_BIT);
+
+    glClearColor(0.1f, 0.1f, 0.1f, 1.0f);
+    glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+}
+
+void RenderSystem::UpdateShadow()
+{
+    OptionAndClearShadow();
+
+    Math::Mat4f lightProjection, lightView;
+    float near_plane = 0.0f, far_plane = 1000.f;
+    lightProjection = Math::Mat4f::CreateOrtho(-150.0f, 150.0f, -150.0f, 150.0f, near_plane, far_plane);
+
+    // TO DO : how do you use multi source of lights in this case ? 
+    shadowMap.shader.use();
+    shadowMap.shader.setMat4("lightSpaceMatrix", lightSpaceMatrix);
+
+    auto& coordinator = Coordinator::GetInstance();
+
+    Signature signature;
+    signature.set(coordinator.GetComponentType<LightComponent>());
+    auto lights = coordinator.GetEntitiesWithSignature(signature);
+
+    // draw light
+    for (unsigned int i = 0; i < lights.size(); i++)
+    {
+        std::string index = std::to_string(i);
+        auto& light = coordinator.GetComponent<LightComponent>(lights[i]);
+        lightView = Math::Mat4f::CreateTRSMat(light.position, Math::Vec3f{ Math::ToRads(light.direction.Y * 90),- Math::ToRads(light.direction.X * 90),Math::ToRads(light.direction.Z * 90) }, { 1 }).GetInverted();
+        lightSpaceMatrix = lightProjection * lightView;
+
+    }
+
+    // draw all model in deph test 
+    for (auto entity : entities)
+    {
+        auto& entityTransform = coordinator.GetComponent<TransformComponent>(entity);
+        auto& renderableComponent = coordinator.GetComponent<RenderableComponent>(entity);
+        shadowMap.shader.setMat4("model", Math::Mat4f::CreateTRSMat(entityTransform.position, entityTransform.rotation, entityTransform.scale));
+
+        if (renderableComponent.model != nullptr)
+            renderableComponent.model->Draw(&renderableComponent.materials);
+    }
+
+    glBindFramebuffer(GL_FRAMEBUFFER, 0);
+
 }
