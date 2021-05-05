@@ -21,33 +21,20 @@ endif()
 option(BWAT_ENGINE_TEST_ENABLED OFF)
 option(BWAT_EDITOR_ENABLED OFF)
 
-    add_subdirectory(lib)
+add_subdirectory(lib)
 if(BWAT_ENGINE_TEST_ENABLED)
     add_subdirectory(tests)
 endif()
 
-#TODO: Include the directory properly
-include_directories(lib/PhysX/physx/include lib/PhysX/pxshared/include/)
-set(ENGINE_LIBRARY glad glfw assimp flatbuffers imgui OpenAL stb json dirent AudioFile lua sol2
-        PhysXExtensions PhysX PhysXPvdSDK PhysXVehicle PhysXCharacterKinematic PhysXCooking PhysXCommon PhysXFoundation)
 add_subdirectory(Engine)
-target_link_libraries(Engine PUBLIC ${ENGINE_LIBRARY})
-if(BWAT_EDITOR_ENABLED)
-    target_compile_definitions(Engine PRIVATE BWATEDITOR)
-endif()
-
-add_subdirectory(Editor)
-target_link_libraries(Editor PUBLIC ${ENGINE_LIBRARY})
-target_link_libraries(Editor PUBLIC Engine)
-if(BWAT_EDITOR_ENABLED)
-    target_compile_definitions(Editor PRIVATE BWATEDITOR)
-endif()
 
 add_executable(Launcher launcher.cpp)
 target_link_libraries(Launcher PUBLIC Engine)
 
 if(BWAT_EDITOR_ENABLED)
-    target_link_libraries(Engine PUBLIC Editor)
+    add_subdirectory(Editor)
     target_link_libraries(Launcher PUBLIC Editor)
     target_compile_definitions(Launcher PRIVATE BWATEDITOR)
+    target_compile_definitions(Editor PRIVATE BWATEDITOR)
+    target_compile_definitions(Engine PRIVATE BWATEDITOR)
 endif()
