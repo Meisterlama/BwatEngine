@@ -17,8 +17,7 @@ namespace BwatEngine
             sceneMap[entity].id = entity;
             AddComponent<DataComponent>(entity, {});
 
-            auto node = GetNode(entity);
-            std::string entityName = "Entity_" + std::to_string(node.id);
+            std::string entityName = "Entity_" + std::to_string(entity);
             GetComponent<DataComponent>(entity).name = entityName;
 
             return entity;
