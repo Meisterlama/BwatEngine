@@ -1,16 +1,5 @@
 #include "Engine.hpp"
 
-#include "imgui_impl_glfw.h"
-#include "imgui_impl_opengl3.h"
-
-#include "Math/Math.hpp"
-#include "Scene.hpp"
-
-#include "Rendering/Shader.hpp"
-#include "Rendering/Light.hpp"
-#include "EditorInterface.hpp"
-
-#include "ECS/ECS.hpp"
 #include "ECS/Systems/PhysicsSystem.hpp"
 #include "ECS/Systems/PlayerControlSystem.hpp"
 #include "ECS/Systems/RenderSystem.hpp"
