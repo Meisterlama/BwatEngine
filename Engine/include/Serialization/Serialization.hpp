@@ -1,9 +1,6 @@
 #ifndef ENGINE_SERIALIZATION_HPP
 #define ENGINE_SERIALIZATION_HPP
 
-
-
-
 namespace BwatEngine
 {
     class Scene;

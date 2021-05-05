@@ -35,6 +35,7 @@ int main()
 		editor.OnTick();
 	}
 
+	editor.Close();
 	engine.Close();
 
 	return 0;

@@ -6,7 +6,6 @@
 #include "ECS/Components/CameraComponent.hpp"
 #include "ECS/Components/PlayerComponent.hpp"
 #include "ECS/Components/ColliderComponent.hpp"
-#include "ECS/Components/GravityComponent.hpp"
 #include "ResourceManager/ResourceManager.hpp"
 
 using json = nlohmann::json;
@@ -144,7 +143,7 @@ namespace BwatEngine {
             }
 
             if (renderable.model != nullptr) {
-                temp["model"] = renderable.model->modelPath.string();
+                temp["model"] = renderable.model->modelPath;
 
             }
 
