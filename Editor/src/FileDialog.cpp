@@ -228,7 +228,7 @@ void FileDialog::LoadOnResources(FileInfoStruct file)
     {
         //if (BwatEngine::ResourceManager::Instance().
         loadMe = true;
-        chargeFile = file;
+        loadFile = file;
     }
 }
 
