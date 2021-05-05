@@ -5,6 +5,7 @@
 #include <ECS/Components/ColliderComponent.hpp>
 #include <ECS/Components/CameraComponent.hpp>
 #include <ECS/Components/PlayerComponent.hpp>
+#include <ECS/Components/DataComponent.hpp>
 #include <ECS/Components/ScriptComponent.hpp>
 
 #include "ResourceManager/ResourceManager.hpp"
@@ -18,6 +19,13 @@
 WidgetProperties::WidgetProperties(EditorInterface *editor) : Widget(editor)
 {
     title = "Properties";
+}
+
+template<>
+void WidgetProperties::ShowComponent<BwatEngine::DataComponent>(BwatEngine::DataComponent& component)
+{
+    char* buf = (char*)component.name.c_str();
+    ImGui::InputText("Name", buf, 128 * sizeof(char));
 }
 
 template<>
@@ -251,11 +259,14 @@ void WidgetProperties::TickVisible()
         hasComponentAvailable |= AddComponentMenuItem<ColliderComponent>(currentEntity);
         hasComponentAvailable |= AddComponentMenuItem<CameraComponent>(currentEntity);
         hasComponentAvailable |= AddComponentMenuItem<PlayerComponent>(currentEntity);
+        hasComponentAvailable |= AddComponentMenuItem<DataComponent>(currentEntity);
         hasComponentAvailable |= AddComponentMenuItem<ScriptComponent>(currentEntity);
+
 
         ImGui::EndMenu();
     }
 
+    ShowComponentMenuItem<DataComponent>(currentEntity);
     ShowComponentMenuItem<TransformComponent>(currentEntity);
     ShowComponentMenuItem<RenderableComponent>(currentEntity);
     ShowComponentMenuItem<RigidBodyComponent>(currentEntity);

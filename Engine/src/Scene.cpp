@@ -11,6 +11,7 @@
 #include "ECS/Components/ColliderComponent.hpp"
 #include "ECS/Components/ScriptComponent.hpp"
 #include "ECS/Components/AudioSourceComponent.hpp"
+#include "ECS/Components/DataComponent.hpp"
 
 #include "ECS/Systems/PhysicsSystem.hpp"
 #include "ECS/Systems/PlayerControlSystem.hpp"
@@ -54,6 +55,7 @@ Scene::Scene(Window& window)
     coordinator.RegisterComponent<ColliderComponent>();
     coordinator.RegisterComponent<ScriptComponent>();
     coordinator.RegisterComponent<AudioSourceComponent>();
+    coordinator.RegisterComponent<DataComponent>();
 
     physicsSystem = coordinator.RegisterSystem<PhysicsSystem>();
     {
