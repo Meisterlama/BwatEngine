@@ -187,7 +187,7 @@ Scene::Scene(Window& window)
                 renderableComponent.materials[0] = &myMat1;
 
                 coordinator.AddComponent<AudioSourceComponent>(entity, AudioSourceComponent{*audioData});
-                coordinator.AddComponent<ScriptComponent>(entity, "Assets/script/start.lua", "Assets/script/update.lua");
+                coordinator.AddComponent<ScriptComponent>(entity, "Assets/script/update.lua");
 
             }
         }
