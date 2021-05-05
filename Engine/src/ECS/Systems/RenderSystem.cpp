@@ -40,7 +40,6 @@ void RenderSystem::SetCamera(EntityID _camera)
 
 void RenderSystem::Update(Window& win)
 {
-    
     CheckCameraValid();
     OptionAndClear(win);
 
@@ -52,6 +51,7 @@ void RenderSystem::Update(Window& win)
 
 }
 
+// Gamma correction go to post process
 void RenderSystem::ManageCubeMap()
 {
 
@@ -64,10 +64,13 @@ void RenderSystem::ManageCubeMap()
     cubeMap.shader.use();
     cubeMap.shader.setMat4("view", Math::Mat4f::CreateTRSMat(Math::Vec3f(0, 0, 0), cameraTransform.rotation, cameraTransform.scale).Invert());
     cubeMap.shader.setMat4("projection", cameraComponent.GetProjectionMatrix());
-    shader.setFloat("gamma", cameraComponent.gamma);
-    shader.setBool("isGamma", cameraComponent.isGamma);
+    cubeMap.shader.setFloat("gamma", cameraComponent.gamma);
+    cubeMap.shader.setBool("isGamma", cameraComponent.isGamma);
     glBindVertexArray(cubeMap.skyboxVAO);
-    cubeMap.BindCubeMap();
+
+    glBindTexture(GL_TEXTURE_CUBE_MAP, cubeMap.id);
+    glDrawArrays(GL_TRIANGLES, 0, 36);
+
     glDepthMask(GL_TRUE);
 
 }
@@ -92,10 +95,10 @@ void RenderSystem::ManageEntitiesAndLights()
     shader.setFloat("gamma", cameraComponent.gamma);
     shader.setBool("isGamma", cameraComponent.isGamma);
 
-
     shader.SetTexture("shadowMap", 10 , shadowMap.depthMap);
-
     shader.setMat4("lightSpaceMatrix", lightSpaceMatrix);
+    
+    shader.SetTextureCubemap("envMap", 20, cubeMap.id);
     
     for (unsigned int i = 0; i < lights.size(); i++)
     {

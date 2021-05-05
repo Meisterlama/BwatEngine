@@ -136,3 +136,12 @@ void Shader::SetTexture(const std::string& name, int value, int idTexture)
     glBindTexture(GL_TEXTURE_2D, idTexture);
     glActiveTexture(GL_TEXTURE0);
 }
+
+void Shader::SetTextureCubemap(const std::string& name, GLuint value, GLuint idTexture)
+{
+    glUniform1i(glGetUniformLocation(ID, name.c_str()), value);
+
+    glActiveTexture(GL_TEXTURE0 + value);
+    glBindTexture(GL_TEXTURE_CUBE_MAP, idTexture);
+    glActiveTexture(GL_TEXTURE0);
+}

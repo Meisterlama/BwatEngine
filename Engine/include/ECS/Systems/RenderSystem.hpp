@@ -41,6 +41,7 @@ namespace BwatEngine
 
         GLuint GetRenderTextureID() { return mainRenderFBO.textureColor.id; }
         void BindMainRenderFBO() { mainRenderFBO.UseAndBind(); }
+        GLuint GetMainShader() const { return shader.ID; }
 
       
     };
