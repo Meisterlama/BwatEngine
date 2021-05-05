@@ -1,7 +1,6 @@
 #ifndef FRAMEBUFFER_HPP
 #define FRAMEBUFFER_HPP
 
-#include <iostream>
 #include <glad/glad.h>
 
 #include "Texture.hpp"

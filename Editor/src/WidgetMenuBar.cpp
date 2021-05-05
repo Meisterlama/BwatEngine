@@ -2,6 +2,7 @@
 #include "EditorInterface.hpp"
 #include "Engine.hpp"
 #include "Serialization/Serialization.hpp"
+#include "Time.hpp"
 WidgetMenuBar::WidgetMenuBar(EditorInterface *editor) : Widget(editor)
 {
     title = "MenuBar";

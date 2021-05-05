@@ -5,7 +5,6 @@
 #include <string>
 
 #include "glad/glad.h"
-#include "GLFW/glfw3.h"
 #include "Rendering/Shader.hpp"
 
 namespace Rendering

@@ -2,8 +2,6 @@
 #define PHYSIC_HPP
 
 #include <PxPhysicsAPI.h>
-#include <iostream>
-#include <string>
 
 namespace BwatEngine
 {

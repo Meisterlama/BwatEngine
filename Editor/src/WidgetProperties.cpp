@@ -6,11 +6,15 @@
 #include <ECS/Components/CameraComponent.hpp>
 #include <ECS/Components/PlayerComponent.hpp>
 #include <ECS/Components/DataComponent.hpp>
+#include <ECS/Components/ScriptComponent.hpp>
 
 #include "ResourceManager/ResourceManager.hpp"
 #include "ECS/Coordinator.hpp"
 
+#include <Rendering/Model.hpp>
 #include "WidgetProperties.hpp"
+
+#include "imgui_stdlib.h"
 
 WidgetProperties::WidgetProperties(EditorInterface *editor) : Widget(editor)
 {
@@ -52,7 +56,7 @@ void WidgetProperties::ShowComponent<BwatEngine::RenderableComponent>(BwatEngine
     {
         std::string modelName;
         if (component.model != nullptr)
-            modelName = component.model->modelPath.filename().string();
+            modelName = component.model->modelPath;
         else
             modelName = "";
 
@@ -64,9 +68,9 @@ void WidgetProperties::ShowComponent<BwatEngine::RenderableComponent>(BwatEngine
 
             for(auto &model : meshList)
             {
-                std::filesystem::path path = model;
-                bool selected = (modelName == path.filename().string());
-                if(ImGui::Selectable(path.string().c_str(), selected))
+                std::string path = model;
+                bool selected = (modelName == path);
+                if(ImGui::Selectable(path.c_str(), selected))
                 {
                     component.model = BwatEngine::ResourceManager::Instance()->GetOrLoadModel(model);
                 }
@@ -219,6 +223,19 @@ void WidgetProperties::ShowComponent<BwatEngine::CameraComponent>(BwatEngine::Ca
     }
 }
 
+template<>
+void WidgetProperties::ShowComponent<BwatEngine::ScriptComponent>(BwatEngine::ScriptComponent &component)
+{
+    if (ImGui::CollapsingHeader("Camera Component", ImGuiTreeNodeFlags_DefaultOpen))
+    {
+        std::string ScriptName = component.scriptPath;
+        if(ImGui::InputText("ScriptFile", &ScriptName, ImGuiInputTextFlags_EnterReturnsTrue))
+        {
+            component.scriptPath = ScriptName;
+        }
+    }
+}
+
 void WidgetProperties::TickVisible()
 {
     using namespace BwatEngine;
@@ -243,6 +260,8 @@ void WidgetProperties::TickVisible()
         hasComponentAvailable |= AddComponentMenuItem<CameraComponent>(currentEntity);
         hasComponentAvailable |= AddComponentMenuItem<PlayerComponent>(currentEntity);
         hasComponentAvailable |= AddComponentMenuItem<DataComponent>(currentEntity);
+        hasComponentAvailable |= AddComponentMenuItem<ScriptComponent>(currentEntity);
+
 
         ImGui::EndMenu();
     }
@@ -253,6 +272,7 @@ void WidgetProperties::TickVisible()
     ShowComponentMenuItem<RigidBodyComponent>(currentEntity);
     ShowComponentMenuItem<AudioSourceComponent>(currentEntity);
     ShowComponentMenuItem<CameraComponent>(currentEntity);
+    ShowComponentMenuItem<ScriptComponent>(currentEntity);
     //ShowComponentMenuItem<ColliderComponent>(currentEntity);
 }
 

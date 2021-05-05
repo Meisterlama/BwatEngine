@@ -2,7 +2,9 @@
 #define ENGINE_ECS_SYSTEMS_AUDIO_HPP
 
 #include "ECS/System.hpp"
+#include "ECS/Coordinator.hpp"
 #include "ECS/Components/AudioSourceComponent.hpp"
+#include "ECS/Components/TransformComponent.hpp"
 
 namespace BwatEngine
 {
