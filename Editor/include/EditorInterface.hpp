@@ -19,10 +19,11 @@ class  EditorInterface
 {
 public:
     EditorInterface(BwatEngine::Engine* _engine);
-    ~EditorInterface(){};
+    ~EditorInterface();
 
     void OnTick();
     void Initialise();
+    void DestroyImGui();
 
     void SetEditedEntity(BwatEngine::EntityID entity);
     BwatEngine::EntityID GetEditedEntity() { return editedEntity; }

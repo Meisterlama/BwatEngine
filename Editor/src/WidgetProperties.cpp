@@ -48,7 +48,7 @@ void WidgetProperties::ShowComponent<BwatEngine::RenderableComponent>(BwatEngine
     {
         std::string modelName;
         if (component.model != nullptr)
-            modelName = component.model->modelPath.filename().string();
+            modelName = component.model->modelPath;
         else
             modelName = "";
 
@@ -60,9 +60,9 @@ void WidgetProperties::ShowComponent<BwatEngine::RenderableComponent>(BwatEngine
 
             for(auto &model : meshList)
             {
-                std::filesystem::path path = model;
-                bool selected = (modelName == path.filename().string());
-                if(ImGui::Selectable(path.string().c_str(), selected))
+                std::string path = model;
+                bool selected = (modelName == path);
+                if(ImGui::Selectable(path.c_str(), selected))
                 {
                     component.model = BwatEngine::ResourceManager::Instance()->GetOrLoadModel(model);
                 }

@@ -17,10 +17,35 @@ EditorInterface::EditorInterface(BwatEngine::Engine* _engine)
     engine = _engine;
     widgets.clear();
     widgets.shrink_to_fit();
+
+    IMGUI_CHECKVERSION();
+    ImGui::CreateContext();
+    ImGuiIO& io = ImGui::GetIO(); (void)io;
+    io.ConfigFlags |= ImGuiConfigFlags_NavEnableKeyboard;       // Enable Keyboard Controls
+    io.ConfigFlags |= ImGuiConfigFlags_DockingEnable;           // Enable Docking
+
+    ImGui_ImplGlfw_InitForOpenGL(engine->GetGLFWwindow(), false);
+    ImGui_ImplOpenGL3_Init("#version 330");
+}
+
+EditorInterface::~EditorInterface()
+{
+    DestroyImGui();
+}
+
+void EditorInterface::DestroyImGui()
+{
+    ImGui_ImplGlfw_Shutdown();
+    ImGui_ImplOpenGL3_Shutdown();
+    ImGui::DestroyContext();
 }
 
 void EditorInterface::OnTick()
 {
+    ImGui_ImplOpenGL3_NewFrame();
+    ImGui_ImplGlfw_NewFrame();
+    ImGui::NewFrame();
+
     BeginWindow();
 
     for (std::unique_ptr<Widget>& widget : widgets)

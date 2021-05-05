@@ -5,9 +5,8 @@
 #include <vector>
 #include <unordered_map>
 #include "Rendering/Model.hpp"
+#include "Rendering/Texture.hpp"
 #include "Audio/Sound.hpp"
-
-
 
 
 namespace BwatEngine

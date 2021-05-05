@@ -1,9 +1,8 @@
 #include "Scene.hpp"
 
-#include "Inputs/InputHandler.hpp"
+#include "Math/Misc/RNG.hpp"
 
 #include "ECS/Coordinator.hpp"
-#include "ECS/Components/GravityComponent.hpp"
 #include "ECS/Components/RigidBodyComponent.hpp"
 #include "ECS/Components/CameraComponent.hpp"
 #include "ECS/Components/PlayerComponent.hpp"
@@ -13,22 +12,14 @@
 #include "ECS/Components/ScriptComponent.hpp"
 #include "ECS/Components/AudioSourceComponent.hpp"
 
-
 #include "ECS/Systems/PhysicsSystem.hpp"
 #include "ECS/Systems/PlayerControlSystem.hpp"
 #include "ECS/Systems/RenderSystem.hpp"
 #include "ECS/Systems/SoundSystem.hpp"
 #include "ECS/Systems/ScriptSystem.hpp"
 #include "ECS/Systems/PostProcessSystem.hpp"
-#include "Engine.hpp"
-
-#include "Physic/PhysicCast.hpp"
-#include "Rendering/Material.hpp"
 
 #include "ResourceManager/ResourceManager.hpp"
-
-//#include "Rendering/Material.hpp"
-
 
 using namespace BwatEngine;
 
@@ -55,7 +46,6 @@ Scene::Scene(Window& window)
 
     Coordinator& coordinator = Coordinator::GetInstance();
 
-    coordinator.RegisterComponent<GravityComponent>();
     coordinator.RegisterComponent<RigidBodyComponent>();
     coordinator.RegisterComponent<CameraComponent>();
     coordinator.RegisterComponent<RenderableComponent>();
@@ -128,12 +118,8 @@ Scene::Scene(Window& window)
     BwatEngine::ResourceManager::Instance()->GetOrLoadTexture("Assets/image/moteur.jpg", Rendering::Texture::Type::E_DIFFUSE);
     Audio::AudioData* audioData = BwatEngine::ResourceManager::Instance()->GetOrLoadAudio("Assets/pop.wav");
 
-    std::default_random_engine generator;
-    std::uniform_real_distribution<float> randPosition(-100.0f, 100.0f);
-    std::uniform_real_distribution<float> randRotation(0.0f, 3.0f);
-    std::uniform_real_distribution<float> randScale(3.0f, 5.0f);
-    std::uniform_real_distribution<float> randColor(0.0f, 1.0f);
-    std::uniform_real_distribution<float> randGravity(-10.0f, -1.0f);
+    Math::RNG randPosition{0};  //(-100.0f, 100.0f);
+    Math::RNG randRotation{1};  //(0.0f, 3.0f);
 
     physx::PxMaterial* material = Physic::GetPhysics()->createMaterial(0,0,0);
 
@@ -174,8 +160,16 @@ Scene::Scene(Window& window)
             else // ================================= Cube
             {
                 coordinator.AddComponent<TransformComponent>(entity,
-                    Math::Vec3f{randPosition(generator), randPosition(generator), randPosition(generator)},
-                    Math::Vec3f{randRotation(generator), randRotation(generator), randRotation(generator)},
+                    Math::Vec3f{
+                        randPosition.RollRandomFloatInRange(-100.f, 100.f),
+                        randPosition.RollRandomFloatInRange(-100.f, 100.f),
+                        randPosition.RollRandomFloatInRange(-100.f, 100.f)
+                        },
+                    Math::Vec3f{
+                        randPosition.RollRandomFloatInRange(0.f, 3.f),
+                        randPosition.RollRandomFloatInRange(0.f, 3.f),
+                        randPosition.RollRandomFloatInRange(0.f, 3.f)
+                        },
                     Math::Vec3f{3});
                 auto eTransform = coordinator.GetComponent<TransformComponent>(entity);
                 coordinator.AddComponent<RigidBodyComponent>(entity, eTransform);

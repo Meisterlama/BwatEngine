@@ -8,7 +8,6 @@
 
 #include "Rendering/Shader.hpp"
 #include "Rendering/Light.hpp"
-#include "Rendering/Camera.hpp"
 #include "EditorInterface.hpp"
 
 #include "ECS/ECS.hpp"
@@ -20,22 +19,13 @@
 #include "ECS/Systems/PostProcessSystem.hpp"
 
 #include "Inputs/InputHandler.hpp"
+#include "Time.hpp"
 
 using namespace BwatEngine;
 
 //initialization
 Engine::Engine() : scene(window)
 {
-
-    IMGUI_CHECKVERSION();
-    ImGui::CreateContext();
-    ImGuiIO& io = ImGui::GetIO(); (void)io;
-    io.ConfigFlags |= ImGuiConfigFlags_NavEnableKeyboard;       // Enable Keyboard Controls
-    io.ConfigFlags |= ImGuiConfigFlags_DockingEnable;           // Enable Docking
-
-    ImGui_ImplGlfw_InitForOpenGL(GetGLFWwindow(), false);
-    ImGui_ImplOpenGL3_Init("#version 330");
-
     InputHandler::Initialize(GetGLFWwindow());
 }
 
@@ -43,11 +33,6 @@ Engine::Engine() : scene(window)
 void Engine::Update()
 {
     InputHandler::Update();
-
-    ImGui_ImplOpenGL3_NewFrame();
-    ImGui_ImplGlfw_NewFrame();
-    ImGui::NewFrame();
-
 
     float currentFrame = glfwGetTime();
     Time::deltaTime = currentFrame - lastFrame;
@@ -71,7 +56,7 @@ void Engine::Update()
         scene.physicsSystem->Update();
     }
 
-    scene.playerControlSystem->Update(Time::deltaTime, GetGLFWwindow());
+    scene.playerControlSystem->Update();
 
     ManageRenderAndPostProcess();
 
@@ -100,9 +85,6 @@ void Engine::Update()
 //Close all content 
 void Engine::Close()
 {
-    ImGui_ImplGlfw_Shutdown();
-    ImGui_ImplOpenGL3_Shutdown();
-    ImGui::DestroyContext();
     GetWindow().Close();
 }
 

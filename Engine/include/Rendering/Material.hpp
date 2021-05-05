@@ -1,13 +1,11 @@
 #ifndef MATERIAL_HPP
 #define MATERIAL_HPP
 
-#include "Texture.hpp"
-//#include "Math/Math.hpp"
-
 class aiMaterial;
 
 namespace Rendering
 {
+    class Texture;
 	struct Material
 	{
 		Material(const aiMaterial& from);
