@@ -18,11 +18,11 @@ Material::Material(const aiMaterial& from)
             specular = BwatEngine::ResourceManager::Instance()->GetOrLoadTexture(path.C_Str(), Rendering::Texture::Type::E_SPECULAR);
     }
     {
-        //aiColor3D diffuseColor;
-        //from.Get(AI_MATKEY_COLOR_DIFFUSE, diffuseColor);
-        //color = { diffuseColor.r, diffuseColor.g, diffuseColor.b };
+        aiString path;
+        if (from.GetTexture(aiTextureType_NORMALS, 0, &path) == aiReturn_SUCCESS)
+            normal = BwatEngine::ResourceManager::Instance()->GetOrLoadTexture(path.C_Str(), Rendering::Texture::Type::E_NORMAL);
     }
-
+ 
 }
 
 void Material::Bind()
@@ -34,6 +34,10 @@ void Material::Bind()
     glActiveTexture(GL_TEXTURE1);
     if (specular)
         specular->Use();
+
+    glActiveTexture(GL_TEXTURE2);
+    if (normal)
+        normal->Use();
 
     glActiveTexture(GL_TEXTURE0);
 }

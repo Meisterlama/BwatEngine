@@ -11,7 +11,7 @@ namespace Rendering
 
 	public:
 
-		ShadowMapping(int width = 1024, int  height = 1024);
+		ShadowMapping(int width = 4096, int  height = 4096);
 
 		Shader shader;
 		int width, height;

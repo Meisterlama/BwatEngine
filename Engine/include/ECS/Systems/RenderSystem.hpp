@@ -39,8 +39,6 @@ namespace BwatEngine
         void CheckCameraValid();
         void OptionAndClear(Window& win);
 
-        void OptionAndClearShadow();
-
         GLuint GetRenderTextureID() { return mainRenderFBO.textureColor.id; }
         void BindMainRenderFBO() { mainRenderFBO.UseAndBind(); }
 

@@ -116,6 +116,13 @@ void RenderSystem::ManageEntitiesAndLights()
             shader.setInt("material.diffuse",0);
         if (renderableComponent.materials[0]->specular != nullptr)
             shader.setInt("material.specular", 1);
+        if (renderableComponent.materials[0]->normal != nullptr)
+        {
+            shader.setInt("material.normal", 2);
+            shader.setInt("material.isNormal", 1);
+        }
+        else
+            shader.setInt("material.isNormal", 0);
 
         if (renderableComponent.model != nullptr)
             renderableComponent.model->Draw(&renderableComponent.materials);
@@ -147,7 +154,8 @@ void RenderSystem::OptionAndClear(Window& win)
 
 // ===================================== SHADOW ===================================== //
 
-void RenderSystem::OptionAndClearShadow()
+
+void RenderSystem::UpdateShadow()
 {
     glViewport(0, 0, shadowMap.width, shadowMap.height);
     glBindFramebuffer(GL_FRAMEBUFFER, shadowMap.depthMapFbo);
@@ -155,19 +163,10 @@ void RenderSystem::OptionAndClearShadow()
 
     glClearColor(0.1f, 0.1f, 0.1f, 1.0f);
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-}
-
-void RenderSystem::UpdateShadow()
-{
-    OptionAndClearShadow();
 
     Math::Mat4f lightProjection, lightView;
     float near_plane = 0.0f, far_plane = 1000.f;
     lightProjection = Math::Mat4f::CreateOrtho(-150.0f, 150.0f, -150.0f, 150.0f, near_plane, far_plane);
-
-    // TO DO : how do you use multi source of lights in this case ? 
-    shadowMap.shader.use();
-    shadowMap.shader.setMat4("lightSpaceMatrix", lightSpaceMatrix);
 
     auto& coordinator = Coordinator::GetInstance();
 
@@ -175,16 +174,21 @@ void RenderSystem::UpdateShadow()
     signature.set(coordinator.GetComponentType<LightComponent>());
     auto lights = coordinator.GetEntitiesWithSignature(signature);
 
-    // draw light
+    // Generate shadoz of the directional light
     for (unsigned int i = 0; i < lights.size(); i++)
     {
         std::string index = std::to_string(i);
         auto& light = coordinator.GetComponent<LightComponent>(lights[i]);
-        lightView = Math::Mat4f::CreateTRSMat(light.position, Math::Vec3f{ Math::ToRads(light.direction.Y * 90),- Math::ToRads(light.direction.X * 90),Math::ToRads(light.direction.Z * 90) }, { 1 }).GetInverted();
-        lightSpaceMatrix = lightProjection * lightView;
-
+        if (light.typeoflight == Rendering::TYPE_LIGHT::Directional)
+        {
+            lightView = Math::Mat4f::CreateTRSMat(light.position, Math::Vec3f{ Math::ToRads(light.direction.Y * 90),-Math::ToRads(light.direction.X * 90),Math::ToRads(light.direction.Z * 90) }, { 1 }).GetInverted();
+            lightSpaceMatrix = lightProjection * lightView;
+        }
     }
 
+    shadowMap.shader.use();
+    shadowMap.shader.setMat4("lightSpaceMatrix", lightSpaceMatrix);
+    
     // draw all model in deph test 
     for (auto entity : entities)
     {

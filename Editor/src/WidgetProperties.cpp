@@ -122,6 +122,43 @@ void WidgetProperties::ShowComponent<BwatEngine::RenderableComponent>(BwatEngine
                 }
                 ImGui::EndCombo();
             }
+
+            std::string normalName;
+            if (component.materials[i]->normal != nullptr)
+                normalName = component.materials[i]->normal->path;
+            else
+                normalName = "";
+            
+            ImGui::Text("Normal Texture");
+            ImGui::SameLine();
+            if (ImGui::BeginCombo("##normal", normalName.c_str()))
+            {
+                auto textList = BwatEngine::ResourceManager::Instance()->GetTextList();
+
+                for (auto& text : textList)
+                {
+                    bool selected = (normalName == text.c_str());
+                    if (ImGui::Selectable(text.c_str(), selected))
+                    {
+                        component.materials[i]->normal = BwatEngine::ResourceManager::Instance()->GetOrLoadTexture(text, Rendering::Texture::Type::E_NORMAL);;
+                    }
+                    if (selected)
+                        ImGui::SetItemDefaultFocus();
+                }
+                ImGui::EndCombo();
+            }
+
+            if (ImGui::Button("Clear Texture"))
+            {
+                component.materials[i]->diffuse = nullptr;
+                component.materials[i]->specular = nullptr;
+                component.materials[i]->normal = nullptr;
+
+                DiffName = "";
+                SpecName = "";
+                normalName = "";
+            }
+
         }
     }
 }
