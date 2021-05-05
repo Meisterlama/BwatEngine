@@ -6,7 +6,6 @@
 #include "ECS/Components/CameraComponent.hpp"
 #include "ECS/Components/PlayerComponent.hpp"
 #include "ECS/Components/ColliderComponent.hpp"
-#include "ECS/Components/GravityComponent.hpp"
 #include "ResourceManager/ResourceManager.hpp"
 
 using json = nlohmann::json;
@@ -51,15 +50,15 @@ namespace BwatEngine {
         }
 
         template<typename T>
+        void SerializeComponent(const T &, json &js) {
+        }
+
+        template<typename T>
         void SaveComponent(EntityID entityId, json &js) {
             auto &coordinator = Coordinator::GetInstance();
             if (coordinator.HaveComponent<T>(entityId))
                 Serializable::SerializeComponent<T>(coordinator.GetComponent<T>(entityId), js);
 
-        }
-
-        template<typename T>
-        void SerializeComponent(const T &, json &js) {
         }
 
         template<>
@@ -144,7 +143,7 @@ namespace BwatEngine {
             }
 
             if (renderable.model != nullptr) {
-                temp["model"] = renderable.model->modelPath.string();
+                temp["model"] = renderable.model->modelPath;
 
             }
 

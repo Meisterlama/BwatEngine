@@ -1,11 +1,8 @@
 #ifndef DEBUG_LOGGER_HPP
 #define DEBUG_LOGGER_HPP
 
-
-
 #include <cstdio>
 #include <cstdarg>
-#include <cstdbool>
 #include <ctime>
 
 namespace BLogger

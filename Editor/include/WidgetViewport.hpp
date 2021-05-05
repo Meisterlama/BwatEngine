@@ -2,7 +2,6 @@
 #define BWATENGINE_WIDGETVIEWPORT_HPP
 
 #include "Widget.hpp"
-#include "glad/glad.h"
 #include "Rendering/FrameBuffer.hpp"
 #include "ImGuizmo.h"
 

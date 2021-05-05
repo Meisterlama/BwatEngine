@@ -1,7 +1,7 @@
 #ifndef ENGINE_INPUTS_INPUT_HANDLER_HPP
 #define ENGINE_INPUTS_INPUT_HANDLER_HPP
 
-#include <map>
+#include <unordered_map>
 #include "InputEnums.hpp"
 #include "Math/Vector/Vectors.hpp"
 namespace BwatEngine
@@ -15,9 +15,9 @@ namespace BwatEngine
     class InputHandler
     {
     private:
-        std::map<Keyboard, InputState> keyboard{};
+        std::unordered_map<Keyboard, InputState> keyboard{};
         Keyboard lastPressed;
-        std::map<Mouse, InputState> mouse{};
+        std::unordered_map<Mouse, InputState> mouse{};
 
         BwatEngine::Math::Vec2d mouseDelta{};
         BwatEngine::Math::Vec2d mousePos{};

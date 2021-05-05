@@ -37,7 +37,7 @@ endif()
 include_directories(lib/PhysX/physx/include lib/PhysX/pxshared/include/)
 
 add_subdirectory(Engine)
-set(ENGINE_LIBRARY glad glfw assimp flatbuffers imgui OpenAL stb json dirent AudioFile
+set(ENGINE_LIBRARY glad glfw assimp flatbuffers imgui OpenAL stb json dirent AudioFile lua sol2
 PhysXExtensions PhysX PhysXPvdSDK PhysXVehicle PhysXCharacterKinematic PhysXCooking PhysXCommon PhysXFoundation)
 
 add_subdirectory(Game)

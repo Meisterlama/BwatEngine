@@ -3,10 +3,10 @@
 
 #include "ECS/System.hpp"
 
-#include "Physic/PhysicScene.hpp"
-
 namespace BwatEngine
 {
+    class PhysicScene;
+
     class PhysicsSystem : public System
     {
     public:

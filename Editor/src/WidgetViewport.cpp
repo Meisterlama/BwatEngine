@@ -18,29 +18,29 @@ WidgetViewport::WidgetViewport(EditorInterface *editor) : Widget(editor) ,
 
 void WidgetViewport::TickVisible()
 {
-    if (ImGui::ImageButton((ImTextureID)BwatEngine::ResourceManager::Instance()->GetOrLoadTexture("Assets/image/trans.png",Rendering::Texture::Type::E_DIFFUSE)->id, ImVec2(50.f, 50.f)))
+    if (ImGui::ImageButton(reinterpret_cast<ImTextureID>(BwatEngine::ResourceManager::Instance()->GetOrLoadTexture("Assets/image/trans.png",Rendering::Texture::Type::E_DIFFUSE)->id), ImVec2(50.f, 50.f)))
     {
         guizmoOperation = ImGuizmo::OPERATION::TRANSLATE;
     }
     ImGui::SameLine();
-    if (ImGui::ImageButton((ImTextureID)BwatEngine::ResourceManager::Instance()->GetOrLoadTexture("Assets/image/Rotate.png",Rendering::Texture::Type::E_DIFFUSE)->id, ImVec2(50.f, 50.f)))
+    if (ImGui::ImageButton(reinterpret_cast<ImTextureID>(BwatEngine::ResourceManager::Instance()->GetOrLoadTexture("Assets/image/rotate.png",Rendering::Texture::Type::E_DIFFUSE)->id), ImVec2(50.f, 50.f)))
     {
         guizmoOperation = ImGuizmo::OPERATION::ROTATE;
     }
     ImGui::SameLine();
-    if (ImGui::ImageButton((ImTextureID)BwatEngine::ResourceManager::Instance()->GetOrLoadTexture("Assets/image/scale.png",Rendering::Texture::Type::E_DIFFUSE)->id, ImVec2(50.f, 50.f)))
+    if (ImGui::ImageButton(reinterpret_cast<ImTextureID>(BwatEngine::ResourceManager::Instance()->GetOrLoadTexture("Assets/image/scale.png",Rendering::Texture::Type::E_DIFFUSE)->id), ImVec2(50.f, 50.f)))
     {
         guizmoOperation = ImGuizmo::OPERATION::SCALE;
     }
 
     ImGui::SameLine();
     ImGui::SetCursorPosX(ImGui::GetWindowWidth() - 125);
-    if (ImGui::ImageButton((ImTextureID)BwatEngine::ResourceManager::Instance()->GetOrLoadTexture("Assets/image/world.png",Rendering::Texture::Type::E_DIFFUSE)->id, ImVec2(50.f, 50.f)))
+    if (ImGui::ImageButton(reinterpret_cast<ImTextureID>(BwatEngine::ResourceManager::Instance()->GetOrLoadTexture("Assets/image/world.png",Rendering::Texture::Type::E_DIFFUSE)->id), ImVec2(50.f, 50.f)))
     {
         guizmoMode = ImGuizmo::MODE::WORLD;
     }
     ImGui::SameLine();
-    if (ImGui::ImageButton((ImTextureID)BwatEngine::ResourceManager::Instance()->GetOrLoadTexture("Assets/image/local.png",Rendering::Texture::Type::E_DIFFUSE)->id, ImVec2(50.f, 50.f)))
+    if (ImGui::ImageButton(reinterpret_cast<ImTextureID>(BwatEngine::ResourceManager::Instance()->GetOrLoadTexture("Assets/image/local.png",Rendering::Texture::Type::E_DIFFUSE)->id), ImVec2(50.f, 50.f)))
     {
         guizmoMode = ImGuizmo::MODE::LOCAL;
     }
