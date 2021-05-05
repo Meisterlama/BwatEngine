@@ -83,7 +83,7 @@ void Engine::Update()
     static bool updateScript = false;
     if (InputHandler::GetKeyboardDown(KEY_F4))
     {
-        LogDebug("ScriptOn");
+        LogInfo("Toggle Script");
         updateScript = !updateScript;
 
     }

@@ -51,15 +51,15 @@ namespace BwatEngine {
         }
 
         template<typename T>
+        void SerializeComponent(const T &, json &js) {
+        }
+
+        template<typename T>
         void SaveComponent(EntityID entityId, json &js) {
             auto &coordinator = Coordinator::GetInstance();
             if (coordinator.HaveComponent<T>(entityId))
                 Serializable::SerializeComponent<T>(coordinator.GetComponent<T>(entityId), js);
 
-        }
-
-        template<typename T>
-        void SerializeComponent(const T &, json &js) {
         }
 
         template<>
