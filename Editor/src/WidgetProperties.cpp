@@ -10,8 +10,11 @@
 #include "ECS/Coordinator.hpp"
 
 #include <Rendering/Model.hpp>
+#include <ECS/Components/ScriptComponent.hpp>
 
 #include "WidgetProperties.hpp"
+
+#include "imgui_stdlib.h"
 
 BwatEngine::EntityID WidgetProperties::currentEntity = 0;
 
@@ -205,6 +208,19 @@ void WidgetProperties::ShowComponent<BwatEngine::CameraComponent>(BwatEngine::Ca
     }
 }
 
+template<>
+void WidgetProperties::ShowComponent<BwatEngine::ScriptComponent>(BwatEngine::ScriptComponent &component)
+{
+    if (ImGui::CollapsingHeader("Camera Component", ImGuiTreeNodeFlags_DefaultOpen))
+    {
+        std::string ScriptName = component.scriptPath;
+        if(ImGui::InputText("ScriptFile", &ScriptName, ImGuiInputTextFlags_EnterReturnsTrue))
+        {
+            component.scriptPath = ScriptName;
+        }
+    }
+}
+
 void WidgetProperties::TickVisible()
 {
     using namespace BwatEngine;
@@ -228,6 +244,7 @@ void WidgetProperties::TickVisible()
         hasComponentAvailable |= AddComponentMenuItem<ColliderComponent>(currentEntity);
         hasComponentAvailable |= AddComponentMenuItem<CameraComponent>(currentEntity);
         hasComponentAvailable |= AddComponentMenuItem<PlayerComponent>(currentEntity);
+        hasComponentAvailable |= AddComponentMenuItem<ScriptComponent>(currentEntity);
 
         ImGui::EndMenu();
     }
@@ -237,6 +254,7 @@ void WidgetProperties::TickVisible()
     ShowComponentMenuItem<RigidBodyComponent>(currentEntity);
     ShowComponentMenuItem<AudioSourceComponent>(currentEntity);
     ShowComponentMenuItem<CameraComponent>(currentEntity);
+    ShowComponentMenuItem<ScriptComponent>(currentEntity);
     //ShowComponentMenuItem<ColliderComponent>(currentEntity);
 }
 

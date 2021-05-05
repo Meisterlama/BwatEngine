@@ -12,15 +12,15 @@ namespace BwatEngine
     struct ScriptComponent
     {
     public :
-        std::string startScriptPath;
-        std::string updateScriptPath;
-
+        std::string scriptPath;
+        std::string oldPath;
 
         bool isStarted = false;
 
-        ScriptComponent(std::string startScriptPath, std::string updateScriptPath)
-        : startScriptPath(std::move(startScriptPath))
-        , updateScriptPath(std::move(updateScriptPath))
+        bool waitingForChanges = false;
+
+        ScriptComponent(std::string startScriptPath = "")
+        : scriptPath(std::move(startScriptPath))
         {}
     };
 }

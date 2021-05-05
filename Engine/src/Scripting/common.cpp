@@ -1,4 +1,4 @@
-#include "Scripting/common.hpp"
+#include "Scripting/modules.hpp"
 #include "ECS/Coordinator.hpp"
 #include "ECS/Components/TransformComponent.hpp"
 
@@ -20,6 +20,11 @@ namespace BwatEngine
         LogDebug("[LUA] %s", logString.c_str());
     }
 
+    EntityID CreateEntity()
+    {
+        return Coordinator::GetInstance().CreateEntity();
+    }
+
     sol::table open_common(sol::this_state s)
     {
         sol::state_view lua(s);
@@ -30,12 +35,8 @@ namespace BwatEngine
         module.set_function("__Log", Log);
         module.set_function("SetPosition", SetPosition);
         module.set_function("GetPosition", GetPosition);
-        module.new_usertype<Math::Vec3f>("Vec3f",
-                                         "X", &Math::Vec3f::X,
-                                         "Y", &Math::Vec3f::Y,
-                                         "Z", &Math::Vec3f::Z
-        );
-        lua.script_file("Assets/script/debug.lua");
+        module.set_function("CreateEntity", CreateEntity);
+        
         return module;
     }
 }
