@@ -28,12 +28,7 @@ EditorInterface::EditorInterface(BwatEngine::Engine* _engine)
     ImGui_ImplOpenGL3_Init("#version 330");
 }
 
-EditorInterface::~EditorInterface()
-{
-    DestroyImGui();
-}
-
-void EditorInterface::DestroyImGui()
+void EditorInterface::Close()
 {
     ImGui_ImplGlfw_Shutdown();
     ImGui_ImplOpenGL3_Shutdown();
