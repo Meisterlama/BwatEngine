@@ -27,6 +27,10 @@ void Engine::Update()
     Time::deltaTime = currentFrame - lastFrame;
     lastFrame = currentFrame;
 
+    if (InputHandler::GetKeyboardDown(KEY_ESCAPE))
+    {
+        glfwSetWindowShouldClose(GetGLFWwindow(), true);
+    }
 
     static bool updatePhysics = false;
     if (InputHandler::GetKeyboardDown(KEY_F2))
@@ -89,8 +93,10 @@ void Engine::ManageRenderAndPostProcess()
 
     if (isPostProcess)
         scene.renderSystem->BindMainRenderFBO();
-    else
+    else if (MainFBO)
         MainFBO->UseAndBind();
+    else
+        glBindFramebuffer(GL_FRAMEBUFFER, 0); //TODO: Proper handling of default framebuffer
 
     scene.renderSystem->Update(GetWindow());
 

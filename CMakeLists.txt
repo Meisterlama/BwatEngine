@@ -18,50 +18,33 @@ else()
     message(FATAL_ERROR ">>> Not supported platform ${CMAKE_SYSTEM}")
 endif()
 
-set(BWAT_ENGINE_TEST_ENABLED OFF)
-set(BWAT_EDITOR_ENABLED ON)
-set(BWAT_EDITOR_DEBUG_ENABLED ON)
+option(BWAT_ENGINE_TEST_ENABLED OFF)
+option(BWAT_EDITOR_ENABLED OFF)
 
-
-if(BWAT_EDITOR_DEBUG_ENABLED)
-    add_compile_definitions(BWATDEBUG)
-endif()
-
-
-add_subdirectory(lib)
+    add_subdirectory(lib)
 if(BWAT_ENGINE_TEST_ENABLED)
     add_subdirectory(tests)
 endif()
 
 #TODO: Include the directory properly
 include_directories(lib/PhysX/physx/include lib/PhysX/pxshared/include/)
-
-add_subdirectory(Engine)
 set(ENGINE_LIBRARY glad glfw assimp flatbuffers imgui OpenAL stb json dirent AudioFile lua sol2
-PhysXExtensions PhysX PhysXPvdSDK PhysXVehicle PhysXCharacterKinematic PhysXCooking PhysXCommon PhysXFoundation)
-
-add_subdirectory(Game)
-target_link_libraries(Game PUBLIC ${ENGINE_LIBRARY})
-target_link_libraries(Game PUBLIC Engine)
+        PhysXExtensions PhysX PhysXPvdSDK PhysXVehicle PhysXCharacterKinematic PhysXCooking PhysXCommon PhysXFoundation)
+add_subdirectory(Engine)
+target_link_libraries(Engine PUBLIC ${ENGINE_LIBRARY})
+if(BWAT_EDITOR_ENABLED)
+    target_compile_definitions(Engine PRIVATE BWATEDITOR)
+endif()
 
 add_subdirectory(Editor)
 target_link_libraries(Editor PUBLIC ${ENGINE_LIBRARY})
 target_link_libraries(Editor PUBLIC Engine)
-
-target_link_libraries(Engine PUBLIC Game ${ENGINE_LIBRARY})
-
-file(GLOB_RECURSE BWATENGINE_ASSETS
-        ${CMAKE_SOURCE_DIR}/Assets/*)
-
-MESSAGE(STATUS "\n\n\nASSETS: ${BWATENGINE_ASSETS}")
+if(BWAT_EDITOR_ENABLED)
+    target_compile_definitions(Editor PRIVATE BWATEDITOR)
+endif()
 
 add_executable(Launcher launcher.cpp)
 target_link_libraries(Launcher PUBLIC Engine)
-add_dependencies(Launcher Engine)
-add_custom_command(TARGET Launcher
-        COMMAND ${CMAKE_COMMAND} -E copy_directory
-        ${CMAKE_SOURCE_DIR}/Assets/ $<TARGET_FILE_DIR:Launcher>/Assets/
-        DEPENDS ${BWATENGINE_ASSETS})
 
 if(BWAT_EDITOR_ENABLED)
     target_link_libraries(Engine PUBLIC Editor)

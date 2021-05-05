@@ -1,8 +1,9 @@
 #include <algorithm>
 #include "Inputs/InputHandler.hpp"
-#include "Debug/Logger.hpp"
 
+#if defined(BWATEDITOR)
 #include "imgui_impl_glfw.h"
+#endif
 
 namespace BwatEngine
 {
@@ -17,7 +18,9 @@ namespace BwatEngine
         if ((action == GLFW_PRESS) || (action == GLFW_REPEAT))
             inputHandler->lastPressed = static_cast<Keyboard>(key);
 
+#if defined(BWATEDITOR)
         ImGui_ImplGlfw_KeyCallback(window, key, scancode, action, mods);
+#endif
 //        LogTrace("Mod: %i; Key: %s(%i) %s",
 //                 mods, glfwGetKeyName(key, 0), key, (action == 0) ? "released" : ((action == 1) ? "pressed" : "repeated"));
     }
@@ -26,8 +29,9 @@ namespace BwatEngine
         inputHandler->mouse[static_cast<Mouse>(button)].pressed = (action == GLFW_PRESS) || (action == GLFW_REPEAT);
         inputHandler->mouse[static_cast<Mouse>(button)].down = (action == GLFW_PRESS);
         inputHandler->mouse[static_cast<Mouse>(button)].up = (action == GLFW_RELEASE);
-
+#if defined(BWATEDITOR)
         ImGui_ImplGlfw_MouseButtonCallback(window, button, action, mods);
+#endif
 //        LogTrace("Mouse button %i(mod %i) %s",
 //                 button, mods, (action == 0) ? "released" : ((action == 1) ? "pressed" : "repeated"));
     }
@@ -47,7 +51,9 @@ namespace BwatEngine
     void InputHandler::ScrollCallback(GLFWwindow* window, double xoffset, double yoffset)
     {
         inputHandler->scrollDelta = {xoffset, yoffset};
+#if defined(BWATEDITOR)
         ImGui_ImplGlfw_ScrollCallback(window, xoffset, yoffset);
+#endif
 //        LogDebug("\nScroll Delta: X:%f;Y:%f",
 //                 xoffset, yoffset);
     }
@@ -58,7 +64,9 @@ namespace BwatEngine
         glfwSetMouseButtonCallback(_window, InputHandler::MouseButtonCallback);
         glfwSetCursorPosCallback(_window, InputHandler::MouseMovementCallback);
         glfwSetScrollCallback(_window, InputHandler::ScrollCallback);
+#if defined(BWATEDITOR)
         glfwSetCharCallback(_window, ImGui_ImplGlfw_CharCallback);
+#endif
 
         GetInstance()->window = _window;
     }
