@@ -5,7 +5,6 @@
 
 #include "Math/Math.hpp"
 #include "Physic/Physic.hpp"
-#include "Physic/PhysicCast.hpp"
 
 namespace BwatEngine
 {
@@ -20,6 +19,7 @@ namespace BwatEngine
 
 		~Collider() = default;
 		physx::PxShape* GetShape() { return shape; }
+        physx::PxMaterial* GetMaterial() { return material; }
 		void SetFriction(float friction);
 
 	};

@@ -20,7 +20,11 @@ namespace BwatEngine::Audio
         ALuint sampleRate;
         ALenum format;
         float length;
+
+        AudioData() = default;
+        AudioData(std::string path);
     };
+
 
     AudioData LoadWavFile(std::string path);
 

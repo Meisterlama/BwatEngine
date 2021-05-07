@@ -24,6 +24,7 @@ namespace BwatEngine
 
         Window* window = nullptr;
         EntityID camera = 0;
+        Signature signature;
 
     public:
 

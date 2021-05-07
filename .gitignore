@@ -1,11 +1,10 @@
 VSProject
 .vs
 .idea
-cmake-build-debug
-cmake-build-release
+cmake-*
 
 
-Assets
+Assets/*
 
 docs/build
 docs/env

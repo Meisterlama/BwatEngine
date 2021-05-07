@@ -1,4 +1,6 @@
+#include <string>
 #include "ECS/Coordinator.hpp"
+#include "ECS/Components/DataComponent.hpp"
 
 namespace BwatEngine
 {
@@ -13,6 +15,11 @@ namespace BwatEngine
             auto entity = entityManager.CreateEntity();
             entities.push_back(entity);
             sceneMap[entity].id = entity;
+            AddComponent<DataComponent>(entity, {});
+
+            std::string entityName = "Entity_" + std::to_string(entity);
+            GetComponent<DataComponent>(entity).name = entityName;
+
             return entity;
     }
 

@@ -6,6 +6,7 @@
 #define MATH_VECTOR3_HPP
 
 #include "Math/Meta.hpp"
+#include "Math/Common.hpp"
 
 namespace BwatEngine::Math
 {

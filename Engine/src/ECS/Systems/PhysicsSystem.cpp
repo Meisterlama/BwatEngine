@@ -5,6 +5,7 @@
 #include "ECS/Coordinator.hpp"
 #include "ECS/Components/RigidBodyComponent.hpp"
 #include "ECS/Components/TransformComponent.hpp"
+#include "Physic/PhysicScene.hpp"
 
 
 using namespace BwatEngine;

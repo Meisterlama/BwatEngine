@@ -19,20 +19,29 @@ EditorInterface::EditorInterface(BwatEngine::Engine* _engine)
     engine = _engine;
     widgets.clear();
     widgets.shrink_to_fit();
+
+    IMGUI_CHECKVERSION();
+    ImGui::CreateContext();
+    ImGuiIO& io = ImGui::GetIO(); (void)io;
+    io.ConfigFlags |= ImGuiConfigFlags_NavEnableKeyboard;       // Enable Keyboard Controls
+    io.ConfigFlags |= ImGuiConfigFlags_DockingEnable;           // Enable Docking
+
+    ImGui_ImplGlfw_InitForOpenGL(engine->GetGLFWwindow(), false);
+    ImGui_ImplOpenGL3_Init("#version 330");
 }
 
-void EditorInterface::DestroyImGui()
+void EditorInterface::Close()
 {
-    //ImGui_ImplGlfw_Shutdown();
-    //ImGui_ImplOpenGL3_Shutdown();
-    //ImGui::DestroyContext();
+    ImGui_ImplGlfw_Shutdown();
+    ImGui_ImplOpenGL3_Shutdown();
+    ImGui::DestroyContext();
 }
 
 void EditorInterface::OnTick()
 {
-    //ImGui_ImplOpenGL3_NewFrame();
-    //ImGui_ImplGlfw_NewFrame();
-    //ImGui::NewFrame();
+    ImGui_ImplOpenGL3_NewFrame();
+    ImGui_ImplGlfw_NewFrame();
+    ImGui::NewFrame();
 
     BeginWindow();
 
@@ -64,6 +73,7 @@ void EditorInterface::Initialise()
     widgets.emplace_back(std::make_unique<WidgetProperties>(this));
     widgets.emplace_back(std::make_unique<WidgetShader>(this));
 
+    widgetProperties = static_cast<WidgetProperties*>(widgets.back().get());
 }
 
 void EditorInterface::ApplyStyle() const
@@ -116,4 +126,10 @@ void EditorInterface::BeginWindow()
 
         ImGui::DockSpace(windowID, ImVec2(0.0f, 0.0f), ImGuiDockNodeFlags_PassthruCentralNode);
     }
+}
+
+void EditorInterface::SetEditedEntity(BwatEngine::EntityID entity)
+{
+    editedEntity = entity;
+    widgetProperties->Inspect(editedEntity);
 }

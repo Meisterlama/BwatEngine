@@ -1,11 +1,8 @@
 #pragma once
 
 #include <vector>
-#include <string>
 #include "Shader.hpp"
 #include "Math/Math.hpp"
-#include "Texture.hpp"
-#include "Light.hpp"
 #include "Material.hpp"
 
 namespace Rendering

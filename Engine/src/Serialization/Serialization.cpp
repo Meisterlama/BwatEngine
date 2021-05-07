@@ -12,7 +12,7 @@
 
 namespace BwatEngine {
 
-    void Serializer::SaveScene(const BwatEngine::Scene &toSave, const char* path)
+    void Serializer::SaveScene(const BwatEngine::Scene &toSave, const char* path) //enlever la scene ici ?
     {
         std::ofstream file(path);
 
@@ -20,12 +20,16 @@ namespace BwatEngine {
         Coordinator &coordinator = Coordinator::GetInstance();
         auto entities = coordinator.GetEntitiesList();
 
+        // save Transform / rigidBody / Camera / / / / /
         for (int i = 0; i < entities.size(); i++)
         {
-            TransformComponent transform = coordinator.GetComponent<TransformComponent>(entities[i]);
-            Serializable::SaveComponent<TransformComponent>(transform, js["Entity"]);
-
-
+            EntityID currentEntity = entities[i];
+            Serializable::SaveComponent<TransformComponent>(currentEntity, js["Entity"][i]);
+            Serializable::SaveComponent<CameraComponent>(currentEntity, js["Entity"][i]);
+            Serializable::SaveComponent<PlayerComponent>(currentEntity, js["Entity"][i]);
+            Serializable::SaveComponent<RigidBodyComponent>(currentEntity, js["Entity"][i]);
+            Serializable::SaveComponent<RenderableComponent>(currentEntity, js["Entity"][i]);
+            Serializable::SaveComponent<ColliderComponent>(currentEntity, js["Entity"][i]);
         }
 
             file << std::setw(4) << js << std::endl;
@@ -45,20 +49,35 @@ namespace BwatEngine {
             file >> js;
 
             Coordinator &coordinator = Coordinator::GetInstance();
-            auto entities = coordinator.GetEntitiesList();
+            coordinator.DestroyAllEntities();
+            json& entities = js["Entity"];
 
-            for (int i = 0; i < entities.size(); i++) {
 
-                json transform  = js["Entity"][i]["transform"];
-                json position   = transform.at("position");
-                json rotation   = transform.at("rotation");
-                json scale      = transform.at("scale");
+            for (int i = 0; i < entities.size(); i++)
+            {
+               json& entity = entities[i];
+               auto newEntity =  coordinator.CreateEntity();
 
-                coordinator.GetComponent<TransformComponent>(entities[i]) = Math::Transform{
-                        Math::Vec3f{position.at("X").get<float>(), position.at("Y").get<float>(),position.at("Z").get<float>()},
-                        Math::Vec3f{rotation.at("X").get<float>(),rotation.at("Y").get<float>(),rotation.at("Z").get<float>()},
-                        Math::Vec3f{scale.at("X").get<float>(), scale.at("Y").get<float>(), scale.at("Z").get<float>()}
-                };
+               for (int j = 0; j < entity.size(); j++)
+               {
+                   auto componentId = entity[j][0];
+                   auto componentData = entity[j][1];
+                   if (componentId == "transform")
+                       Serializable::Load<TransformComponent>(newEntity, componentData);
+                   else if (componentId == "camera")
+                       Serializable::Load<CameraComponent>(newEntity, componentData);
+                   else if (componentId == "player")
+                       Serializable::Load<PlayerComponent>(newEntity, componentData);
+                   else if (componentId == "rigidBody")
+                       Serializable::Load<RigidBodyComponent>(newEntity, componentData);
+                   else if (componentId == "renderable")
+                       Serializable::Load<RenderableComponent>(newEntity, componentData);
+                   else if (componentId == "collider")
+                       Serializable::Load<ColliderComponent>(newEntity, componentData);
+
+
+               }
+
             }
 
         }

@@ -6,19 +6,27 @@
 #include <ECS/Components/CameraComponent.hpp>
 #include <ECS/Components/PlayerComponent.hpp>
 #include <ECS/Components/LightComponent.hpp>
+#include <ECS/Components/DataComponent.hpp>
+#include <ECS/Components/ScriptComponent.hpp>
 
 #include "ResourceManager/ResourceManager.hpp"
 #include "ECS/Coordinator.hpp"
 
 #include <Rendering/Model.hpp>
-
 #include "WidgetProperties.hpp"
 
-BwatEngine::EntityID WidgetProperties::currentEntity = 0;
+#include "imgui_stdlib.h"
 
 WidgetProperties::WidgetProperties(EditorInterface *editor) : Widget(editor)
 {
     title = "Properties";
+}
+
+template<>
+void WidgetProperties::ShowComponent<BwatEngine::DataComponent>(BwatEngine::DataComponent& component)
+{
+    char* buf = (char*)component.name.c_str();
+    ImGui::InputText("Name", buf, 128 * sizeof(char));
 }
 
 template<>
@@ -27,7 +35,17 @@ void WidgetProperties::ShowComponent<BwatEngine::TransformComponent>(BwatEngine:
     if (ImGui::CollapsingHeader("Transform",ImGuiTreeNodeFlags_DefaultOpen))
     {
         ImGui::DragFloat3("Position", component.position.values, 0.01);
-        ImGui::DragFloat3("Rotation", component.rotation.values, 0.01);
+
+        // Handle rotation
+        if (ImGui::DragFloat3("Rotation", eulersInDegrees.values, 1.0))
+        {
+            BwatEngine::Math::Vec3f radEulers;
+            radEulers.X = BwatEngine::Math::ToRads(eulersInDegrees.X);
+            radEulers.Y = BwatEngine::Math::ToRads(eulersInDegrees.Y);
+            radEulers.Z = BwatEngine::Math::ToRads(eulersInDegrees.Z);
+            component.rotation = BwatEngine::Math::Quatf(radEulers);
+        }
+
         ImGui::DragFloat3("Scale", component.scale.values, 0.01);
     }
 }
@@ -39,7 +57,7 @@ void WidgetProperties::ShowComponent<BwatEngine::RenderableComponent>(BwatEngine
     {
         std::string modelName;
         if (component.model != nullptr)
-            modelName = component.model->modelPath.filename().string();
+            modelName = component.model->modelPath;
         else
             modelName = "";
 
@@ -51,9 +69,9 @@ void WidgetProperties::ShowComponent<BwatEngine::RenderableComponent>(BwatEngine
 
             for(auto &model : meshList)
             {
-                std::filesystem::path path = model;
-                bool selected = (modelName == path.filename().string());
-                if(ImGui::Selectable(path.string().c_str(), selected))
+                std::string path = model;
+                bool selected = (modelName == path);
+                if(ImGui::Selectable(path.c_str(), selected))
                 {
                     component.model = BwatEngine::ResourceManager::Instance()->GetOrLoadModel(model);
                 }
@@ -246,6 +264,19 @@ void WidgetProperties::ShowComponent<BwatEngine::CameraComponent>(BwatEngine::Ca
     }
 }
 
+template<>
+void WidgetProperties::ShowComponent<BwatEngine::ScriptComponent>(BwatEngine::ScriptComponent &component)
+{
+    if (ImGui::CollapsingHeader("Camera Component", ImGuiTreeNodeFlags_DefaultOpen))
+    {
+        std::string ScriptName = component.scriptPath;
+        if(ImGui::InputText("ScriptFile", &ScriptName, ImGuiInputTextFlags_EnterReturnsTrue))
+        {
+            component.scriptPath = ScriptName;
+        }
+    }
+}
+
 void WidgetProperties::TickVisible()
 {
     using namespace BwatEngine;
@@ -270,15 +301,19 @@ void WidgetProperties::TickVisible()
         hasComponentAvailable |= AddComponentMenuItem<CameraComponent>(currentEntity);
         hasComponentAvailable |= AddComponentMenuItem<PlayerComponent>(currentEntity);
         hasComponentAvailable |= AddComponentMenuItem<LightComponent>(currentEntity);
+        hasComponentAvailable |= AddComponentMenuItem<DataComponent>(currentEntity);
+        hasComponentAvailable |= AddComponentMenuItem<ScriptComponent>(currentEntity);
 
         ImGui::EndMenu();
     }
 
+    ShowComponentMenuItem<DataComponent>(currentEntity);
     ShowComponentMenuItem<TransformComponent>(currentEntity);
     ShowComponentMenuItem<RenderableComponent>(currentEntity);
     ShowComponentMenuItem<RigidBodyComponent>(currentEntity);
     ShowComponentMenuItem<AudioSourceComponent>(currentEntity);
     ShowComponentMenuItem<CameraComponent>(currentEntity);
+    ShowComponentMenuItem<ScriptComponent>(currentEntity);
     //ShowComponentMenuItem<ColliderComponent>(currentEntity);
     ShowComponentMenuItem<LightComponent>(currentEntity);
 }
@@ -286,6 +321,16 @@ void WidgetProperties::TickVisible()
 void WidgetProperties::Inspect(BwatEngine::EntityID entity)
 {
     currentEntity = entity;
+
+    BwatEngine::Coordinator &coordinator = BwatEngine::Coordinator::GetInstance();
+    if (coordinator.HaveComponent<BwatEngine::TransformComponent>(entity))
+    {
+        auto transform = coordinator.GetComponent<BwatEngine::TransformComponent>(currentEntity);
+        eulersInDegrees = transform.rotation.GetEulerAngles();
+        eulersInDegrees.X = BwatEngine::Math::ToDegs(eulersInDegrees.X);
+        eulersInDegrees.Y = BwatEngine::Math::ToDegs(eulersInDegrees.Y);
+        eulersInDegrees.Z = BwatEngine::Math::ToDegs(eulersInDegrees.Z);
+    }
 }
 
 template<typename T>

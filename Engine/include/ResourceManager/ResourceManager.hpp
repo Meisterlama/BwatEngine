@@ -5,8 +5,8 @@
 #include <vector>
 #include <unordered_map>
 #include "Rendering/Model.hpp"
-
-
+#include "Rendering/Texture.hpp"
+#include "Audio/Sound.hpp"
 
 
 namespace BwatEngine
@@ -34,6 +34,9 @@ namespace BwatEngine
 
         Rendering::Texture* LoadTexture(std::string path, Rendering::Texture::Type type);
 
+        Audio::AudioData* LoadAudio(std::string path);
+
+
         /* ************************************************************************* */
 
         /* get the resources with the type */
@@ -42,11 +45,15 @@ namespace BwatEngine
 
         Rendering::Texture* GetOrLoadTexture(std::string path, Rendering::Texture::Type type);
 
+        Audio::AudioData* GetOrLoadAudio(std::string path);
+
         /* ************************************************************************* */
 
         std::vector<std::string>& GetModelList();
 
         std::vector<std::string>& GetTextList();
+
+         std::vector<std::string>& getAudioList();
 
     private:
 
@@ -55,11 +62,12 @@ namespace BwatEngine
 
         bool dirtyModels = false;
         bool dirtyTextures = false;
+        bool dirtyAudio = false;
 
         /* all the maps that stores the resources */
         // add the rig for skinning animation
         // add materials
-        //std::unordered_map<std::string, SoundResource> sounds;
+        std::unordered_map<std::string, std::unique_ptr<Audio::AudioData>> audio;
         std::unordered_map<std::string, std::unique_ptr<Rendering::Model>> models;
         std::unordered_map<std::string, std::unique_ptr<Rendering::Texture>> textures;
 
@@ -68,9 +76,12 @@ namespace BwatEngine
         void UpdateModelsKey();
         std::vector<std::string> texturesKey;
         void UpdateTexturesKey();
+        std::vector<std::string> audioKey;
+        void UpdateAudioKey();
 
         Rendering::Texture* GetTexture(std::string path);
         Rendering::Model* GetModel(std::string path);
+        Audio::AudioData* GetAudio(std::string path);
 
 
     };
