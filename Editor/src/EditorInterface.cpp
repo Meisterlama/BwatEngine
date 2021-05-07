@@ -6,11 +6,13 @@
 #include "WidgetMenuBar.hpp"
 #include "WidgetHierarchy.hpp"
 #include "WidgetAsset.hpp"
+#include "WidgetShader.hpp"
 #include "WidgetViewport.hpp"
 #include "WidgetProperties.hpp"
 #include "imgui_internal.h"
 
 #include "Engine.hpp"
+#include "ECS/Systems/RenderSystem.hpp"
 
 EditorInterface::EditorInterface(BwatEngine::Engine* _engine)
 {
@@ -47,7 +49,7 @@ void EditorInterface::OnTick()
     {
         widget->Tick();
     }
-
+    
     ImGui::End();
 
     ImGui::Render();
@@ -68,8 +70,12 @@ void EditorInterface::Initialise()
     widgets.emplace_back(std::make_unique<WidgetHierarchy>(this));
     widgets.emplace_back(std::make_unique<WidgetAsset>(this));
     widgets.emplace_back(std::make_unique<WidgetViewport>(this));
-    widgets.emplace_back(std::make_unique<WidgetProperties>(this));
-    widgetProperties = static_cast<WidgetProperties*>(widgets.back().get());
+    widgets.emplace_back(std::make_unique<WidgetShader>(this));
+
+    {
+        widgets.emplace_back(std::make_unique<WidgetProperties>(this));
+        widgetProperties = static_cast<WidgetProperties*>(widgets.back().get());
+    }
 }
 
 void EditorInterface::ApplyStyle() const

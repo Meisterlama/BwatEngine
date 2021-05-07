@@ -11,6 +11,7 @@
 #include "ECS/Components/ColliderComponent.hpp"
 #include "ECS/Components/ScriptComponent.hpp"
 #include "ECS/Components/AudioSourceComponent.hpp"
+#include "ECS/Components/LightComponent.hpp"
 #include "ECS/Components/DataComponent.hpp"
 
 #include "ECS/Systems/PhysicsSystem.hpp"
@@ -24,22 +25,8 @@
 
 using namespace BwatEngine;
 
-std::vector<Rendering::Light> Scene::lights;
-
-void Scene::AddLight(Rendering::Light& newlight)
-{
-	lights.push_back(newlight);
-}
-
-std::vector<Rendering::Light>& Scene::GetLights()
-{
-	return lights;
-}
-
-
-
 Scene::Scene(Window& window)
-    : texture(BwatEngine::ResourceManager::Instance()->GetOrLoadTexture("Assets/image/moteur.jpg",Rendering::Texture::Type::E_DIFFUSE)), texture1(BwatEngine::ResourceManager::Instance()->GetOrLoadTexture("Assets/image/green.png", Rendering::Texture::Type::E_DIFFUSE))
+    : texture(BwatEngine::ResourceManager::Instance()->GetOrLoadTexture("Assets/image/brickwall.jpg",Rendering::Texture::Type::E_DIFFUSE)), texture1(BwatEngine::ResourceManager::Instance()->GetOrLoadTexture("Assets/image/green.png", Rendering::Texture::Type::E_DIFFUSE))
 {
     scenePhysic.Init(physic);
 
@@ -55,6 +42,7 @@ Scene::Scene(Window& window)
     coordinator.RegisterComponent<ColliderComponent>();
     coordinator.RegisterComponent<ScriptComponent>();
     coordinator.RegisterComponent<AudioSourceComponent>();
+    coordinator.RegisterComponent<LightComponent>();
     coordinator.RegisterComponent<DataComponent>();
 
     physicsSystem = coordinator.RegisterSystem<PhysicsSystem>();
@@ -114,6 +102,7 @@ Scene::Scene(Window& window)
 
     //Rendering::Model mymodel = Rendering::Model{ (std::string) "Assets/bag/backpack.obj" };
     model = BwatEngine::ResourceManager::Instance()->GetOrLoadModel("Assets/cube.obj");;
+    
 
     //BwatEngine::ResourceManager::Instance()->GetOrLoadModel("Assets/sphere.obj");
     BwatEngine::ResourceManager::Instance()->GetOrLoadTexture("Assets/image/green.png", Rendering::Texture::Type::E_DIFFUSE);
@@ -128,7 +117,7 @@ Scene::Scene(Window& window)
     myMat.SetDiffuse(*texture);
     myMat1.SetDiffuse(*texture1);
     
-        for (int i = 0; i < 200; i++)
+        for (int i = 0; i < 10 ; i++)
         {
             auto entity = coordinator.CreateEntity();
             if (i == 0)
@@ -145,7 +134,7 @@ Scene::Scene(Window& window)
             else if (i == 1) // ================================= Plane
             {
                 coordinator.AddComponent<TransformComponent>(entity,
-                    Math::Vec3f{0, -105, 0},
+                    Math::Vec3f{0, -11, 0},
                     Math::Vec3f{0, 0, 0},
                     Math::Vec3f{300, 1, 300});
 
@@ -159,13 +148,18 @@ Scene::Scene(Window& window)
                 renderableComponent.materials[0] = &myMat;
 
             }
-            else // ================================= Cube
+            else if ( i == 2 )// ================================= Cube
+            {
+                coordinator.AddComponent<LightComponent>(entity, {});
+            }
+            else
             {
                 coordinator.AddComponent<TransformComponent>(entity,
+
                     Math::Vec3f{
-                        randPosition.RollRandomFloatInRange(-100.f, 100.f),
-                        randPosition.RollRandomFloatInRange(-100.f, 100.f),
-                        randPosition.RollRandomFloatInRange(-100.f, 100.f)
+                        randPosition.RollRandomFloatInRange(0.f, 30.f),
+                        randPosition.RollRandomFloatInRange(0.f, 30.f),
+                        randPosition.RollRandomFloatInRange(0.f, 30.f)
                         },
                     Math::Vec3f{
                         randPosition.RollRandomFloatInRange(0.f, 3.f),
@@ -173,11 +167,12 @@ Scene::Scene(Window& window)
                         randPosition.RollRandomFloatInRange(0.f, 3.f)
                         },
                     Math::Vec3f{3});
+
                 auto eTransform = coordinator.GetComponent<TransformComponent>(entity);
                 coordinator.AddComponent<RigidBodyComponent>(entity, eTransform);
 
-                coordinator.AddComponent<ColliderComponent>(entity, { new BoxCollider{eTransform.scale} });
-                coordinator.AddComponent<RenderableComponent>(entity,{ model });
+                coordinator.AddComponent<ColliderComponent>(entity, { new SphereCollider{eTransform.scale.X} });
+                coordinator.AddComponent<RenderableComponent>(entity, { model });
 
                 auto& renderableComponent = coordinator.GetComponent<RenderableComponent>(entity);
                 renderableComponent.materials[0] = &myMat1;
