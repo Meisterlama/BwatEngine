@@ -40,8 +40,6 @@ namespace BwatEngine
     {
         inputHandler->mousePos = {xpos, ypos};
 
-        BwatEngine::Math::Vec2d mouseDelta = inputHandler->mousePos - inputHandler->mouseOldPos;
-
 //        LogDebug("\nOldPos X:%f;Y:%f,\nNewPos X:%f;Y:%f,\nDelta X:%f;Y:%f",
 //                 inputHandler->mouseOldPos.X, inputHandler->mouseOldPos.Y,
 //                 xpos, ypos,
@@ -92,7 +90,15 @@ namespace BwatEngine
             inputHandler->mouse[buttonState.first].up = false;
         }
         glfwPollEvents();
-        inputHandler->mouseDelta = inputHandler->mousePos - inputHandler->mouseOldPos;
+        if (inputHandler->ignoreNextDelta)
+        {
+            inputHandler->mouseDelta = {0,0};
+            inputHandler->ignoreNextDelta = false;
+        }
+        else
+        {
+            inputHandler->mouseDelta = inputHandler->mousePos - inputHandler->mouseOldPos;
+        }
         inputHandler->mouseOldPos = inputHandler->mousePos;
     }
 
@@ -129,14 +135,21 @@ namespace BwatEngine
 
         inputHandler->mouseStatus = status;
         glfwSetInputMode(window, GLFW_CURSOR, status);
-//        if (status == Disabled)
-//        {
-//            ImGui::GetIO().ConfigFlags |= ImGuiConfigFlags_NoMouse;
-//        }
-//        else
-//        {
-//            ImGui::GetIO().ConfigFlags &= ~ImGuiConfigFlags_NoMouse;
-//        }
+        if (status == Disabled)
+        {
+            inputHandler->ignoreNextDelta = true;
+        }
+
+#ifdef BWATEDITOR
+        if (status == Disabled)
+        {
+            ImGui::GetIO().ConfigFlags |= ImGuiConfigFlags_NoMouse;
+        }
+        else
+        {
+            ImGui::GetIO().ConfigFlags &= ~ImGuiConfigFlags_NoMouse;
+        }
+#endif
     }
 
     MouseStatus InputHandler::GetMouseStatus()

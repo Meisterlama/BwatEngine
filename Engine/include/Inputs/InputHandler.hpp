@@ -24,6 +24,8 @@ namespace BwatEngine
         BwatEngine::Math::Vec2d mouseOldPos{};
         MouseStatus mouseStatus;
 
+        bool ignoreNextDelta = false;
+
         BwatEngine::Math::Vec2d scrollDelta{};
 
         InputHandler() = default;
