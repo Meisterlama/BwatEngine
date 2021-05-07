@@ -26,6 +26,7 @@ public:
     void Close();
 
     void SetEditedEntity(BwatEngine::EntityID entity);
+    std::vector<std::unique_ptr<Widget>>&  GetWidgetList() { return widgets; };
     BwatEngine::EntityID GetEditedEntity() { return editedEntity; }
 
     BwatEngine::Engine* engine = nullptr;

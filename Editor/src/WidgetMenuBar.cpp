@@ -19,6 +19,11 @@ void WidgetMenuBar::TickAlways()
             MenuFile();
             ImGui::EndMenu();
         }
+        if (ImGui::BeginMenu("Windows"))
+        {
+            MenuWindow();
+            ImGui::EndMenu();
+        }
         if (ImGui::BeginMenu("Edit"))
         {
             if (ImGui::MenuItem("Undo", "CTRL+Z")) {}
@@ -43,6 +48,22 @@ void WidgetMenuBar::TickAlways()
             BwatEngine::Serializer::LoadScene(editor->engine->GetScene(), "test.txt");
         }
         ImGui::EndMainMenuBar();
+    }
+}
+
+void WidgetMenuBar::MenuWindow()
+{
+    auto& widgetList = editor->GetWidgetList();
+
+    for(auto& widget  : widgetList)
+    {
+        if (widget->GetTitle() != "MenuBar")
+        {
+            if(ImGui::MenuItem(widget->GetTitle().c_str()))
+            {
+                widget->SetVisible(true);
+            }
+        }
     }
 }
 

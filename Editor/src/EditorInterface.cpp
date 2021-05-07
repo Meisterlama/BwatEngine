@@ -8,6 +8,7 @@
 #include "WidgetAsset.hpp"
 #include "WidgetViewport.hpp"
 #include "WidgetProperties.hpp"
+#include "WidgetTools.hpp"
 #include "imgui_internal.h"
 
 #include "Engine.hpp"
@@ -68,8 +69,11 @@ void EditorInterface::Initialise()
     widgets.emplace_back(std::make_unique<WidgetHierarchy>(this));
     widgets.emplace_back(std::make_unique<WidgetAsset>(this));
     widgets.emplace_back(std::make_unique<WidgetViewport>(this));
+
     widgets.emplace_back(std::make_unique<WidgetProperties>(this));
     widgetProperties = static_cast<WidgetProperties*>(widgets.back().get());
+
+    widgets.emplace_back(std::make_unique<WidgetTools>(this));
 }
 
 void EditorInterface::ApplyStyle() const
@@ -110,12 +114,14 @@ void EditorInterface::BeginWindow()
             ImGuiID dockMainID = windowID;
             ImGuiID dockRightID = ImGui::DockBuilderSplitNode(dockMainID, ImGuiDir_Right, 0.2f, nullptr, &dockMainID);
             ImGuiID dockDownID = ImGui::DockBuilderSplitNode(dockMainID, ImGuiDir_Down, 0.25f, nullptr, &dockMainID);
+            ImGuiID dockUpID = ImGui::DockBuilderSplitNode(dockMainID, ImGuiDir_Up, 0.25f, nullptr, &dockMainID);
 
             //Docks widgets here
             ImGui::DockBuilderDockWindow("Assets", dockDownID);
             ImGui::DockBuilderDockWindow("Viewport", dockMainID);
             ImGui::DockBuilderDockWindow("Properties", dockRightID);
             ImGui::DockBuilderDockWindow("Hierarchy", dockRightID);
+            ImGui::DockBuilderDockWindow("Hierarchy", dockUpID);
 
             ImGui::DockBuilderFinish(dockMainID);
         }

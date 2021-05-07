@@ -5,7 +5,7 @@
 #include "ECS/Components/TransformComponent.hpp"
 #include "ECS/Components/CameraComponent.hpp"
 #include "WidgetProperties.hpp"
-#include "ResourceManager/ResourceManager.hpp"
+#include "WidgetTools.hpp"
 
 WidgetViewport::WidgetViewport(EditorInterface *editor) : Widget(editor) , 
     fbo(editor->engine->GetWindow().GetWidth(), editor->engine->GetWindow().GetHeight())
@@ -18,33 +18,6 @@ WidgetViewport::WidgetViewport(EditorInterface *editor) : Widget(editor) ,
 
 void WidgetViewport::TickVisible()
 {
-    if (ImGui::ImageButton(reinterpret_cast<ImTextureID>(BwatEngine::ResourceManager::Instance()->GetOrLoadTexture("Assets/image/trans.png",Rendering::Texture::Type::E_DIFFUSE)->id), ImVec2(50.f, 50.f)))
-    {
-        guizmoOperation = ImGuizmo::OPERATION::TRANSLATE;
-    }
-    ImGui::SameLine();
-    if (ImGui::ImageButton(reinterpret_cast<ImTextureID>(BwatEngine::ResourceManager::Instance()->GetOrLoadTexture("Assets/image/rotate.png",Rendering::Texture::Type::E_DIFFUSE)->id), ImVec2(50.f, 50.f)))
-    {
-        guizmoOperation = ImGuizmo::OPERATION::ROTATE;
-    }
-    ImGui::SameLine();
-    if (ImGui::ImageButton(reinterpret_cast<ImTextureID>(BwatEngine::ResourceManager::Instance()->GetOrLoadTexture("Assets/image/scale.png",Rendering::Texture::Type::E_DIFFUSE)->id), ImVec2(50.f, 50.f)))
-    {
-        guizmoOperation = ImGuizmo::OPERATION::SCALE;
-    }
-
-    ImGui::SameLine();
-    ImGui::SetCursorPosX(ImGui::GetWindowWidth() - 125);
-    if (ImGui::ImageButton(reinterpret_cast<ImTextureID>(BwatEngine::ResourceManager::Instance()->GetOrLoadTexture("Assets/image/world.png",Rendering::Texture::Type::E_DIFFUSE)->id), ImVec2(50.f, 50.f)))
-    {
-        guizmoMode = ImGuizmo::MODE::WORLD;
-    }
-    ImGui::SameLine();
-    if (ImGui::ImageButton(reinterpret_cast<ImTextureID>(BwatEngine::ResourceManager::Instance()->GetOrLoadTexture("Assets/image/local.png",Rendering::Texture::Type::E_DIFFUSE)->id), ImVec2(50.f, 50.f)))
-    {
-        guizmoMode = ImGuizmo::MODE::LOCAL;
-    }
-
     ImGui::GetWindowDrawList()->AddImage(
             (ImTextureID)(size_t)fbo.textureColor.id, ImVec2(ImGui::GetCursorScreenPos()),
             ImVec2(ImGui::GetCursorScreenPos().x + ImGui::GetWindowWidth(), ImGui::GetCursorScreenPos().y + ImGui::GetWindowHeight()), ImVec2(0, 1), ImVec2(1, 0));
@@ -77,7 +50,7 @@ void WidgetViewport::TickVisible()
 
         BwatEngine::Math::Mat4f proj = cameraComponent.GetProjectionMatrix();
 
-        if (ImGuizmo::Manipulate(view.values, proj.values, guizmoOperation, guizmoMode, entityMat.values))
+        if (ImGuizmo::Manipulate(view.values, proj.values, WidgetTools::guizmoOperation, WidgetTools::guizmoMode, entityMat.values))
         {
             BwatEngine::Math::Vec3f pos;
             BwatEngine::Math::Vec3f sca;
@@ -88,7 +61,7 @@ void WidgetViewport::TickVisible()
                     sca.values
                     );
 
-            switch (guizmoOperation)
+            switch (WidgetTools::guizmoOperation)
             {
                 case ImGuizmo::OPERATION::TRANSLATE:
                     entityTransform.position = pos;
