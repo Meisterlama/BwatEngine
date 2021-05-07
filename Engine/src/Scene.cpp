@@ -157,9 +157,9 @@ Scene::Scene(Window& window)
                 coordinator.AddComponent<TransformComponent>(entity,
 
                     Math::Vec3f{
-                        randPosition.RollRandomFloatInRange(-100.f, 100.f),
-                        randPosition.RollRandomFloatInRange(-100.f, 100.f),
-                        randPosition.RollRandomFloatInRange(-100.f, 100.f)
+                        randPosition.RollRandomFloatInRange(0.f, 30.f),
+                        randPosition.RollRandomFloatInRange(0.f, 30.f),
+                        randPosition.RollRandomFloatInRange(0.f, 30.f)
                         },
                     Math::Vec3f{
                         randPosition.RollRandomFloatInRange(0.f, 3.f),

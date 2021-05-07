@@ -70,10 +70,12 @@ void EditorInterface::Initialise()
     widgets.emplace_back(std::make_unique<WidgetHierarchy>(this));
     widgets.emplace_back(std::make_unique<WidgetAsset>(this));
     widgets.emplace_back(std::make_unique<WidgetViewport>(this));
-    widgets.emplace_back(std::make_unique<WidgetProperties>(this));
     widgets.emplace_back(std::make_unique<WidgetShader>(this));
 
-    widgetProperties = static_cast<WidgetProperties*>(widgets.back().get());
+    {
+        widgets.emplace_back(std::make_unique<WidgetProperties>(this));
+        widgetProperties = static_cast<WidgetProperties*>(widgets.back().get());
+    }
 }
 
 void EditorInterface::ApplyStyle() const
