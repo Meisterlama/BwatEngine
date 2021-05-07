@@ -8,6 +8,7 @@
 #include "WidgetAsset.hpp"
 #include "WidgetViewport.hpp"
 #include "WidgetProperties.hpp"
+#include "WidgetLog.hpp"
 #include "imgui_internal.h"
 
 #include "Engine.hpp"
@@ -49,6 +50,7 @@ void EditorInterface::Initialise()
     widgets.emplace_back(std::make_unique<WidgetAsset>(this));
     widgets.emplace_back(std::make_unique<WidgetViewport>(this));
     widgets.emplace_back(std::make_unique<WidgetProperties>(this));
+    widgets.emplace_back(std::make_unique<WidgetLog>(this));
     widgetProperties = static_cast<WidgetProperties*>(widgets.back().get());
 }
 

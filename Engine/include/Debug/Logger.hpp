@@ -10,7 +10,7 @@
 
 namespace BLogger
 {
-    typedef struct {
+    typedef struct LogEvent {
         va_list ap;
         const char *fmt;
         const char *file;
@@ -49,7 +49,8 @@ namespace BLogger
     void LogSetLock(LockFn fn, void *uData);
     void LogSetLevel(int level);
     void LogSetQuiet(bool enable);
-    int LogAddCallback(LogFn, void* uData, int level);
+    int LogAddCallback(LogFn callback, void* uData, int level);
+    void LogRemoveCallback(int index);
     int LogAddFp(FILE *fp, int level);
 
     void LogLog(int level, const char*file, int line, const char *fmt, ...);
@@ -57,6 +58,7 @@ namespace BLogger
     void LogNull();
 
 
+    static bool isDirty = false;
 }
 
 

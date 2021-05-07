@@ -5,6 +5,7 @@
 
 #include "Engine.hpp"
 #include "EditorInterface.hpp"
+#include "Debug/Logger.hpp"
 
 #if defined(_MSC_VER) || defined(__MINGW32__)
 #define DLLEXPORT __declspec(dllexport)
@@ -22,6 +23,17 @@ int main()
 {
     using namespace BwatEngine;
 
+    FILE* myFile;
+    myFile = fopen("log.txt", "w");
+
+    if (myFile == nullptr)
+    {
+        std::cout << "error file";
+    }
+    else
+    {
+        BLogger::LogAddFp(myFile, 0);
+    }
 
 	Engine engine;
 
@@ -37,5 +49,6 @@ int main()
 
 	engine.Close();
 
+	fclose(myFile);
 	return 0;
 }
