@@ -131,7 +131,7 @@ Scene::Scene(Window& window)
     myMat.SetDiffuse(*texture);
     myMat1.SetDiffuse(*texture1);
     
-        for (int i = 0; i < MAX_ENTITIES - 1; i++)
+        for (int i = 0; i < 10 ; i++)
         {
             auto entity = coordinator.CreateEntity();
             if (i == 0)

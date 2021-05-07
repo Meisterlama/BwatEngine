@@ -320,7 +320,6 @@ bool WidgetProperties::ShowComponentMenuItem(BwatEngine::EntityID entity)
     return false;
 }
 
-
 template<>
 void WidgetProperties::ShowComponent<BwatEngine::LightComponent>(BwatEngine::LightComponent& component)
 {
@@ -334,20 +333,17 @@ void WidgetProperties::ShowComponent<BwatEngine::LightComponent>(BwatEngine::Lig
         BwatEngine::Math::Vec3f diffuse = component.diffuse;
 
         const char* items[] = { "Directional", "Point", "Spot", };
-        static const char* current_item = NULL;
 
-        if (ImGui::BeginCombo("##Typeoflight", current_item))
+        if (ImGui::BeginCombo("##Typeoflight", items[component.typeoflight]))
         {
             for (int n = 0; n < IM_ARRAYSIZE(items); n++)
             {
-                bool is_selected = (current_item == items[n]); 
-                if (ImGui::Selectable(items[n], is_selected))
+                if (ImGui::Selectable(items[n], component.typeoflight == n))
                 {
-                    current_item = items[n];
                     component.typeoflight = (Rendering::TYPE_LIGHT)n;
                 }
-                if (is_selected)
-                    ImGui::SetItemDefaultFocus();   
+                //if (is_selected)
+                //    ImGui::SetItemDefaultFocus();   
             }
             ImGui::EndCombo();
         }

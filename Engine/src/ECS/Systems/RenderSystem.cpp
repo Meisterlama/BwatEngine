@@ -113,22 +113,26 @@ void RenderSystem::ManageEntitiesAndLights()
         auto& renderableComponent = coordinator.GetComponent<RenderableComponent>(entity);
         shader.setMat4("model", Math::Mat4f::CreateTRSMat(entityTransform.position, entityTransform.rotation, entityTransform.scale));
 
-        shader.setFloat("material.shininess", renderableComponent.materials[0]->shininess);
-        
-        if (renderableComponent.materials[0]->diffuse != nullptr)
-            shader.setInt("material.diffuse",0);
-        if (renderableComponent.materials[0]->specular != nullptr)
-            shader.setInt("material.specular", 1);
-        if (renderableComponent.materials[0]->normal != nullptr)
+        if (renderableComponent.materials.size() > 0)
         {
-            shader.setInt("material.normal", 2);
-            shader.setInt("material.isNormal", 1);
+            shader.setFloat("material.shininess", renderableComponent.materials[0]->shininess);
+
+            if (renderableComponent.materials[0]->diffuse != nullptr)
+                shader.setInt("material.diffuse", 0);
+            if (renderableComponent.materials[0]->specular != nullptr)
+                shader.setInt("material.specular", 1);
+            if (renderableComponent.materials[0]->normal != nullptr)
+            {
+                shader.setInt("material.normal", 2);
+                shader.setInt("material.isNormal", 1);
+            }
+            else
+                shader.setInt("material.isNormal", 0);
         }
-        else
-            shader.setInt("material.isNormal", 0);
 
         if (renderableComponent.model != nullptr)
             renderableComponent.model->Draw(&renderableComponent.materials);
+
     }
 }
 
