@@ -241,31 +241,29 @@ void WidgetProperties::TickVisible()
     using namespace BwatEngine;
 
     Coordinator &coordinator = Coordinator::GetInstance();
-    if (ImGui::Button("Create Entity"))
-    {
-        coordinator.CreateEntity();
-    }
-
     Signature entitySignature = coordinator.GetEntitySignature(currentEntity);
 
-    if (ImGui::BeginMenu("AddComponent"))
+    if (currentEntity != 0)
     {
-        bool hasComponentAvailable = false;
+        if (ImGui::BeginMenu("AddComponent"))
+        {
+            bool hasComponentAvailable = false;
 
-        hasComponentAvailable |= AddComponentMenuItem<TransformComponent>(currentEntity);
-        hasComponentAvailable |= AddComponentMenuItem<RigidBodyComponent>(currentEntity);
-        hasComponentAvailable |= AddComponentMenuItem<RenderableComponent>(currentEntity);
-        hasComponentAvailable |= AddComponentMenuItem<AudioSourceComponent>(currentEntity);
-        hasComponentAvailable |= AddComponentMenuItem<ColliderComponent>(currentEntity);
-        hasComponentAvailable |= AddComponentMenuItem<CameraComponent>(currentEntity);
-        hasComponentAvailable |= AddComponentMenuItem<PlayerComponent>(currentEntity);
-        hasComponentAvailable |= AddComponentMenuItem<DataComponent>(currentEntity);
-        hasComponentAvailable |= AddComponentMenuItem<ScriptComponent>(currentEntity);
+            hasComponentAvailable |= AddComponentMenuItem<TransformComponent>(currentEntity);
+            hasComponentAvailable |= AddComponentMenuItem<RigidBodyComponent>(currentEntity);
+            hasComponentAvailable |= AddComponentMenuItem<RenderableComponent>(currentEntity);
+            hasComponentAvailable |= AddComponentMenuItem<AudioSourceComponent>(currentEntity);
+            hasComponentAvailable |= AddComponentMenuItem<ColliderComponent>(currentEntity);
+            hasComponentAvailable |= AddComponentMenuItem<CameraComponent>(currentEntity);
+            hasComponentAvailable |= AddComponentMenuItem<PlayerComponent>(currentEntity);
+            hasComponentAvailable |= AddComponentMenuItem<DataComponent>(currentEntity);
+            hasComponentAvailable |= AddComponentMenuItem<ScriptComponent>(currentEntity);
 
 
-        ImGui::EndMenu();
+            ImGui::EndMenu();
+        }
     }
-
+    
     ShowComponentMenuItem<DataComponent>(currentEntity);
     ShowComponentMenuItem<TransformComponent>(currentEntity);
     ShowComponentMenuItem<RenderableComponent>(currentEntity);

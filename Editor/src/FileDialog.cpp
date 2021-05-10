@@ -206,9 +206,17 @@ void FileDialog::ShowList()
         OpenDialog("", dir.parent_path());
     }
 
+    bool selected = false;
+
     for (int i = 0; i < fileList.size(); i++)
     {
-        if(ImGui::Selectable(fileList[i].fileName.c_str()))
+
+        if (fileList[i].fileName == loadFile.fileName)
+        {
+            selected = true;
+        }
+
+        if(ImGui::Selectable(fileList[i].fileName.c_str(), selected))
         {
             if (fileList[i].ext == "")
             {
