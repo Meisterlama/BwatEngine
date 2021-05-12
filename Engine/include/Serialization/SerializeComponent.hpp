@@ -8,6 +8,7 @@
 #include "ECS/Components/ColliderComponent.hpp"
 #include "ECS/Components/ScriptComponent.hpp"
 #include "ECS/Components/LightComponent.hpp"
+#include "ECS/Components/DataComponent.hpp"
 #include "ResourceManager/ResourceManager.hpp"
 
 using json = nlohmann::json;
@@ -232,6 +233,16 @@ namespace BwatEngine {
             }
         }
 
+        template<>
+        void SerializeComponent<DataComponent>(const DataComponent &data, json &js)
+        {
+            js += json{
+                        "data",
+                        {
+                            {"name", data.name}
+                        }
+                    };
+        }
 
         //*********************** LOAD FUNCTIONS ***********************//
         template<typename T>
@@ -376,10 +387,15 @@ namespace BwatEngine {
 
             coordinator.AddComponent<LightComponent>(entityId, myLight);
 
-
-
         }
 
+        template<>
+        void Load<DataComponent>(EntityID entityId, const json &componentData)
+        {
+            auto &coordinator = Coordinator::GetInstance();
+            auto& entityName = coordinator.GetComponent<DataComponent>(entityId);
+            entityName.name = componentData.at("name").get<std::string>();
+        }
 
 
     }; // namespace Serializable
