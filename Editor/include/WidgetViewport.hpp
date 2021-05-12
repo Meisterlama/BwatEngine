@@ -14,10 +14,6 @@ public:
 
     ImGuizmo::MODE guizmoMode = ImGuizmo::MODE::LOCAL;
     ImGuizmo::OPERATION guizmoOperation = ImGuizmo::OPERATION::TRANSLATE;
-
-private:
-
-    Rendering::FrameBufferObject fbo;
 };
 
 #endif //BWATENGINE_WIDGETVIEWPORT_HPP

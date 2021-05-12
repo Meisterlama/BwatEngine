@@ -2,23 +2,39 @@
 
 using namespace BwatEngine;
 
-void PostProcessSystem::Init()
+PostProcessSystem::PostProcessSystem(int width, int height)
+	: inversion(fullScreenQuad)
+	, bloom(fullScreenQuad,width,height)
+	, blur(fullScreenQuad)
+	, gammaCor(fullScreenQuad)
 {
-	postProcess.Init();
+	framebuffer.Resize(width, height);
 
-	shaders.push_back({ "Assets/Shaders/PostProcess/postProcess.vs", "Assets/Shaders/PostProcess/inversion.fs" });
-	shaders.push_back({ "Assets/Shaders/PostProcess/postProcess.vs", "Assets/Shaders/PostProcess/kernel.fs" });
-	shaders.push_back({ "Assets/Shaders/PostProcess/postProcess.vs", "Assets/Shaders/PostProcess/blur.fs" });
-	shaders.push_back({ "Assets/Shaders/PostProcess/postProcess.vs", "Assets/Shaders/PostProcess/edge.fs" });
+	inversion.SetEnabled(false);
+	bloom.SetEnabled(false);
+	blur.SetEnabled(false);
+	gammaCor.SetEnabled(false);
 }
 
-void PostProcessSystem::Update(GLuint textureID , POSTPROCESS_SHADER indexShader)
+void PostProcessSystem::Begin()
+{
+	framebuffer.Bind();
+}
+
+void PostProcessSystem::Apply()
 {
 	glDisable(GL_DEPTH_TEST);
 
-	shaders[indexShader].use();
+	Rendering::PostProcess* postProcesses[] = {
+		&inversion,
+		&bloom,
+		&blur,
+		&gammaCor
+	};
 
-	postProcess.Apply(textureID);
-
-	glBindFramebuffer(GL_FRAMEBUFFER, 0);
+	for (Rendering::PostProcess* postProcess : postProcesses)
+	{
+		if (postProcess->IsEnabled())
+			postProcess->Draw(framebuffer.textureColor.id);
+	}
 }

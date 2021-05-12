@@ -9,12 +9,14 @@
 #include "WidgetShader.hpp"
 #include "WidgetViewport.hpp"
 #include "WidgetProperties.hpp"
+#include "WidgetPostProcess.hpp"
 #include "imgui_internal.h"
 
 #include "Engine.hpp"
 #include "ECS/Systems/RenderSystem.hpp"
 
 EditorInterface::EditorInterface(BwatEngine::Engine* _engine)
+    : gameViewFramebuffer(_engine->GetWindow().GetWidth(), _engine->GetWindow().GetHeight())
 {
     engine = _engine;
     widgets.clear();
@@ -39,6 +41,11 @@ void EditorInterface::Close()
 
 void EditorInterface::OnTick()
 {
+    // Render game in editor framebuffer
+    GLint previousFramebuffer = gameViewFramebuffer.Bind();
+    engine->Update();
+    glBindFramebuffer(GL_FRAMEBUFFER, previousFramebuffer);
+
     ImGui_ImplOpenGL3_NewFrame();
     ImGui_ImplGlfw_NewFrame();
     ImGui::NewFrame();
@@ -59,6 +66,7 @@ void EditorInterface::OnTick()
     //ImGui::UpdatePlatformWindows();
     //ImGui::RenderPlatformWindowsDefault();
     //glfwMakeContextCurrent(backup_current_context);
+
 }
 
 void EditorInterface::Initialise()
@@ -71,6 +79,7 @@ void EditorInterface::Initialise()
     widgets.emplace_back(std::make_unique<WidgetAsset>(this));
     widgets.emplace_back(std::make_unique<WidgetViewport>(this));
     widgets.emplace_back(std::make_unique<WidgetShader>(this));
+    widgets.emplace_back(std::make_unique<WidgetPostProcess>(this));
 
     {
         widgets.emplace_back(std::make_unique<WidgetProperties>(this));

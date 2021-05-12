@@ -4,8 +4,10 @@
 #include "ECS/System.hpp"
 #include "ECS/ECS.hpp"
 
-#include "Rendering/PostProcess.hpp"
+#include "Rendering/QuadScreen.hpp"
 #include "Rendering/Shader.hpp"
+#include "Rendering/FrameBuffer.hpp"
+#include "Rendering/PostProcess.hpp"
 
 #include "glad/glad.h"
 
@@ -13,28 +15,29 @@
 
 namespace BwatEngine
 {
-	enum POSTPROCESS_SHADER
-	{
-		INVERSION,
-		KERNELCLASSIC,
-		BLUR,
-		EDGE,
-		CUSTOM,
-		SIZE,
-	};
+	
 
 	class PostProcessSystem : public System
 	{
 	private:
 
-		Rendering::Shader customShader;
-		Rendering::PostProcess postProcess;
-		std::vector<Rendering::Shader> shaders;
+		Rendering::FrameBufferObject framebuffer;
+		Rendering::FullScreenQuad fullScreenQuad;
+
 	
 	public :
 
-		void Update(GLuint textureID, POSTPROCESS_SHADER indexShader);
-		void Init();
+		Rendering::Inversion inversion;
+		Rendering::Bloom bloom;
+		Rendering::Blur blur;
+		Rendering::GammaCorection gammaCor;
+
+		bool isPostProcess = false;
+
+		PostProcessSystem(int width, int height);
+
+		void Begin();
+		void Apply();
 	};
 
 }

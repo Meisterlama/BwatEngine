@@ -9,6 +9,7 @@ namespace BwatEngine
     class System
     {
     public:
+        virtual ~System() = default;
         std::set<EntityID> entities;
     };
 }

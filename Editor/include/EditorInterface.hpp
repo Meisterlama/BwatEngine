@@ -7,6 +7,7 @@
 #include "ECS/ECS.hpp"
 #include "Widget.hpp"
 #include "Window.hpp"
+#include "Rendering/FrameBuffer.hpp"
 
 namespace BwatEngine
 {
@@ -30,6 +31,7 @@ public:
 
     BwatEngine::Engine* engine = nullptr;
     WidgetProperties* widgetProperties = nullptr;
+    Rendering::FrameBufferObject gameViewFramebuffer;
 
 private:
     void ApplyStyle() const;

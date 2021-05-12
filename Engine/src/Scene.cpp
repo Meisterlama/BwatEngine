@@ -72,7 +72,6 @@ Scene::Scene(Window& window)
         signature.set(coordinator.GetComponentType<TransformComponent>());
         coordinator.SetSystemSignature<RenderSystem>(signature);
     }
-    renderSystem->Init(window);
 
     // =================================== SCRIPT =================================== //
 
@@ -94,10 +93,9 @@ Scene::Scene(Window& window)
     soundSystem->Init();
 
     // =================================== POST PROCESS =================================== //
-    postProcessSystem = coordinator.RegisterSystem<PostProcessSystem>();
-    postProcessSystem->Init();
+    postProcessSystem = coordinator.RegisterSystem<PostProcessSystem>(window.GetWidth(), window.GetHeight());
 
-    
+
 
 
     //Rendering::Model mymodel = Rendering::Model{ (std::string) "Assets/bag/backpack.obj" };
@@ -175,7 +173,8 @@ Scene::Scene(Window& window)
                 coordinator.AddComponent<RenderableComponent>(entity, { model });
 
                 auto& renderableComponent = coordinator.GetComponent<RenderableComponent>(entity);
-                renderableComponent.materials[0] = &myMat1;
+                renderableComponent.materials[0] = new Rendering::Material;
+                renderableComponent.materials[0]->diffuse = texture1;
 
                 coordinator.AddComponent<AudioSourceComponent>(entity, AudioSourceComponent{*audioData});
                 coordinator.AddComponent<ScriptComponent>(entity, "Assets/script/update.lua");

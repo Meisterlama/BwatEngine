@@ -17,7 +17,6 @@ namespace Rendering
             E_SPECULAR,
             E_NORMAL,
             E_HEIGHT,
-
         };
       
         GLuint id;

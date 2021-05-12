@@ -16,8 +16,6 @@ namespace BwatEngine
         float bottom = 360.0f;
         float aspect = 16.0f / 9.0f;
         float fov = 80.0f;
-        bool isGamma = false;
-        float gamma = 2.2f;
 
 
         Math::Mat4f GetProjectionMatrix()
