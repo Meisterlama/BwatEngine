@@ -32,43 +32,18 @@ void Engine::Update()
         glfwSetWindowShouldClose(GetGLFWwindow(), true);
     }
 
-    static bool updatePhysics = false;
-    if (InputHandler::GetKeyboardDown(KEY_F2))
-    {
-        updatePhysics = !updatePhysics;
-
-    }
-    static bool updateAudio = false;
-    if (InputHandler::GetKeyboardDown(KEY_F3))
-    {
-        updateAudio = !updateAudio;
-    }
-
-    if (updatePhysics)
-    {
-        scene.physicsSystem->Update();
-    }
-
     scene.playerControlSystem->Update();
 
     ManageRenderAndPostProcess();
 
-    if (updateAudio)
+    if (isPlaying)
     {
+        scene.physicsSystem->Update();
         scene.soundSystem->Update();
-    }
-
-    static bool updateScript = false;
-    if (InputHandler::GetKeyboardDown(KEY_F4))
-    {
-        LogInfo("Toggle Script");
-        updateScript = !updateScript;
-
-    }
-    if (updateScript)
-    {
         scene.scriptSystem->Update();
     }
+
+
 
 
     glfwSwapBuffers(GetGLFWwindow());

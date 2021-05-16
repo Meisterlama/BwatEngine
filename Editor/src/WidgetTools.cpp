@@ -1,5 +1,7 @@
 #include "WidgetTools.hpp"
 #include "ResourceManager/ResourceManager.hpp"
+#include "EditorInterface.hpp"
+#include "Engine.hpp"
 
 ImGuizmo::MODE WidgetTools::guizmoMode = ImGuizmo::MODE::LOCAL;
 ImGuizmo::OPERATION WidgetTools::guizmoOperation = ImGuizmo::OPERATION::TRANSLATE;
@@ -38,5 +40,13 @@ void WidgetTools::TickVisible()
     {
         guizmoMode = ImGuizmo::MODE::LOCAL;
     }
+
+    ImGui::SameLine();
+    ImGui::SetCursorPosX(ImGui::GetWindowWidth()/2 - 25/2);
+    if (ImGui::ImageButton(reinterpret_cast<ImTextureID>(BwatEngine::ResourceManager::Instance()->GetOrLoadTexture("Assets/image/play.png",Rendering::Texture::Type::E_DIFFUSE)->id), ImVec2(25.f, 25.f)))
+    {
+        editor->engine->isPlaying = !editor->engine->isPlaying;
+    }
+
 }
 

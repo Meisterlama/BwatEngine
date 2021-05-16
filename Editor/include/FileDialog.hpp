@@ -10,9 +10,9 @@ class FileDialog
 public:
     struct FileInfoStruct
     {
-        std::string filePath = " ";
-        std::string fileName = " ";
-        std::string ext = " ";
+        std::string filePath = "";
+        std::string fileName = "";
+        std::string ext = "";
     };
 
     FileDialog();

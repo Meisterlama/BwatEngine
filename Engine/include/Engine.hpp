@@ -32,6 +32,8 @@ namespace BwatEngine
 
 		void ManageRenderAndPostProcess();
 
+		bool isPlaying = false;
+
 	private:
 		float lastFrame = 0.0f;
 
