@@ -16,6 +16,7 @@ Window::Window()
 
 Window::~Window()
 {
+    Close();
 }
 
 typedef const char* (*glGetStringFunc)(int);

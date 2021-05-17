@@ -11,8 +11,8 @@ namespace BwatEngine
     {
     public:
 
-        void Init(PhysicScene* physicScene);
-        void Update();
+        PhysicsSystem(PhysicScene* physicScene) : ptrPhysicScene(physicScene) {};
+        virtual void Update() override;
         
     private:
 

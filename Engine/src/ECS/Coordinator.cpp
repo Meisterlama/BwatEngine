@@ -10,6 +10,12 @@ namespace BwatEngine
          return coordinator;
     }
 
+    void Coordinator::ClearInstance()
+    {
+        DestroyAllEntities();
+        systemManager.DestroySystems();
+    }
+
     EntityID Coordinator::CreateEntity()
     {
             auto entity = entityManager.CreateEntity();

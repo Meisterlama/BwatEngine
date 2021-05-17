@@ -10,11 +10,6 @@
 
 using namespace BwatEngine;
 
-void PhysicsSystem::Init(PhysicScene* scene) 
-{
-    ptrPhysicScene = scene;
-}
-
 void PhysicsSystem::Update()
 {
     for (auto entity : entities)

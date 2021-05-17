@@ -10,7 +10,7 @@
 
 using namespace BwatEngine;
 
-RenderSystem::RenderSystem()
+RenderSystem::RenderSystem(int width, int height) : displayWidth(width), displayHeight(height)
 {
     shader = { "Assets/Shaders/colors.vs", "Assets/Shaders/multilight.fs" };
 
@@ -38,7 +38,7 @@ void RenderSystem::SetCamera(EntityID _camera)
 // ===================================== MAIN RENDERER ===================================== //
 
 
-void RenderSystem::Update(int displayWidth, int displayHeight)
+void RenderSystem::Update()
 {
     CheckCameraValid();
     OptionAndClear(displayWidth, displayHeight);

@@ -12,12 +12,12 @@ namespace BwatEngine
     {
         Math::RNG rng;
     public:
-        void Init() {
+        SoundSystem() {
             Audio::InitOpenAL();
             rng.ResetSeed(0);
         }
 
-        void Update()
+        virtual void Update() override
         {
             auto& coordinator = Coordinator::GetInstance();
             for (auto entity : entities)

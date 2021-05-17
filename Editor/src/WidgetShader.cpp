@@ -3,6 +3,7 @@
 
 #include "Engine.hpp"
 #include "ECS/Systems/RenderSystem.hpp"
+#include "ECS/Coordinator.hpp"
 
 
 WidgetShader::WidgetShader(EditorInterface* editor) : Widget(editor)
@@ -12,7 +13,8 @@ WidgetShader::WidgetShader(EditorInterface* editor) : Widget(editor)
 
 void WidgetShader::TickVisible()
 {
-	InspectProgram(editor->engine->GetScene().renderSystem->GetMainShader());
+    auto renderSystem = BwatEngine::Coordinator::GetInstance().GetSystem<BwatEngine::RenderSystem>();
+	InspectProgram(renderSystem->GetMainShader());
 }
 
 

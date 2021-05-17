@@ -22,7 +22,10 @@ class  EditorInterface
 {
 public:
     EditorInterface(BwatEngine::Engine* _engine);
-    ~EditorInterface() = default;
+    ~EditorInterface()
+    {
+        Close();
+    };
 
     void OnTick();
     void Initialise();

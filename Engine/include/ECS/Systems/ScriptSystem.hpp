@@ -14,9 +14,8 @@ namespace BwatEngine
         sol::state lua;
 	public:
 
-
-		void Init();
-		void Update();
+        ScriptSystem();
+		virtual void Update() override;
 	};
 }
 

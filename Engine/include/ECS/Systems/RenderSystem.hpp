@@ -26,12 +26,15 @@ namespace BwatEngine
 
     public:
 
+        int displayWidth;
+        int displayHeight;
+
         Math::Vec3f clearColor = { 0.5f, 0.5f, 0.5f };
         Math::Mat4f  lightSpaceMatrix;
 
-        RenderSystem();
+        RenderSystem(int Width, int Height);
         void SetCamera(EntityID _camera);
-        void Update(int displayWidth, int displayHeight);
+        virtual void Update() override;
         void UpdateShadow();
         void RenderCubeMap();
         void RenderEntitiesAndLights();

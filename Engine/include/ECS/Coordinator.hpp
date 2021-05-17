@@ -45,6 +45,8 @@ namespace BwatEngine
          */
         static Coordinator& GetInstance();
 
+        void ClearInstance();
+
         /**
          * @brief Find a valid entity ID, reserve it and return it
          * @return The created entity ID
@@ -204,7 +206,14 @@ namespace BwatEngine
         std::shared_ptr<S> RegisterSystem(Args&&... args)
         {
             LogInfo("Registered system %s", typeid(S).name());
-            return systemManager.RegisterSystem<S>(args...);
+            std::shared_ptr<S> systemPtr = systemManager.RegisterSystem<S>(args...);
+            return systemPtr;
+        }
+
+        template<typename S>
+        void SetSystemConfig(SystemConfig config)
+        {
+            systemManager.SetSystemConfig<S>(config);
         }
 
         /**
@@ -212,10 +221,27 @@ namespace BwatEngine
          * @tparam S System's type
          * @param signature Signature accepted by the system
          */
-        template<class S>
-        void SetSystemSignature(Signature signature)
+        template<class S, class... C>
+        constexpr void SetSystemSignature()
         {
+            Signature signature;
+            std::array<ComponentTypeID, sizeof...(C)> IDs = {GetComponentType<C>()...};
+            for (auto ID : IDs)
+            {
+                signature.set(ID);
+            }
             systemManager.SetSignature<S>(signature);
+        }
+
+        void UpdateSystems(bool gameUpdate)
+        {
+            systemManager.UpdateSystems(gameUpdate);
+        }
+
+        template<class S>
+        std::shared_ptr<S> GetSystem()
+        {
+              return systemManager.GetSystem<S>() ;
         }
 
         /**

@@ -54,12 +54,5 @@ int main()
 #endif
 
     }
-#if defined(BWATEDITOR)
-	editor.Close();
-#endif
-
-    engine.Close();
-
-	fclose(myFile);
 	return 0;
 }

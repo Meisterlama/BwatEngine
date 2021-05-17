@@ -43,7 +43,7 @@ namespace BwatEngine
 
         Rendering::Model* GetOrLoadModel(std::string path);
 
-        Rendering::Texture* GetOrLoadTexture(std::string path, Rendering::Texture::Type type);
+        Rendering::Texture* GetOrLoadTexture(std::string path, Rendering::Texture::Type type = Rendering::Texture::Type::E_DIFFUSE);
 
         Audio::AudioData* GetOrLoadAudio(std::string path);
 

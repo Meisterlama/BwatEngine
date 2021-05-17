@@ -350,7 +350,7 @@ bool WidgetProperties::AddComponentMenuItem(BwatEngine::EntityID entity)
         //TODO: proper component name
         if (ImGui::MenuItem(typeid(T).name()))
             //TODO: proper default value for the component
-            coordinator.AddComponent<T>(entity, {});
+            coordinator.AddComponent<T>(entity);
         return true;
     }
     return false;

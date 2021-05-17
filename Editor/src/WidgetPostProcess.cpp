@@ -2,6 +2,7 @@
 #include "EditorInterface.hpp"
 #include "Engine.hpp"
 #include "ECS/Systems/PostProcessSystem.hpp"
+#include "ECS/Coordinator.hpp"
 
 WidgetPostProcess::WidgetPostProcess(EditorInterface* editor) : Widget(editor)
 {
@@ -11,7 +12,7 @@ WidgetPostProcess::WidgetPostProcess(EditorInterface* editor) : Widget(editor)
 void WidgetPostProcess::TickVisible()
 {
     bool update = false;
-    std::shared_ptr<BwatEngine::PostProcessSystem> system = editor->engine->GetScene().postProcessSystem;
+    auto system = BwatEngine::Coordinator::GetInstance().GetSystem<BwatEngine::PostProcessSystem>();
     bool isPostProcess = system->isPostProcess;
     bool isBloom = system->bloom.IsEnabled();
     bool isGamma = system->gammaCor.IsEnabled();
