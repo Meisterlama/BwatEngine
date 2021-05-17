@@ -173,9 +173,40 @@
 <p>The plugins on CLion and VS are a bit of heavy weight and overkill for what’s in place on BwatEngine.</p>
 </div>
 <p>Currently there is no page where <strong>all</strong> the exposed functions are explained, so you must go through the sources.</p>
-<p>The files you’re interested in are located at Engine/src/Scripting. The functions are registered in the functions
-<cite>open_&lt;module&gt;()</cite> at the end of the related .cpp file. They are written as a macro <cite>REGISTER_FUNC()</cite> or as
-<cite>module.set_function()</cite>.</p>
+<p>The script system currently looks for 2 functions in the script, <cite>Start()</cite> and <cite>Update</cite>. If they exist, they will be
+called at the correct time. You can write a script without any of these functions. You can include another script file
+like this :</p>
+<div class="highlight-lua notranslate"><div class="highlight"><pre><span></span><span class="n">myScript</span> <span class="o">=</span> <span class="nb">require</span><span class="p">(</span><span class="s2">&quot;myscript&quot;</span><span class="p">)</span> <span class="c1">-- Where myscript.lua is located in Assets/script/</span>
+</pre></div>
+</div>
+<p>A sample script might look like this :</p>
+<div class="highlight-lua notranslate"><div class="highlight"><pre><span></span><span class="c1">-- This script translate the attached entity up and down with the keyboard</span>
+<span class="n">components</span> <span class="o">=</span> <span class="nb">require</span><span class="p">(</span><span class="s2">&quot;components&quot;</span><span class="p">)</span>
+<span class="n">input</span> <span class="o">=</span> <span class="nb">require</span><span class="p">(</span><span class="s2">&quot;input&quot;</span><span class="p">)</span>
+<span class="n">logger</span> <span class="o">=</span> <span class="nb">require</span><span class="p">(</span><span class="s2">&quot;logger&quot;</span><span class="p">)</span> <span class="c1">-- logger.lua, contains a wrapper to LogDebug</span>
+<span class="n">math</span> <span class="o">=</span> <span class="nb">require</span><span class="p">(</span><span class="s2">&quot;math&quot;</span><span class="p">)</span>
+
+<span class="kr">function</span> <span class="nf">Start</span><span class="p">()</span> <span class="c1">-- Called the first time the script is executed</span>
+    <span class="n">logger</span><span class="p">.</span><span class="n">DebugLog</span><span class="p">(</span><span class="s2">&quot;Starting&quot;</span><span class="p">)</span>
+    <span class="n">components</span><span class="p">.</span><span class="n">SetStatic</span><span class="p">(</span><span class="n">entity</span><span class="p">,</span> <span class="kc">true</span><span class="p">)</span> <span class="c1">-- set the RigidBody as a static one</span>
+<span class="kr">end</span>
+
+<span class="c1">-- I am a comment</span>
+<span class="kr">function</span> <span class="nf">Update</span><span class="p">()</span> <span class="c1">-- Called on every update of the scriptSystem</span>
+    <span class="kd">local</span> <span class="n">transform</span> <span class="o">=</span> <span class="n">components</span><span class="p">.</span><span class="n">GetTransform</span><span class="p">(</span><span class="n">entity</span><span class="p">)</span> <span class="c1">-- Returns a reference</span>
+    <span class="kr">if</span> <span class="n">input</span><span class="p">.</span><span class="n">GetKeyboard</span><span class="p">(</span><span class="s2">&quot;w&quot;</span><span class="p">)</span> <span class="kr">then</span>
+        <span class="n">transform</span><span class="p">.</span><span class="n">position</span><span class="p">.</span><span class="n">Y</span> <span class="o">=</span> <span class="n">transform</span><span class="p">.</span><span class="n">position</span><span class="p">.</span><span class="n">Y</span> <span class="o">+</span> <span class="mi">1</span>
+    <span class="kr">elseif</span> <span class="n">input</span><span class="p">.</span><span class="n">GetKeyboard</span><span class="p">(</span><span class="s2">&quot;s&quot;</span><span class="p">)</span> <span class="kr">then</span>
+        <span class="n">transform</span><span class="p">.</span><span class="n">position</span><span class="p">.</span><span class="n">Y</span> <span class="o">=</span> <span class="n">transform</span><span class="p">.</span><span class="n">position</span><span class="p">.</span><span class="n">Y</span> <span class="o">-</span> <span class="mi">1</span>
+    <span class="kr">end</span>
+<span class="kr">end</span>
+</pre></div>
+</div>
+<p><cite>entity</cite> is defined by the ScriptSystem right before executing the script. It is defined globally in the lua environment
+and correspond to the ID of the entity which script is being executed</p>
+<p>The files you’re interested in to see the API are located at Engine/src/Scripting.
+The functions are registered in the functions <cite>open_&lt;module&gt;()</cite> at the end of the related .cpp file.
+They are written as a macro <cite>REGISTER_FUNC()</cite> or as <cite>module.set_function()</cite>.</p>
 </div>
 <div class="section" id="common-cpp">
 <h2>common.cpp<a class="headerlink" href="#common-cpp" title="Permalink to this headline">¶</a></h2>
