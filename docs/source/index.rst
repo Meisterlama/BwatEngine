@@ -16,10 +16,6 @@ Welcome to BwatEngine's documentation!
 Getting Started
 ================
 
-HELLO WORLD
-
-Here is the documentation for the BwatEngine
-
 Indices and tables
 ==================
 
