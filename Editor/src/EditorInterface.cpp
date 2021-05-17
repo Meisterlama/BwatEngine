@@ -287,13 +287,13 @@ void EditorInterface::ToolbarUI()
     {
         if (!engine->isPlaying)
         {
-            //BwatEngine::Serializer::SaveScene(editor->engine->GetScene(), "play.txt");
+            //BwatEngine::Serializer::SaveScene(engine->GetScene(), "play.txt");
             engine->isPlaying = true;
         }
         else
         {
             engine->isPlaying = false;
-            //BwatEngine::Serializer::LoadScene(editor->engine->GetScene(), "play.txt");
+            //BwatEngine::Serializer::LoadScene(engine->GetScene(), "play.txt");
         }
     }
     ImGui::SameLine();

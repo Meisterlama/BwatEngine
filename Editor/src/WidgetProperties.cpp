@@ -298,18 +298,19 @@ void WidgetProperties::TickVisible()
         {
             bool hasComponentAvailable = false;
 
-        hasComponentAvailable |= AddComponentMenuItem<TransformComponent>(currentEntity);
-        hasComponentAvailable |= AddComponentMenuItem<RigidBodyComponent>(currentEntity);
-        hasComponentAvailable |= AddComponentMenuItem<RenderableComponent>(currentEntity);
-        hasComponentAvailable |= AddComponentMenuItem<AudioSourceComponent>(currentEntity);
-        hasComponentAvailable |= AddComponentMenuItem<ColliderComponent>(currentEntity);
-        hasComponentAvailable |= AddComponentMenuItem<CameraComponent>(currentEntity);
-        hasComponentAvailable |= AddComponentMenuItem<PlayerComponent>(currentEntity);
-        hasComponentAvailable |= AddComponentMenuItem<LightComponent>(currentEntity);
-        hasComponentAvailable |= AddComponentMenuItem<DataComponent>(currentEntity);
-        hasComponentAvailable |= AddComponentMenuItem<ScriptComponent>(currentEntity);
+            hasComponentAvailable |= AddComponentMenuItem<TransformComponent>(currentEntity);
+            hasComponentAvailable |= AddComponentMenuItem<RigidBodyComponent>(currentEntity);
+            hasComponentAvailable |= AddComponentMenuItem<RenderableComponent>(currentEntity);
+            hasComponentAvailable |= AddComponentMenuItem<AudioSourceComponent>(currentEntity);
+            hasComponentAvailable |= AddComponentMenuItem<ColliderComponent>(currentEntity);
+            hasComponentAvailable |= AddComponentMenuItem<CameraComponent>(currentEntity);
+            hasComponentAvailable |= AddComponentMenuItem<PlayerComponent>(currentEntity);
+            hasComponentAvailable |= AddComponentMenuItem<LightComponent>(currentEntity);
+            hasComponentAvailable |= AddComponentMenuItem<DataComponent>(currentEntity);
+            hasComponentAvailable |= AddComponentMenuItem<ScriptComponent>(currentEntity);
 
-        ImGui::EndMenu();
+            ImGui::EndMenu();
+        }
     }
     
     ShowComponentMenuItem<DataComponent>(currentEntity);
