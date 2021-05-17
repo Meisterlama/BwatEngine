@@ -18,10 +18,10 @@ RigidBody::RigidBody(const Math::Transform& transform, bool isStatic) : oldTrans
 
 RigidBody::~RigidBody()
 {
-	//if (isStatic)
-	//	staticActor->release();
-	//else
-	//	rigidBody->release();
+	if (isStatic)
+		staticActor->release();
+	else
+		rigidBody->release();
 }
 
 void RigidBody::SetStatic(bool isStat)
@@ -111,7 +111,7 @@ bool RigidBody::CompareOldTransform(const Math::Transform& trans)
 	return (oldTransform.position == trans.position && oldTransform.rotation == trans.rotation);
 }
 
-Math::Vec3f RigidBody::GetPosition()
+Math::Vec3f RigidBody::GetPosition() const
 {
 	if (isStatic)
 		return ToBwatVec3( staticActor->getGlobalPose().p);
@@ -119,7 +119,7 @@ Math::Vec3f RigidBody::GetPosition()
 		return ToBwatVec3(rigidBody->getGlobalPose().p);
 }
 
-Math::Quatf RigidBody::GetRotation()
+Math::Quatf RigidBody::GetRotation() const
 {
 	if (isStatic)
 		return ToBwatQuat(staticActor->getGlobalPose().q);
@@ -128,13 +128,13 @@ Math::Quatf RigidBody::GetRotation()
 }
 
 
-float RigidBody::GetMass()
+float RigidBody::GetMass() const
 {
 	if (!isStatic)
 		return rigidBody->getMass();
 }
 
-Math::Vec3f RigidBody::GetVelocity()
+Math::Vec3f RigidBody::GetVelocity() const
 {
 	if (!isStatic)
 		return ToBwatVec3(rigidBody->getLinearVelocity());
