@@ -7,6 +7,7 @@ namespace BwatEngine {
     sol::table open_common(sol::this_state s);
     sol::table open_input(sol::this_state s);
     sol::table open_math(sol::this_state s);
+    sol::table open_components(sol::this_state s);
 }
 
 

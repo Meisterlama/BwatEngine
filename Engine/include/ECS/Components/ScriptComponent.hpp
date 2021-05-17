@@ -15,6 +15,7 @@ namespace BwatEngine
 
         ScriptComponent(std::string startScriptPath = "")
         : scriptPath(std::move(startScriptPath))
+        , oldPath(scriptPath)
         {}
     };
 }
