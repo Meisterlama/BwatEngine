@@ -41,7 +41,7 @@ namespace BwatEngine
             entityToIndexMap[entity] = newIndex;
             indexToEntityMap[newIndex] = entity;
             if (size < componentArray.size())
-                componentArray[newIndex] = C{args...};
+                componentArray[newIndex] = std::move(C{std::forward<Args>(args)...});
             else
                 componentArray.emplace_back(args...);
             size++;
@@ -74,6 +74,7 @@ namespace BwatEngine
             size_t indexOfRemovedEntity = entityToIndexMap[entity];
             size_t indexOfLastElement = size - 1;
             componentArray[indexOfRemovedEntity] = componentArray[indexOfLastElement];
+            componentArray.pop_back();
 
             EntityID entityOfLastElement = indexToEntityMap[indexOfLastElement];
             entityToIndexMap[entityOfLastElement] = indexOfRemovedEntity;

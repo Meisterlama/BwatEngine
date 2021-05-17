@@ -121,7 +121,15 @@ namespace BwatEngine {
 
         template<>
         void SerializeComponent<BwatEngine::RigidBodyComponent>(const RigidBodyComponent &rigidBody, json &js) {
-            js += json{"rigidBody"};
+            js +=
+                    json{
+                            "rigidBody",
+                            {
+                                 {"static", rigidBody.GetIsStatic()},
+                                 {"mass", rigidBody.GetMass()},
+                                 SerializeVector3f("velocity", rigidBody.GetVelocity())
+                            }
+            };
         }
 
         template<>
@@ -315,6 +323,17 @@ namespace BwatEngine {
             auto &coordinator = Coordinator::GetInstance();
             auto& eTransform = coordinator.GetComponent<TransformComponent>(entityId);
             coordinator.AddComponent<RigidBodyComponent>(entityId, eTransform, true);
+            auto& rigidBody = coordinator.GetComponent<RigidBodyComponent>(entityId);
+
+            auto velocity = componentData.at("velocity");
+
+            rigidBody.SetStatic(componentData.at("static").get<bool>());
+            rigidBody.SetMass(componentData.at("mass").get<float>());
+            rigidBody.SetVelocity(Math::Vec3f{
+                velocity.at("X").get<float>(),
+                velocity.at("Y").get<float>(),
+                velocity.at("Z").get<float>(),
+            });
         }
 
         template<>
@@ -346,8 +365,8 @@ namespace BwatEngine {
         void Load<ColliderComponent>(EntityID entityId, const json &componentData) {
             auto &coordinator = Coordinator::GetInstance();
             json mats = componentData.at("materials");
-            auto& eTransform = coordinator.GetComponent<TransformComponent>(entityId);
-            coordinator.AddComponent<ColliderComponent>(entityId, {new BoxCollider{eTransform.scale}});
+            auto eTransform = coordinator.GetComponent<TransformComponent>(entityId);
+            coordinator.AddComponent<ColliderComponent>(entityId, eTransform.scale);
             auto& collider = coordinator.GetComponent<ColliderComponent>(entityId);
             collider.collider->SetFriction(mats.at("static").get<float>());
 
