@@ -13,6 +13,8 @@
   
   <link rel="stylesheet" href="_static/css/theme.css" type="text/css" />
   <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
+  <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
+  <link rel="stylesheet" href="_static/css/theme.css" type="text/css" />
 
   
   
@@ -29,6 +31,7 @@
   
     
       <script type="text/javascript" id="documentation_options" data-url_root="./" src="_static/documentation_options.js"></script>
+        <script data-url_root="./" id="documentation_options" src="_static/documentation_options.js"></script>
         <script src="_static/jquery.js"></script>
         <script src="_static/underscore.js"></script>
         <script src="_static/doctools.js"></script>
@@ -171,89 +174,56 @@
 <h2>Getting Started<a class="headerlink" href="#getting-started" title="Permalink to this headline">¶</a></h2>
 <p>Everything works with the Coordinator</p>
 <dl class="cpp class">
-<dt id="_CPPv4N10BwatEngine11CoordinatorE">
-<span id="_CPPv3N10BwatEngine11CoordinatorE"></span><span id="_CPPv2N10BwatEngine11CoordinatorE"></span><span id="BwatEngine::Coordinator"></span><span class="target" id="classBwatEngine_1_1Coordinator"></span><em class="property"><span class="pre">class</span> </em><code class="sig-name descname"><span class="pre">Coordinator</span></code><br /></dt>
+<dt class="sig sig-object cpp" id="_CPPv4N10BwatEngine11CoordinatorE">
+<span id="_CPPv3N10BwatEngine11CoordinatorE"></span><span id="_CPPv2N10BwatEngine11CoordinatorE"></span><span id="BwatEngine::Coordinator"></span><span class="target" id="classBwatEngine_1_1Coordinator"></span><span class="k"><span class="pre">class</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">Coordinator</span></span></span><br /></dt>
 <dd><p>Singleton managing everything related to the ECS. </p>
 </dd></dl>
 
 <p>To operate, you need to register each components and systems needed for the engine like this :</p>
-<div class="highlight-cpp notranslate"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span class="normal"> 1</span>
-<span class="normal"> 2</span>
-<span class="normal"> 3</span>
-<span class="normal"> 4</span>
-<span class="normal"> 5</span>
-<span class="normal"> 6</span>
-<span class="normal"> 7</span>
-<span class="normal"> 8</span>
-<span class="normal"> 9</span>
-<span class="normal">10</span>
-<span class="normal">11</span>
-<span class="normal">12</span>
-<span class="normal">13</span>
-<span class="normal">14</span>
-<span class="normal">15</span>
-<span class="normal">16</span>
-<span class="normal">17</span>
-<span class="normal">18</span>
-<span class="normal">19</span>
-<span class="normal">20</span></pre></div></td><td class="code"><div class="highlight"><pre><span></span><span class="c1">// Cache the instance</span>
-<span class="n">Coordinator</span><span class="o">&amp;</span> <span class="n">coordinator</span> <span class="o">=</span> <span class="n">Coordinator</span><span class="o">::</span><span class="n">GetInstance</span><span class="p">();</span>
-
-<span class="c1">// Register the components required by PhysicsSystem</span>
-<span class="n">coordinator</span><span class="p">.</span><span class="n">RegisterComponent</span><span class="o">&lt;</span><span class="n">TransformComponent</span><span class="o">&gt;</span><span class="p">();</span>
-<span class="n">coordinator</span><span class="p">.</span><span class="n">RegisterComponent</span><span class="o">&lt;</span><span class="n">RigidBodyComponent</span><span class="o">&gt;</span><span class="p">();</span>
-
-<span class="c1">// Register the system</span>
-<span class="n">PhysicsSystem</span><span class="o">*</span> <span class="n">physicsSystem</span> <span class="o">=</span> <span class="o">*</span><span class="n">coordinator</span><span class="p">.</span><span class="n">RegisterSystem</span><span class="o">&lt;</span><span class="n">PhysicsSystem</span><span class="o">&gt;</span><span class="p">();</span>
-
-<span class="c1">// Create the signature for the system</span>
-<span class="n">Signature</span> <span class="n">signature</span><span class="p">;</span>
-<span class="n">signature</span><span class="p">.</span><span class="n">set</span><span class="p">(</span><span class="n">coordinator</span><span class="p">.</span><span class="n">GetComponentType</span><span class="o">&lt;</span><span class="n">RigidBodyComponent</span><span class="o">&gt;</span><span class="p">());</span>
-<span class="n">signature</span><span class="p">.</span><span class="n">set</span><span class="p">(</span><span class="n">coordinator</span><span class="p">.</span><span class="n">GetComponentType</span><span class="o">&lt;</span><span class="n">TransformComponent</span><span class="o">&gt;</span><span class="p">());</span>
-
-<span class="c1">// Set the signature</span>
-<span class="n">coordinator</span><span class="p">.</span><span class="n">SetSystemSignature</span><span class="o">&lt;</span><span class="n">PhysicsSystem</span><span class="o">&gt;</span><span class="p">(</span><span class="n">signature</span><span class="p">);</span>
-
-<span class="c1">//Init the system</span>
-<span class="n">physicsSystem</span><span class="o">-&gt;</span><span class="n">Init</span><span class="p">();</span>
+<div class="highlight-cpp notranslate"><div class="highlight"><pre><span></span><span class="linenos"> 1</span><span class="c1">// Cache the instance</span>
+<span class="linenos"> 2</span><span class="n">Coordinator</span><span class="o">&amp;</span> <span class="n">coordinator</span> <span class="o">=</span> <span class="n">Coordinator</span><span class="o">::</span><span class="n">GetInstance</span><span class="p">();</span>
+<span class="linenos"> 3</span>
+<span class="linenos"> 4</span><span class="c1">// Register the components required by PhysicsSystem</span>
+<span class="linenos"> 5</span><span class="n">coordinator</span><span class="p">.</span><span class="n">RegisterComponent</span><span class="o">&lt;</span><span class="n">TransformComponent</span><span class="o">&gt;</span><span class="p">();</span>
+<span class="linenos"> 6</span><span class="n">coordinator</span><span class="p">.</span><span class="n">RegisterComponent</span><span class="o">&lt;</span><span class="n">RigidBodyComponent</span><span class="o">&gt;</span><span class="p">();</span>
+<span class="linenos"> 7</span>
+<span class="linenos"> 8</span><span class="c1">// Register the system</span>
+<span class="linenos"> 9</span><span class="n">PhysicsSystem</span><span class="o">*</span> <span class="n">physicsSystem</span> <span class="o">=</span> <span class="o">*</span><span class="n">coordinator</span><span class="p">.</span><span class="n">RegisterSystem</span><span class="o">&lt;</span><span class="n">PhysicsSystem</span><span class="o">&gt;</span><span class="p">();</span>
+<span class="linenos">10</span>
+<span class="linenos">11</span><span class="c1">// Create the signature for the system</span>
+<span class="linenos">12</span><span class="n">Signature</span> <span class="n">signature</span><span class="p">;</span>
+<span class="linenos">13</span><span class="n">signature</span><span class="p">.</span><span class="n">set</span><span class="p">(</span><span class="n">coordinator</span><span class="p">.</span><span class="n">GetComponentType</span><span class="o">&lt;</span><span class="n">RigidBodyComponent</span><span class="o">&gt;</span><span class="p">());</span>
+<span class="linenos">14</span><span class="n">signature</span><span class="p">.</span><span class="n">set</span><span class="p">(</span><span class="n">coordinator</span><span class="p">.</span><span class="n">GetComponentType</span><span class="o">&lt;</span><span class="n">TransformComponent</span><span class="o">&gt;</span><span class="p">());</span>
+<span class="linenos">15</span>
+<span class="linenos">16</span><span class="c1">// Set the signature</span>
+<span class="linenos">17</span><span class="n">coordinator</span><span class="p">.</span><span class="n">SetSystemSignature</span><span class="o">&lt;</span><span class="n">PhysicsSystem</span><span class="o">&gt;</span><span class="p">(</span><span class="n">signature</span><span class="p">);</span>
+<span class="linenos">18</span>
+<span class="linenos">19</span><span class="c1">//Init the system</span>
+<span class="linenos">20</span><span class="n">physicsSystem</span><span class="o">-&gt;</span><span class="n">Init</span><span class="p">();</span>
 </pre></div>
-</td></tr></table></div>
+</div>
 <p>Now that the system is initialized, its Update function must be called during the main loop</p>
 </div>
 <div class="section" id="creating-an-entity">
 <h2>Creating an Entity<a class="headerlink" href="#creating-an-entity" title="Permalink to this headline">¶</a></h2>
 <p>To create entities and add components on them, here is a snippet</p>
-<div class="highlight-cpp notranslate"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span class="normal"> 1</span>
-<span class="normal"> 2</span>
-<span class="normal"> 3</span>
-<span class="normal"> 4</span>
-<span class="normal"> 5</span>
-<span class="normal"> 6</span>
-<span class="normal"> 7</span>
-<span class="normal"> 8</span>
-<span class="normal"> 9</span>
-<span class="normal">10</span>
-<span class="normal">11</span>
-<span class="normal">12</span>
-<span class="normal">13</span>
-<span class="normal">14</span>
-<span class="normal">15</span></pre></div></td><td class="code"><div class="highlight"><pre><span></span><span class="c1">// Create an entity and returns its ID</span>
-<span class="n">Entity</span> <span class="n">entity</span> <span class="o">=</span> <span class="n">coordinator</span><span class="p">.</span><span class="n">CreateEntity</span><span class="p">();</span>
-
-<span class="c1">// Adding components</span>
-<span class="n">coordinator</span><span class="p">.</span><span class="n">AddComponent</span><span class="o">&lt;</span><span class="n">TransformComponent</span><span class="o">&gt;</span><span class="p">(</span><span class="n">entity</span><span class="p">,</span>
-            <span class="p">{</span>
-                <span class="n">Math</span><span class="o">::</span><span class="n">Vec3f</span><span class="p">{</span><span class="mf">0.f</span><span class="p">,</span> <span class="mf">0.f</span><span class="p">,</span> <span class="mf">0.f</span><span class="p">}</span> <span class="c1">// position</span>
-                <span class="n">Math</span><span class="o">::</span><span class="n">Vec3f</span><span class="p">{</span><span class="mf">0.f</span><span class="p">,</span> <span class="mf">0.f</span><span class="p">,</span> <span class="mf">0.f</span><span class="p">}</span> <span class="c1">// rotation</span>
-                <span class="n">Math</span><span class="o">::</span><span class="n">Vec3f</span><span class="p">{</span><span class="mf">1.f</span><span class="p">,</span> <span class="mf">1.f</span><span class="p">,</span> <span class="mf">1.f</span><span class="p">}</span> <span class="c1">// scale</span>
-            <span class="p">});</span>
-<span class="n">coordinator</span><span class="p">.</span><span class="n">AddComponent</span><span class="o">&lt;</span><span class="n">RigidBodyComponent</span><span class="o">&gt;</span><span class="p">(</span><span class="n">entity</span><span class="p">,</span>
-            <span class="p">{</span>
-                <span class="n">Math</span><span class="o">::</span><span class="n">Vec3f</span><span class="p">{</span><span class="mf">0.f</span><span class="p">,</span> <span class="mf">0.f</span><span class="p">,</span> <span class="mf">0.f</span><span class="p">}</span> <span class="c1">// velocity</span>
-                <span class="n">Math</span><span class="o">::</span><span class="n">Vec3f</span><span class="p">{</span><span class="mf">0.f</span><span class="p">,</span> <span class="mf">0.f</span><span class="p">,</span> <span class="mf">0.f</span><span class="p">}</span> <span class="c1">// acceleration</span>
-            <span class="p">});</span>
+<div class="highlight-cpp notranslate"><div class="highlight"><pre><span></span><span class="linenos"> 1</span><span class="c1">// Create an entity and returns its ID</span>
+<span class="linenos"> 2</span><span class="n">Entity</span> <span class="n">entity</span> <span class="o">=</span> <span class="n">coordinator</span><span class="p">.</span><span class="n">CreateEntity</span><span class="p">();</span>
+<span class="linenos"> 3</span>
+<span class="linenos"> 4</span><span class="c1">// Adding components</span>
+<span class="linenos"> 5</span><span class="n">coordinator</span><span class="p">.</span><span class="n">AddComponent</span><span class="o">&lt;</span><span class="n">TransformComponent</span><span class="o">&gt;</span><span class="p">(</span><span class="n">entity</span><span class="p">,</span>
+<span class="linenos"> 6</span>            <span class="p">{</span>
+<span class="linenos"> 7</span>                <span class="n">Math</span><span class="o">::</span><span class="n">Vec3f</span><span class="p">{</span><span class="mf">0.f</span><span class="p">,</span> <span class="mf">0.f</span><span class="p">,</span> <span class="mf">0.f</span><span class="p">}</span> <span class="c1">// position</span>
+<span class="linenos"> 8</span>                <span class="n">Math</span><span class="o">::</span><span class="n">Vec3f</span><span class="p">{</span><span class="mf">0.f</span><span class="p">,</span> <span class="mf">0.f</span><span class="p">,</span> <span class="mf">0.f</span><span class="p">}</span> <span class="c1">// rotation</span>
+<span class="linenos"> 9</span>                <span class="n">Math</span><span class="o">::</span><span class="n">Vec3f</span><span class="p">{</span><span class="mf">1.f</span><span class="p">,</span> <span class="mf">1.f</span><span class="p">,</span> <span class="mf">1.f</span><span class="p">}</span> <span class="c1">// scale</span>
+<span class="linenos">10</span>            <span class="p">});</span>
+<span class="linenos">11</span><span class="n">coordinator</span><span class="p">.</span><span class="n">AddComponent</span><span class="o">&lt;</span><span class="n">RigidBodyComponent</span><span class="o">&gt;</span><span class="p">(</span><span class="n">entity</span><span class="p">,</span>
+<span class="linenos">12</span>            <span class="p">{</span>
+<span class="linenos">13</span>                <span class="n">Math</span><span class="o">::</span><span class="n">Vec3f</span><span class="p">{</span><span class="mf">0.f</span><span class="p">,</span> <span class="mf">0.f</span><span class="p">,</span> <span class="mf">0.f</span><span class="p">}</span> <span class="c1">// velocity</span>
+<span class="linenos">14</span>                <span class="n">Math</span><span class="o">::</span><span class="n">Vec3f</span><span class="p">{</span><span class="mf">0.f</span><span class="p">,</span> <span class="mf">0.f</span><span class="p">,</span> <span class="mf">0.f</span><span class="p">}</span> <span class="c1">// acceleration</span>
+<span class="linenos">15</span>            <span class="p">});</span>
 </pre></div>
-</td></tr></table></div>
+</div>
 <p>Now this entity has a Transform and a RigidBody. Because its signature corresponds to the signature
 of the system we initialized just before, its ID will be passed through the system on the update,
 performing the relevant code of the update function.</p>
@@ -262,68 +232,43 @@ performing the relevant code of the update function.</p>
 <h2>Creating a Component<a class="headerlink" href="#creating-a-component" title="Permalink to this headline">¶</a></h2>
 <p>You can just create a simple struct</p>
 <p>Example of a boiler-plate RigidBody :</p>
-<div class="highlight-cpp notranslate"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span class="normal">1</span>
-<span class="normal">2</span>
-<span class="normal">3</span>
-<span class="normal">4</span>
-<span class="normal">5</span>
-<span class="normal">6</span>
-<span class="normal">7</span>
-<span class="normal">8</span></pre></div></td><td class="code"><div class="highlight"><pre><span></span><span class="k">namespace</span> <span class="nn">BwatEngine</span>
-<span class="p">{</span>
-    <span class="k">struct</span> <span class="nc">RigidBodyComponent</span>
-    <span class="p">{</span>
-        <span class="n">Math</span><span class="o">::</span><span class="n">Vec3f</span> <span class="n">velocity</span><span class="p">;</span>
-        <span class="n">Math</span><span class="o">::</span><span class="n">Vec3f</span> <span class="n">acceleration</span><span class="p">;</span>
-    <span class="p">};</span>
-<span class="p">}</span>
+<div class="highlight-cpp notranslate"><div class="highlight"><pre><span></span><span class="linenos">1</span><span class="k">namespace</span> <span class="nn">BwatEngine</span>
+<span class="linenos">2</span><span class="p">{</span>
+<span class="linenos">3</span>    <span class="k">struct</span> <span class="nc">RigidBodyComponent</span>
+<span class="linenos">4</span>    <span class="p">{</span>
+<span class="linenos">5</span>        <span class="n">Math</span><span class="o">::</span><span class="n">Vec3f</span> <span class="n">velocity</span><span class="p">;</span>
+<span class="linenos">6</span>        <span class="n">Math</span><span class="o">::</span><span class="n">Vec3f</span> <span class="n">acceleration</span><span class="p">;</span>
+<span class="linenos">7</span>    <span class="p">};</span>
+<span class="linenos">8</span><span class="p">}</span>
 </pre></div>
-</td></tr></table></div>
+</div>
 </div>
 <div class="section" id="creating-a-system">
 <h2>Creating a System<a class="headerlink" href="#creating-a-system" title="Permalink to this headline">¶</a></h2>
 <p>To create a system, you must create a class that inherits from System
 and implement the Init and Update functions.</p>
 <p>Example of a boiler-plate PhysicsSystem</p>
-<div class="highlight-cpp notranslate"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span class="normal"> 1</span>
-<span class="normal"> 2</span>
-<span class="normal"> 3</span>
-<span class="normal"> 4</span>
-<span class="normal"> 5</span>
-<span class="normal"> 6</span>
-<span class="normal"> 7</span>
-<span class="normal"> 8</span>
-<span class="normal"> 9</span>
-<span class="normal">10</span>
-<span class="normal">11</span>
-<span class="normal">12</span>
-<span class="normal">13</span>
-<span class="normal">14</span>
-<span class="normal">15</span>
-<span class="normal">16</span>
-<span class="normal">17</span>
-<span class="normal">18</span>
-<span class="normal">19</span></pre></div></td><td class="code"><div class="highlight"><pre><span></span><span class="k">class</span> <span class="nc">PhysicsSystem</span> <span class="o">:</span> <span class="k">public</span> <span class="n">System</span>
-<span class="p">{</span>
-<span class="k">public</span><span class="o">:</span>
-    <span class="kt">void</span> <span class="n">Init</span><span class="p">()</span> <span class="p">{};</span>
-
-    <span class="kt">void</span> <span class="nf">Update</span><span class="p">(</span><span class="kt">float</span> <span class="n">dt</span><span class="p">)</span>
-    <span class="p">{</span>
-        <span class="k">const</span> <span class="n">Vec3f</span> <span class="n">gravity</span><span class="p">{</span><span class="mi">0</span><span class="p">,</span> <span class="mi">-10</span><span class="p">,</span> <span class="mi">0</span><span class="p">};</span>
-        <span class="k">for</span> <span class="p">(</span><span class="n">Entity</span> <span class="nl">entityID</span> <span class="p">:</span> <span class="n">entities</span><span class="p">)</span>
-        <span class="p">{</span>
-            <span class="n">Coordinator</span><span class="o">&amp;</span> <span class="n">coordinator</span> <span class="o">=</span> <span class="n">Coordinator</span><span class="o">::</span><span class="n">GetInstance</span><span class="p">();</span>
-            <span class="k">auto</span><span class="o">&amp;</span> <span class="n">rigidBody</span> <span class="o">=</span> <span class="n">coordinator</span><span class="p">.</span><span class="n">GetComponent</span><span class="o">&lt;</span><span class="n">RigidBodyComponent</span><span class="o">&gt;</span><span class="p">(</span><span class="n">entityID</span><span class="p">);</span>
-            <span class="k">auto</span><span class="o">&amp;</span> <span class="n">transform</span> <span class="o">=</span> <span class="n">coordinator</span><span class="p">.</span><span class="n">GetComponent</span><span class="o">&lt;</span><span class="n">TransformComponent</span><span class="o">&gt;</span><span class="p">(</span><span class="n">entityID</span><span class="p">);</span>
-
-            <span class="n">transform</span><span class="p">.</span><span class="n">position</span> <span class="o">+=</span> <span class="n">rigidBody</span><span class="p">.</span><span class="n">velocity</span> <span class="o">*</span> <span class="n">dt</span><span class="p">;</span>
-            <span class="n">rigidBody</span><span class="p">.</span><span class="n">velocity</span> <span class="o">+=</span> <span class="n">gravity</span> <span class="o">*</span> <span class="n">dt</span><span class="p">;</span>
-        <span class="p">}</span>
-    <span class="p">};</span>
-<span class="p">};</span>
+<div class="highlight-cpp notranslate"><div class="highlight"><pre><span></span><span class="linenos"> 1</span><span class="k">class</span> <span class="nc">PhysicsSystem</span> <span class="o">:</span> <span class="k">public</span> <span class="n">System</span>
+<span class="linenos"> 2</span><span class="p">{</span>
+<span class="linenos"> 3</span><span class="k">public</span><span class="o">:</span>
+<span class="linenos"> 4</span>    <span class="kt">void</span> <span class="n">Init</span><span class="p">()</span> <span class="p">{};</span>
+<span class="linenos"> 5</span>
+<span class="linenos"> 6</span>    <span class="kt">void</span> <span class="nf">Update</span><span class="p">(</span><span class="kt">float</span> <span class="n">dt</span><span class="p">)</span>
+<span class="linenos"> 7</span>    <span class="p">{</span>
+<span class="linenos"> 8</span>        <span class="k">const</span> <span class="n">Vec3f</span> <span class="n">gravity</span><span class="p">{</span><span class="mi">0</span><span class="p">,</span> <span class="mi">-10</span><span class="p">,</span> <span class="mi">0</span><span class="p">};</span>
+<span class="linenos"> 9</span>        <span class="k">for</span> <span class="p">(</span><span class="n">Entity</span> <span class="nl">entityID</span> <span class="p">:</span> <span class="n">entities</span><span class="p">)</span>
+<span class="linenos">10</span>        <span class="p">{</span>
+<span class="linenos">11</span>            <span class="n">Coordinator</span><span class="o">&amp;</span> <span class="n">coordinator</span> <span class="o">=</span> <span class="n">Coordinator</span><span class="o">::</span><span class="n">GetInstance</span><span class="p">();</span>
+<span class="linenos">12</span>            <span class="k">auto</span><span class="o">&amp;</span> <span class="n">rigidBody</span> <span class="o">=</span> <span class="n">coordinator</span><span class="p">.</span><span class="n">GetComponent</span><span class="o">&lt;</span><span class="n">RigidBodyComponent</span><span class="o">&gt;</span><span class="p">(</span><span class="n">entityID</span><span class="p">);</span>
+<span class="linenos">13</span>            <span class="k">auto</span><span class="o">&amp;</span> <span class="n">transform</span> <span class="o">=</span> <span class="n">coordinator</span><span class="p">.</span><span class="n">GetComponent</span><span class="o">&lt;</span><span class="n">TransformComponent</span><span class="o">&gt;</span><span class="p">(</span><span class="n">entityID</span><span class="p">);</span>
+<span class="linenos">14</span>
+<span class="linenos">15</span>            <span class="n">transform</span><span class="p">.</span><span class="n">position</span> <span class="o">+=</span> <span class="n">rigidBody</span><span class="p">.</span><span class="n">velocity</span> <span class="o">*</span> <span class="n">dt</span><span class="p">;</span>
+<span class="linenos">16</span>            <span class="n">rigidBody</span><span class="p">.</span><span class="n">velocity</span> <span class="o">+=</span> <span class="n">gravity</span> <span class="o">*</span> <span class="n">dt</span><span class="p">;</span>
+<span class="linenos">17</span>        <span class="p">}</span>
+<span class="linenos">18</span>    <span class="p">};</span>
+<span class="linenos">19</span><span class="p">};</span>
 </pre></div>
-</td></tr></table></div>
+</div>
 <p>Referenced headers</p>
 <div class="toctree-wrapper compound">
 <ul>
