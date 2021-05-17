@@ -9,7 +9,9 @@
 #include "WidgetShader.hpp"
 #include "WidgetViewport.hpp"
 #include "WidgetProperties.hpp"
+#include "WidgetLog.hpp"
 #include "WidgetPostProcess.hpp"
+
 #include "imgui_internal.h"
 
 #include "Engine.hpp"
@@ -78,6 +80,7 @@ void EditorInterface::Initialise()
     widgets.emplace_back(std::make_unique<WidgetHierarchy>(this));
     widgets.emplace_back(std::make_unique<WidgetAsset>(this));
     widgets.emplace_back(std::make_unique<WidgetViewport>(this));
+    widgets.emplace_back(std::make_unique<WidgetLog>(this));
     widgets.emplace_back(std::make_unique<WidgetShader>(this));
     widgets.emplace_back(std::make_unique<WidgetPostProcess>(this));
 

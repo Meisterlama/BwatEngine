@@ -98,10 +98,17 @@ static const char *LevelColors[] = {
                 L.callbacks[i].fn = fn;
                 L.callbacks[i].uData = uData;
                 L.callbacks[i].level = level;
-                return 0;
+                return i;
             }
         }
         return -1;
+    }
+
+    void LogRemoveCallback(int index)
+    {
+        if (index < 0)
+            return;
+        L.callbacks[index].fn = NULL;
     }
 
 

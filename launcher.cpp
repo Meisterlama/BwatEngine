@@ -4,6 +4,7 @@
 
 
 #include "Engine.hpp"
+#include "Debug/Logger.hpp"
 
 #if BWATEDITOR
 #include "EditorInterface.hpp"
@@ -25,6 +26,17 @@ int main()
 {
     using namespace BwatEngine;
 
+    FILE* myFile;
+    myFile = fopen("log.txt", "w");
+
+    if (myFile == nullptr)
+    {
+       LogError("file Error");
+    }
+    else
+    {
+        BLogger::LogAddFp(myFile, 0);
+    }
 
 	Engine engine;
 
@@ -48,5 +60,6 @@ int main()
 
     engine.Close();
 
+	fclose(myFile);
 	return 0;
 }
