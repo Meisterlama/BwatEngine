@@ -2,35 +2,127 @@
 
 using namespace Rendering;
 
-void PostProcess::Init()
+PostProcess::PostProcess(Rendering::FullScreenQuad& fullScreenQuad)
+	: fullScreenQuad(fullScreenQuad)
 {
-    float quadVertices[] = { 
-        // positions   // texCoords
-        -1.0f,  1.0f,  0.0f, 1.0f,
-        -1.0f, -1.0f,  0.0f, 0.0f,
-         1.0f, -1.0f,  1.0f, 0.0f,
-
-        -1.0f,  1.0f,  0.0f, 1.0f,
-         1.0f, -1.0f,  1.0f, 0.0f,
-         1.0f,  1.0f,  1.0f, 1.0f
-    };
-
-    glGenVertexArrays(1, &quadVAO);
-    glGenBuffers(1, &quadVBO);
-    glBindVertexArray(quadVAO);
-    glBindBuffer(GL_ARRAY_BUFFER, quadVBO);
-    glBufferData(GL_ARRAY_BUFFER, sizeof(quadVertices), &quadVertices, GL_STATIC_DRAW);
-    glEnableVertexAttribArray(0);
-    glVertexAttribPointer(0, 2, GL_FLOAT, GL_FALSE, 4 * sizeof(float), (void*)0);
-    glEnableVertexAttribArray(1);
-    glVertexAttribPointer(1, 2, GL_FLOAT, GL_FALSE, 4 * sizeof(float), (void*)(2 * sizeof(float)));
-    glBindVertexArray(0);
 
 }
 
-void PostProcess::Apply(GLuint texColorFBO)
+// ============================================ INVERSION ============================================ // 
+
+
+Inversion::Inversion(Rendering::FullScreenQuad& fullScreenQuad)
+	: PostProcess(fullScreenQuad)
+	, shader({ "Assets/Shaders/PostProcess/postProcess.vs", "Assets/Shaders/PostProcess/inversion.fs" })
 {
-    glBindVertexArray(quadVAO);
-    glBindTexture(GL_TEXTURE_2D, texColorFBO);	
-    glDrawArrays(GL_TRIANGLES, 0, 6);
 }
+
+void Inversion::Draw(GLuint gameTexture)
+{
+	glBindTexture(GL_TEXTURE_2D, gameTexture);
+	shader.Use();
+	fullScreenQuad.Draw();
+}
+
+// ============================================ BLOOM ============================================ // 
+
+Bloom::Bloom(Rendering::FullScreenQuad& fullScreenQuad,int width, int height)
+	: PostProcess(fullScreenQuad)
+	, shader({ "Assets/Shaders/PostProcess/postProcess.vs", "Assets/Shaders/PostProcess/bloom.fs" })
+	, shaderGaussianBlur({ "Assets/Shaders/PostProcess/postProcess.vs", "Assets/Shaders/PostProcess/gaussianBlur.fs" })
+	, shaderBloomFinal ({ "Assets/Shaders/PostProcess/postProcess.vs", "Assets/Shaders/PostProcess/bloomFinal.fs" })
+{
+	
+	internalFBO.Resize(width, height);
+
+	shaderBloomFinal.Use();
+	shaderBloomFinal.SetInt("scene", 0);
+	shaderBloomFinal.SetInt("bloomBlur", 1);
+
+	glGenFramebuffers(2, pingpongFBO);
+	glGenTextures(2, pingpongBuffer);
+	for (unsigned int i = 0; i < 2; i++)
+	{
+		glBindFramebuffer(GL_FRAMEBUFFER, pingpongFBO[i]);
+		glBindTexture(GL_TEXTURE_2D, pingpongBuffer[i]);
+		glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA16F, width, height, 0, GL_RGBA, GL_FLOAT, NULL);
+		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
+		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
+		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
+		
+		glFramebufferTexture2D( GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_2D, pingpongBuffer[i], 0);
+	}
+}
+
+void Bloom::Draw(GLuint gameTexture)
+{
+	glBindTexture(GL_TEXTURE_2D, gameTexture);
+
+	// Bind bloom internal fbo
+	int previousFBO = internalFBO.Bind();
+	
+	shader.Use();
+	fullScreenQuad.Draw();
+
+	bool horizontal = true, first_iteration = true;
+	int amount = 10;
+	shaderGaussianBlur.Use();
+	for (unsigned int i = 0; i < amount; i++)
+	{
+		glBindFramebuffer(GL_FRAMEBUFFER, pingpongFBO[horizontal]);
+		shaderGaussianBlur.SetInt("horizontal", horizontal);
+		glBindTexture(
+			GL_TEXTURE_2D, first_iteration ? internalFBO.textureColor.id : pingpongBuffer[!horizontal]
+		);
+
+		fullScreenQuad.Draw();
+		horizontal = !horizontal;
+		if (first_iteration)
+			first_iteration = false;
+	}
+
+	glBindFramebuffer(GL_FRAMEBUFFER, previousFBO);
+
+	shaderBloomFinal.Use();
+	glActiveTexture(GL_TEXTURE0);
+	glBindTexture(GL_TEXTURE_2D, gameTexture);
+	glActiveTexture(GL_TEXTURE1);
+	glBindTexture(GL_TEXTURE_2D, pingpongBuffer[!horizontal]);
+	shaderBloomFinal.SetFloat("exposure", exposure);
+	fullScreenQuad.Draw();
+}
+
+// ============================================ BLUR ============================================ // 
+
+Blur::Blur(Rendering::FullScreenQuad& fullscreenQuad)
+	: PostProcess(fullscreenQuad)
+	, shader({ "Assets/Shaders/PostProcess/postProcess.vs", "Assets/Shaders/PostProcess/blur.fs" })
+{
+
+}
+
+void Blur::Draw(GLuint gameTexture) 
+{
+	glBindTexture(GL_TEXTURE_2D, gameTexture);
+	shader.Use();
+	fullScreenQuad.Draw();
+}
+
+// ============================================ GAMMA CORECTION ============================================ // 
+
+
+GammaCorection::GammaCorection(Rendering::FullScreenQuad& fullscreenQuad)
+	: PostProcess(fullscreenQuad)
+	, shader({ "Assets/Shaders/PostProcess/postProcess.vs", "Assets/Shaders/PostProcess/gamma.fs" })
+{
+
+}
+
+void GammaCorection::Draw(GLuint gameTexture) 
+{
+	glBindTexture(GL_TEXTURE_2D, gameTexture);
+	shader.Use();
+	fullScreenQuad.Draw();
+}
+

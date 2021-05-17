@@ -18,14 +18,14 @@ namespace BwatEngine
 
 		GLFWwindow* handler = nullptr;
 
-		float GetHeight() { return height; };
-		float GetWidth() { return width; };
+		int GetHeight() { return height; };
+		int GetWidth() { return width; };
 		bool IsWorking() { return !glfwWindowShouldClose(handler); };
 
 	private:
 
-		float width = 0.f;
-		float height = 0.f;
+		int width = 0.f;
+		int height = 0.f;
 
 	};
 

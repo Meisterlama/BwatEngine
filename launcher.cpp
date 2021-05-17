@@ -35,10 +35,10 @@ int main()
 
 	while (engine.ShouldRun())
 	{
-		engine.Update();
-
 #if defined(BWATEDITOR)
 		editor.OnTick();
+#else
+		engine.Update();
 #endif
 
     }

@@ -177,6 +177,17 @@ void WidgetProperties::ShowComponent<BwatEngine::RenderableComponent>(BwatEngine
                 normalName = "";
             }
 
+            bool update = false;
+            bool isColored = component.materials[i]->isColor;
+            update |= ImGui::Checkbox("isColor", &isColored);
+
+            if (component.materials[i]->isColor)
+            {
+                ImGui::ColorEdit4("Color", component.materials[i]->color.values);
+            }
+
+            if (update)
+                component.materials[i]->isColor = isColored;
         }
     }
 }
@@ -258,9 +269,6 @@ void WidgetProperties::ShowComponent<BwatEngine::CameraComponent>(BwatEngine::Ca
         }
         ImGui::DragFloat("Near", &component.near);
         ImGui::DragFloat("Far", &component.far);
-
-        ImGui::Checkbox("isGamma", &component.isGamma);
-        ImGui::DragFloat("Gamma", &component.gamma);
     }
 }
 

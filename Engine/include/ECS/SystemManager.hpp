@@ -14,8 +14,8 @@ namespace BwatEngine
         std::unordered_map<const char*, Signature> signatures{};
         std::unordered_map<const char*, std::shared_ptr<System>> systems{};
     public:
-        template<class S>
-        std::shared_ptr<S> RegisterSystem()
+        template<class S, class... Args>
+        std::shared_ptr<S> RegisterSystem(Args&&... args)
         {
             const char* typeName = typeid(S).name();
             if (systems.find(typeName) != systems.end())
@@ -24,7 +24,7 @@ namespace BwatEngine
                 return nullptr;
             }
 
-            std::shared_ptr<S> system = std::make_shared<S>();
+            std::shared_ptr<S> system = std::make_shared<S>(args...);
             systems.insert({typeName, system});
             return system;
         }

@@ -18,13 +18,12 @@ namespace Rendering
 		Texture textureColor;
 		GLuint depthRenderbuffer;
 
-		FrameBufferObject(float width = 1200, float height = 720);
+		FrameBufferObject(int width = 1200, int height = 720);
 		~FrameBufferObject() {};
 
-		void UseAndBind();
-		void Unbind();
+		GLint Bind();
 
-		void Rezise(float width, float height);
+		void Resize(float width, float height);
 		void SetName(std::string tmpName) { name = tmpName; };
 		GLuint GetFbo() { return fbo; };
 
