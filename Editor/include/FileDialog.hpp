@@ -20,7 +20,6 @@ public:
     void OpenDialog(const char* aFilters, const std::filesystem::path& aFilePathName);
     void ShowList();
 
-    bool loadMe = false;
     FileInfoStruct loadFile;
 
 private:

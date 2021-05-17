@@ -2,7 +2,8 @@
 #include "EditorInterface.hpp"
 #include "Engine.hpp"
 #include "Serialization/Serialization.hpp"
-#include "Time.hpp"
+#include "ResourceManager/ResourceManager.hpp"
+
 WidgetMenuBar::WidgetMenuBar(EditorInterface *editor) : Widget(editor)
 {
     title = "MenuBar";
@@ -13,7 +14,6 @@ void WidgetMenuBar::TickAlways()
 {
     if (ImGui::BeginMainMenuBar())
     {
-        ImGui::Text("%f", (BwatEngine::Time::deltaTime != 0) ? 1.f / BwatEngine::Time::deltaTime : 0);
         if (ImGui::BeginMenu("File"))
         {
             MenuFile();

@@ -7,6 +7,7 @@
 #include "ECS/ECS.hpp"
 #include "Widget.hpp"
 #include "Window.hpp"
+#include "ImGuizmo.h"
 
 namespace BwatEngine
 {
@@ -24,6 +25,7 @@ public:
     void OnTick();
     void Initialise();
     void Close();
+    void ToolbarUI();
 
     void SetEditedEntity(BwatEngine::EntityID entity);
     std::vector<std::unique_ptr<Widget>>&  GetWidgetList() { return widgets; };
@@ -31,6 +33,9 @@ public:
 
     BwatEngine::Engine* engine = nullptr;
     WidgetProperties* widgetProperties = nullptr;
+    static ImGuizmo::MODE guizmoMode;
+    static ImGuizmo::OPERATION guizmoOperation;
+
 
 private:
     void ApplyStyle() const;
@@ -40,6 +45,8 @@ private:
     std::vector<std::unique_ptr<Widget>> widgets;
     bool initialised = false;
     bool editorBegun = false;
+    bool showFPS = false;
+    const float toolBarSize = 45.f;
 };
 
 

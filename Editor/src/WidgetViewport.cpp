@@ -5,7 +5,6 @@
 #include "ECS/Components/TransformComponent.hpp"
 #include "ECS/Components/CameraComponent.hpp"
 #include "WidgetProperties.hpp"
-#include "WidgetTools.hpp"
 
 WidgetViewport::WidgetViewport(EditorInterface *editor) : Widget(editor) , 
     fbo(editor->engine->GetWindow().GetWidth(), editor->engine->GetWindow().GetHeight())
@@ -50,7 +49,7 @@ void WidgetViewport::TickVisible()
 
         BwatEngine::Math::Mat4f proj = cameraComponent.GetProjectionMatrix();
 
-        if (ImGuizmo::Manipulate(view.values, proj.values, WidgetTools::guizmoOperation, WidgetTools::guizmoMode, entityMat.values))
+        if (ImGuizmo::Manipulate(view.values, proj.values, EditorInterface::guizmoOperation, EditorInterface::guizmoMode, entityMat.values))
         {
             BwatEngine::Math::Vec3f pos;
             BwatEngine::Math::Vec3f sca;
@@ -61,7 +60,7 @@ void WidgetViewport::TickVisible()
                     sca.values
                     );
 
-            switch (WidgetTools::guizmoOperation)
+            switch (EditorInterface::guizmoOperation)
             {
                 case ImGuizmo::OPERATION::TRANSLATE:
                     entityTransform.position = pos;
