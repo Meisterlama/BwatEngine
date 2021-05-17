@@ -30,6 +30,9 @@ namespace BwatEngine {
             Serializable::SaveComponent<RigidBodyComponent>(currentEntity, js["Entity"][i]);
             Serializable::SaveComponent<RenderableComponent>(currentEntity, js["Entity"][i]);
             Serializable::SaveComponent<ColliderComponent>(currentEntity, js["Entity"][i]);
+            Serializable::SaveComponent<ScriptComponent>(currentEntity, js["Entity"][i]);
+            Serializable::SaveComponent<LightComponent>(currentEntity, js["Entity"][i]);
+            Serializable::SaveComponent<DataComponent>(currentEntity, js["Entity"][i]);
         }
 
             file << std::setw(4) << js << std::endl;
@@ -74,7 +77,12 @@ namespace BwatEngine {
                        Serializable::Load<RenderableComponent>(newEntity, componentData);
                    else if (componentId == "collider")
                        Serializable::Load<ColliderComponent>(newEntity, componentData);
-
+                   else if (componentId == "script")
+                       Serializable::Load<ScriptComponent>(newEntity, componentData);
+                   else if (componentId == "light")
+                       Serializable::Load<LightComponent>(newEntity, componentData);
+                   else if (componentId == "data")
+                       Serializable::Load<DataComponent>(newEntity, componentData);
 
                }
 
