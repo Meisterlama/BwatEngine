@@ -27,5 +27,5 @@ void WidgetLog::OnLogCallback(BLogger::LogEvent* ev)
 
 void WidgetLog::TickVisible()
 {
-    ImGui::Text(ss.str().c_str());
+    ImGui::TextWrapped(ss.str().c_str());
 }
