@@ -13,9 +13,45 @@ To start developing gameplay with the Lua API, you should download VS Code ans i
 
 Currently there is no page where **all** the exposed functions are explained, so you must go through the sources.
 
-The files you're interested in are located at Engine/src/Scripting. The functions are registered in the functions
-`open_<module>()` at the end of the related .cpp file. They are written as a macro `REGISTER_FUNC()` or as
-`module.set_function()`.
+The script system currently looks for 2 functions in the script, `Start()` and `Update`. If they exist, they will be
+called at the correct time. You can write a script without any of these functions. You can include another script file
+like this :
+
+.. code-block:: lua
+
+    myScript = require("myscript") -- Where myscript.lua is located in Assets/script/
+
+A sample script might look like this :
+
+.. code-block:: lua
+
+    -- This script translate the attached entity up and down with the keyboard
+    components = require("components")
+    input = require("input")
+    logger = require("logger") -- logger.lua, contains a wrapper to LogDebug
+    math = require("math")
+
+    function Start() -- Called the first time the script is executed
+        logger.DebugLog("Starting")
+        components.SetStatic(entity, true) -- set the RigidBody as a static one
+    end
+
+    -- I am a comment
+    function Update() -- Called on every update of the scriptSystem
+        local transform = components.GetTransform(entity) -- Returns a reference
+        if input.GetKeyboard("w") then
+            transform.position.Y = transform.position.Y + 1
+        elseif input.GetKeyboard("s") then
+            transform.position.Y = transform.position.Y - 1
+        end
+    end
+
+`entity` is defined by the ScriptSystem right before executing the script. It is defined globally in the lua environment
+and correspond to the ID of the entity which script is being executed
+
+The files you're interested in to see the API are located at Engine/src/Scripting.
+The functions are registered in the functions `open_<module>()` at the end of the related .cpp file.
+They are written as a macro `REGISTER_FUNC()` or as `module.set_function()`.
 
 common.cpp
 ##########
