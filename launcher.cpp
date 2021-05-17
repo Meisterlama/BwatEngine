@@ -31,7 +31,7 @@ int main()
 
     if (myFile == nullptr)
     {
-        std::cout << "error file";
+       LogError("file Error");
     }
     else
     {
