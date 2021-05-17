@@ -2,12 +2,10 @@
 #define WORLD_HPP
 
 #include <vector>
-#include <random>
 
 #include "Rendering/Light.hpp"
 #include "Rendering/Model.hpp"
 #include "Physic/Physic.hpp"
-#include "ECS/ECS.hpp"
 #include "Physic/PhysicScene.hpp"
 
 
@@ -26,12 +24,8 @@ namespace BwatEngine
 	{
 	private:
 
-		static std::vector<Rendering::Light> lights;
 
 	public:
-
-		static void AddLight(Rendering::Light& newlight);
-		static std::vector<Rendering::Light>& GetLights();
 
 		Scene(Window& window);
 
@@ -52,8 +46,6 @@ namespace BwatEngine
 		// PhysX
 		Physic physic{};
 		PhysicScene scenePhysic;
-
-
 	};
 
 }

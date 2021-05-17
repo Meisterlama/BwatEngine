@@ -1,13 +1,13 @@
 #ifndef MATERIAL_HPP
 #define MATERIAL_HPP
 
-#include "Texture.hpp"
-//#include "Math/Math.hpp"
+#include "Math/Math.hpp"
 
 class aiMaterial;
 
 namespace Rendering
 {
+    class Texture;
 	struct Material
 	{
 		Material(const aiMaterial& from);
@@ -15,8 +15,12 @@ namespace Rendering
 
 		Texture* diffuse = nullptr;
 		Texture* specular = nullptr;
+		Texture* normal = nullptr;
 
-		//BwatEngine::Math::Vec3f color;
+		bool isColor = false;
+		BwatEngine::Math::Vec4f color;
+
+		float shininess = 32.f;
 
 		void Bind();
 		void SetDiffuse(Texture& texture);

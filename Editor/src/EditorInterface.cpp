@@ -6,29 +6,59 @@
 #include "WidgetMenuBar.hpp"
 #include "WidgetHierarchy.hpp"
 #include "WidgetAsset.hpp"
+#include "WidgetShader.hpp"
 #include "WidgetViewport.hpp"
 #include "WidgetProperties.hpp"
 #include "WidgetLog.hpp"
+#include "WidgetPostProcess.hpp"
+
 #include "imgui_internal.h"
 
 #include "Engine.hpp"
+#include "ECS/Systems/RenderSystem.hpp"
 
 EditorInterface::EditorInterface(BwatEngine::Engine* _engine)
+    : gameViewFramebuffer(_engine->GetWindow().GetWidth(), _engine->GetWindow().GetHeight())
 {
     engine = _engine;
     widgets.clear();
     widgets.shrink_to_fit();
+
+    IMGUI_CHECKVERSION();
+    ImGui::CreateContext();
+    ImGuiIO& io = ImGui::GetIO(); (void)io;
+    io.ConfigFlags |= ImGuiConfigFlags_NavEnableKeyboard;       // Enable Keyboard Controls
+    io.ConfigFlags |= ImGuiConfigFlags_DockingEnable;           // Enable Docking
+
+    ImGui_ImplGlfw_InitForOpenGL(engine->GetGLFWwindow(), false);
+    ImGui_ImplOpenGL3_Init("#version 330");
+}
+
+void EditorInterface::Close()
+{
+    ImGui_ImplGlfw_Shutdown();
+    ImGui_ImplOpenGL3_Shutdown();
+    ImGui::DestroyContext();
 }
 
 void EditorInterface::OnTick()
 {
+    // Render game in editor framebuffer
+    GLint previousFramebuffer = gameViewFramebuffer.Bind();
+    engine->Update();
+    glBindFramebuffer(GL_FRAMEBUFFER, previousFramebuffer);
+
+    ImGui_ImplOpenGL3_NewFrame();
+    ImGui_ImplGlfw_NewFrame();
+    ImGui::NewFrame();
+
     BeginWindow();
 
     for (std::unique_ptr<Widget>& widget : widgets)
     {
         widget->Tick();
     }
-
+    
     ImGui::End();
 
     ImGui::Render();
@@ -38,6 +68,7 @@ void EditorInterface::OnTick()
     //ImGui::UpdatePlatformWindows();
     //ImGui::RenderPlatformWindowsDefault();
     //glfwMakeContextCurrent(backup_current_context);
+
 }
 
 void EditorInterface::Initialise()
@@ -49,9 +80,14 @@ void EditorInterface::Initialise()
     widgets.emplace_back(std::make_unique<WidgetHierarchy>(this));
     widgets.emplace_back(std::make_unique<WidgetAsset>(this));
     widgets.emplace_back(std::make_unique<WidgetViewport>(this));
-    widgets.emplace_back(std::make_unique<WidgetProperties>(this));
     widgets.emplace_back(std::make_unique<WidgetLog>(this));
-    widgetProperties = static_cast<WidgetProperties*>(widgets.back().get());
+    widgets.emplace_back(std::make_unique<WidgetShader>(this));
+    widgets.emplace_back(std::make_unique<WidgetPostProcess>(this));
+
+    {
+        widgets.emplace_back(std::make_unique<WidgetProperties>(this));
+        widgetProperties = static_cast<WidgetProperties*>(widgets.back().get());
+    }
 }
 
 void EditorInterface::ApplyStyle() const

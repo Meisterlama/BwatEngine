@@ -5,15 +5,28 @@
 #include <ECS/Components/ColliderComponent.hpp>
 #include <ECS/Components/CameraComponent.hpp>
 #include <ECS/Components/PlayerComponent.hpp>
+#include <ECS/Components/LightComponent.hpp>
+#include <ECS/Components/DataComponent.hpp>
+#include <ECS/Components/ScriptComponent.hpp>
 
 #include "ResourceManager/ResourceManager.hpp"
 #include "ECS/Coordinator.hpp"
 
+#include <Rendering/Model.hpp>
 #include "WidgetProperties.hpp"
+
+#include "imgui_stdlib.h"
 
 WidgetProperties::WidgetProperties(EditorInterface *editor) : Widget(editor)
 {
     title = "Properties";
+}
+
+template<>
+void WidgetProperties::ShowComponent<BwatEngine::DataComponent>(BwatEngine::DataComponent& component)
+{
+    char* buf = (char*)component.name.c_str();
+    ImGui::InputText("Name", buf, 128 * sizeof(char));
 }
 
 template<>
@@ -44,7 +57,7 @@ void WidgetProperties::ShowComponent<BwatEngine::RenderableComponent>(BwatEngine
     {
         std::string modelName;
         if (component.model != nullptr)
-            modelName = component.model->modelPath.filename().string();
+            modelName = component.model->modelPath;
         else
             modelName = "";
 
@@ -56,9 +69,9 @@ void WidgetProperties::ShowComponent<BwatEngine::RenderableComponent>(BwatEngine
 
             for(auto &model : meshList)
             {
-                std::filesystem::path path = model;
-                bool selected = (modelName == path.filename().string());
-                if(ImGui::Selectable(path.string().c_str(), selected))
+                std::string path = model;
+                bool selected = (modelName == path);
+                if(ImGui::Selectable(path.c_str(), selected))
                 {
                     component.model = BwatEngine::ResourceManager::Instance()->GetOrLoadModel(model);
                 }
@@ -127,6 +140,54 @@ void WidgetProperties::ShowComponent<BwatEngine::RenderableComponent>(BwatEngine
                 }
                 ImGui::EndCombo();
             }
+
+            std::string normalName;
+            if (component.materials[i]->normal != nullptr)
+                normalName = component.materials[i]->normal->path;
+            else
+                normalName = "";
+            
+            ImGui::Text("Normal Texture");
+            ImGui::SameLine();
+            if (ImGui::BeginCombo("##normal", normalName.c_str()))
+            {
+                auto textList = BwatEngine::ResourceManager::Instance()->GetTextList();
+
+                for (auto& text : textList)
+                {
+                    bool selected = (normalName == text.c_str());
+                    if (ImGui::Selectable(text.c_str(), selected))
+                    {
+                        component.materials[i]->normal = BwatEngine::ResourceManager::Instance()->GetOrLoadTexture(text, Rendering::Texture::Type::E_NORMAL);;
+                    }
+                    if (selected)
+                        ImGui::SetItemDefaultFocus();
+                }
+                ImGui::EndCombo();
+            }
+
+            if (ImGui::Button("Clear Texture"))
+            {
+                component.materials[i]->diffuse = nullptr;
+                component.materials[i]->specular = nullptr;
+                component.materials[i]->normal = nullptr;
+
+                DiffName = "";
+                SpecName = "";
+                normalName = "";
+            }
+
+            bool update = false;
+            bool isColored = component.materials[i]->isColor;
+            update |= ImGui::Checkbox("isColor", &isColored);
+
+            if (component.materials[i]->isColor)
+            {
+                ImGui::ColorEdit4("Color", component.materials[i]->color.values);
+            }
+
+            if (update)
+                component.materials[i]->isColor = isColored;
         }
     }
 }
@@ -211,6 +272,19 @@ void WidgetProperties::ShowComponent<BwatEngine::CameraComponent>(BwatEngine::Ca
     }
 }
 
+template<>
+void WidgetProperties::ShowComponent<BwatEngine::ScriptComponent>(BwatEngine::ScriptComponent &component)
+{
+    if (ImGui::CollapsingHeader("Camera Component", ImGuiTreeNodeFlags_DefaultOpen))
+    {
+        std::string ScriptName = component.scriptPath;
+        if(ImGui::InputText("ScriptFile", &ScriptName, ImGuiInputTextFlags_EnterReturnsTrue))
+        {
+            component.scriptPath = ScriptName;
+        }
+    }
+}
+
 void WidgetProperties::TickVisible()
 {
     using namespace BwatEngine;
@@ -234,16 +308,22 @@ void WidgetProperties::TickVisible()
         hasComponentAvailable |= AddComponentMenuItem<ColliderComponent>(currentEntity);
         hasComponentAvailable |= AddComponentMenuItem<CameraComponent>(currentEntity);
         hasComponentAvailable |= AddComponentMenuItem<PlayerComponent>(currentEntity);
+        hasComponentAvailable |= AddComponentMenuItem<LightComponent>(currentEntity);
+        hasComponentAvailable |= AddComponentMenuItem<DataComponent>(currentEntity);
+        hasComponentAvailable |= AddComponentMenuItem<ScriptComponent>(currentEntity);
 
         ImGui::EndMenu();
     }
 
+    ShowComponentMenuItem<DataComponent>(currentEntity);
     ShowComponentMenuItem<TransformComponent>(currentEntity);
     ShowComponentMenuItem<RenderableComponent>(currentEntity);
     ShowComponentMenuItem<RigidBodyComponent>(currentEntity);
     ShowComponentMenuItem<AudioSourceComponent>(currentEntity);
     ShowComponentMenuItem<CameraComponent>(currentEntity);
+    ShowComponentMenuItem<ScriptComponent>(currentEntity);
     //ShowComponentMenuItem<ColliderComponent>(currentEntity);
+    ShowComponentMenuItem<LightComponent>(currentEntity);
 }
 
 void WidgetProperties::Inspect(BwatEngine::EntityID entity)
@@ -291,4 +371,85 @@ bool WidgetProperties::ShowComponentMenuItem(BwatEngine::EntityID entity)
         return true;
     }
     return false;
+}
+
+template<>
+void WidgetProperties::ShowComponent<BwatEngine::LightComponent>(BwatEngine::LightComponent& component)
+{
+    if (ImGui::CollapsingHeader("Light", ImGuiTreeNodeFlags_DefaultOpen))
+    {
+        bool update = false;
+        BwatEngine::Math::Vec3f position = component.position;
+        BwatEngine::Math::Vec3f direction = component.direction;
+        BwatEngine::Math::Vec3f ambient = component.ambient;
+        BwatEngine::Math::Vec3f specular = component.specular;
+        BwatEngine::Math::Vec3f diffuse = component.diffuse;
+
+        const char* items[] = { "Directional", "Point", "Spot", };
+
+        if (ImGui::BeginCombo("##Typeoflight", items[component.typeoflight]))
+        {
+            for (int n = 0; n < IM_ARRAYSIZE(items); n++)
+            {
+                if (ImGui::Selectable(items[n], component.typeoflight == n))
+                {
+                    component.typeoflight = (Rendering::TYPE_LIGHT)n;
+                }
+                //if (is_selected)
+                //    ImGui::SetItemDefaultFocus();   
+            }
+            ImGui::EndCombo();
+        }
+
+        update |= ImGui::DragFloat3("Position", position.values, 0.1f);
+        update |= ImGui::DragFloat3("Direction", direction.values, 0.01f,-2.0f,2.f);
+
+        update |= ImGui::ColorEdit3("Ambient", ambient.values, ImGuiColorEditFlags_Float);
+        update |= ImGui::ColorEdit3("Specular", specular.values, ImGuiColorEditFlags_Float);
+        update |= ImGui::ColorEdit3("Diffuse", diffuse.values, ImGuiColorEditFlags_Float);
+
+
+        float constant = component.constant;
+        float linear = component.linear;
+        float quadratic = component.quadratic;
+
+        float cutOff = component.cutoff;
+        float outerCutOff = component.outerCutoff;
+
+        if (component.typeoflight == Rendering::TYPE_LIGHT::Point || component.typeoflight == Rendering::TYPE_LIGHT::Spot)
+        {
+
+            update |= ImGui::DragFloat("Constant", &constant , 0.1f, 0.0f);
+            update |= ImGui::DragFloat("linear", &linear, 0.01f, 0.0f);
+            update |= ImGui::DragFloat("quadratic", &quadratic, 0.001f, 0.0f);
+
+            if (component.typeoflight == Rendering::TYPE_LIGHT::Spot)
+            {
+                update |= ImGui::DragFloat("cutOff",&cutOff , 0.01f, 0.0f);
+                update |= ImGui::DragFloat("outerCutOff", &outerCutOff, 0.01f, 0.0f);
+            }
+        }
+
+        if (update)
+        {
+            //Directional Light 
+            component.position = position;
+            component.direction = direction;
+
+            component.ambient = ambient;
+            component.specular = specular;
+            component.diffuse = diffuse;
+
+            // Point Light 
+            component.constant     = constant;
+            component.linear       = linear;
+            component.quadratic    = quadratic;
+
+            // Spot Light 
+            component.cutoff       = cutOff;
+            component.outerCutoff  = outerCutOff;
+
+        }
+
+    }
 }

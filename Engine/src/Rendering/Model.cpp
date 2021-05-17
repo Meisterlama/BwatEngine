@@ -83,6 +83,7 @@ void Model::ProcessMesh(aiMesh* mesh, const aiScene* scene)
         else
             vertex.texCoord = BwatEngine::Math::Vec2f(0.0f, 0.0f);
 
+
         vertices.push_back(vertex);
     }
     // now wak through each of the mesh's faces (a face is a mesh its triangle) and retrieve the corresponding vertex indices.

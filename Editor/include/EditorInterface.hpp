@@ -7,6 +7,7 @@
 #include "ECS/ECS.hpp"
 #include "Widget.hpp"
 #include "Window.hpp"
+#include "Rendering/FrameBuffer.hpp"
 
 namespace BwatEngine
 {
@@ -19,16 +20,18 @@ class  EditorInterface
 {
 public:
     EditorInterface(BwatEngine::Engine* _engine);
-    ~EditorInterface(){};
+    ~EditorInterface() = default;
 
     void OnTick();
     void Initialise();
+    void Close();
 
     void SetEditedEntity(BwatEngine::EntityID entity);
     BwatEngine::EntityID GetEditedEntity() { return editedEntity; }
 
     BwatEngine::Engine* engine = nullptr;
     WidgetProperties* widgetProperties = nullptr;
+    Rendering::FrameBufferObject gameViewFramebuffer;
 
 private:
     void ApplyStyle() const;

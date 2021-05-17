@@ -4,8 +4,11 @@
 
 
 #include "Engine.hpp"
-#include "EditorInterface.hpp"
 #include "Debug/Logger.hpp"
+
+#if BWATEDITOR
+#include "EditorInterface.hpp"
+#endif
 
 #if defined(_MSC_VER) || defined(__MINGW32__)
 #define DLLEXPORT __declspec(dllexport)
@@ -37,17 +40,25 @@ int main()
 
 	Engine engine;
 
-
+#if defined(BWATEDITOR)
 	EditorInterface editor(&engine);
 	editor.Initialise();
+#endif
 
 	while (engine.ShouldRun())
 	{
-		engine.Update();
+#if defined(BWATEDITOR)
 		editor.OnTick();
-	}
+#else
+		engine.Update();
+#endif
 
-	engine.Close();
+    }
+#if defined(BWATEDITOR)
+	editor.Close();
+#endif
+
+    engine.Close();
 
 	fclose(myFile);
 	return 0;

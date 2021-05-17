@@ -1,17 +1,5 @@
 #include "Engine.hpp"
 
-#include "imgui_impl_glfw.h"
-#include "imgui_impl_opengl3.h"
-
-#include "Math/Math.hpp"
-#include "Scene.hpp"
-
-#include "Rendering/Shader.hpp"
-#include "Rendering/Light.hpp"
-#include "Rendering/Camera.hpp"
-#include "EditorInterface.hpp"
-
-#include "ECS/ECS.hpp"
 #include "ECS/Systems/PhysicsSystem.hpp"
 #include "ECS/Systems/PlayerControlSystem.hpp"
 #include "ECS/Systems/RenderSystem.hpp"
@@ -20,39 +8,29 @@
 #include "ECS/Systems/PostProcessSystem.hpp"
 
 #include "Inputs/InputHandler.hpp"
+#include "Time.hpp"
 
 using namespace BwatEngine;
 
 //initialization
 Engine::Engine() : scene(window)
 {
-
-    IMGUI_CHECKVERSION();
-    ImGui::CreateContext();
-    ImGuiIO& io = ImGui::GetIO(); (void)io;
-    io.ConfigFlags |= ImGuiConfigFlags_NavEnableKeyboard;       // Enable Keyboard Controls
-    io.ConfigFlags |= ImGuiConfigFlags_DockingEnable;           // Enable Docking
-
-    ImGui_ImplGlfw_InitForOpenGL(GetGLFWwindow(), false);
-    ImGui_ImplOpenGL3_Init("#version 330");
-
     InputHandler::Initialize(GetGLFWwindow());
 }
 
 //Main Funtion of engine 
 void Engine::Update()
 {
-    InputHandler::Update();
-
-    ImGui_ImplOpenGL3_NewFrame();
-    ImGui_ImplGlfw_NewFrame();
-    ImGui::NewFrame();
-
-
     float currentFrame = glfwGetTime();
     Time::deltaTime = currentFrame - lastFrame;
     lastFrame = currentFrame;
 
+    InputHandler::Update();
+
+    if (InputHandler::GetKeyboardDown(KEY_ESCAPE))
+    {
+        glfwSetWindowShouldClose(GetGLFWwindow(), true);
+    }
 
     static bool updatePhysics = false;
     if (InputHandler::GetKeyboardDown(KEY_F2))
@@ -71,9 +49,9 @@ void Engine::Update()
         scene.physicsSystem->Update();
     }
 
-    scene.playerControlSystem->Update(Time::deltaTime, GetGLFWwindow());
+    scene.playerControlSystem->Update();
 
-    ManageRenderAndPostProcess();
+    RenderScene();
 
     if (updateAudio)
     {
@@ -83,7 +61,7 @@ void Engine::Update()
     static bool updateScript = false;
     if (InputHandler::GetKeyboardDown(KEY_F4))
     {
-        LogDebug("ScriptOn");
+        LogInfo("Toggle Script");
         updateScript = !updateScript;
 
     }
@@ -92,17 +70,12 @@ void Engine::Update()
         scene.scriptSystem->Update();
     }
 
-
-    glfwSwapBuffers(GetGLFWwindow());
-
+    glfwSwapBuffers(GetWindow().handler);
 }
 
 //Close all content 
 void Engine::Close()
 {
-    ImGui_ImplGlfw_Shutdown();
-    ImGui_ImplOpenGL3_Shutdown();
-    ImGui::DestroyContext();
     GetWindow().Close();
 }
 
@@ -111,24 +84,25 @@ Engine::~Engine()
 
 }
 
-
-void Engine::ManageRenderAndPostProcess()
+void Engine::RenderScene()
 {
-    bool isPostProcess = false;
+    scene.renderSystem->UpdateShadow();
 
-    if (isPostProcess)
-        scene.renderSystem->BindMainRenderFBO();
-    else
-        MainFBO->UseAndBind();
+    GLint targetFramebuffer;
+    glGetIntegerv(GL_DRAW_FRAMEBUFFER_BINDING, &targetFramebuffer);
 
-    scene.renderSystem->Update(GetWindow());
+    //bool isPostProcess = false;
 
-    if (isPostProcess)
+    if (scene.postProcessSystem->isPostProcess)
+        scene.postProcessSystem->Begin();
+
+    scene.renderSystem->Update(GetWindow().GetWidth(), GetWindow().GetHeight());
+
+    if (scene.postProcessSystem->isPostProcess)
     {
-        // Post Process ... 
-        MainFBO->UseAndBind();
-        scene.postProcessSystem->Update(scene.renderSystem->GetRenderTextureID(), POSTPROCESS_SHADER::INVERSION);
+        glBindFramebuffer(GL_FRAMEBUFFER, targetFramebuffer);
+        scene.postProcessSystem->Apply();
     }
 
-    MainFBO->Unbind();
+    glDisable(GL_FRAMEBUFFER_SRGB);
 }

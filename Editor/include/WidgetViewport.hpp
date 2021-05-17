@@ -2,7 +2,6 @@
 #define BWATENGINE_WIDGETVIEWPORT_HPP
 
 #include "Widget.hpp"
-#include "glad/glad.h"
 #include "Rendering/FrameBuffer.hpp"
 #include "ImGuizmo.h"
 
@@ -15,10 +14,6 @@ public:
 
     ImGuizmo::MODE guizmoMode = ImGuizmo::MODE::LOCAL;
     ImGuizmo::OPERATION guizmoOperation = ImGuizmo::OPERATION::TRANSLATE;
-
-private:
-
-    Rendering::FrameBufferObject fbo;
 };
 
 #endif //BWATENGINE_WIDGETVIEWPORT_HPP

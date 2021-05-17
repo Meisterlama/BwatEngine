@@ -7,7 +7,7 @@ namespace BwatEngine
     typedef uint32_t IDType;
 
     typedef IDType EntityID;
-    static constexpr IDType MAX_ENTITIES = 1000;
+    static constexpr IDType MAX_ENTITIES = 10000;
 
     typedef IDType ComponentTypeID;
     static constexpr ComponentTypeID MAX_COMPONENTS = 32;

@@ -57,7 +57,7 @@ namespace BwatEngine::Math
     }
     ML_FUNC_DECL int RNG::RollRandomIntInRange(int minValue, int maxValue)
     {
-        return minValue + static_cast<unsigned int>(Get1dNoiseZeroToOne(m_position++, m_seed) * maxValue);
+        return minValue + static_cast<int>(Get1dNoiseZeroToOne(m_position++, m_seed) * (maxValue - minValue));
     }
     ML_FUNC_DECL float RNG::RollRandomFloatZeroToOne()
     {
@@ -65,7 +65,7 @@ namespace BwatEngine::Math
     }
     ML_FUNC_DECL float RNG::RollRandomFloatInRange(float minValue, float maxValue)
     {
-        return minValue * Get1dNoiseZeroToOne(m_position++, m_seed) * maxValue;
+        return minValue + Get1dNoiseZeroToOne(m_position++, m_seed) * (maxValue - minValue);
     }
     ML_FUNC_DECL bool RNG::RollRandomChance(float probabilityOfReturningTrue)
     {
