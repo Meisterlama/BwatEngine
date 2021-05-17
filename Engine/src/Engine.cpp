@@ -91,14 +91,14 @@ void Engine::RenderScene()
     GLint targetFramebuffer;
     glGetIntegerv(GL_DRAW_FRAMEBUFFER_BINDING, &targetFramebuffer);
 
-    bool isPostProcess = false;
+    //bool isPostProcess = false;
 
-    if (isPostProcess)
+    if (scene.postProcessSystem->isPostProcess)
         scene.postProcessSystem->Begin();
 
     scene.renderSystem->Update(GetWindow().GetWidth(), GetWindow().GetHeight());
 
-    if (isPostProcess)
+    if (scene.postProcessSystem->isPostProcess)
     {
         glBindFramebuffer(GL_FRAMEBUFFER, targetFramebuffer);
         scene.postProcessSystem->Apply();

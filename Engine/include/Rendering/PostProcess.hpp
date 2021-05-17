@@ -45,6 +45,8 @@ namespace Rendering
 		Bloom(Rendering::FullScreenQuad& fullscreenQuad,int width, int height);
 		void Draw(GLuint gameTexture) override;
 
+		float exposure = 1.f;
+
 	private:
 		Rendering::FrameBufferObject internalFBO;
 

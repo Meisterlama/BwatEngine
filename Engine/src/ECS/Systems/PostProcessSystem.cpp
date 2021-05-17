@@ -10,9 +10,9 @@ PostProcessSystem::PostProcessSystem(int width, int height)
 {
 	framebuffer.Resize(width, height);
 
-	inversion.SetEnabled(false);
+	inversion.SetEnabled(true);
 	bloom.SetEnabled(false);
-	blur.SetEnabled(false);
+	blur.SetEnabled(true);
 	gammaCor.SetEnabled(false);
 }
 
