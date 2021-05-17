@@ -19,7 +19,7 @@ int setLuaPath(lua_State *L, const char *path)
     return 0; // all done!
 }
 
-void ScriptSystem::Init()
+ScriptSystem::ScriptSystem()
 {
     int x = 0;
     lua.open_libraries(sol::lib::base, sol::lib::package, sol::lib::io, sol::lib::os);

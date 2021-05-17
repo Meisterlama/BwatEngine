@@ -16,7 +16,6 @@ namespace BwatEngine
 		~Engine();
 
 		void Update();
-		void Close();
 
 		bool ShouldRun() { return window.IsWorking(); };
 
@@ -37,9 +36,7 @@ namespace BwatEngine
 		Window window;
 		Scene scene;
 
-		void RenderScene();
-
-	};
+    };
 
 }
 #endif // !ENGINE_HPP

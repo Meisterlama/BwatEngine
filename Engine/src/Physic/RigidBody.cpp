@@ -132,12 +132,14 @@ float RigidBody::GetMass() const
 {
 	if (!isStatic)
 		return rigidBody->getMass();
+	return 0;
 }
 
 Math::Vec3f RigidBody::GetVelocity() const
 {
 	if (!isStatic)
 		return ToBwatVec3(rigidBody->getLinearVelocity());
+	return {0.f};
 }
 
 void RigidBody::OnContact(RigidBody& actor2, COLLISION_TYPE colType)

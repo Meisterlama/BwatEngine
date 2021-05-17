@@ -11,10 +11,8 @@ namespace BwatEngine
         bool lockMouse = false;
         Math::Vec3f rotation{};
     public:
-        void Init()
-        {};
 
-        void Update();
+        virtual void Update() override;
     };
 }
 

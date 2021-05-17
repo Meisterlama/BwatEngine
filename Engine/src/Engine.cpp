@@ -32,52 +32,37 @@ void Engine::Update()
         glfwSetWindowShouldClose(GetGLFWwindow(), true);
     }
 
-    scene.playerControlSystem->Update();
+    auto& coordinator = Coordinator::GetInstance();
+    auto renderSystem = coordinator.GetSystem<RenderSystem>();
+    auto postProcessSystem = coordinator.GetSystem<PostProcessSystem>();
 
-    RenderScene();
+    renderSystem->displayHeight = GetWindow().GetHeight();
+    renderSystem->displayWidth = GetWindow().GetWidth();
 
-    if (isPlaying)
+    Coordinator::GetInstance().UpdateSystems(isPlaying);
+
+    renderSystem->UpdateShadow();
+    GLint targetFramebuffer;
+    glGetIntegerv(GL_DRAW_FRAMEBUFFER_BINDING, &targetFramebuffer);
+
+    if (postProcessSystem->isPostProcess)
+        postProcessSystem->Begin();
+
+    renderSystem->Update();
+
+    if (postProcessSystem->isPostProcess)
     {
-        scene.physicsSystem->Update();
-        scene.soundSystem->Update();
-        scene.scriptSystem->Update();
+        glBindFramebuffer(GL_FRAMEBUFFER, targetFramebuffer);
+        postProcessSystem->Apply();
     }
 
-
+    glDisable(GL_FRAMEBUFFER_SRGB);
 
     glfwSwapBuffers(GetWindow().handler);
 }
 
-//Close all content 
-void Engine::Close()
-{
-    GetWindow().Close();
-}
-
 Engine::~Engine()
 {
-
+    Coordinator::GetInstance().ClearInstance();
 }
 
-void Engine::RenderScene()
-{
-    scene.renderSystem->UpdateShadow();
-
-    GLint targetFramebuffer;
-    glGetIntegerv(GL_DRAW_FRAMEBUFFER_BINDING, &targetFramebuffer);
-
-    //bool isPostProcess = false;
-
-    if (scene.postProcessSystem->isPostProcess)
-        scene.postProcessSystem->Begin();
-
-    scene.renderSystem->Update(GetWindow().GetWidth(), GetWindow().GetHeight());
-
-    if (scene.postProcessSystem->isPostProcess)
-    {
-        glBindFramebuffer(GL_FRAMEBUFFER, targetFramebuffer);
-        scene.postProcessSystem->Apply();
-    }
-
-    glDisable(GL_FRAMEBUFFER_SRGB);
-}

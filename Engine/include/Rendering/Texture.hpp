@@ -26,7 +26,7 @@ namespace Rendering
         Texture() = delete;
         Texture(const Texture&) = delete;
 
-        Texture(const std::string& path, Type type);
+        Texture(const std::string& path, Type type = Type::E_DIFFUSE);
         ~Texture();
 
         Texture(int width, int height);

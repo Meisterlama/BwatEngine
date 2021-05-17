@@ -26,7 +26,6 @@
 using namespace BwatEngine;
 
 Scene::Scene(Window& window)
-    : texture(BwatEngine::ResourceManager::Instance()->GetOrLoadTexture("Assets/image/brickwall.jpg",Rendering::Texture::Type::E_DIFFUSE)), texture1(BwatEngine::ResourceManager::Instance()->GetOrLoadTexture("Assets/image/green.png", Rendering::Texture::Type::E_DIFFUSE))
 {
     scenePhysic.Init(physic);
 
@@ -45,62 +44,41 @@ Scene::Scene(Window& window)
     coordinator.RegisterComponent<LightComponent>();
     coordinator.RegisterComponent<DataComponent>();
 
-    physicsSystem = coordinator.RegisterSystem<PhysicsSystem>();
-    {
-        Signature signature;
-        signature.set(coordinator.GetComponentType<RigidBodyComponent>());
-        signature.set(coordinator.GetComponentType<TransformComponent>());
-        signature.set(coordinator.GetComponentType<ColliderComponent>());
-        coordinator.SetSystemSignature<PhysicsSystem>(signature);
-    }
-    physicsSystem->Init(&scenePhysic);
+    coordinator.RegisterSystem<PhysicsSystem>(&scenePhysic);
+    coordinator.SetSystemSignature<PhysicsSystem, RigidBodyComponent, TransformComponent, ColliderComponent>();
+    coordinator.SetSystemConfig<PhysicsSystem>(SystemConfig{SystemConfig::GameUpdate, 2});
 
-    playerControlSystem = coordinator.RegisterSystem<PlayerControlSystem>();
-    {
-        Signature signature;
-        signature.set(coordinator.GetComponentType<PlayerComponent>());
-        signature.set(coordinator.GetComponentType<TransformComponent>());
-        coordinator.SetSystemSignature<PlayerControlSystem>(signature);
+    coordinator.RegisterSystem<PlayerControlSystem>();
+    coordinator.SetSystemSignature<PlayerControlSystem, PlayerComponent, TransformComponent>();
 
-    }
-    playerControlSystem->Init();
+    coordinator.RegisterSystem<RenderSystem>(window.GetWidth(), window.GetHeight());
+    coordinator.SetSystemSignature<RenderSystem, RenderableComponent, TransformComponent>();
+    coordinator.SetSystemConfig<RenderSystem>(SystemConfig{SystemConfig::ManualUpdate});
 
-    renderSystem = coordinator.RegisterSystem<RenderSystem>();
-    {
-        Signature signature;
-        signature.set(coordinator.GetComponentType<RenderableComponent>());
-        signature.set(coordinator.GetComponentType<TransformComponent>());
-        coordinator.SetSystemSignature<RenderSystem>(signature);
-    }
 
     // =================================== SCRIPT =================================== //
 
-    scriptSystem = coordinator.RegisterSystem<ScriptSystem>();
-    {
-        Signature signature;
-        signature.set(coordinator.GetComponentType<ScriptComponent>());
-        coordinator.SetSystemSignature<ScriptSystem>(signature);
-    }
-    scriptSystem->Init();
+    coordinator.RegisterSystem<ScriptSystem>();
+    coordinator.SetSystemSignature<ScriptSystem, ScriptComponent>();
+    coordinator.SetSystemConfig<ScriptSystem>(SystemConfig{SystemConfig::GameUpdate, 1});
 
     // =================================== SOUND =================================== //
-    soundSystem = coordinator.RegisterSystem<SoundSystem>();
-    {
-        Signature signature;
-        signature.set(coordinator.GetComponentType<AudioSourceComponent>());
-        coordinator.SetSystemSignature<SoundSystem>(signature);
-    }
-    soundSystem->Init();
+    coordinator.RegisterSystem<SoundSystem>();
+    coordinator.SetSystemSignature<SoundSystem, AudioSourceComponent>();
+    coordinator.SetSystemConfig<SoundSystem>(SystemConfig{SystemConfig::GameUpdate});
 
     // =================================== POST PROCESS =================================== //
-    postProcessSystem = coordinator.RegisterSystem<PostProcessSystem>(window.GetWidth(), window.GetHeight());
+    coordinator.RegisterSystem<PostProcessSystem>(window.GetWidth(), window.GetHeight());
+    coordinator.SetSystemConfig<PostProcessSystem>(SystemConfig{SystemConfig::ManualUpdate});
 
 
 
 
     //Rendering::Model mymodel = Rendering::Model{ (std::string) "Assets/bag/backpack.obj" };
-    model = BwatEngine::ResourceManager::Instance()->GetOrLoadModel("Assets/cube.obj");;
-    
+    Rendering::Model* model = ResourceManager::Instance()->GetOrLoadModel("Assets/cube.obj");;
+
+    Rendering::Texture* texture(ResourceManager::Instance()->GetOrLoadTexture("Assets/image/brickwall.jpg"));
+    Rendering::Texture* texture1(ResourceManager::Instance()->GetOrLoadTexture("Assets/image/green.png"));
 
     //BwatEngine::ResourceManager::Instance()->GetOrLoadModel("Assets/sphere.obj");
     BwatEngine::ResourceManager::Instance()->GetOrLoadTexture("Assets/image/green.png", Rendering::Texture::Type::E_DIFFUSE);
@@ -115,7 +93,7 @@ Scene::Scene(Window& window)
     myMat.SetDiffuse(*texture);
     myMat1.SetDiffuse(*texture1);
     
-        for (int i = 0; i < 10 ; i++)
+        for (int i = 0; i < 4 ; i++)
         {
             auto entity = coordinator.CreateEntity();
             if (i == 0)
