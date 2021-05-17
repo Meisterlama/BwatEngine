@@ -200,11 +200,11 @@ namespace BwatEngine
          * @tparam S System's type
          * @return A pointer to the registered system
          */
-        template<class S>
-        std::shared_ptr<S> RegisterSystem()
+        template<class S, class... Args>
+        std::shared_ptr<S> RegisterSystem(Args&&... args)
         {
             LogInfo("Registered system %s", typeid(S).name());
-            return systemManager.RegisterSystem<S>();
+            return systemManager.RegisterSystem<S>(args...);
         }
 
         /**

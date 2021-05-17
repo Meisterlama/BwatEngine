@@ -30,6 +30,7 @@ lua.require(module,sol::c_call<decltype(&(open_module)), &(open_module)>,false);
     REQUIRE_MODULE("input", open_input);
     REQUIRE_MODULE("common", open_common);
     REQUIRE_MODULE("math", open_math);
+    REQUIRE_MODULE("components", open_components);
     setLuaPath(lua, "./Assets/script/?.lua");
 }
 
@@ -39,10 +40,18 @@ void ScriptSystem::Update()
     {
         auto &scriptComponent = Coordinator::GetInstance().GetComponent<ScriptComponent>(entity);
 
+        lua["Start"] = sol::nil;
+        lua["Update"] = sol::nil;
         auto loaded_script = lua.script_file(scriptComponent.scriptPath, sol::script_pass_on_error);
 
         if (scriptComponent.waitingForChanges && scriptComponent.oldPath == scriptComponent.scriptPath)
             continue;
+
+        if (scriptComponent.oldPath != scriptComponent.scriptPath)
+        {
+            scriptComponent.oldPath = scriptComponent.scriptPath;
+            scriptComponent.isStarted = false;
+        }
 
         if (!loaded_script.valid())
         {

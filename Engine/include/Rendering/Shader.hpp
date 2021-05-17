@@ -10,7 +10,7 @@ namespace Rendering
     {
     private:
 
-        void checkCompileErrors(unsigned int shader);
+        void CheckCompileErrors(unsigned int shader);
 
     public:
 
@@ -23,18 +23,22 @@ namespace Rendering
         Shader(const char* vertexPath, const char* fragmentPath);
 
         //create Shader
-        GLuint createShader(GLenum type, int sourceCount, const char** sources);
+        GLuint CreateShader(GLenum type, int sourceCount, const char** sources);
 
         // use/activate the shader
-        void use();
+        void Use();
 
         // utility uniform functions
-        void setBool(const std::string& name, bool value) const;
-        void setInt(const std::string& name, int value) const;
-        void setFloat(const std::string& name, float value) const;
-        void setVec2(const std::string& name, float x, float y) const;
-        void setVec3(const std::string& name, float x, float y, float z) const;
-        void setMat4(const std::string &name, const BwatEngine::Math::Mat4f &mat) const;
+        void SetBool(const std::string& name, bool value) const;
+        void SetInt(const std::string& name, int value) const;
+        void SetFloat(const std::string& name, float value) const;
+        void SetVec2(const std::string& name, float x, float y) const;
+        void SetVec3(const std::string& name, float x, float y, float z) const;
+        void SetVec4(const std::string& name, float x, float y, float z,float w) const;
+        void SetMat4(const std::string &name, const BwatEngine::Math::Mat4f &mat) const;
+        void SetTexture(const std::string& name, int value, int idTexture);
+        void SetTextureCubemap(const std::string& name, GLuint value, GLuint idTexture);
+
         
 
     };

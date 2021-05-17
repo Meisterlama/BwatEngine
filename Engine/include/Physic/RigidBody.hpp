@@ -50,14 +50,14 @@ namespace BwatEngine
 		void AddActor(physx::PxScene* scene);
 
 		bool CompareOldTransform(const Math::Transform& trans);
-		bool GetIsStatic() { return isStatic; }
+		bool GetIsStatic() const { return isStatic; }
 		bool ShouldRegister() { return shouldRegister; }
 
-		Math::Vec3f GetPosition();
-		Math::Quatf GetRotation();
+		Math::Vec3f GetPosition()const;
+		Math::Quatf GetRotation() const;
 
-		float GetMass();
-		Math::Vec3f GetVelocity();
+		float GetMass() const;
+		Math::Vec3f GetVelocity() const;
 
 		void OnContact(RigidBody& actor2, COLLISION_TYPE colType);
 		void setContactFunc(COLLISION_TYPE colType, OnCollisionFunction&& func);

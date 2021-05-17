@@ -21,11 +21,11 @@ Engine::Engine() : scene(window)
 //Main Funtion of engine 
 void Engine::Update()
 {
-    InputHandler::Update();
-
     float currentFrame = glfwGetTime();
     Time::deltaTime = currentFrame - lastFrame;
     lastFrame = currentFrame;
+
+    InputHandler::Update();
 
     if (InputHandler::GetKeyboardDown(KEY_ESCAPE))
     {
@@ -34,7 +34,7 @@ void Engine::Update()
 
     scene.playerControlSystem->Update();
 
-    ManageRenderAndPostProcess();
+    RenderScene();
 
     if (isPlaying)
     {
@@ -45,9 +45,7 @@ void Engine::Update()
 
 
 
-
-    glfwSwapBuffers(GetGLFWwindow());
-
+    glfwSwapBuffers(GetWindow().handler);
 }
 
 //Close all content 
@@ -61,26 +59,25 @@ Engine::~Engine()
 
 }
 
-
-void Engine::ManageRenderAndPostProcess()
+void Engine::RenderScene()
 {
-    bool isPostProcess = false;
+    scene.renderSystem->UpdateShadow();
 
-    if (isPostProcess)
-        scene.renderSystem->BindMainRenderFBO();
-    else if (MainFBO)
-        MainFBO->UseAndBind();
-    else
-        glBindFramebuffer(GL_FRAMEBUFFER, 0); //TODO: Proper handling of default framebuffer
+    GLint targetFramebuffer;
+    glGetIntegerv(GL_DRAW_FRAMEBUFFER_BINDING, &targetFramebuffer);
 
-    scene.renderSystem->Update(GetWindow());
+    //bool isPostProcess = false;
 
-    if (isPostProcess)
+    if (scene.postProcessSystem->isPostProcess)
+        scene.postProcessSystem->Begin();
+
+    scene.renderSystem->Update(GetWindow().GetWidth(), GetWindow().GetHeight());
+
+    if (scene.postProcessSystem->isPostProcess)
     {
-        // Post Process ... 
-        MainFBO->UseAndBind();
-        scene.postProcessSystem->Update(scene.renderSystem->GetRenderTextureID(), POSTPROCESS_SHADER::INVERSION);
+        glBindFramebuffer(GL_FRAMEBUFFER, targetFramebuffer);
+        scene.postProcessSystem->Apply();
     }
 
-    MainFBO->Unbind();
+    glDisable(GL_FRAMEBUFFER_SRGB);
 }

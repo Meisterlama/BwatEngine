@@ -17,6 +17,7 @@ namespace BwatEngine
         float aspect = 16.0f / 9.0f;
         float fov = 80.0f;
 
+
         Math::Mat4f GetProjectionMatrix()
         {
             return (isOrtho) ? Math::Mat4f::CreateOrtho(left, right, bottom, top, near, far)

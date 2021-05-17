@@ -194,24 +194,24 @@ bool function(std::string key)                              \
         INIT_KEYMAP();
         INIT_MOUSEMAP();
 
-#define REGISTER(function) module.set_function(#function, function)
+#define REGISTER_FUNC(function) module.set_function(#function, function)
 
-        REGISTER(GetKeyboardDown);
-        REGISTER(GetKeyboardUp);
-        REGISTER(GetKeyboard);
+        REGISTER_FUNC(GetKeyboardDown);
+        REGISTER_FUNC(GetKeyboardUp);
+        REGISTER_FUNC(GetKeyboard);
 
-        REGISTER(GetAnyKeyDown);
+        REGISTER_FUNC(GetAnyKeyDown);
 
-        REGISTER(GetMouseButtonDown);
-        REGISTER(GetMouseButtonUp);
-        REGISTER(GetMouseButton);
+        REGISTER_FUNC(GetMouseButtonDown);
+        REGISTER_FUNC(GetMouseButtonUp);
+        REGISTER_FUNC(GetMouseButton);
 
-        REGISTER(GetMousePos);
-        REGISTER(GetMouseDelta);
-        REGISTER(GetScrollDelta);
+        REGISTER_FUNC(GetMousePos);
+        REGISTER_FUNC(GetMouseDelta);
+        REGISTER_FUNC(GetScrollDelta);
 
 
-#undef REGISTER
+#undef REGISTER_FUNC
 
         return module;
     }

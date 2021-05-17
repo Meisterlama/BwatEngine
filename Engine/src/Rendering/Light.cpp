@@ -2,73 +2,35 @@
 
 using namespace Rendering;
 
-Light::Light() : 
-ambient(0),diffuse(0),specular(0)
+Light::Light() 
 {
-}
-
-
-Light::Light(TYPE_LIGHT myType, BwatEngine::Math::Vec3f tmpAmbient, BwatEngine::Math::Vec3f tmpDiffuse, BwatEngine::Math::Vec3f tmpSpecular)
-{
-    typeoflight = myType;
-    ambient = tmpAmbient;
-    diffuse = tmpDiffuse;
-    specular = tmpSpecular;
-}
-
-void Light::SetAmbient(BwatEngine::Math::Vec3f tmpAmbient)
-{
-    ambient = tmpAmbient;
-}
-
-void Light::SetDiffuse(BwatEngine::Math::Vec3f tmpDiffuse)
-{
-    diffuse = tmpDiffuse;
-}
-
-void Light::SetSpecular(BwatEngine::Math::Vec3f tmpSpecular)
-{
-    specular = tmpSpecular;
-}
-
-void Light::SetAttenuation(float tmpConstant, float tmpLinear, float tmpQuadratic)
-{
-    constant = tmpConstant;
-    linear = tmpLinear;
-    quadratic = tmpQuadratic;
-}
-
-void Light::SetMaterialLight(int tmpMatDiffuse, int tmpMatSpecular, float tmpMatShininess)
-{
-    matDiffuse = tmpMatDiffuse;
-    matSpecular = tmpMatSpecular;
-    matShininess = tmpMatShininess;
-}
-
-void Light::SetSpotLightValues(float tmpCutOff, float tmpOuterCutOff)
-{
-    cutoff = tmpCutOff;
-    outerCutoff = tmpOuterCutOff;
 }
 
 
 void Light::ApplyOnShader(Shader* shader , const std::string& i) const
 {
-    shader->use();
+    shader->Use();
 
-    shader->setVec3("light.ambient", ambient.X, ambient.Y, ambient.Z);
-    shader->setVec3("light.diffuse", diffuse.X, diffuse.Y, diffuse.Z);
-    shader->setVec3("light.specular", specular.X, specular.Y, specular.Z);
+    shader->SetVec3("light["+ i +"].position", position.X, position.Y, position.Z);
+    shader->SetVec3("light[" + i + "].direction", direction.X, direction.Y, direction.Z);
+    shader->SetInt("light[" + i + "].typeoflight", typeoflight);
 
-    //shader->setFloat("light.constant",  constant);
-    //shader->setFloat("light.linear",    linear);
-    //shader->setFloat("light.quadratic", quadratic);
+    shader->SetVec3("light[" + i + "].ambient", ambient.X, ambient.Y, ambient.Z);
+    shader->SetVec3("light[" + i + "].diffuse", diffuse.X, diffuse.Y, diffuse.Z);
+    shader->SetVec3("light[" + i + "].specular", specular.X, specular.Y, specular.Z);
 
-    //shader->setFloat("light.cutOff", cutoff);
-    //shader->setFloat("light.outerCutOff", outerCutoff);
+    if (typeoflight == TYPE_LIGHT::Point || typeoflight == TYPE_LIGHT::Spot)
+    {
+        shader->SetFloat("light[" + i + "].constant", constant);
+        shader->SetFloat("light[" + i + "].linear", linear);
+        shader->SetFloat("light[" + i + "].quadratic", quadratic);
 
-    shader->setVec3("light.position", position.X, position.Y, position.Z);/*
-    shader->setVec3("light.direction", direction.X, direction.Y, direction.Z);*//*
-    shader->setInt("light.typeoflight", typeoflight);*/
+        if (typeoflight == TYPE_LIGHT::Spot)
+        {
+            shader->SetFloat("light[" + i + "].cutOff", BwatEngine::Math::Cos(cutoff));
+            shader->SetFloat("light[" + i + "].outerCutOff", BwatEngine::Math::Cos(outerCutoff));
+        }
+    }
+
 }
 

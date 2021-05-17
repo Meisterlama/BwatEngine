@@ -6,6 +6,9 @@
 #include "ECS/Components/CameraComponent.hpp"
 #include "ECS/Components/PlayerComponent.hpp"
 #include "ECS/Components/ColliderComponent.hpp"
+#include "ECS/Components/ScriptComponent.hpp"
+#include "ECS/Components/LightComponent.hpp"
+#include "ECS/Components/DataComponent.hpp"
 #include "ResourceManager/ResourceManager.hpp"
 
 using json = nlohmann::json;
@@ -118,7 +121,15 @@ namespace BwatEngine {
 
         template<>
         void SerializeComponent<BwatEngine::RigidBodyComponent>(const RigidBodyComponent &rigidBody, json &js) {
-            js += json{"rigidBody"};
+            js +=
+                    json{
+                            "rigidBody",
+                            {
+                                 {"static", rigidBody.GetIsStatic()},
+                                 {"mass", rigidBody.GetMass()},
+                                 SerializeVector3f("velocity", rigidBody.GetVelocity())
+                            }
+            };
         }
 
         template<>
@@ -175,6 +186,71 @@ namespace BwatEngine {
                     };
         }
 
+        template<>
+        void SerializeComponent<ScriptComponent>(const ScriptComponent &script, json &js)
+        {
+            js +=
+                json{
+                    "script",
+                    {
+                        {"path", script.scriptPath}
+                    }
+                };
+        }
+
+        template<>
+        void SerializeComponent<LightComponent>(const LightComponent &light, json &js)
+        {
+            if (light.typeoflight == Rendering::Spot)
+            {
+                js +=
+                    json{
+                        "light",
+                        {
+                                SerializeVector3f("position", light.position),
+                                SerializeVector3f("direction", light.direction),
+                                SerializeVector3f("ambient", light.ambient),
+                                SerializeVector3f("diffuse", light.diffuse),
+                                SerializeVector3f("specular", light.specular),
+                                {"constant", light.constant},
+                                {"linear", light.linear},
+                                {"quadratic", light.quadratic},
+                                {"cutoff", light.cutoff},
+                                {"outerCutoff", light.outerCutoff},
+                                {"typeOfLight", light.typeoflight}
+                        }
+                    };
+            }
+            else
+            {
+                js +=
+                        json{
+                                "light",
+                                {
+                                        SerializeVector3f("position", light.position),
+                                        SerializeVector3f("direction", light.direction),
+                                        SerializeVector3f("ambient", light.ambient),
+                                        SerializeVector3f("diffuse", light.diffuse),
+                                        SerializeVector3f("specular", light.specular),
+                                        {"constant", light.constant},
+                                        {"linear", light.linear},
+                                        {"quadratic", light.quadratic},
+                                        {"typeOfLight", light.typeoflight}
+                                }
+                        };
+            }
+        }
+
+        template<>
+        void SerializeComponent<DataComponent>(const DataComponent &data, json &js)
+        {
+            js += json{
+                        "data",
+                        {
+                            {"name", data.name}
+                        }
+                    };
+        }
 
         //*********************** LOAD FUNCTIONS ***********************//
         template<typename T>
@@ -245,8 +321,19 @@ namespace BwatEngine {
         template<>
         void Load<RigidBodyComponent>(EntityID entityId, const json &componentData) {
             auto &coordinator = Coordinator::GetInstance();
-            auto eTransform = coordinator.GetComponent<TransformComponent>(entityId);
+            auto& eTransform = coordinator.GetComponent<TransformComponent>(entityId);
             coordinator.AddComponent<RigidBodyComponent>(entityId, eTransform, true);
+            auto& rigidBody = coordinator.GetComponent<RigidBodyComponent>(entityId);
+
+            auto velocity = componentData.at("velocity");
+
+            rigidBody.SetStatic(componentData.at("static").get<bool>());
+            rigidBody.SetMass(componentData.at("mass").get<float>());
+            rigidBody.SetVelocity(Math::Vec3f{
+                velocity.at("X").get<float>(),
+                velocity.at("Y").get<float>(),
+                velocity.at("Z").get<float>(),
+            });
         }
 
         template<>
@@ -279,13 +366,55 @@ namespace BwatEngine {
             auto &coordinator = Coordinator::GetInstance();
             json mats = componentData.at("materials");
             auto eTransform = coordinator.GetComponent<TransformComponent>(entityId);
-            coordinator.AddComponent<ColliderComponent>(entityId, {new BoxCollider{eTransform.scale}});
-            auto collider = coordinator.GetComponent<ColliderComponent>(entityId);
+            coordinator.AddComponent<ColliderComponent>(entityId, eTransform.scale);
+            auto& collider = coordinator.GetComponent<ColliderComponent>(entityId);
             collider.collider->SetFriction(mats.at("static").get<float>());
 
         }
 
+        template<>
+        void Load<ScriptComponent>(EntityID entityId, const json &componentData)
+        {
+            auto &coordinator = Coordinator::GetInstance();
+            coordinator.AddComponent<ScriptComponent>(entityId, {componentData.at("path").get<std::string>()});
+        }
 
+        template<>
+        void Load<LightComponent>(EntityID entityId, const json &componentData)
+        {
+            auto &coordinator = Coordinator::GetInstance();
+            json position = componentData.at("position");
+            json direction = componentData.at("direction");
+            json ambient = componentData.at("ambient");
+            json diffuse = componentData.at("diffuse");
+            json specular = componentData.at("specular");
+            Rendering::Light myLight;
+            myLight.position = {position.at("X").get<float>(), position.at("Y").get<float>(), position.at("Z").get<float>()};
+            myLight.direction = {direction.at("X").get<float>(), direction.at("Y").get<float>(), direction.at("Z").get<float>()};
+            myLight.ambient = {ambient.at("X").get<float>(), ambient.at("Y").get<float>(), ambient.at("Z").get<float>()};
+            myLight.diffuse = {diffuse.at("X").get<float>(), diffuse.at("Y").get<float>(), diffuse.at("Z").get<float>()};
+            myLight.specular = {specular.at("X").get<float>(), specular.at("Y").get<float>(), specular.at("Z").get<float>()};
+            myLight.typeoflight = componentData.at("typeOfLight").get<Rendering::TYPE_LIGHT>();
+            myLight.constant = componentData.at("constant").get<float>();
+            myLight.linear = componentData.at("linear").get<float>();
+            myLight.quadratic = componentData.at("quadratic").get<float>();
+            if (myLight.typeoflight == Rendering::Spot)
+            {
+                myLight.cutoff = componentData.at("cutoff").get<float>();
+                myLight.outerCutoff = componentData.at("outerCutoff").get<float>();
+            }
+
+            coordinator.AddComponent<LightComponent>(entityId, myLight);
+
+        }
+
+        template<>
+        void Load<DataComponent>(EntityID entityId, const json &componentData)
+        {
+            auto &coordinator = Coordinator::GetInstance();
+            auto& entityName = coordinator.GetComponent<DataComponent>(entityId);
+            entityName.name = componentData.at("name").get<std::string>();
+        }
 
 
     }; // namespace Serializable

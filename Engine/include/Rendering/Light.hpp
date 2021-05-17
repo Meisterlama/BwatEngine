@@ -9,57 +9,37 @@ namespace Rendering
     {
         Directional,
         Point,
-        Spot
+        Spot,
+        Size
     };
 
-    class Light
+    struct Light
     {
-    private:
-
-    public:
-        BwatEngine::Math::Vec3f position{ 0,0,0 };
-        BwatEngine::Math::Vec3f direction{ 0,0,0 };
+        BwatEngine::Math::Vec3f position{ 0,50,0 };
+        BwatEngine::Math::Vec3f direction{ 0,-1,0 };
 
         // classic
         BwatEngine::Math::Vec3f ambient{ 0,0,0 };
-        BwatEngine::Math::Vec3f diffuse{ 0,0,0 };
+        BwatEngine::Math::Vec3f diffuse{ 1,1,1 };
         BwatEngine::Math::Vec3f specular{ 0,0,0 };
 
         // attenuation
         float constant = 1.f;
-        float linear = 1.f;
-        float quadratic = 1.f;
-
-        //material
-        int matDiffuse = 0;
-        int matSpecular = 1;
-        float matShininess = 32.0f;
+        float linear = 0.09f;
+        float quadratic = 0.032f;
 
         //spotlight 
-        float cutoff = 0.f;
-        float outerCutoff = 0.f;
+        float cutoff = 12.5f;
+        float outerCutoff = 15.f;
 
         //nbr light and type ;
         TYPE_LIGHT typeoflight = Directional;
         int nbrlights = 1;
 
-
         Light();
         ~Light() {};
-
-        Light(TYPE_LIGHT myType, BwatEngine::Math::Vec3f tmpAmbient, BwatEngine::Math::Vec3f tmpDiffuse, BwatEngine::Math::Vec3f tmpSpecular);
-
-        //Methods
-        void SetAmbient(BwatEngine::Math::Vec3f tmpAmbient);
-        void SetDiffuse(BwatEngine::Math::Vec3f tmpDiffuse);
-        void SetSpecular(BwatEngine::Math::Vec3f tmpSpecular);
-
-        void SetAttenuation(float tmpConstant, float tmpLinear, float tmpQuadratic);
-        void SetMaterialLight(int tmpMatDiffuse, int tmpMatSpecular, float tmpMatShininess);
-        void SetSpotLightValues(float tmpCutOff, float tmpOuterCutOff);
 
         void ApplyOnShader(Shader* shader, const std::string& i) const;
 
     };
-
 }

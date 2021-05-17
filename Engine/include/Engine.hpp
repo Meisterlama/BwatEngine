@@ -28,9 +28,6 @@ namespace BwatEngine
 
 		GLFWwindow* GetGLFWwindow() { return window.handler; };
 
-		Rendering::FrameBufferObject* MainFBO = nullptr;
-
-		void ManageRenderAndPostProcess();
 
 		bool isPlaying = false;
 
@@ -39,6 +36,8 @@ namespace BwatEngine
 
 		Window window;
 		Scene scene;
+
+		void RenderScene();
 
 	};
 

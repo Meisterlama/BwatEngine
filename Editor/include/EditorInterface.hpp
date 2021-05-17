@@ -8,6 +8,8 @@
 #include "Widget.hpp"
 #include "Window.hpp"
 #include "ImGuizmo.h"
+#include "Rendering/FrameBuffer.hpp"
+
 
 namespace BwatEngine
 {
@@ -35,6 +37,7 @@ public:
     WidgetProperties* widgetProperties = nullptr;
     static ImGuizmo::MODE guizmoMode;
     static ImGuizmo::OPERATION guizmoOperation;
+    Rendering::FrameBufferObject gameViewFramebuffer;
 
 
 private:

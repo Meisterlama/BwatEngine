@@ -10,34 +10,35 @@
 #include "Window.hpp"
 #include "Rendering/CubeMap.hpp"
 #include "Rendering/PostProcess.hpp"
+#include "Rendering/ShadowMapping.hpp"
 
 namespace BwatEngine
 {
     class RenderSystem : public System
     {
-        Rendering::FrameBufferObject mainRenderFBO;
         Rendering::Shader shader;
 
         Rendering::CubeMap cubeMap;
+        Rendering::ShadowMapping shadowMap;
 
-        Window* window = nullptr;
         EntityID camera = 0;
         Signature signature;
 
     public:
 
         Math::Vec3f clearColor = { 0.5f, 0.5f, 0.5f };
+        Math::Mat4f  lightSpaceMatrix;
 
-        void Init(Window& win);
+        RenderSystem();
         void SetCamera(EntityID _camera);
-        void Update(Window& win);
-        void ManageCubeMap();
-        void ManageEntitiesAndLights();
+        void Update(int displayWidth, int displayHeight);
+        void UpdateShadow();
+        void RenderCubeMap();
+        void RenderEntitiesAndLights();
         void CheckCameraValid();
-        void OptionAndClear(Window& win);
+        void OptionAndClear(int displayWidth, int displayHeight);
 
-        GLuint GetRenderTextureID() { return mainRenderFBO.textureColor.id; }
-        void BindMainRenderFBO() { mainRenderFBO.UseAndBind(); }
+        GLuint GetMainShader() const { return shader.ID; }
 
       
     };

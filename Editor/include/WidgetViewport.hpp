@@ -12,8 +12,8 @@ public:
 
     void TickVisible() override;
 
-private:
 
+private:
     Rendering::FrameBufferObject fbo;
 };
 

@@ -496,10 +496,11 @@ namespace BwatEngine::Math
     template<typename T>
     ML_FUNC_DECL Internal::Matrix4<T> Internal::Matrix4<T>::CreateOrtho(T left, T right, T bottom, T top, T near, T far)
     {
-        return Internal::Matrix4<T>{2/(right-left), 0             , 0             , -(right+left)/(right-left),
-                          0             , 2/(top-bottom), 0             , -(top+bottom)/(top-bottom),
-                          0             , 0             ,-2/(far-near)  , -(far+near)/(far-near),
-                          0             , 0             , 0             , 1}.Transpose();
+        return Internal::Matrix4<T>{
+                          2/(right-left), 0             , 0                 , -(right+left)/(right-left),
+                          0             , 2/(top-bottom), 0                 , -(top+bottom)/(top-bottom),
+                          0             , 0             ,-2/(far-near)      , -(far+near)/(far-near),
+                          0             , 0             , 0                 , 1}.Transpose();
     }
 
     template<typename T>
@@ -631,15 +632,15 @@ namespace BwatEngine::Math
     template<typename T>
     ML_FUNC_DECL Internal::Matrix4<T> Internal::Matrix4<T>::LookAt(Internal::Vector3<T> origin, Internal::Vector3<T> target, Internal::Vector3<T> upDir)
     {
-        Internal::Vector3<T> forward{origin - target};
+        Internal::Vector3<T> forward{target - origin};
         forward.SafeNormalize();
 
         Internal::Vector3<T> left{upDir.CrossProduct(forward)};
-        left.Normalize();
+        left.SafeNormalize();
 
         Internal::Vector3<T> up = forward.CrossProduct(left);
 
-        T m12 = -left.x * origin.X - left.Y * origin.Y - left.Z * origin.Z;
+        T m12 = -left.X * origin.X - left.Y * origin.Y - left.Z * origin.Z;
         T m13 = -up.X * origin.X - up.Y * origin.Y - up.Z * origin.Z;
         T m14 = -forward.X * origin.X - forward.Y * origin.Y - forward.Z * origin.Z;
 
