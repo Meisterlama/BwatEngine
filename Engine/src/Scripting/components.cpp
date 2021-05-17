@@ -114,9 +114,7 @@ namespace BwatEngine
                                              CAMERA_MEMBER(top),
                                              CAMERA_MEMBER(bottom),
                                              CAMERA_MEMBER(aspect),
-                                             CAMERA_MEMBER(fov),
-                                             CAMERA_MEMBER(isGamma),
-                                             CAMERA_MEMBER(gamma)
+                                             CAMERA_MEMBER(fov)
                                              );
         #undef CAMERA_MEMBER
 
