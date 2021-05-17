@@ -34,8 +34,13 @@ namespace BwatEngine {
         json SerializeVector4f(const char* vectorName, const Math::Vec4f& vector)
         {
             return json{
-                    SerializeVector3f(vectorName, {vector.X, vector.Y, vector.Z}),
-                    "W", vector.W
+                    vectorName,
+                    {
+                        {"X", vector.X},
+                        {"Y", vector.Y},
+                        {"Z", vector.Z},
+                        {"W", vector.W}
+                    }
             };
         }
 
@@ -128,20 +133,36 @@ namespace BwatEngine {
         void SerializeComponent<RenderableComponent>(const RenderableComponent &renderable, json &js) {
 
             json temp;
-            for (int i = 0; i < renderable.materials.size(); i++) {
+            for (int i = 0; i < renderable.materials.size(); i++)
+            {
                 Rendering::Material *material = renderable.materials[i];
                 if (material->diffuse != nullptr) {
-                    temp["materials"] +=
+                    temp["materials"][i]["material"] +=
                             json{
                                     {"diffuse", material->diffuse->path}
                             };
                 }
+
                 if (material->specular != nullptr) {
-                    temp["materials"] +=
+                    temp["materials"][i]["material"] +=
                             json{
                                     {"specular", material->specular->path}
                             };
                 }
+
+                if (material->normal != nullptr){
+                    temp["materials"][i]["material"] +=
+                            json{
+                                    {"normal", material->normal->path}
+                            };
+                }
+
+                temp["materials"][i]["material"] +=
+                        json {
+                            {"isColor", material->isColor},
+                            SerializeVector4f("color", material->color)
+                        };
+
 
             }
 
@@ -328,6 +349,7 @@ namespace BwatEngine {
 
             if (componentData.contains("materials")) {
                 json materials = componentData.at("materials");
+                renderable.materials[0] = new Rendering::Material;
                 for (int i = 0; i < materials.size(); i++) {
                     if (materials.contains("diffuse")) {
                         renderable.materials[i]->SetDiffuse(
