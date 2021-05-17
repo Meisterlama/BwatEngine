@@ -365,8 +365,7 @@ namespace BwatEngine::Math
     template<typename T>
     ML_FUNC_DECL Internal::Quaternion<T> Internal::Quaternion<T>::GetInverted() const
     {
-        *this = Conjugate() / Amplitude();
-        return *this;
+        return Internal::Quaternion{*this}.Conjugate() / Norm();
     }
 
     template <typename T>
