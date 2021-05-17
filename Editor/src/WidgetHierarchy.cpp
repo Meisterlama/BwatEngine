@@ -4,6 +4,8 @@
 #include "EditorInterface.hpp"
 #include "ECS/Coordinator.hpp"
 #include "ECS/Components/DataComponent.hpp"
+#include "imgui_internal.h"
+#include "ECS/Coordinator.hpp"
 
 WidgetHierarchy::WidgetHierarchy(EditorInterface *editor) : Widget(editor)
 {
@@ -23,6 +25,12 @@ void WidgetHierarchy::ShowEntity(BwatEngine::EntityID entity)
     {
         flags |= ImGuiTreeNodeFlags_Leaf;
     }
+
+    if (entity == editor->GetEditedEntity())
+    {
+        flags |= ImGuiTreeNodeFlags_Selected;
+    }
+
     bool isOpen = ImGui::TreeNodeEx(entityName.c_str(), flags);
 
     if (ImGui::IsItemClicked())
@@ -47,4 +55,14 @@ void WidgetHierarchy::TickVisible()
     {
         ShowEntity(entity);
     }
+
+   if (ImGui::BeginPopupContextWindow("entity menu", ImGuiMouseButton_Right))
+   {
+       if (ImGui::MenuItem("Create new entity"))
+       {
+           BwatEngine::Coordinator::GetInstance().CreateEntity();
+       }
+       ImGui::EndPopup();
+   }
+
 }

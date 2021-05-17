@@ -29,6 +29,8 @@ namespace BwatEngine
 		GLFWwindow* GetGLFWwindow() { return window.handler; };
 
 
+		bool isPlaying = false;
+
 	private:
 		float lastFrame = 0.0f;
 

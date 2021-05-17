@@ -206,9 +206,28 @@ void FileDialog::ShowList()
         OpenDialog("", dir.parent_path());
     }
 
+    bool selected = false;
+
     for (int i = 0; i < fileList.size(); i++)
     {
-        if(ImGui::Selectable(fileList[i].fileName.c_str()))
+
+        if (fileList[i].fileName == loadFile.fileName)
+        {
+            selected = true;
+        }
+        else
+            selected = false;
+
+        if (fileList[i].ext == "")
+            ImGui::Image(reinterpret_cast<ImTextureID>(BwatEngine::ResourceManager::Instance()->GetOrLoadTexture("Assets/image/folder.png",Rendering::Texture::Type::E_DIFFUSE)->id), ImVec2(20, 20));
+        else if (fileList[i].ext == ".jpg" || fileList[i].ext == ".png")
+            ImGui::Image(reinterpret_cast<ImTextureID>(BwatEngine::ResourceManager::Instance()->GetOrLoadTexture("Assets/image/imageFile.png",Rendering::Texture::Type::E_DIFFUSE)->id), ImVec2(20, 20));
+        else
+            ImGui::Image(reinterpret_cast<ImTextureID>(BwatEngine::ResourceManager::Instance()->GetOrLoadTexture("Assets/image/file.png",Rendering::Texture::Type::E_DIFFUSE)->id), ImVec2(20, 20));
+
+        ImGui::SameLine();
+
+        if(ImGui::Selectable(fileList[i].fileName.c_str(), selected))
         {
             if (fileList[i].ext == "")
             {
@@ -227,7 +246,6 @@ void FileDialog::LoadOnResources(FileInfoStruct file)
     if (file.ext == ".obj" || file.ext == ".fbx" || file.ext == ".png" || file.ext == ".jpg")
     {
         //if (BwatEngine::ResourceManager::Instance().
-        loadMe = true;
         loadFile = file;
     }
 }

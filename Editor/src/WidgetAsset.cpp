@@ -12,15 +12,14 @@ WidgetAsset::WidgetAsset(EditorInterface *editor) : Widget(editor)
 
 void WidgetAsset::TickVisible()
 {
-    if (assetDirectory.loadMe)
+    if (ImGui::BeginPopupContextWindow("entity menu", ImGuiMouseButton_Right))
     {
-        if (ImGui::Button("Load Resources"))
+        if (ImGui::MenuItem("Load Resources"))
         {
             LoadResources(assetDirectory.loadFile);
-            assetDirectory.loadMe = false;
         }
+        ImGui::EndPopup();
     }
-
     assetDirectory.ShowList();
 }
 

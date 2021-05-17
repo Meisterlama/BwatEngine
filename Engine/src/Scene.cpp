@@ -139,7 +139,7 @@ Scene::Scene(Window& window)
                 auto eTransform = coordinator.GetComponent<TransformComponent>(entity);
                 coordinator.AddComponent<RigidBodyComponent>(entity, eTransform , true);
 
-                coordinator.AddComponent<ColliderComponent>(entity, { new BoxCollider{eTransform.scale} });
+                coordinator.AddComponent<ColliderComponent>(entity, eTransform.scale);
                 coordinator.AddComponent<RenderableComponent>(entity,{ model });
 
                 auto& renderableComponent = coordinator.GetComponent<RenderableComponent>(entity);
@@ -169,7 +169,7 @@ Scene::Scene(Window& window)
                 auto eTransform = coordinator.GetComponent<TransformComponent>(entity);
                 coordinator.AddComponent<RigidBodyComponent>(entity, eTransform);
 
-                coordinator.AddComponent<ColliderComponent>(entity, { new SphereCollider{eTransform.scale.X} });
+                coordinator.AddComponent<ColliderComponent>(entity, eTransform.scale.X);
                 coordinator.AddComponent<RenderableComponent>(entity, { model });
 
                 auto& renderableComponent = coordinator.GetComponent<RenderableComponent>(entity);
