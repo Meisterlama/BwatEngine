@@ -20,6 +20,7 @@
 WidgetProperties::WidgetProperties(EditorInterface *editor) : Widget(editor)
 {
     title = "Properties";
+    flags |= ImGuiWindowFlags_MenuBar;
 }
 
 template<>
@@ -32,8 +33,6 @@ void WidgetProperties::ShowComponent<BwatEngine::DataComponent>(BwatEngine::Data
 template<>
 void WidgetProperties::ShowComponent<BwatEngine::TransformComponent>(BwatEngine::TransformComponent& component)
 {
-    if (ImGui::CollapsingHeader("Transform",ImGuiTreeNodeFlags_DefaultOpen))
-    {
         ImGui::DragFloat3("Position", component.position.values, 0.01);
 
         // Handle rotation
@@ -47,14 +46,11 @@ void WidgetProperties::ShowComponent<BwatEngine::TransformComponent>(BwatEngine:
         }
 
         ImGui::DragFloat3("Scale", component.scale.values, 0.01);
-    }
 }
 
 template<>
 void WidgetProperties::ShowComponent<BwatEngine::RenderableComponent>(BwatEngine::RenderableComponent& component)
 {
-    if (ImGui::CollapsingHeader("Renderable",ImGuiTreeNodeFlags_DefaultOpen))
-    {
         std::string modelName;
         if (component.model != nullptr)
             modelName = component.model->modelPath;
@@ -192,14 +188,11 @@ void WidgetProperties::ShowComponent<BwatEngine::RenderableComponent>(BwatEngine
             if (update)
                 component.materials[i]->isColor = isColored;
         }
-    }
 }
 
 template<>
 void WidgetProperties::ShowComponent<BwatEngine::RigidBodyComponent>(BwatEngine::RigidBodyComponent& component)
 {
-    if (ImGui::CollapsingHeader("RigidBody",ImGuiTreeNodeFlags_DefaultOpen))
-    {
         bool update = false;
         bool isStatic = component.GetIsStatic();
         update |= ImGui::Checkbox("isStatic", &isStatic);
@@ -222,15 +215,12 @@ void WidgetProperties::ShowComponent<BwatEngine::RigidBodyComponent>(BwatEngine:
 
         if (update)
             component.SetStatic(isStatic);
-        
-    }
+
 }
 
 template<>
 void WidgetProperties::ShowComponent<BwatEngine::AudioSourceComponent>(BwatEngine::AudioSourceComponent &component)
 {
-    if (ImGui::CollapsingHeader("Audio Source", ImGuiTreeNodeFlags_DefaultOpen))
-    {
         bool update = false;
         float gain = component.source.GetGain();
         float pitch = component.source.GetPitch();
@@ -249,14 +239,11 @@ void WidgetProperties::ShowComponent<BwatEngine::AudioSourceComponent>(BwatEngin
 
         if(ImGui::Button("Play"))
             component.source.Play();
-    }
 }
 
 template<>
 void WidgetProperties::ShowComponent<BwatEngine::CameraComponent>(BwatEngine::CameraComponent &component)
 {
-    if (ImGui::CollapsingHeader("Camera Component", ImGuiTreeNodeFlags_DefaultOpen))
-    {
         if (component.isOrtho)
         {
             ImGui::DragFloat("Left", &component.left);
@@ -272,7 +259,6 @@ void WidgetProperties::ShowComponent<BwatEngine::CameraComponent>(BwatEngine::Ca
         }
         ImGui::DragFloat("Near", &component.near);
         ImGui::DragFloat("Far", &component.far);
-    }
 }
 
 template<>
@@ -293,6 +279,11 @@ void WidgetProperties::ShowComponent<BwatEngine::ScriptComponent>(BwatEngine::Sc
     }
 }
 
+template<>
+void WidgetProperties::ShowComponent<BwatEngine::ColliderComponent>(BwatEngine::ColliderComponent &component) {}
+template<>
+void WidgetProperties::ShowComponent<BwatEngine::PlayerComponent>(BwatEngine::PlayerComponent &component) {}
+
 void WidgetProperties::TickVisible()
 {
     using namespace BwatEngine;
@@ -302,33 +293,37 @@ void WidgetProperties::TickVisible()
 
     if (currentEntity != 0)
     {
-        if (ImGui::BeginMenu("AddComponent"))
+        if (ImGui::BeginMenuBar())
         {
+
             bool hasComponentAvailable = false;
+            if (ImGui::BeginMenu("Add Component"))
+            {
+                hasComponentAvailable |= AddComponentMenuItem<TransformComponent>(currentEntity);
+                hasComponentAvailable |= AddComponentMenuItem<RigidBodyComponent>(currentEntity);
+                hasComponentAvailable |= AddComponentMenuItem<RenderableComponent>(currentEntity);
+                hasComponentAvailable |= AddComponentMenuItem<AudioSourceComponent>(currentEntity);
+                hasComponentAvailable |= AddComponentMenuItem<ColliderComponent>(currentEntity);
+                hasComponentAvailable |= AddComponentMenuItem<CameraComponent>(currentEntity);
+                hasComponentAvailable |= AddComponentMenuItem<PlayerComponent>(currentEntity);
+                hasComponentAvailable |= AddComponentMenuItem<LightComponent>(currentEntity);
+                hasComponentAvailable |= AddComponentMenuItem<DataComponent>(currentEntity);
+                hasComponentAvailable |= AddComponentMenuItem<ScriptComponent>(currentEntity);
+                ImGui::EndMenu();
+            }
 
-            hasComponentAvailable |= AddComponentMenuItem<TransformComponent>(currentEntity);
-            hasComponentAvailable |= AddComponentMenuItem<RigidBodyComponent>(currentEntity);
-            hasComponentAvailable |= AddComponentMenuItem<RenderableComponent>(currentEntity);
-            hasComponentAvailable |= AddComponentMenuItem<AudioSourceComponent>(currentEntity);
-            hasComponentAvailable |= AddComponentMenuItem<ColliderComponent>(currentEntity);
-            hasComponentAvailable |= AddComponentMenuItem<CameraComponent>(currentEntity);
-            hasComponentAvailable |= AddComponentMenuItem<PlayerComponent>(currentEntity);
-            hasComponentAvailable |= AddComponentMenuItem<LightComponent>(currentEntity);
-            hasComponentAvailable |= AddComponentMenuItem<DataComponent>(currentEntity);
-            hasComponentAvailable |= AddComponentMenuItem<ScriptComponent>(currentEntity);
-
-            ImGui::EndMenu();
+            ImGui::EndMenuBar();
         }
     }
     
     ShowComponentMenuItem<DataComponent>(currentEntity);
     ShowComponentMenuItem<TransformComponent>(currentEntity);
-    ShowComponentMenuItem<RenderableComponent>(currentEntity);
     ShowComponentMenuItem<RigidBodyComponent>(currentEntity);
+    ShowComponentMenuItem<RenderableComponent>(currentEntity);
     ShowComponentMenuItem<AudioSourceComponent>(currentEntity);
+    ShowComponentMenuItem<ColliderComponent>(currentEntity);
     ShowComponentMenuItem<CameraComponent>(currentEntity);
-    ShowComponentMenuItem<ScriptComponent>(currentEntity);
-    //ShowComponentMenuItem<ColliderComponent>(currentEntity);
+    ShowComponentMenuItem<PlayerComponent>(currentEntity);
     ShowComponentMenuItem<LightComponent>(currentEntity);
 }
 
@@ -373,7 +368,25 @@ bool WidgetProperties::ShowComponentMenuItem(BwatEngine::EntityID entity)
 
     if (entitySignature.test(coordinator.GetComponentType<T>()))
     {
-        ShowComponent(coordinator.GetComponent<T>(currentEntity));
+        ImGui::PushID(typeid(T).name());
+        if (ImGui::CollapsingHeader(typeid(T).name(), ImGuiTreeNodeFlags_DefaultOpen))
+        {
+            bool componentDeleted = false;
+            if (ImGui::BeginPopupContextItem("ComponentContextMenu"))
+            {
+                if (ImGui::MenuItem("Delete Component"))
+                {
+                    coordinator.RemoveComponent<T>(currentEntity);
+                    componentDeleted = true;
+                }
+                ImGui::EndPopup();
+            }
+            if (!componentDeleted)
+            {
+                ShowComponent(coordinator.GetComponent<T>(currentEntity));
+            }
+        }
+        ImGui::PopID();
         return true;
     }
     return false;
@@ -382,8 +395,6 @@ bool WidgetProperties::ShowComponentMenuItem(BwatEngine::EntityID entity)
 template<>
 void WidgetProperties::ShowComponent<BwatEngine::LightComponent>(BwatEngine::LightComponent& component)
 {
-    if (ImGui::CollapsingHeader("Light", ImGuiTreeNodeFlags_DefaultOpen))
-    {
         bool update = false;
         BwatEngine::Math::Vec3f position = component.position;
         BwatEngine::Math::Vec3f direction = component.direction;
@@ -456,6 +467,4 @@ void WidgetProperties::ShowComponent<BwatEngine::LightComponent>(BwatEngine::Lig
             component.outerCutoff  = outerCutOff;
 
         }
-
-    }
 }

@@ -51,5 +51,7 @@ protected:
     void SetPath(const std::string& aPath);
     void ScanDir(const std::string& aPath);
     void LoadOnResources(FileInfoStruct file);
+
+    void LoadResources(FileInfoStruct file);
 };
 #endif //BWATENGINE_FILEDIALOG_H

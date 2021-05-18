@@ -42,10 +42,10 @@ public:
     static ImGuizmo::MODE guizmoMode;
     static ImGuizmo::OPERATION guizmoOperation;
     Rendering::FrameBufferObject gameViewFramebuffer;
+    void ApplyStyle() const;
 
 
 private:
-    void ApplyStyle() const;
     void BeginWindow();
     GLuint playImage = BwatEngine::ResourceManager::Instance()->GetOrLoadTexture("Assets/image/play.png",Rendering::Texture::Type::E_DIFFUSE)->id;
 
