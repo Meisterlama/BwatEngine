@@ -278,12 +278,17 @@ void WidgetProperties::ShowComponent<BwatEngine::CameraComponent>(BwatEngine::Ca
 template<>
 void WidgetProperties::ShowComponent<BwatEngine::ScriptComponent>(BwatEngine::ScriptComponent &component)
 {
-    if (ImGui::CollapsingHeader("Camera Component", ImGuiTreeNodeFlags_DefaultOpen))
+    if (ImGui::CollapsingHeader("Script Component", ImGuiTreeNodeFlags_DefaultOpen))
     {
         std::string ScriptName = component.scriptPath;
         if(ImGui::InputText("ScriptFile", &ScriptName, ImGuiInputTextFlags_EnterReturnsTrue))
         {
             component.scriptPath = ScriptName;
+        }
+        if (ImGui::Button("Reload"))
+        {
+            component.isStarted = false;
+            component.waitingForChanges = false;
         }
     }
 }

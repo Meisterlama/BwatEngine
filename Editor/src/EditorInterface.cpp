@@ -279,7 +279,7 @@ void EditorInterface::ToolbarUI()
     {
         guizmoMode = ImGuizmo::MODE::LOCAL;
     }
-    
+
     ImGui::SameLine();
     ImGui::SetCursorPosX(ImGui::GetWindowWidth()/2 - 25/2);
     if (ImGui::ImageButton(reinterpret_cast<ImTextureID>(playImage), ImVec2(25.f, 25.f)))
