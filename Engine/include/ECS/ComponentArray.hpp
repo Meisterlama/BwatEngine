@@ -63,6 +63,22 @@ namespace BwatEngine
             size++;
         }
 
+        void InsertData(EntityID entity)
+        {
+            if(entityToIndexMap.find(entity) != entityToIndexMap.end())
+            {
+                LogError("Component added to same entity more than once.");
+                return;
+            }            size_t newIndex = size;
+            entityToIndexMap[entity] = newIndex;
+            indexToEntityMap[newIndex] = entity;
+            if (size < componentArray.size())
+                componentArray[newIndex] = std::move<C>({});
+            else
+                componentArray.emplace_back();
+            size++;
+        }
+
         void RemoveData(EntityID entity)
         {
             if(entityToIndexMap.find(entity) == entityToIndexMap.end())

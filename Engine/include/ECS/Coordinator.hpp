@@ -134,6 +134,24 @@ namespace BwatEngine
         }
 
         /**
+         * @brief Add a component \p C to the given \p entity
+         * @tparam C Added component's type
+         * @param entity EntityID ID
+         * @warning Adding a component that an entity already has is invalid
+         */
+        template<class C>
+        void AddComponent(EntityID entity)
+        {
+            componentManager.AddComponent<C>(entity);
+
+            auto signature = entityManager.GetSignature(entity);
+            signature.set(componentManager.GetComponentType<C>(), true);
+            entityManager.SetSignature(entity, signature);
+
+            systemManager.EntitySignatureChanged(entity, signature);
+        }
+
+        /**
          * @brief Remove the component \p C from the given \p entity
          * @tparam C Removed component's type
          * @param entity EntityID ID
