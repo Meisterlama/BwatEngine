@@ -210,7 +210,7 @@ void FileDialog::ShowList()
 
     for (int i = 0; i < fileList.size(); i++)
     {
-
+        ImGui::PushID(fileList[i].fileName.c_str());
         if (fileList[i].fileName == loadFile.fileName)
         {
             selected = true;
@@ -238,6 +238,18 @@ void FileDialog::ShowList()
                 LoadOnResources(fileList[i]);
             }
         }
+
+        if (ImGui::BeginPopupContextItem("LoadResourceContextMenu"))
+        {
+            if (ImGui::MenuItem("Load Resources"))
+            {
+                LoadOnResources(fileList[i]);
+                LoadResources(fileList[i]);
+            }
+            ImGui::EndPopup();
+        }
+
+        ImGui::PopID();
     }
 }
 
@@ -250,6 +262,15 @@ void FileDialog::LoadOnResources(FileInfoStruct file)
     }
 }
 
-
-
+void FileDialog::LoadResources(FileDialog::FileInfoStruct file)
+{
+    if (file.ext == ".obj" || file.ext == ".fbx")
+    {
+        BwatEngine::ResourceManager::Instance()->GetOrLoadModel(file.filePath);
+    }
+    if (file.ext == ".png" || file.ext == ".jpg")
+    {
+        BwatEngine::ResourceManager::Instance()->GetOrLoadTexture(file.filePath, Rendering::Texture::Type::E_DIFFUSE);
+    }
+}
 

@@ -37,6 +37,16 @@ void WidgetHierarchy::ShowEntity(BwatEngine::EntityID entity)
     {
         editor->SetEditedEntity(entity);
     }
+
+    if (ImGui::BeginPopupContextItem("ShowEntityContextMenu"))
+    {
+        if (ImGui::MenuItem("Delete entity"))
+        {
+            BwatEngine::Coordinator::GetInstance().DestroyEntity(entity);
+        }
+        ImGui::EndPopup();
+    }
+
     if (isOpen)
     {
         for (auto &child : node.children)
@@ -51,18 +61,18 @@ void WidgetHierarchy::TickVisible()
 {
     auto &coordinator = BwatEngine::Coordinator::GetInstance();
 
+    if (ImGui::BeginPopupContextWindow("CreateEntityContextMenu"))
+    {
+        if (ImGui::MenuItem("Create entity"))
+        {
+            coordinator.CreateEntity();
+        }
+        ImGui::EndPopup();
+    }
+
     for (auto &entity : coordinator.GetRootEntities())
     {
         ShowEntity(entity);
     }
-
-   if (ImGui::BeginPopupContextWindow("entity menu", ImGuiMouseButton_Right))
-   {
-       if (ImGui::MenuItem("Create new entity"))
-       {
-           BwatEngine::Coordinator::GetInstance().CreateEntity();
-       }
-       ImGui::EndPopup();
-   }
 
 }
