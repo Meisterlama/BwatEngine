@@ -1,20 +1,23 @@
 #ifndef SCRIPT_COMPONENT_HPP
 #define SCRIPT_COMPONENT_HPP
 
-class Script 
-{
-public :
-	
-	virtual void Update() {};
-	virtual void Start() {};
-};
-
 namespace BwatEngine
 {
-	struct ScriptComponent
-	{
-		Script* script;
-	};
+    struct ScriptComponent
+    {
+    public :
+        std::string scriptPath;
+        std::string oldPath;
+
+        bool isStarted = false;
+
+        bool waitingForChanges = false;
+
+        ScriptComponent(std::string startScriptPath = "")
+        : scriptPath(std::move(startScriptPath))
+        , oldPath(scriptPath)
+        {}
+    };
 }
 
-#endif
+#endif //SCRIPT_COMPONENT_HPP

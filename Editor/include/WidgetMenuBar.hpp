@@ -14,5 +14,6 @@ public:
 private:
     void MenuFile();
     void MenuOption();
+    void MenuWindow();
 };
 #endif //BWATENGINE_WIDGETMENUBAR_HPP

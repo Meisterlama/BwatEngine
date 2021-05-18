@@ -1,29 +1,19 @@
 #ifndef ENGINE_SERIALIZATION_HPP
 #define ENGINE_SERIALIZATION_HPP
 
-
-
-
 namespace BwatEngine
 {
     class Scene;
 
-    class Serializer
+    // namespace ou static
+    namespace Serializer
     {
-    public:
-        Serializer() = delete;
-        ~Serializer() = default;
-        Serializer(const char* path);
-
-        void SaveScene(const Scene& toSave);
-        void LoadData(Scene& toLoad);
-    private:
-
-        const char* path{""};
-
-
+        void SaveScene(const Scene& toSave, const char* path);
+        void LoadScene(Scene& toLoad, const char* path);
     };
-}
+
+
+};
 
 #endif
 

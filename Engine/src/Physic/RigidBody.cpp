@@ -5,17 +5,23 @@ using namespace BwatEngine;
 RigidBody::RigidBody(const Math::Transform& transform, bool isStatic) : oldTransform(transform), isStatic(isStatic)
 {
 	if (isStatic)
+	{
 		staticActor = Physic::GetPhysics()->createRigidStatic(ToPxTransform(transform));
+		staticActor->userData = this;
+	}
 	else
+	{
 		rigidBody = Physic::GetPhysics()->createRigidDynamic(ToPxTransform(transform));
+		rigidBody->userData = this;
+	}
 }
 
 RigidBody::~RigidBody()
 {
-	//if (isStatic)
-	//	staticActor->release();
-	//else
-	//	rigidBody->release();
+	if (isStatic)
+		staticActor->release();
+	else
+		rigidBody->release();
 }
 
 void RigidBody::SetStatic(bool isStat)
@@ -35,6 +41,7 @@ void RigidBody::SetStatic(bool isStat)
 		}
 
 		staticActor = Physic::GetPhysics()->createRigidStatic(ToPxTransform(oldTransform));
+		staticActor->userData = this;
 	}
 	else
 	{
@@ -47,6 +54,7 @@ void RigidBody::SetStatic(bool isStat)
 		}
 
 		rigidBody = Physic::GetPhysics()->createRigidDynamic(ToPxTransform(oldTransform));
+		rigidBody->userData = this;
 	}
 
 	shouldRegister = true;
@@ -103,7 +111,7 @@ bool RigidBody::CompareOldTransform(const Math::Transform& trans)
 	return (oldTransform.position == trans.position && oldTransform.rotation == trans.rotation);
 }
 
-Math::Vec3f RigidBody::GetPosition()
+Math::Vec3f RigidBody::GetPosition() const
 {
 	if (isStatic)
 		return ToBwatVec3( staticActor->getGlobalPose().p);
@@ -111,7 +119,7 @@ Math::Vec3f RigidBody::GetPosition()
 		return ToBwatVec3(rigidBody->getGlobalPose().p);
 }
 
-Math::Quatf RigidBody::GetRotation()
+Math::Quatf RigidBody::GetRotation() const
 {
 	if (isStatic)
 		return ToBwatQuat(staticActor->getGlobalPose().q);
@@ -120,14 +128,26 @@ Math::Quatf RigidBody::GetRotation()
 }
 
 
-float RigidBody::GetMass()
+float RigidBody::GetMass() const
 {
 	if (!isStatic)
 		return rigidBody->getMass();
+	return 0;
 }
 
-Math::Vec3f RigidBody::GetVelocity()
+Math::Vec3f RigidBody::GetVelocity() const
 {
 	if (!isStatic)
 		return ToBwatVec3(rigidBody->getLinearVelocity());
+	return {0.f};
+}
+
+void RigidBody::OnContact(RigidBody& actor2, COLLISION_TYPE colType)
+{
+	if (collisionFunction[colType]) collisionFunction[colType](actor2);
+}
+
+void RigidBody::setContactFunc(COLLISION_TYPE colType, OnCollisionFunction&& func)
+{
+	collisionFunction[colType] = std::move(func);
 }

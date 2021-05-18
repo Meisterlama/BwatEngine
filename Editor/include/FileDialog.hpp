@@ -7,14 +7,22 @@
 
 class FileDialog
 {
-private:
+public:
     struct FileInfoStruct
     {
-        std::string filePath;
-        std::string fileName;
-        std::string ext;
+        std::string filePath = "";
+        std::string fileName = "";
+        std::string ext = "";
     };
 
+    FileDialog();
+
+    void OpenDialog(const char* aFilters, const std::filesystem::path& aFilePathName);
+    void ShowList();
+
+    FileInfoStruct loadFile;
+
+private:
     struct FilterInfoStruct
     {
         std::string filter;
@@ -37,17 +45,13 @@ private:
     std::filesystem::path dlgDefaultFileName;
     std::filesystem::path dlgDefaultEx;
 
-public:
-    FileDialog();
-    ~FileDialog();
-
-    void OpenDialog(const char* aFilters, const std::filesystem::path& aFilePathName);
-    void ShowList();
-
-protected:	    // set default file name
+protected:
     void ParseFilters(const char* aFilters);
     void SetSelectedFilterWithExt(const std::string& aFilter);
     void SetPath(const std::string& aPath);
     void ScanDir(const std::string& aPath);
+    void LoadOnResources(FileInfoStruct file);
+
+    void LoadResources(FileInfoStruct file);
 };
 #endif //BWATENGINE_FILEDIALOG_H

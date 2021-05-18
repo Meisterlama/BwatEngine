@@ -8,7 +8,7 @@
 
 using namespace Rendering;
 
-Mesh::Mesh(std::vector<Vertex> mVertices, std::vector<unsigned int> mIndices, const Material& material)
+Mesh::Mesh(std::vector<Vertex> mVertices, std::vector<unsigned int> mIndices, Material material)
     : vertices(mVertices), indices(mIndices), defaultMaterial(material)
 {
     glGenVertexArrays(1, &VAO);
@@ -31,7 +31,7 @@ Mesh::Mesh(std::vector<Vertex> mVertices, std::vector<unsigned int> mIndices, co
     glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, sizeof(Vertex), (void*)offsetof(Vertex, normal));
     // vertex texture coords
     glEnableVertexAttribArray(2);
-    glVertexAttribPointer(2, 2, GL_FLOAT, GL_FALSE, sizeof(Vertex), (void*)offsetof(Vertex, texCoords));
+    glVertexAttribPointer(2, 2, GL_FLOAT, GL_FALSE, sizeof(Vertex), (void*)offsetof(Vertex, texCoord));
 
     glBindVertexArray(0);
 }

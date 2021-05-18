@@ -1,11 +1,6 @@
 #include "FileDialog.hpp"
 #include "imgui.h"
-
-#if WIN32
-#include <direntWin32.h>
-#else
-#include <dirent.h>
-#endif
+#include "ResourceManager/ResourceManager.hpp"
 
 inline std::vector<std::string> SplitStringToVector(const std::string& text, char delimiter, bool pushEmpty)
 {
@@ -17,13 +12,13 @@ inline std::vector<std::string> SplitStringToVector(const std::string& text, cha
         while (end != std::string::npos)
         {
             std::string token = text.substr(start, end - start);
-            if (!token.empty() || (token.empty() && pushEmpty)) //-V728
+            if (!token.empty() || (token.empty() && pushEmpty))
                 arr.push_back(token);
             start = end + 1;
             end = text.find(delimiter, start);
         }
         std::string token = text.substr(start);
-        if (!token.empty() || (token.empty() && pushEmpty)) //-V728
+        if (!token.empty() || (token.empty() && pushEmpty))
             arr.push_back(token);
     }
     return arr;
@@ -33,8 +28,6 @@ FileDialog::FileDialog()
 {
     showDialog = false;
 }
-
-FileDialog::~FileDialog() = default;
 
 void FileDialog::OpenDialog(const char *aFilters, const std::filesystem::path& aFilePathName)
 {
@@ -171,76 +164,113 @@ void FileDialog::SetPath(const std::string &aPath)
 
 void FileDialog::ScanDir(const std::string &aPath)
 {
-    struct dirent** files = nullptr;
-    int i = 0;
-    int n = 0;
-    std::string path = aPath;
+
+    std::filesystem::path path = aPath;
 
     if (!aPath.empty())
     {
-        n = scandir(path.c_str(), &files, nullptr, alphasort);
         fileList.clear();
 
-        if (n > 0)
+        for (auto& p: std::filesystem::directory_iterator(aPath))
         {
-            for (i = 0; i < n; i++)
+
+            FileInfoStruct infos;
+
+            infos.filePath = p.path().string();
+            infos.fileName = p.path().filename().string();
+
+            if (infos.fileName != ".")
             {
-                struct dirent* ent = files[i];
+                infos.ext = p.path().extension().string();
 
-                FileInfoStruct infos;
-
-                infos.filePath = path;
-                infos.fileName = ent->d_name;
-
-                if (infos.fileName != ".")
+                if (!dlgFilters.empty())
                 {
-                    size_t lpt = infos.fileName.find_last_of('.');
-
-                    if (lpt != std::string::npos)
-                    {
-                        infos.ext = infos.fileName.substr(lpt);
-                    }
-
-                    if (!dlgFilters.empty())
-                    {
-                        if (!selectedFilter.Empty() &&
+                    if (!selectedFilter.Empty() &&
                         (!selectedFilter.FilterExist(infos.ext) && selectedFilter.filter != ".*"))
-                        {
-                            continue;
-                        }
+                    {
+                        continue;
                     }
                 }
-
-                fileList.push_back(infos);
             }
 
-            for (i = 0; i < n; i++)
-            {
-                free(files[i]);
-            }
-
-            free(files);
+            fileList.push_back(infos);
         }
     }
 }
 
 void FileDialog::ShowList()
 {
+    std::filesystem::path dir = currentPath;
+    if (ImGui::Button("Back"))
+    {
+        OpenDialog("", dir.parent_path());
+    }
+
+    bool selected = false;
+
     for (int i = 0; i < fileList.size(); i++)
     {
-        if(ImGui::Selectable(fileList[i].fileName.c_str()))
+        ImGui::PushID(fileList[i].fileName.c_str());
+        if (fileList[i].fileName == loadFile.fileName)
         {
-            std::filesystem::path dir = fileList[i].filePath + fileList[i].fileName;
-            if (fileList[i].fileName == "..")
-                OpenDialog("", dir.parent_path());
-            else if (!dir.has_extension())
+            selected = true;
+        }
+        else
+            selected = false;
+
+        if (fileList[i].ext == "")
+            ImGui::Image(reinterpret_cast<ImTextureID>(BwatEngine::ResourceManager::Instance()->GetOrLoadTexture("Assets/image/folder.png",Rendering::Texture::Type::E_DIFFUSE)->id), ImVec2(20, 20));
+        else if (fileList[i].ext == ".jpg" || fileList[i].ext == ".png")
+            ImGui::Image(reinterpret_cast<ImTextureID>(BwatEngine::ResourceManager::Instance()->GetOrLoadTexture("Assets/image/imageFile.png",Rendering::Texture::Type::E_DIFFUSE)->id), ImVec2(20, 20));
+        else
+            ImGui::Image(reinterpret_cast<ImTextureID>(BwatEngine::ResourceManager::Instance()->GetOrLoadTexture("Assets/image/file.png",Rendering::Texture::Type::E_DIFFUSE)->id), ImVec2(20, 20));
+
+        ImGui::SameLine();
+
+        if(ImGui::Selectable(fileList[i].fileName.c_str(), selected))
+        {
+            if (fileList[i].ext == "")
             {
-                OpenDialog("",fileList[i].filePath + "/" + fileList[i].fileName);
+                OpenDialog("", fileList[i].filePath);
+            }
+            else
+            {
+                LoadOnResources(fileList[i]);
             }
         }
+
+        if (ImGui::BeginPopupContextItem("LoadResourceContextMenu"))
+        {
+            if (ImGui::MenuItem("Load Resources"))
+            {
+                LoadOnResources(fileList[i]);
+                LoadResources(fileList[i]);
+            }
+            ImGui::EndPopup();
+        }
+
+        ImGui::PopID();
     }
 }
 
+void FileDialog::LoadOnResources(FileInfoStruct file)
+{
+    if (file.ext == ".obj" || file.ext == ".fbx" || file.ext == ".png" || file.ext == ".jpg")
+    {
+        //if (BwatEngine::ResourceManager::Instance().
+        loadFile = file;
+    }
+}
 
-
+void FileDialog::LoadResources(FileDialog::FileInfoStruct file)
+{
+    if (file.ext == ".obj" || file.ext == ".fbx")
+    {
+        BwatEngine::ResourceManager::Instance()->GetOrLoadModel(file.filePath);
+    }
+    if (file.ext == ".png" || file.ext == ".jpg")
+    {
+        BwatEngine::ResourceManager::Instance()->GetOrLoadTexture(file.filePath, Rendering::Texture::Type::E_DIFFUSE);
+    }
+}
 

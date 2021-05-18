@@ -26,6 +26,7 @@ public:
     //Properties
     float GetHeight()         const { return height; }
     ImGuiWindow* GetWindow()  const { return window; }
+    std::string GetTitle() const {return title; }
     bool& GetVisible()              { return isVisible; }
     void SetVisible(bool visible)   { isVisible = visible; }
 

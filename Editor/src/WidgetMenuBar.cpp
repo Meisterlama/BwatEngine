@@ -2,6 +2,8 @@
 #include "EditorInterface.hpp"
 #include "Engine.hpp"
 #include "Serialization/Serialization.hpp"
+#include "ResourceManager/ResourceManager.hpp"
+
 WidgetMenuBar::WidgetMenuBar(EditorInterface *editor) : Widget(editor)
 {
     title = "MenuBar";
@@ -12,20 +14,14 @@ void WidgetMenuBar::TickAlways()
 {
     if (ImGui::BeginMainMenuBar())
     {
-        ImGui::Text("%f", (BwatEngine::Time::deltaTime != 0) ? 1.f / BwatEngine::Time::deltaTime : 0);
         if (ImGui::BeginMenu("File"))
         {
             MenuFile();
             ImGui::EndMenu();
         }
-        if (ImGui::BeginMenu("Edit"))
+        if (ImGui::BeginMenu("Windows"))
         {
-            if (ImGui::MenuItem("Undo", "CTRL+Z")) {}
-            if (ImGui::MenuItem("Redo", "CTRL+Y", false, false)) {}  // Disabled item
-            ImGui::Separator();
-            if (ImGui::MenuItem("Cut", "CTRL+X")) {}
-            if (ImGui::MenuItem("Copy", "CTRL+C")) {}
-            if (ImGui::MenuItem("Paste", "CTRL+V")) {}
+            MenuWindow();
             ImGui::EndMenu();
         }
         if (ImGui::BeginMenu("Options"))
@@ -33,51 +29,39 @@ void WidgetMenuBar::TickAlways()
             MenuOption();
             ImGui::EndMenu();
         }
-        if (ImGui::BeginMenu("Save Scene"))
-        {
-            BwatEngine::Serializer serializ("test.txt");
-            serializ.SaveScene(editor->engine->GetScene());
-            ImGui::EndMenu();
-        }
-        if (ImGui::BeginMenu("Load Scene"))
-        {
-            BwatEngine::Serializer serializ("test.txt");
-            serializ.LoadData(editor->engine->GetScene());
-            ImGui::EndMenu();
-        }
         ImGui::EndMainMenuBar();
+    }
+}
+
+void WidgetMenuBar::MenuWindow()
+{
+    auto& widgetList = editor->GetWidgetList();
+
+    for(auto& widget  : widgetList)
+    {
+        if (widget->GetTitle() != "MenuBar")
+        {
+            if(ImGui::MenuItem(widget->GetTitle().c_str()))
+            {
+                widget->SetVisible(true);
+            }
+        }
     }
 }
 
 void WidgetMenuBar::MenuFile()
 {
-    ImGui::MenuItem("(demo menu)", NULL, false, false);
-    if (ImGui::MenuItem("New")) {}
-    if (ImGui::MenuItem("Open", "Ctrl+O")) {}
-    if (ImGui::BeginMenu("Open Recent"))
+    if (ImGui::MenuItem("Save Scene"))
     {
-        ImGui::MenuItem("fish_hat.c");
-        ImGui::MenuItem("fish_hat.inl");
-        ImGui::MenuItem("fish_hat.h");
-        if (ImGui::BeginMenu("More.."))
-        {
-            ImGui::MenuItem("Hello");
-            ImGui::MenuItem("Sailor");
-            if (ImGui::BeginMenu("Recurse.."))
-            {
-                MenuFile();
-                ImGui::EndMenu();
-            }
-            ImGui::EndMenu();
-        }
-        ImGui::EndMenu();
+        BwatEngine::Serializer::SaveScene(editor->engine->GetScene(), "test.txt");
     }
-    if (ImGui::MenuItem("Save", "Ctrl+S")) {}
-    if (ImGui::MenuItem("Save As..")) {}
+    if (ImGui::MenuItem("Load Scene"))
+    {
+        BwatEngine::Serializer::LoadScene(editor->engine->GetScene(), "test.txt");
+    }
 
     ImGui::Separator();
 
-    if (ImGui::MenuItem("Checked", NULL, true)) {}
     if (ImGui::MenuItem("Quit", "Alt+F4")) {}
 }
 
@@ -96,6 +80,10 @@ void WidgetMenuBar::MenuOption()
         if (ImGui::MenuItem("Classic"))
         {
             ImGui::StyleColorsClassic();
+        }
+        if (ImGui::MenuItem("Bwat"))
+        {
+            editor->ApplyStyle();
         }
         ImGui::EndMenu();
     }

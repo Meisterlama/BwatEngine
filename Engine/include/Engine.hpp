@@ -2,12 +2,8 @@
 #define ENGINE_HPP
 
 
-#include <memory>
-
-#include "Time.hpp"
 #include "Window.hpp"
 #include "Scene.hpp"
-#include "Physic/Physic.hpp"
 #include "Rendering/FrameBuffer.hpp"
 
 namespace BwatEngine
@@ -20,7 +16,6 @@ namespace BwatEngine
 		~Engine();
 
 		void Update();
-		void Close();
 
 		bool ShouldRun() { return window.IsWorking(); };
 
@@ -32,7 +27,8 @@ namespace BwatEngine
 
 		GLFWwindow* GetGLFWwindow() { return window.handler; };
 
-		Rendering::FrameBufferObject* MainFBO = nullptr;
+
+		bool isPlaying = false;
 
 	private:
 		float lastFrame = 0.0f;
@@ -40,7 +36,7 @@ namespace BwatEngine
 		Window window;
 		Scene scene;
 
-	};
+    };
 
 }
 #endif // !ENGINE_HPP

@@ -3,10 +3,9 @@
 
 #include <string>
 #include <stb_image.h>
-#include <iostream>
+#include <vector>
 
 #include "glad/glad.h"
-#include "GLFW/glfw3.h"
 
 namespace Rendering
 {
@@ -17,7 +16,7 @@ namespace Rendering
             E_DIFFUSE,
             E_SPECULAR,
             E_NORMAL,
-            E_HEIGHT
+            E_HEIGHT,
         };
       
         GLuint id;
@@ -27,11 +26,12 @@ namespace Rendering
         Texture() = delete;
         Texture(const Texture&) = delete;
 
-        Texture(const std::string& path, Type type);
+        Texture(const std::string& path, Type type = Type::E_DIFFUSE);
         ~Texture();
 
         Texture(int width, int height);
 
+        void Resize(int width, int height);
         void Use();
         void UnBind();
     };

@@ -2,9 +2,8 @@
 #define BWATENGINE_WIDGETPROPERTIES_H
 
 #include "Widget.hpp"
-#include <memory>
-#include "Core.hpp"
-#include <ECS/Components/TransformComponent.hpp>
+#include "Math/Vector/Vector3.hpp"
+#include "ECS/ECS.hpp"
 
 class WidgetProperties : public Widget
 {
@@ -13,20 +12,21 @@ public:
 
     void TickVisible() override;
 
-    static void Inspect(BwatEngine::Entity& entity);
+    void Inspect(BwatEngine::EntityID entity);
 
-    static BwatEngine::Entity currentEntity;
+    BwatEngine::Math::Vec3f eulersInDegrees; // Value to edit before converted to quaternion
 
 private:
     template<typename T>
     void ShowComponent(T& component);
 
     template<typename T>
-    bool AddComponentMenuItem(BwatEngine::Entity entity);
+    bool AddComponentMenuItem(BwatEngine::EntityID entity);
 
     template<typename T>
-    bool ShowComponentMenuItem(BwatEngine::Entity entity);
+    bool ShowComponentMenuItem(BwatEngine::EntityID entity);
 
+    BwatEngine::EntityID currentEntity = 0;
 };
 
 #endif //BWATENGINE_WIDGETPROPERTIES_H

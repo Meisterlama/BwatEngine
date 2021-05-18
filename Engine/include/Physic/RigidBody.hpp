@@ -8,10 +8,23 @@
 #include "Physic.hpp"
 #include "Collider.hpp"
 
+#include <functional>
+
 namespace BwatEngine 
 {
+
+	enum COLLISION_TYPE
+	{
+		OnEnterCollision,
+		OnStayCollision,
+		OnExitCollision,
+		EnumSize,
+	};
+
 	class RigidBody 
 	{
+
+		typedef std::function<void(RigidBody&)> OnCollisionFunction;
 
 	private :
 
@@ -20,6 +33,8 @@ namespace BwatEngine
 		bool isStatic = false;
 		bool shouldRegister = true;
 		Math::Transform oldTransform{};
+
+		OnCollisionFunction collisionFunction[COLLISION_TYPE::EnumSize]{};
 
 	public :
 
@@ -35,14 +50,18 @@ namespace BwatEngine
 		void AddActor(physx::PxScene* scene);
 
 		bool CompareOldTransform(const Math::Transform& trans);
-		bool GetIsStatic() { return isStatic; }
+		bool GetIsStatic() const { return isStatic; }
 		bool ShouldRegister() { return shouldRegister; }
 
-		Math::Vec3f GetPosition();
-		Math::Quatf GetRotation();
+		Math::Vec3f GetPosition()const;
+		Math::Quatf GetRotation() const;
 
-		float GetMass();
-		Math::Vec3f GetVelocity();
+		float GetMass() const;
+		Math::Vec3f GetVelocity() const;
+
+		void OnContact(RigidBody& actor2, COLLISION_TYPE colType);
+		void setContactFunc(COLLISION_TYPE colType, OnCollisionFunction&& func);
+		
 
 	};
 }

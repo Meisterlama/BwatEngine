@@ -1,17 +1,17 @@
 #ifndef ENGINE_ECS_ENTITY_MANAGER_HPP
 #define ENGINE_ECS_ENTITY_MANAGER_HPP
-#include "Core.hpp"
-#include "Debug/Logger.hpp"
 #include <vector>
 #include <queue>
-#include <cassert>
+#include <algorithm>
+#include "Debug/Logger.hpp"
 
 namespace BwatEngine
 {
     class EntityManager
     {
-        std::queue<Entity> availableEntities{};
-        Entity nextEntity{};
+        //TODO: Custom Queue
+        std::vector<EntityID> availableEntities{};
+        EntityID nextEntity = 1;
         // TODO: Manage vector reallocation to handle more entities than default MAX_ENTITIES
         std::vector<Signature> signatures{};
         int livingEntityCount{};
@@ -22,14 +22,18 @@ namespace BwatEngine
             signatures.resize(MAX_ENTITIES);
         }
 
-        Entity CreateEntity()
+        EntityID CreateEntity()
         {
-            assert(livingEntityCount < MAX_ENTITIES && "Too many entities in existence.");
-            Entity id = nextEntity;
+            if (livingEntityCount > MAX_ENTITIES)
+            {
+                LogError("Too many entities in existence.");
+                return 0;
+            }
+            EntityID id = nextEntity;
             if (!availableEntities.empty())
             {
-                id = availableEntities.front();
-                availableEntities.pop();
+                id = availableEntities.back();
+                availableEntities.pop_back();
             }
             else
             {
@@ -40,26 +44,53 @@ namespace BwatEngine
             return id;
         }
 
-        void DestroyEntity(Entity entity)
+        bool IsValid(EntityID entity)
         {
-            assert(entity < MAX_ENTITIES && "Entity out of range.");
+            if (entity == 0
+            || entity > nextEntity
+            || std::any_of(
+                    availableEntities.cbegin(),
+                    availableEntities.cend(),
+                    [&entity](EntityID freeID){ return freeID == entity;}))
+            {
+                return false;
+            }
+
+            return true;
+        }
+
+        void DestroyEntity(EntityID entity)
+        {
+            if(entity > MAX_ENTITIES)
+            {
+                LogError("EntityID out of range.");
+                return;
+            }
 
             signatures[entity].reset();
 
-            availableEntities.push(entity);
+            availableEntities.push_back(entity);
             livingEntityCount--;
         }
 
-        void SetSignature(Entity entity, Signature signature)
+        void SetSignature(EntityID entity, Signature signature)
         {
-            assert(entity < MAX_ENTITIES && "Entity out of range.");
+            if(entity > MAX_ENTITIES)
+            {
+                LogError("EntityID out of range.");
+                return;
+            }
 
             signatures[entity] = signature;
         }
 
-        Signature GetSignature(Entity entity)
+        Signature GetSignature(EntityID entity) const
         {
-            assert(entity < MAX_ENTITIES && "Entity out of range.");
+            if(entity > MAX_ENTITIES)
+            {
+                LogError("EntityID out of range.");
+                return 0;
+            }
             return signatures[entity];
         }
     };

@@ -1,7 +1,6 @@
 #ifndef FRAMEBUFFER_HPP
 #define FRAMEBUFFER_HPP
 
-#include <iostream>
 #include <glad/glad.h>
 
 #include "Texture.hpp"
@@ -19,13 +18,12 @@ namespace Rendering
 		Texture textureColor;
 		GLuint depthRenderbuffer;
 
-		FrameBufferObject(float width, float height);
-		//FrameBufferObject() {};
+		FrameBufferObject(int width = 1200, int height = 720);
 		~FrameBufferObject() {};
 
-		void UseAndBind();
-		void Unbind();
+		GLint Bind();
 
+		void Resize(float width, float height);
 		void SetName(std::string tmpName) { name = tmpName; };
 		GLuint GetFbo() { return fbo; };
 

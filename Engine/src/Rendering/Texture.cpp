@@ -9,7 +9,7 @@ Texture::Texture(int width, int height)
 {
     glGenTextures(1, &id);
     glBindTexture(GL_TEXTURE_2D, id);
-    glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, width, height, 0, GL_RGBA, GL_UNSIGNED_BYTE, nullptr);
+    glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA32F, width, height, 0, GL_RGBA, GL_FLOAT, nullptr);
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
 }
@@ -47,7 +47,7 @@ Texture::Texture(const std::string& path, Type type) : path(path), type(type)
     }
     else
     {
-        std::cout << "Texture failed to load at path: " << path.c_str() << std::endl;
+        LogError("Texture failed to load at path: %s", path.c_str());
         stbi_image_free(data);
     }
 }
@@ -66,3 +66,11 @@ void Texture::UnBind()
 {
     glBindTexture(GL_TEXTURE_2D, 0);
 }
+
+
+void Texture::Resize(int width, int height)
+{
+    glBindTexture(GL_TEXTURE_2D, id);
+    glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA32F, width, height, 0, GL_RGBA, GL_FLOAT, nullptr);
+}
+

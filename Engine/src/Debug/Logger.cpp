@@ -98,10 +98,17 @@ static const char *LevelColors[] = {
                 L.callbacks[i].fn = fn;
                 L.callbacks[i].uData = uData;
                 L.callbacks[i].level = level;
-                return 0;
+                return i;
             }
         }
         return -1;
+    }
+
+    void LogRemoveCallback(int index)
+    {
+        if (index < 0)
+            return;
+        L.callbacks[index].fn = NULL;
     }
 
 
@@ -120,6 +127,14 @@ static const char *LevelColors[] = {
 
 
     void LogLog(int level, const char *file, int line, const char *fmt, ...) {
+#if 0
+        // To fix(disable) the 'mysterious' crash
+        va_list ap;
+        va_start(ap, fmt);
+        fprintf(stderr, "[%s]\t%s:%d: ", LevelStrings[level]);
+        vfprintf(stderr, fmt, ap);
+        va_end(ap);
+#else
         LogEvent ev = {};
         ev.fmt = fmt;
         ev.file = file;
@@ -146,6 +161,7 @@ static const char *LevelColors[] = {
         }
 
         unlock();
+#endif
     }
 
     void LogNull()

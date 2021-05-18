@@ -131,6 +131,13 @@ namespace BwatEngine
         MOUSE_BUTTON_7 = GLFW_MOUSE_BUTTON_7,
         MOUSE_BUTTON_8 = GLFW_MOUSE_BUTTON_8,
     };
+
+    enum MouseStatus
+    {
+        Normal = GLFW_CURSOR_NORMAL,
+        Hidden = GLFW_CURSOR_HIDDEN,
+        Disabled = GLFW_CURSOR_DISABLED,
+    };
 }
 
 #endif //ENGINE_INPUTS_INPUT_ENUMS_HPP

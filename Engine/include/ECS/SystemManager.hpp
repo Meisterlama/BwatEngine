@@ -1,64 +1,110 @@
 #ifndef ENGINE_ECS_SYSTEM_MANAGER_HPP
 #define ENGINE_ECS_SYSTEM_MANAGER_HPP
 
-#include "Core.hpp"
-#include "System.hpp"
-
+#include "ECS.hpp"
+#include "Debug/Logger.hpp"
+#include "ECS/System.hpp"
 #include <unordered_map>
+#include <memory>
+#include <queue>
 
 namespace BwatEngine
 {
+    class System;
     class SystemManager
     {
         std::unordered_map<const char*, Signature> signatures{};
         std::unordered_map<const char*, std::shared_ptr<System>> systems{};
     public:
-        template<typename T>
-        std::shared_ptr<T> RegisterSystem()
+        void DestroySystems()
         {
-            const char* typeName = typeid(T).name();
-            assert(systems.find(typeName) == systems.end() && "Registering system more than once.");
+            systems.clear();
+            signatures.clear();
+        }
+        template<class S, class... Args>
+        std::shared_ptr<S> RegisterSystem(Args&&... args)
+        {
+            const char* typeName = typeid(S).name();
+            if (systems.find(typeName) != systems.end())
+            {
+                LogError("Registering system more than once.");
+                return nullptr;
+            }
 
-            std::shared_ptr<T> system = std::make_shared<T>();
+            std::shared_ptr<S> system = std::make_shared<S>(args...);
             systems.insert({typeName, system});
             return system;
         }
 
-        template<typename T>
-        void SetSignature(Signature signature)
+        template<class S>
+        std::shared_ptr<S> GetSystem()
         {
-            const char* typeName = typeid(T).name();
-            assert(systems.find(typeName) != systems.end() && "System used before registered.");
+            const char* typeName = typeid(S).name();
+            auto result = systems.find(typeName);
+
+            if (result == systems.end())
+            {
+                LogError("Register your system before using it !");
+                return nullptr;
+            }
+            return std::dynamic_pointer_cast<S>(result->second);
+        }
+
+        template<typename S>
+        void SetSystemConfig(SystemConfig config)
+        {
+            const char* typeName = typeid(S).name();
+            auto result = systems.find(typeName);
+            if ( result == systems.end())
+            {
+                LogError("Register your system before using it !");
+                return;
+            }
+            result->second->config = config;
+        }
+
+        template<class S>
+        constexpr void SetSignature(Signature signature)
+        {
+            const char* typeName = typeid(S).name();
+            if(systems.find(typeName) == systems.end())
+            {
+                LogError("Register your system before using it !");
+                return;
+            }
             signatures.insert({typeName, signature});
         }
 
-        void EntityDestroyed(Entity entity)
+        void UpdateSystems(bool gameUpdate)
         {
-            for (auto const& pair : systems)
+            constexpr auto cmp = [](const std::shared_ptr<System>& lhs, const std::shared_ptr<System>& rhs) { return (*lhs) < (*rhs);};
+            std::priority_queue<std::shared_ptr<System>, std::vector<std::shared_ptr<System>>, decltype(cmp)> queue(cmp);
+            for (auto& pair : systems)
             {
-                auto const& system = pair.second;
-                system->entities.erase(entity);
+                queue.push(pair.second);
+            }
+
+            while (!queue.empty())
+            {
+                auto systemPtr = queue.top();
+                switch (systemPtr->config.updateBehaviour)
+                {
+                    case SystemConfig::AlwaysUpdate:
+                        systemPtr->Update();
+                        break;
+                    case SystemConfig::GameUpdate:
+                        if (gameUpdate) systemPtr->Update();
+                        break;
+                    case SystemConfig::ManualUpdate:
+                        break;
+                }
+                queue.pop();
             }
         }
 
-        void EntitySignatureChanged(Entity entity, Signature entitySignature)
-        {
-            for (auto const& pair : systems)
-            {
-                auto const& type = pair.first;
-                auto const& system = pair.second;
-                auto const& systemSignature = signatures[type];
+        void EntityDestroyed(EntityID entity);
 
-                if ((entitySignature & systemSignature) == systemSignature)
-                {
-                    system->entities.insert(entity);
-                }
-                else
-                {
-                    system->entities.erase(entity);
-                }
-            }
-        }
+        void EntitySignatureChanged(EntityID entity, Signature entitySignature);
     };
 }
 

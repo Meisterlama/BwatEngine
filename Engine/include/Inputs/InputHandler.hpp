@@ -1,7 +1,7 @@
 #ifndef ENGINE_INPUTS_INPUT_HANDLER_HPP
 #define ENGINE_INPUTS_INPUT_HANDLER_HPP
 
-#include <map>
+#include <unordered_map>
 #include "InputEnums.hpp"
 #include "Math/Vector/Vectors.hpp"
 namespace BwatEngine
@@ -15,12 +15,16 @@ namespace BwatEngine
     class InputHandler
     {
     private:
-        std::map<Keyboard, InputState> keyboard{};
-        std::map<Mouse, InputState> mouse{};
+        std::unordered_map<Keyboard, InputState> keyboard{};
+        Keyboard lastPressed;
+        std::unordered_map<Mouse, InputState> mouse{};
 
         BwatEngine::Math::Vec2d mouseDelta{};
         BwatEngine::Math::Vec2d mousePos{};
         BwatEngine::Math::Vec2d mouseOldPos{};
+        MouseStatus mouseStatus;
+
+        bool ignoreNextDelta = false;
 
         BwatEngine::Math::Vec2d scrollDelta{};
 
@@ -48,12 +52,18 @@ namespace BwatEngine
         static bool GetKeyboardDown(Keyboard key);
         static bool GetKeyboardUp(Keyboard key);
         static bool GetKeyboard(Keyboard key);
+        static bool GetAnyKeyDown();
+        static Keyboard GetLastKeyPressed();
         static bool GetMouseButtonDown(Mouse button);
         static bool GetMouseButtonUp(Mouse button);
         static bool GetMouseButton(Mouse button);
         static BwatEngine::Math::Vec2d GetMousePos();
         static BwatEngine::Math::Vec2d GetMouseDelta();
         static BwatEngine::Math::Vec2d GetScrollDelta();
+
+        //TODO: Disabling cursor while it is outside of the window causes delta mouse to freak out 3 frames after
+        static void SetMouseStatus(MouseStatus status);
+        static MouseStatus GetMouseStatus();
     };
 }
 

@@ -80,7 +80,7 @@ namespace BwatEngine::Math
              */
             ML_FUNC_DECL Quaternion(Vector3<T> axis, T angle)
             {
-                if (Vector3Length(axis) != 0.0f) {
+                if (axis.Amplitude() == 0.0f) {
                     *this = Quaternion{0};
                     return;
                 }
@@ -91,7 +91,7 @@ namespace BwatEngine::Math
                 float s = Sin(angle);
                 float c = Cos(angle);
 
-                *this = Quaternion<T>(axis.X * s, axis.Y * s, axis.Z * s, axis.W * c);
+                *this = Quaternion<T>(axis.X * s, axis.Y * s, axis.Z * s, c);
             }
 
             ML_FUNC_DECL Quaternion(const Quaternion &quat) = default;
@@ -182,6 +182,8 @@ namespace BwatEngine::Math
              * @return A vector containing the euler angles corresponding to the Quaternion
              */
             [[nodiscard]] ML_FUNC_DECL Vector3<T> GetEulerAngles();
+
+            [[nodiscard]] static ML_FUNC_DECL Quaternion<T> LookAt(Vector3<T> origin, Vector3<T> target, Vector3<T> upDir);
 
             /**
              * @param vec Euler angles of the rotation (in radians)
@@ -363,8 +365,7 @@ namespace BwatEngine::Math
     template<typename T>
     ML_FUNC_DECL Internal::Quaternion<T> Internal::Quaternion<T>::GetInverted() const
     {
-        *this = Conjugate() / Amplitude();
-        return *this;
+        return Internal::Quaternion{*this}.Conjugate() / Norm();
     }
 
     template <typename T>
@@ -395,6 +396,47 @@ namespace BwatEngine::Math
 
         return {pitch, yaw, roll};
     }
+
+#define m00 right.X
+#define m01 up.X
+#define m02 forward.X
+#define m10 right.Y
+#define m11 up.Y
+#define m12 forward.Y
+#define m20 right.Z
+#define m21 up.Z
+#define m22 forward.Z
+
+    template<typename T>
+    [[nodiscard]] ML_FUNC_DECL Internal::Quaternion<T> Internal::Quaternion<T>::LookAt(Vector3<T> origin, Vector3<T> target, Vector3<T> upDir)
+    {
+        Vector3<T> forward = (target - origin).SafeNormalize();
+        Vector3<T> up = upDir - forward * forward.DotProduct(upDir);
+        up.SafeNormalize();
+
+        Vector3<T> right = up.CrossProduct(forward);
+
+        Quaternion<T> q;
+        q.W = Sqrt(1 + m00 + m11 + m22) * 0.5f;
+        float w4_recip = 1.0f / (4.0f * q.W);
+        q.X = (m21 - m12) * w4_recip;
+        q.Y = (m02 - m20) * w4_recip;
+        q.Z = (m10 - m01) * w4_recip;
+
+        return q;
+
+    }
+
+#undef m00
+#undef m01
+#undef m02
+#undef m10
+#undef m11
+#undef m12
+#undef m20
+#undef m21
+#undef m22
+
     template <typename T>
     [[nodiscard]] ML_FUNC_DECL Internal::Vector3<T> Internal::Quaternion<T>::Rotate(Vector3<T> v)
     {

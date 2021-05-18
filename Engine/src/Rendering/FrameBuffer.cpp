@@ -3,7 +3,7 @@
 
 using namespace Rendering;
 
-FrameBufferObject::FrameBufferObject(float width , float height)
+FrameBufferObject::FrameBufferObject(int width , int height)
     : textureColor(width, height)
 {
     depthRenderbuffer = 0;
@@ -32,12 +32,17 @@ FrameBufferObject::FrameBufferObject(float width , float height)
     glBindFramebuffer(GL_FRAMEBUFFER, 0);
 }
 
-void FrameBufferObject::UseAndBind()
+GLint FrameBufferObject::Bind()
 {
+    GLint previousFramebuffer;
+    glGetIntegerv(GL_DRAW_FRAMEBUFFER_BINDING, &previousFramebuffer);
 	glBindFramebuffer(GL_FRAMEBUFFER, fbo);
+    return previousFramebuffer;
 }
 
-void FrameBufferObject::Unbind()
+void FrameBufferObject::Resize(float width, float height)
 {
-	glBindFramebuffer(GL_FRAMEBUFFER, 0);
+    glBindRenderbuffer(GL_RENDERBUFFER, depthRenderbuffer);
+    glRenderbufferStorage(GL_RENDERBUFFER, GL_DEPTH_COMPONENT, width, height);
+    textureColor.Resize(width, height);
 }

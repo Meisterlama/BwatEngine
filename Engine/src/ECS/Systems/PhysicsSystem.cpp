@@ -3,28 +3,20 @@
 #include "Physic/PhysicCast.hpp"
 #include "ECS/Components/ColliderComponent.hpp"
 #include "ECS/Coordinator.hpp"
+#include "ECS/Components/RigidBodyComponent.hpp"
+#include "ECS/Components/TransformComponent.hpp"
+#include "Physic/PhysicScene.hpp"
+
 
 using namespace BwatEngine;
-
-void PhysicsSystem::Init(Scene* scene, const Math::Vec3f& gravity)  
-{
-    ptrScene = scene;
-
-    physx::PxSceneDesc SceneDesc(ptrScene->physic.GetPhysics()->getTolerancesScale());
-    SceneDesc.gravity = ToPxVec3(gravity);
-    SceneDesc.cpuDispatcher = ptrScene->physic.GetCPUDispatcher();
-    SceneDesc.filterShader = physx::PxDefaultSimulationFilterShader;
-
-    ptrScene->scenePhysic = (ptrScene->physic.GetPhysics()->createScene(SceneDesc));
-}
 
 void PhysicsSystem::Update()
 {
     for (auto entity : entities)
     {
-        auto& rigidBody = Coordinator::GetInstance()->GetComponent<RigidBodyComponent>(entity).rigidBody;
-        auto& transform = Coordinator::GetInstance()->GetComponent<TransformComponent>(entity).transform;
-        auto& collider = Coordinator::GetInstance()->GetComponent<ColliderComponent>(entity).collider;
+        auto& rigidBody = Coordinator::GetInstance().GetComponent<RigidBodyComponent>(entity);
+        auto& transform = Coordinator::GetInstance().GetComponent<TransformComponent>(entity);
+        auto& collider = Coordinator::GetInstance().GetComponent<ColliderComponent>(entity).collider;
 
         if (rigidBody.ShouldRegister())
         {
@@ -35,7 +27,7 @@ void PhysicsSystem::Update()
             }
 
             rigidBody.AttachCollider(*collider);
-            rigidBody.AddActor(ptrScene->scenePhysic);
+            rigidBody.AddActor(ptrPhysicScene->GetPhysicScene());
         }
 
         if (rigidBody.CompareOldTransform(transform))
@@ -49,6 +41,8 @@ void PhysicsSystem::Update()
         }
     }
 
-    ptrScene->scenePhysic->simulate(Time::deltaTime);
-    ptrScene->scenePhysic->fetchResults(true);
+    ptrPhysicScene->GetPhysicScene()->simulate(Time::deltaTime);
+    ptrPhysicScene->GetPhysicScene()->fetchResults(true);
+
+    ptrPhysicScene->gContactReportCallback.Flush();
 };

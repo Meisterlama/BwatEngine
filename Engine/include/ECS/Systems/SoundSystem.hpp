@@ -2,7 +2,9 @@
 #define ENGINE_ECS_SYSTEMS_AUDIO_HPP
 
 #include "ECS/System.hpp"
+#include "ECS/Coordinator.hpp"
 #include "ECS/Components/AudioSourceComponent.hpp"
+#include "ECS/Components/TransformComponent.hpp"
 
 namespace BwatEngine
 {
@@ -10,18 +12,18 @@ namespace BwatEngine
     {
         Math::RNG rng;
     public:
-        void Init() {
+        SoundSystem() {
             Audio::InitOpenAL();
             rng.ResetSeed(0);
         }
 
-        void Update()
+        virtual void Update() override
         {
-            auto& coordinator = *Coordinator::GetInstance();
+            auto& coordinator = Coordinator::GetInstance();
             for (auto entity : entities)
             {
                 auto& component = coordinator.GetComponent<AudioSourceComponent>(entity);
-                auto& transform = coordinator.GetComponent<TransformComponent>(entity).transform;
+                auto& transform = coordinator.GetComponent<TransformComponent>(entity);
                 ALint state;
                 alGetSourcei(component.source.GetID(), AL_SOURCE_STATE, &state);
                 component.source.SetPosition(transform.position);

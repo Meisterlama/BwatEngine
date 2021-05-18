@@ -2,7 +2,9 @@
 #include "WidgetProperties.hpp"
 #include "Engine.hpp"
 #include "EditorInterface.hpp"
-
+#include "ECS/Coordinator.hpp"
+#include "ECS/Components/DataComponent.hpp"
+#include "imgui_internal.h"
 #include "ECS/Coordinator.hpp"
 
 WidgetHierarchy::WidgetHierarchy(EditorInterface *editor) : Widget(editor)
@@ -11,11 +13,11 @@ WidgetHierarchy::WidgetHierarchy(EditorInterface *editor) : Widget(editor)
     flags |= ImGuiWindowFlags_HorizontalScrollbar;
 }
 
-void ShowEntity(BwatEngine::Entity entity)
+void WidgetHierarchy::ShowEntity(BwatEngine::EntityID entity)
 {
-    auto &coordinator = *BwatEngine::Coordinator::GetInstance();
+    auto &coordinator = BwatEngine::Coordinator::GetInstance();
     auto &node = coordinator.GetNode(entity);
-    std::string entityName = "Entity_" + std::to_string(entity);
+    std::string entityName = coordinator.GetComponent<BwatEngine::DataComponent>(entity).name;
 
     ImGuiTreeNodeFlags flags =
             ImGuiTreeNodeFlags_SpanAvailWidth | ImGuiTreeNodeFlags_OpenOnDoubleClick | ImGuiTreeNodeFlags_OpenOnArrow;
@@ -23,12 +25,28 @@ void ShowEntity(BwatEngine::Entity entity)
     {
         flags |= ImGuiTreeNodeFlags_Leaf;
     }
+
+    if (entity == editor->GetEditedEntity())
+    {
+        flags |= ImGuiTreeNodeFlags_Selected;
+    }
+
     bool isOpen = ImGui::TreeNodeEx(entityName.c_str(), flags);
 
     if (ImGui::IsItemClicked())
     {
-        WidgetProperties::Inspect(entity);
+        editor->SetEditedEntity(entity);
     }
+
+    if (ImGui::BeginPopupContextItem("ShowEntityContextMenu"))
+    {
+        if (ImGui::MenuItem("Delete entity"))
+        {
+            BwatEngine::Coordinator::GetInstance().DestroyEntity(entity);
+        }
+        ImGui::EndPopup();
+    }
+
     if (isOpen)
     {
         for (auto &child : node.children)
@@ -41,10 +59,20 @@ void ShowEntity(BwatEngine::Entity entity)
 
 void WidgetHierarchy::TickVisible()
 {
-    auto &coordinator = *BwatEngine::Coordinator::GetInstance();
+    auto &coordinator = BwatEngine::Coordinator::GetInstance();
+
+    if (ImGui::BeginPopupContextWindow("CreateEntityContextMenu"))
+    {
+        if (ImGui::MenuItem("Create entity"))
+        {
+            coordinator.CreateEntity();
+        }
+        ImGui::EndPopup();
+    }
 
     for (auto &entity : coordinator.GetRootEntities())
     {
         ShowEntity(entity);
     }
+
 }

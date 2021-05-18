@@ -1,4 +1,6 @@
 #include "WidgetAsset.hpp"
+#include "ResourceManager/ResourceManager.hpp"
+#include "Rendering/Texture.hpp"
 
 WidgetAsset::WidgetAsset(EditorInterface *editor) : Widget(editor)
 {
@@ -10,9 +12,5 @@ WidgetAsset::WidgetAsset(EditorInterface *editor) : Widget(editor)
 
 void WidgetAsset::TickVisible()
 {
-    if (ImGui::Button("Import"))
-    {
-
-    }
     assetDirectory.ShowList();
 }

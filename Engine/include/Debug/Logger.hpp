@@ -1,16 +1,13 @@
 #ifndef DEBUG_LOGGER_HPP
 #define DEBUG_LOGGER_HPP
 
-
-
 #include <cstdio>
 #include <cstdarg>
-#include <cstdbool>
 #include <ctime>
 
 namespace BLogger
 {
-    typedef struct {
+    typedef struct LogEvent {
         va_list ap;
         const char *fmt;
         const char *file;
@@ -25,7 +22,7 @@ namespace BLogger
 
     enum { E_LOG_TRACE, E_LOG_DEBUG, E_LOG_INFO, E_LOG_WARN, E_LOG_ERROR, E_LOG_FATAL };
 
-#ifdef BWATDEBUG
+#if BWATEDITOR
 
 #define LogTrace(...) LogLog(BLogger::E_LOG_TRACE, __FILE__, __LINE__, __VA_ARGS__ )
 #define LogDebug(...) LogLog(BLogger::E_LOG_DEBUG, __FILE__, __LINE__, __VA_ARGS__ )
@@ -49,7 +46,8 @@ namespace BLogger
     void LogSetLock(LockFn fn, void *uData);
     void LogSetLevel(int level);
     void LogSetQuiet(bool enable);
-    int LogAddCallback(LogFn, void* uData, int level);
+    int LogAddCallback(LogFn callback, void* uData, int level);
+    void LogRemoveCallback(int index);
     int LogAddFp(FILE *fp, int level);
 
     void LogLog(int level, const char*file, int line, const char *fmt, ...);
@@ -57,6 +55,7 @@ namespace BLogger
     void LogNull();
 
 
+    static bool isDirty = false;
 }
 
 

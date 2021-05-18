@@ -1,13 +1,10 @@
 #pragma once
 
-#include <vector>
 #include <memory>
-#include <filesystem>
+#include <vector>
 #include "Mesh.hpp"
 #include "glad/glad.h"
-#include "GLFW/glfw3.h"
 #include "Shader.hpp"
-#include "Light.hpp"
 
 #include "Math/Math.hpp"
 
@@ -34,11 +31,12 @@ namespace Rendering
 
 	public:
 
-	    std::filesystem::path modelPath;
+	    std::string modelPath;
 
         Model() = default;
         Model(const std::string path);
 
+		void AddMesh(std::vector<Vertex> vertices, std::vector<unsigned int> indices,Material material);
 		std::vector<Material*> GetDefaultMaterials() const;
 		void Draw(std::vector<Material*>* materials = nullptr);
 	};
