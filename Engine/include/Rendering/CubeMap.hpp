@@ -11,6 +11,8 @@ namespace Rendering
 {
 	struct CubeMap
 	{
+		bool isDds = false;
+
 		GLuint id;
 		std::vector<std::string> faces;
 		unsigned int skyboxVAO, skyboxVBO;
@@ -19,6 +21,11 @@ namespace Rendering
 		void Init();
 		void LoadCubeMap();
 		void BindCubeMap();
+
+		void LoadCubeMapDds(const char* filename);
+		void UploadCubeMapDds(const char* filename);
+		void BindAndDrawCubeMaDdsp();
+		
 	};
 }
 

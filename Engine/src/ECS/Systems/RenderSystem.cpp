@@ -15,12 +15,12 @@ RenderSystem::RenderSystem()
     shader = { "Assets/Shaders/colors.vs", "Assets/Shaders/multilight.fs" };
 
     cubeMap.faces = {
-        "Assets/cubemap/right.jpg",
-        "Assets/cubemap/left.jpg",
-        "Assets/cubemap/top.jpg",
-        "Assets/cubemap/bottom.jpg",
-        "Assets/cubemap/front.jpg",
-        "Assets/cubemap/back.jpg",
+        "Assets/cubemap/left.png",
+        "Assets/cubemap/right.png",
+        "Assets/cubemap/up.png",
+        "Assets/cubemap/down.png",
+        "Assets/cubemap/front.png",
+        "Assets/cubemap/back.png",
     };
 
     cubeMap.LoadCubeMap();
@@ -66,8 +66,13 @@ void RenderSystem::RenderCubeMap()
     cubeMap.shader.SetMat4("projection", cameraComponent.GetProjectionMatrix());
     glBindVertexArray(cubeMap.skyboxVAO);
 
-    glBindTexture(GL_TEXTURE_CUBE_MAP, cubeMap.id);
-    glDrawArrays(GL_TRIANGLES, 0, 36);
+    if (cubeMap.isDds)
+        cubeMap.BindAndDrawCubeMaDdsp();
+    else
+    {
+        glBindTexture(GL_TEXTURE_CUBE_MAP, cubeMap.id);
+        glDrawArrays(GL_TRIANGLES, 0, 36);
+    }
 
     glDepthMask(GL_TRUE);
 
