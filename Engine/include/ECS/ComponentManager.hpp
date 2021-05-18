@@ -55,11 +55,19 @@ namespace BwatEngine
         }
 
         template<class C>
-        void AddComponent(EntityID entity, C&& component = {})
+        void AddComponent(EntityID entity, C&& component)
         {
             if(!GetComponentType<C>())
                 return;
             GetComponentArray<C>()->InsertData(entity, std::forward<C>(component));
+        }
+
+        template<class C>
+        void AddComponent(EntityID entity)
+        {
+            if(!GetComponentType<C>())
+                return;
+            GetComponentArray<C>()->InsertData(entity);
         }
 
         template<class C>
