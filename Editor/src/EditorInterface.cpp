@@ -13,7 +13,6 @@
 #include "WidgetPostProcess.hpp"
 
 #include "imgui_internal.h"
-#include "ResourceManager/ResourceManager.hpp"
 #include "Serialization/Serialization.hpp"
 #include "Time.hpp"
 #include "Engine.hpp"
@@ -280,20 +279,22 @@ void EditorInterface::ToolbarUI()
     {
         guizmoMode = ImGuizmo::MODE::LOCAL;
     }
-
+    
     ImGui::SameLine();
     ImGui::SetCursorPosX(ImGui::GetWindowWidth()/2 - 25/2);
-    if (ImGui::ImageButton(reinterpret_cast<ImTextureID>(BwatEngine::ResourceManager::Instance()->GetOrLoadTexture("Assets/image/play.png",Rendering::Texture::Type::E_DIFFUSE)->id), ImVec2(25.f, 25.f)))
+    if (ImGui::ImageButton(reinterpret_cast<ImTextureID>(playImage), ImVec2(25.f, 25.f)))
     {
         if (!engine->isPlaying)
         {
             //BwatEngine::Serializer::SaveScene(engine->GetScene(), "play.txt");
             engine->isPlaying = true;
+            playImage = BwatEngine::ResourceManager::Instance()->GetOrLoadTexture("Assets/image/pause.png",Rendering::Texture::Type::E_DIFFUSE)->id;
         }
         else
         {
             engine->isPlaying = false;
             //BwatEngine::Serializer::LoadScene(engine->GetScene(), "play.txt");
+            playImage = BwatEngine::ResourceManager::Instance()->GetOrLoadTexture("Assets/image/play.png",Rendering::Texture::Type::E_DIFFUSE)->id;
         }
     }
     ImGui::SameLine();

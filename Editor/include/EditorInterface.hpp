@@ -9,6 +9,7 @@
 #include "Window.hpp"
 #include "ImGuizmo.h"
 #include "Rendering/FrameBuffer.hpp"
+#include "ResourceManager/ResourceManager.hpp"
 
 
 namespace BwatEngine
@@ -46,6 +47,7 @@ public:
 private:
     void ApplyStyle() const;
     void BeginWindow();
+    GLuint playImage = BwatEngine::ResourceManager::Instance()->GetOrLoadTexture("Assets/image/play.png",Rendering::Texture::Type::E_DIFFUSE)->id;
 
     BwatEngine::EntityID editedEntity = 0;
     std::vector<std::unique_ptr<Widget>> widgets;

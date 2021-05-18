@@ -99,7 +99,8 @@ void WidgetProperties::ShowComponent<BwatEngine::RenderableComponent>(BwatEngine
 
             ImGui::Text("Diffuse Texture");
             ImGui::SameLine();
-            if(ImGui::BeginCombo("##Diff", DiffName.c_str()))
+            std::string labelDiff = "##Diff" + std::to_string(i);
+            if(ImGui::BeginCombo(labelDiff.c_str(), DiffName.c_str()))
             {
                 auto textList = BwatEngine::ResourceManager::Instance()->GetTextList();
 
@@ -124,7 +125,8 @@ void WidgetProperties::ShowComponent<BwatEngine::RenderableComponent>(BwatEngine
 
             ImGui::Text("Specular Texture");
             ImGui::SameLine();
-            if(ImGui::BeginCombo("##Spec", SpecName.c_str()))
+            std::string labelSpec = "##Spec" + std::to_string(i);
+            if(ImGui::BeginCombo(labelSpec.c_str(), SpecName.c_str()))
             {
                 auto textList = BwatEngine::ResourceManager::Instance()->GetTextList();
 
@@ -149,7 +151,8 @@ void WidgetProperties::ShowComponent<BwatEngine::RenderableComponent>(BwatEngine
             
             ImGui::Text("Normal Texture");
             ImGui::SameLine();
-            if (ImGui::BeginCombo("##normal", normalName.c_str()))
+            std::string labelNorm = "##Norm" + std::to_string(i);
+            if (ImGui::BeginCombo(labelNorm.c_str(), normalName.c_str()))
             {
                 auto textList = BwatEngine::ResourceManager::Instance()->GetTextList();
 
