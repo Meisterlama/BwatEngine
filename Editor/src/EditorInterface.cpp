@@ -286,14 +286,14 @@ void EditorInterface::ToolbarUI()
     {
         if (!engine->isPlaying)
         {
-            //BwatEngine::Serializer::SaveScene(engine->GetScene(), "play.txt");
+            BwatEngine::Serializer::SaveScene(engine->GetScene(), "play.txt");
             engine->isPlaying = true;
             playImage = BwatEngine::ResourceManager::Instance()->GetOrLoadTexture("Assets/image/pause.png",Rendering::Texture::Type::E_DIFFUSE)->id;
         }
         else
         {
             engine->isPlaying = false;
-            //BwatEngine::Serializer::LoadScene(engine->GetScene(), "play.txt");
+            BwatEngine::Serializer::LoadScene(engine->GetScene(), "play.txt");
             playImage = BwatEngine::ResourceManager::Instance()->GetOrLoadTexture("Assets/image/play.png",Rendering::Texture::Type::E_DIFFUSE)->id;
         }
     }
