@@ -7,6 +7,7 @@
 #include "Rendering/Model.hpp"
 #include "Rendering/Texture.hpp"
 #include "Audio/Sound.hpp"
+#include "ECS/Components/ScriptComponent.hpp"
 
 
 namespace BwatEngine
@@ -36,6 +37,8 @@ namespace BwatEngine
 
         Audio::AudioData* LoadAudio(std::string path);
 
+        std::string* LoadScript(std::string path);
+
 
         /* ************************************************************************* */
 
@@ -47,13 +50,17 @@ namespace BwatEngine
 
         Audio::AudioData* GetOrLoadAudio(std::string path);
 
+        std::string* GetOrLoadScript(std::string path);
+
         /* ************************************************************************* */
 
         std::vector<std::string>& GetModelList();
 
         std::vector<std::string>& GetTextList();
 
-         std::vector<std::string>& getAudioList();
+        std::vector<std::string>& getAudioList();
+
+        std::vector<std::string>& getScriptList();
 
     private:
 
@@ -63,6 +70,7 @@ namespace BwatEngine
         bool dirtyModels = false;
         bool dirtyTextures = false;
         bool dirtyAudio = false;
+        bool dirtyScript = false;
 
         /* all the maps that stores the resources */
         // add the rig for skinning animation
@@ -70,6 +78,7 @@ namespace BwatEngine
         std::unordered_map<std::string, std::unique_ptr<Audio::AudioData>> audio;
         std::unordered_map<std::string, std::unique_ptr<Rendering::Model>> models;
         std::unordered_map<std::string, std::unique_ptr<Rendering::Texture>> textures;
+        std::unordered_map<std::string, std::unique_ptr<std::string>> scripts;
 
         /* ************************************************************************* */
         std::vector<std::string> modelsKey;
@@ -78,10 +87,13 @@ namespace BwatEngine
         void UpdateTexturesKey();
         std::vector<std::string> audioKey;
         void UpdateAudioKey();
+        std::vector<std::string> scriptKey;
+        void UpdateScriptKey();
 
         Rendering::Texture* GetTexture(std::string path);
         Rendering::Model* GetModel(std::string path);
         Audio::AudioData* GetAudio(std::string path);
+        std::string* GetScript(std::string path);
 
 
     };
