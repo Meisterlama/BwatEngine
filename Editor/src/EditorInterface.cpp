@@ -11,6 +11,7 @@
 #include "WidgetProperties.hpp"
 #include "WidgetLog.hpp"
 #include "WidgetPostProcess.hpp"
+#include "WidgetSavePicker.hpp"
 
 #include "imgui_internal.h"
 #include "Serialization/Serialization.hpp"
@@ -88,6 +89,7 @@ void EditorInterface::Initialise()
     widgets.emplace_back(std::make_unique<WidgetLog>(this));
     widgets.emplace_back(std::make_unique<WidgetShader>(this));
     widgets.emplace_back(std::make_unique<WidgetPostProcess>(this));
+    widgets.emplace_back(std::make_unique<WidgetSavePicker>(this));
 
     {
         widgets.emplace_back(std::make_unique<WidgetProperties>(this));
@@ -286,14 +288,14 @@ void EditorInterface::ToolbarUI()
     {
         if (!engine->isPlaying)
         {
-            BwatEngine::Serializer::SaveScene(engine->GetScene(), "play.txt");
+            BwatEngine::Serializer::SaveScene("play.txt");
             engine->isPlaying = true;
             playImage = BwatEngine::ResourceManager::Instance()->GetOrLoadTexture("Assets/image/pause.png",Rendering::Texture::Type::E_DIFFUSE)->id;
         }
         else
         {
             engine->isPlaying = false;
-            BwatEngine::Serializer::LoadScene(engine->GetScene(), "play.txt");
+            BwatEngine::Serializer::LoadScene("play.txt");
             playImage = BwatEngine::ResourceManager::Instance()->GetOrLoadTexture("Assets/image/play.png",Rendering::Texture::Type::E_DIFFUSE)->id;
         }
     }

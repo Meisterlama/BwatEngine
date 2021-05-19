@@ -21,6 +21,7 @@ public:
     void ShowList();
 
     FileInfoStruct loadFile;
+    std::filesystem::path currentPath;
 
 private:
     struct FilterInfoStruct
@@ -34,7 +35,6 @@ private:
 
     std::vector<FileInfoStruct> fileList;
     std::vector<FileInfoStruct> filteredFileList;
-    std::filesystem::path currentPath;
     std::set<std::string> selectedFileNames;
     std::string name;
     bool showDialog = false;

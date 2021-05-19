@@ -2,7 +2,6 @@
 #include "EditorInterface.hpp"
 #include "Engine.hpp"
 #include "Serialization/Serialization.hpp"
-#include "ResourceManager/ResourceManager.hpp"
 
 WidgetMenuBar::WidgetMenuBar(EditorInterface *editor) : Widget(editor)
 {
@@ -39,7 +38,7 @@ void WidgetMenuBar::MenuWindow()
 
     for(auto& widget  : widgetList)
     {
-        if (widget->GetTitle() != "MenuBar")
+        if (widget->GetTitle() != "MenuBar" || widget->GetTitle() != "Save Picker")
         {
             if(ImGui::MenuItem(widget->GetTitle().c_str()))
             {
@@ -53,11 +52,11 @@ void WidgetMenuBar::MenuFile()
 {
     if (ImGui::MenuItem("Save Scene"))
     {
-        BwatEngine::Serializer::SaveScene(editor->engine->GetScene(), "test.txt");
+        editor->GetWidgetList().at(7)->SetVisible(true);
     }
     if (ImGui::MenuItem("Load Scene"))
     {
-        BwatEngine::Serializer::LoadScene(editor->engine->GetScene(), "test.txt");
+        BwatEngine::Serializer::LoadScene("test.txt");
     }
 
     ImGui::Separator();

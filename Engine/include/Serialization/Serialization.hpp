@@ -8,8 +8,8 @@ namespace BwatEngine
     // namespace ou static
     namespace Serializer
     {
-        void SaveScene(const Scene& toSave, const char* path);
-        void LoadScene(Scene& toLoad, const char* path);
+        void SaveScene(const char* path);
+        void LoadScene(const char* path);
     };
 
 
