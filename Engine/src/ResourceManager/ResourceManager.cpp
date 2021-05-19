@@ -34,7 +34,6 @@ namespace BwatEngine
         return it.first->second.get();
     }
 
-#define MAXCHAR 1000
     std::string* ResourceManager::LoadScript(std::string path)
     {
 
