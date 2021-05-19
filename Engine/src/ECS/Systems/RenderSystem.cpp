@@ -1,7 +1,5 @@
 #include "ECS/Coordinator.hpp"
 #include "ECS/Systems/RenderSystem.hpp"
-#include "ECS/Components/TransformComponent.hpp"
-#include "ECS/Components/CameraComponent.hpp"
 #include "ECS/Components/RenderableComponent.hpp"
 #include "ECS/Components/LightComponent.hpp"
 
@@ -32,7 +30,14 @@ RenderSystem::RenderSystem(int width, int height) : displayWidth(width), display
 
 void RenderSystem::SetCamera(EntityID _camera)
 {
+    cameraID = _camera;
+}
+
+void RenderSystem::SetEditorCamera(CameraComponent _camera, TransformComponent _cameraTransform)
+{
+    useEditorCamera = true;
     camera = _camera;
+    cameraTransform = _cameraTransform;
 }
 
 // ===================================== MAIN RENDERER ===================================== //
@@ -43,8 +48,14 @@ void RenderSystem::Update()
     CheckCameraValid();
     OptionAndClear(displayWidth, displayHeight);
 
-    if (camera == 0 )
-        return;
+    if (!useEditorCamera)
+    {
+        if (cameraID == 0)
+            return;
+        auto& coordinator = Coordinator::GetInstance();
+        cameraTransform = coordinator.GetComponent<TransformComponent>(cameraID);
+        camera = coordinator.GetComponent<CameraComponent>(cameraID);
+    }
 
     RenderCubeMap();
     RenderEntitiesAndLights();
@@ -54,16 +65,10 @@ void RenderSystem::Update()
 // Gamma correction go to post process
 void RenderSystem::RenderCubeMap()
 {
-
-    auto& coordinator = Coordinator::GetInstance();
-
-    auto& cameraTransform = coordinator.GetComponent<TransformComponent>(camera);
-    auto& cameraComponent = coordinator.GetComponent<CameraComponent>(camera);
-
     glDepthMask(GL_FALSE);
     cubeMap.shader.Use();
     cubeMap.shader.SetMat4("view", Math::Mat4f::CreateTRSMat(Math::Vec3f(0, 0, 0), cameraTransform.rotation, cameraTransform.scale).Invert());
-    cubeMap.shader.SetMat4("projection", cameraComponent.GetProjectionMatrix());
+    cubeMap.shader.SetMat4("projection", camera.GetProjectionMatrix());
     glBindVertexArray(cubeMap.skyboxVAO);
 
     if (cubeMap.isDds)
@@ -82,9 +87,6 @@ void RenderSystem::RenderEntitiesAndLights()
 {
     auto& coordinator = Coordinator::GetInstance();
 
-    auto& cameraTransform = coordinator.GetComponent<TransformComponent>(camera);
-    auto& cameraComponent = coordinator.GetComponent<CameraComponent>(camera);
-
     Signature signature;
     signature.set(coordinator.GetComponentType<LightComponent>());
     auto lights = coordinator.GetEntitiesWithSignature(signature);
@@ -93,7 +95,7 @@ void RenderSystem::RenderEntitiesAndLights()
     shader.Use();
     shader.SetMat4("view", Math::Mat4f::CreateTRSMat(cameraTransform.position, cameraTransform.rotation, cameraTransform.scale).Invert());
     shader.SetVec3("viewPos", cameraTransform.position.X, cameraTransform.position.Y, cameraTransform.position.Z);
-    shader.SetMat4("proj", cameraComponent.GetProjectionMatrix());
+    shader.SetMat4("proj", camera.GetProjectionMatrix());
     shader.SetInt("nbrlights", (int)lights.size());
 
     shader.SetTexture("shadowMap", 10 , shadowMap.depthMap);
@@ -145,12 +147,14 @@ void RenderSystem::RenderEntitiesAndLights()
 
 void RenderSystem::CheckCameraValid()
 {
+    if (useEditorCamera)
+        return;
     auto& coordinator = Coordinator::GetInstance();
 
-    if (!coordinator.IsValid(camera) || coordinator.GetEntitySignature(camera) != signature)
+    if (!coordinator.IsValid(cameraID) || coordinator.GetEntitySignature(cameraID) != signature)
     {
         auto cameras = coordinator.GetEntitiesWithSignature(signature);
-        camera = (!cameras.empty()) ? cameras[0] : 0;
+        cameraID = (!cameras.empty()) ? cameras[0] : 0;
     }
 }
 

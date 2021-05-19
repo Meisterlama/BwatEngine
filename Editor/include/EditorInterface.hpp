@@ -10,6 +10,8 @@
 #include "ImGuizmo.h"
 #include "Rendering/FrameBuffer.hpp"
 #include "ResourceManager/ResourceManager.hpp"
+#include "ECS/Components/CameraComponent.hpp"
+#include "ECS/Components/TransformComponent.hpp"
 
 
 namespace BwatEngine
@@ -44,6 +46,9 @@ public:
     Rendering::FrameBufferObject gameViewFramebuffer;
     void ApplyStyle() const;
 
+    BwatEngine::CameraComponent camera;
+    BwatEngine::TransformComponent cameraTransform;
+    BwatEngine::Math::Vec3f rotation{};
 
 private:
     void BeginWindow();

@@ -38,7 +38,7 @@ void WidgetHierarchy::ShowEntity(BwatEngine::EntityID entity)
         editor->SetEditedEntity(entity);
     }
 
-    if (ImGui::BeginPopupContextItem("ShowEntityContextMenu"))
+    if (ImGui::BeginPopupContextItem("ShowEntityContextMenu" ,ImGuiWindowFlags_NoMove))
     {
         if (ImGui::MenuItem("Delete entity"))
         {

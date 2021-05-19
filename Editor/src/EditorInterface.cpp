@@ -17,6 +17,7 @@
 #include "Time.hpp"
 #include "Engine.hpp"
 #include "ECS/Systems/RenderSystem.hpp"
+#include "ECS/Coordinator.hpp"
 
 ImGuizmo::MODE EditorInterface::guizmoMode = ImGuizmo::MODE::LOCAL;
 ImGuizmo::OPERATION EditorInterface::guizmoOperation = ImGuizmo::OPERATION::TRANSLATE;
@@ -47,6 +48,11 @@ void EditorInterface::Close()
 
 void EditorInterface::OnTick()
 {
+    auto& coordinator = BwatEngine::Coordinator::GetInstance();
+
+    auto renderSystem = coordinator.GetSystem<BwatEngine::RenderSystem>();
+    renderSystem->SetEditorCamera(camera, cameraTransform);
+
     // Render game in editor framebuffer
     GLint previousFramebuffer = gameViewFramebuffer.Bind();
     engine->Update();

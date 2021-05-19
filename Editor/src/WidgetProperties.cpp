@@ -15,6 +15,8 @@
 #include <Rendering/Model.hpp>
 #include "WidgetProperties.hpp"
 
+#include "type.hpp"
+
 #include "imgui_stdlib.h"
 
 WidgetProperties::WidgetProperties(EditorInterface *editor) : Widget(editor)
@@ -351,7 +353,7 @@ bool WidgetProperties::AddComponentMenuItem(BwatEngine::EntityID entity)
     if (!coordinator.HaveComponent<T>(entity))
     {
         //TODO: proper component name
-        if (ImGui::MenuItem(typeid(T).name()))
+        if (ImGui::MenuItem(demangle(typeid(T).name()).c_str()))
             //TODO: proper default value for the component
             coordinator.AddComponent<T>(entity);
         return true;
@@ -369,7 +371,7 @@ bool WidgetProperties::ShowComponentMenuItem(BwatEngine::EntityID entity)
     if (entitySignature.test(coordinator.GetComponentType<T>()))
     {
         ImGui::PushID(typeid(T).name());
-        if (ImGui::CollapsingHeader(typeid(T).name(), ImGuiTreeNodeFlags_DefaultOpen))
+        if (ImGui::CollapsingHeader(demangle(typeid(T).name()).c_str(), ImGuiTreeNodeFlags_DefaultOpen))
         {
             bool componentDeleted = false;
             if (ImGui::BeginPopupContextItem("ComponentContextMenu"))

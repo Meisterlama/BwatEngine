@@ -5,6 +5,8 @@
 
 #include "ECS/System.hpp"
 #include "ECS/ECS.hpp"
+#include "ECS/Components/TransformComponent.hpp"
+#include "ECS/Components/CameraComponent.hpp"
 #include "Rendering/Shader.hpp"
 #include "Rendering/FrameBuffer.hpp"
 #include "Window.hpp"
@@ -21,7 +23,7 @@ namespace BwatEngine
         Rendering::CubeMap cubeMap;
         Rendering::ShadowMapping shadowMap;
 
-        EntityID camera = 0;
+        EntityID cameraID = 0;
         Signature signature;
 
     public:
@@ -29,11 +31,16 @@ namespace BwatEngine
         int displayWidth;
         int displayHeight;
 
+        bool useEditorCamera = false;
+        CameraComponent camera;
+        TransformComponent cameraTransform;
+
         Math::Vec3f clearColor = { 0.5f, 0.5f, 0.5f };
         Math::Mat4f  lightSpaceMatrix;
 
         RenderSystem(int Width, int Height);
         void SetCamera(EntityID _camera);
+        void SetEditorCamera(CameraComponent camera, TransformComponent cameraTransform);
         virtual void Update() override;
         void UpdateShadow();
         void RenderCubeMap();
