@@ -42,6 +42,8 @@ void Engine::Update()
     Coordinator::GetInstance().UpdateSystems(isPlaying);
 
     renderSystem->UpdateShadow();
+
+
     GLint targetFramebuffer;
     glGetIntegerv(GL_DRAW_FRAMEBUFFER_BINDING, &targetFramebuffer);
 

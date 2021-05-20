@@ -110,8 +110,12 @@ void RenderSystem::RenderEntitiesAndLights()
     
     for (auto entity : entities)
     {
-        auto& entityTransform = coordinator.GetComponent<TransformComponent>(entity);
         auto& renderableComponent = coordinator.GetComponent<RenderableComponent>(entity);
+
+        if (renderableComponent.model == nullptr)
+            continue;
+
+        auto& entityTransform = coordinator.GetComponent<TransformComponent>(entity);
         shader.SetMat4("model", Math::Mat4f::CreateTRSMat(entityTransform.position, entityTransform.rotation, entityTransform.scale));
 
         if (renderableComponent.materials.size() > 0)
@@ -137,9 +141,7 @@ void RenderSystem::RenderEntitiesAndLights()
                 shader.SetInt("material.isNormal", 0);
         }
 
-        if (renderableComponent.model != nullptr)
-            renderableComponent.model->Draw(&renderableComponent.materials);
-
+        renderableComponent.model->Draw(&renderableComponent.materials);
     }
 }
 
@@ -169,6 +171,11 @@ void RenderSystem::OptionAndClear(int displayWidth, int displayHeight)
 
 void RenderSystem::UpdateShadow()
 {
+
+    CheckCameraValid();
+
+    glCullFace(GL_FRONT);
+
     GLint previousFramebuffer;
     glGetIntegerv(GL_DRAW_FRAMEBUFFER_BINDING, &previousFramebuffer);
 
@@ -181,8 +188,8 @@ void RenderSystem::UpdateShadow()
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
     Math::Mat4f lightProjection, lightView;
-    float near_plane = 0.0f, far_plane = 1000.f;
-    lightProjection = Math::Mat4f::CreateOrtho(-150.0f, 150.0f, -150.0f, 150.0f, near_plane, far_plane);
+    float near_plane = -100.f, far_plane = 1000.f;
+    lightProjection = Math::Mat4f::CreateOrtho(-300.0f, 300.0f, -300.0f, 300.0f, near_plane, far_plane);
 
     auto& coordinator = Coordinator::GetInstance();
 
@@ -190,15 +197,19 @@ void RenderSystem::UpdateShadow()
     signature.set(coordinator.GetComponentType<LightComponent>());
     auto lights = coordinator.GetEntitiesWithSignature(signature);
 
+    auto& cameraTransform = coordinator.GetComponent<TransformComponent>(camera);
+
     // Generate shadoz of the directional light
     for (unsigned int i = 0; i < lights.size(); i++)
     {
         std::string index = std::to_string(i);
         auto& light = coordinator.GetComponent<LightComponent>(lights[i]);
+
         if (light.typeoflight == Rendering::TYPE_LIGHT::Directional)
         {
-            lightView = Math::Mat4f::CreateTRSMat(light.position, Math::Vec3f{ Math::ToRads(light.direction.Y * 90),-Math::ToRads(light.direction.X * 90),Math::ToRads(light.direction.Z * 90) }, { 1 }).GetInverted();
-            lightSpaceMatrix = lightProjection * lightView;
+            Math::Quatf lightiew = Math::Quatf::LookAt(light.position + light.direction.SafeNormalize() , light.position  , {0, 1, 0 });
+            lightView = Math::Mat4f::CreateTRSMat(cameraTransform.position, lightiew, {1});
+            lightSpaceMatrix = lightProjection * lightView.GetInverted();
         }
     }
 
@@ -208,13 +219,21 @@ void RenderSystem::UpdateShadow()
     // draw all model in deph test 
     for (auto entity : entities)
     {
-        auto& entityTransform = coordinator.GetComponent<TransformComponent>(entity);
-        auto& renderableComponent = coordinator.GetComponent<RenderableComponent>(entity);
-        shadowMap.shader.SetMat4("model", Math::Mat4f::CreateTRSMat(entityTransform.position, entityTransform.rotation, entityTransform.scale));
+        if (entity == 2)
+            continue;
 
-        if (renderableComponent.model != nullptr)
-            renderableComponent.model->Draw(&renderableComponent.materials);
+        auto& renderableComponent = coordinator.GetComponent<RenderableComponent>(entity);
+
+        if (renderableComponent.model == nullptr)
+            continue;
+
+        auto& entityTransform = coordinator.GetComponent<TransformComponent>(entity);
+
+        shadowMap.shader.SetMat4("model", Math::Mat4f::CreateTRSMat(entityTransform.position, entityTransform.rotation, entityTransform.scale));
+        renderableComponent.model->Draw(&renderableComponent.materials);
     }
+
+    glCullFace(GL_BACK);
 
     glBindFramebuffer(GL_FRAMEBUFFER, previousFramebuffer);
 
