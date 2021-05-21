@@ -1,6 +1,7 @@
 #include "Rendering/Material.hpp"
 #include <assimp/material.h>
 #include "ResourceManager/ResourceManager.hpp"
+#include "Rendering/Shader.hpp"
 
 using namespace Rendering;
 
@@ -39,10 +40,52 @@ void Material::Bind()
     if (normal)
         normal->Use();
 
+    if (isTextured)
+    {
+        glActiveTexture(GL_TEXTURE5);
+        if (albedoMap)
+            albedoMap->Use();
+
+        glActiveTexture(GL_TEXTURE6);
+        if (metallicMap)
+            metallicMap->Use();
+
+        glActiveTexture(GL_TEXTURE7);
+        if (roughnessMap)
+            roughnessMap->Use();
+
+        glActiveTexture(GL_TEXTURE8);
+        if (aoMap)
+            aoMap->Use();
+
+    }
+
     glActiveTexture(GL_TEXTURE0);
+
+
 }
 
-void Material::SetDiffuse(Texture& texture)
+
+void Material::ApplyToShader(Shader& shader)
 {
-    diffuse = &texture;
+    shader.SetBool("material.isColor", isColor);
+    shader.SetVec4("material.color", color.X, color.Y, color.Z, color.W);
+
+    shader.SetFloat("material.shininess", shininess);
+
+    if (specular != nullptr)
+        shader.SetInt("material.specular", 1);
+
+    if (normal != nullptr)
+        shader.SetInt("material.isNormal", 1);
+    else
+        shader.SetInt("material.isNormal", 0);
+
+    if (!isTextured)
+    {
+        shader.SetVec3("albedo",albedo.X,albedo.Y,albedo.Z);
+        shader.SetFloat("metallic", metallic);
+        shader.SetFloat("roughness",roughness);
+        shader.SetFloat("ao",ao);
+    }
 }

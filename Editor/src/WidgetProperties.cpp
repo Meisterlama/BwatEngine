@@ -48,6 +48,43 @@ void WidgetProperties::ShowComponent<BwatEngine::TransformComponent>(BwatEngine:
         ImGui::DragFloat3("Scale", component.scale.values, 0.01);
 }
 
+void TextCenter(std::string text) 
+{
+    ImGui::Text("");
+    float font_size = ImGui::GetFontSize() * text.size() / 2;
+    ImGui::SameLine( ImGui::GetWindowSize().x / 2 - font_size + (font_size / 2) - 10);
+    ImGui::Text(text.c_str());
+}
+
+void CreateSelectedBox(Rendering::Texture* component,int index, std::string nameCategory, std::string label)
+{
+    std::string name;
+    if (component != nullptr)
+        name = component->path;
+    else
+        name = "";
+
+    ImGui::Text(nameCategory.c_str());
+    ImGui::SameLine();
+    label = "##name" + std::to_string(index);
+    if (ImGui::BeginCombo(label.c_str(), name.c_str()))
+    {
+        auto textList = BwatEngine::ResourceManager::Instance()->GetTextList();
+
+        for (auto& text : textList)
+        {
+            bool selected = (name == text.c_str());
+            if (ImGui::Selectable(text.c_str(), selected))
+            {
+                component = BwatEngine::ResourceManager::Instance()->GetOrLoadTexture(text, Rendering::Texture::Type::E_DIFFUSE);;
+            }
+            if (selected)
+                ImGui::SetItemDefaultFocus();
+        }
+        ImGui::EndCombo();
+    }
+}
+
 template<>
 void WidgetProperties::ShowComponent<BwatEngine::RenderableComponent>(BwatEngine::RenderableComponent& component)
 {
@@ -80,8 +117,8 @@ void WidgetProperties::ShowComponent<BwatEngine::RenderableComponent>(BwatEngine
         if (ImGui::Button("Add Materials"))
         {
             auto material = new Rendering::Material;
-            material->SetDiffuse(*BwatEngine::ResourceManager::Instance()
-                    ->GetOrLoadTexture("Assets/image/moteur.jpg",Rendering::Texture::Type::E_DIFFUSE));
+            material->diffuse = BwatEngine::ResourceManager::Instance()->GetOrLoadTexture("Assets/image/moteur.jpg",Rendering::Texture::Type::E_DIFFUSE);
+
             component.materials.push_back(material);
         }
 
@@ -177,6 +214,23 @@ void WidgetProperties::ShowComponent<BwatEngine::RenderableComponent>(BwatEngine
             }
 
             bool update = false;
+
+            bool isTextured = component.materials[i]->isTextured;
+            update |= ImGui::Checkbox("isColor", &isTextured);
+
+            if (isTextured)
+            {
+                CreateSelectedBox(component.materials[i]->albedoMap, i, "albedo", "albe");
+            }
+            else
+            {
+                ImGui::DragFloat3("Albedo", component.materials[i]->albedo.values,0.1f);
+                ImGui::DragFloat("Metallic", &component.materials[i]->metallic, 0.1f, 0.0f, 100.f);
+                ImGui::DragFloat("Roughness", &component.materials[i]->roughness, 0.01f, 0.0f, 100.f);
+                ImGui::DragFloat("Ao", &component.materials[i]->ao, 0.01f, 0.0f, 100.f);
+
+            }
+
             bool isColored = component.materials[i]->isColor;
             update |= ImGui::Checkbox("isColor", &isColored);
 
@@ -185,8 +239,18 @@ void WidgetProperties::ShowComponent<BwatEngine::RenderableComponent>(BwatEngine
                 ImGui::ColorEdit4("Color", component.materials[i]->color.values);
             }
 
+            TextCenter("Shadow Option");
+
+            bool castShadow = component.castShadow;
+            update |= ImGui::Checkbox("Cast Shadow", &castShadow);
+
             if (update)
+            {
+                component.materials[i]->isTextured = isTextured;
                 component.materials[i]->isColor = isColored;
+                component.castShadow = castShadow;
+            }
+
         }
 }
 

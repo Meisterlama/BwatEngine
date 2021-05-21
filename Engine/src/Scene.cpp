@@ -90,8 +90,8 @@ Scene::Scene(Window& window)
 
     physx::PxMaterial* material = Physic::GetPhysics()->createMaterial(0,0,0);
 
-    myMat.SetDiffuse(*texture);
-    myMat1.SetDiffuse(*texture1);
+    myMat.diffuse = texture;
+    myMat1.diffuse = texture1;
     
         for (int i = 0; i < 4 ; i++)
         {

@@ -32,9 +32,12 @@ void PostProcessSystem::Apply()
 		&gammaCor
 	};
 
+
+
 	for (Rendering::PostProcess* postProcess : postProcesses)
 	{
 		if (postProcess->IsEnabled())
 			postProcess->Draw(framebuffer.textureColor.id);
 	}
+
 }
