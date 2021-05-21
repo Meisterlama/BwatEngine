@@ -48,9 +48,13 @@ public:
     Rendering::FrameBufferObject sceneViewFramebuffer;
     void ApplyStyle() const;
 
+    const char* currentScene = nullptr;
+
+
     BwatEngine::CameraComponent camera;
     BwatEngine::TransformComponent cameraTransform;
     BwatEngine::Math::Vec3f rotation{};
+
 
     bool cursorLocked = false;
 private:

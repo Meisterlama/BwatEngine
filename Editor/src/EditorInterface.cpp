@@ -12,6 +12,8 @@
 #include "WidgetProperties.hpp"
 #include "WidgetLog.hpp"
 #include "WidgetPostProcess.hpp"
+#include "WidgetSavePicker.hpp"
+#include "WidgetLoadPicker.hpp"
 
 #include "imgui_internal.h"
 #include "Serialization/Serialization.hpp"
@@ -125,17 +127,18 @@ void EditorInterface::Initialise()
     ApplyStyle();
 
     //Push widget here
-    widgets.emplace_back(std::make_unique<WidgetMenuBar>(this));
-    widgets.emplace_back(std::make_unique<WidgetHierarchy>(this));
-    widgets.emplace_back(std::make_unique<WidgetAsset>(this));
-    widgets.emplace_back(std::make_unique<WidgetViewport>(this));
-    widgets.emplace_back(std::make_unique<WidgetGameport>(this));
-    widgets.emplace_back(std::make_unique<WidgetLog>(this));
-    widgets.emplace_back(std::make_unique<WidgetShader>(this));
-    widgets.emplace_back(std::make_unique<WidgetPostProcess>(this));
+    widgets.emplace_back(std::make_unique<WidgetMenuBar>(this)); // 0 = MenuBar
+    widgets.emplace_back(std::make_unique<WidgetHierarchy>(this)); // 1 = Hierarchy
+    widgets.emplace_back(std::make_unique<WidgetAsset>(this)); // 2 = Asset
+    widgets.emplace_back(std::make_unique<WidgetViewport>(this)); // 3 = Viewport
+    widgets.emplace_back(std::make_unique<WidgetLog>(this)); // 4 = Log
+    widgets.emplace_back(std::make_unique<WidgetShader>(this)); // 5 = Shader
+    widgets.emplace_back(std::make_unique<WidgetPostProcess>(this)); // 6 = PostProcess
+    widgets.emplace_back(std::make_unique<WidgetSavePicker>(this)); // 7 = Save
+    widgets.emplace_back(std::make_unique<WidgetLoadPicker>(this)); // 8 = Load
 
     {
-        widgets.emplace_back(std::make_unique<WidgetProperties>(this));
+        widgets.emplace_back(std::make_unique<WidgetProperties>(this)); // Properties always last
         widgetProperties = static_cast<WidgetProperties*>(widgets.back().get());
     }
 }
@@ -335,16 +338,19 @@ void EditorInterface::ToolbarUI()
     {
         if (!engine->isPlaying)
         {
-            //BwatEngine::Serializer::SaveScene(engine->GetScene(), "play.txt");
+            BwatEngine::Serializer::SaveScene("temp.txt");
             engine->isPlaying = true;
             playImage = BwatEngine::ResourceManager::Instance()->GetOrLoadTexture("Assets/image/pause.png",Rendering::Texture::Type::E_DIFFUSE)->id;
+            ImGui::GetStyle().Colors[ImGuiCol_WindowBg] = ImVec4(235.f / 255.f, 69.f / 255.f, 17.f / 255.f, 1.f);
+
             SetEditedEntity(0);
         }
         else
         {
             engine->isPlaying = false;
-            //BwatEngine::Serializer::LoadScene(engine->GetScene(), "play.txt");
+            BwatEngine::Serializer::LoadScene("temp.txt");
             playImage = BwatEngine::ResourceManager::Instance()->GetOrLoadTexture("Assets/image/play.png",Rendering::Texture::Type::E_DIFFUSE)->id;
+            ImGui::GetStyle().Colors[ImGuiCol_WindowBg] = ImVec4(60.f  / 255.f, 60.f  / 255.f, 60.f  / 255.f, 1.f);
         }
     }
 

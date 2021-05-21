@@ -41,7 +41,7 @@ void WidgetMenuBar::MenuWindow()
 
     for(auto& widget  : widgetList)
     {
-        if (widget->GetTitle() != "MenuBar")
+        if (widget->GetTitle() != "MenuBar" || widget->GetTitle() != "Save Picker")
         {
             if(ImGui::MenuItem(widget->GetTitle().c_str()))
             {
@@ -56,14 +56,21 @@ void WidgetMenuBar::MenuFile()
     if (ImGui::MenuItem("New Scene"))
     {
         BwatEngine::Coordinator::GetInstance().DestroyAllEntities();
+        editor->currentScene = nullptr;
     }
-    if (ImGui::MenuItem("Save Scene"))
+    if (editor->currentScene != nullptr)
+        enabled = true;
+    if (ImGui::MenuItem("Save Scene", 0, false, enabled))
     {
-        BwatEngine::Serializer::SaveScene(editor->engine->GetScene(), "test.txt");
+        BwatEngine::Serializer::SaveScene(editor->currentScene);
+    }
+    if (ImGui::MenuItem("Save as..."))
+    {
+        editor->GetWidgetList().at(7)->SetVisible(true);
     }
     if (ImGui::MenuItem("Load Scene"))
     {
-        BwatEngine::Serializer::LoadScene(editor->engine->GetScene(), "test.txt");
+        editor->GetWidgetList().at(8)->SetVisible(true);
     }
 
     ImGui::Separator();

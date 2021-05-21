@@ -7,6 +7,7 @@
 WidgetPostProcess::WidgetPostProcess(EditorInterface* editor) : Widget(editor)
 {
     title = "PostProcess";
+    SetVisible(false);
 }
 
 void WidgetPostProcess::TickVisible()

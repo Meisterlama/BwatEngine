@@ -20,6 +20,7 @@ void WidgetViewport::TickVisible()
             (ImTextureID)(size_t)editor->sceneViewFramebuffer.textureColor.id, ImVec2(ImGui::GetCursorScreenPos()),
             ImVec2(ImGui::GetCursorScreenPos().x + ImGui::GetWindowWidth(), ImGui::GetCursorScreenPos().y + ImGui::GetWindowHeight()), ImVec2(0, 1), ImVec2(1, 0));
 
+
     ImGuizmo::SetOrthographic(false);
     ImGuizmo::SetDrawlist();
     ImGuizmo::SetRect(ImGui::GetCursorScreenPos().x, ImGui::GetCursorScreenPos().y, ImGui::GetWindowWidth(), ImGui::GetWindowHeight());
@@ -54,16 +55,15 @@ void WidgetViewport::TickVisible()
                     entityMat.values,
                     pos.values,
                     eulerAngles.values,
-                    sca.values
-                    );
+                    sca.values);
 
             switch (EditorInterface::guizmoOperation)
             {
-                case ImGuizmo::OPERATION::TRANSLATE:
-                    entityTransform.position = pos;
-                    break;
+                    case ImGuizmo::OPERATION::TRANSLATE:
+                        entityTransform.position = pos;
+                        break;
 
-                case ImGuizmo::OPERATION::ROTATE:
+                    case ImGuizmo::OPERATION::ROTATE:
                     {
                         BwatEngine::Math::Vec3f radEulers;
                         radEulers.X = BwatEngine::Math::ToRads(eulerAngles.X);
@@ -71,10 +71,11 @@ void WidgetViewport::TickVisible()
                         radEulers.Z = BwatEngine::Math::ToRads(eulerAngles.Z);
                         entityTransform.rotation = BwatEngine::Math::Quatf(radEulers);
                     }
-                    break;
+                        break;
 
-                case ImGuizmo::OPERATION::SCALE:
-                    entityTransform.scale = sca;
+                    case ImGuizmo::OPERATION::SCALE:
+                        entityTransform.scale = sca;
+                
             }
         }
     }
