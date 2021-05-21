@@ -20,13 +20,14 @@ namespace BwatEngine::ECS::Internal
 
         return (status == 0) ? res.get() : name;
     }
+}
 #else
-
+namespace BwatEngine::ECS::Internal
+{
     // does nothing if not g++
     std::string demangle(const char* name)
     {
         return name;
     }
-
-#endif
 }
+#endif

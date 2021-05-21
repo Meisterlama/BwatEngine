@@ -22,13 +22,15 @@ WidgetLog::~WidgetLog()
 void WidgetLog::OnLogCallback(BLogger::LogEvent* ev)
 {
     static std::vector<char> buffer; // Avoid allocation for each call
-    int size = vsnprintf(nullptr, 0, ev->fmt, ev->ap);
+    va_list ap;
+    va_copy(ap, ev->ap);
+
+    int size = vsnprintf(nullptr, 0, ev->fmt, ap);
     if (buffer.size() < size)
         buffer.resize(size+1);
 
-    vsnprintf(buffer.data(), buffer.size(), ev->fmt, ev->ap);
+    vsprintf(buffer.data(), ev->fmt, ev->ap);
     ss << buffer.data() << "\n";
-    std::string yolo = ss.str();
 }
 
 void WidgetLog::TickVisible()
