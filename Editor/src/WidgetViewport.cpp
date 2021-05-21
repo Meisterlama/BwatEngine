@@ -78,23 +78,18 @@ void WidgetViewport::TickVisible()
             }
         }
     }
-
     if (ImGui::IsWindowHovered() && ImGui::IsMouseClicked(ImGuiMouseButton_Right))
     {
         BwatEngine::InputHandler::SetMouseStatus(BwatEngine::Disabled);
         ImGui::SetWindowFocus();
-        cursorLocked = true;
+        editor->cursorLocked = true;
     }
-    if (ImGui::IsWindowHovered() && ImGui::IsMouseClicked(ImGuiMouseButton_Left))
-    {
-        editor->SetEditedEntity(0);
-    }
-    if (cursorLocked && !BwatEngine::InputHandler::GetMouseButton(BwatEngine::MOUSE_BUTTON_2))
+    if (editor->cursorLocked && !BwatEngine::InputHandler::GetMouseButton(BwatEngine::MOUSE_BUTTON_2))
     {
         BwatEngine::InputHandler::SetMouseStatus(BwatEngine::Normal);
-        cursorLocked = false;
+        editor->cursorLocked = false;
     }
-    if (cursorLocked)
+    if (editor->cursorLocked)
     {
         HandleCamera();
     }
@@ -107,26 +102,8 @@ void WidgetViewport::HandleCamera()
     float sensitivity_mouse = -0.1f;
     mouseDelta *= sensitivity_mouse * Time::deltaTime;
 
-//                    if (Math::Quatf(rotation) != transform.rotation)
-//                        rotation = transform.rotation.GetEulerAngles();
-
-    editor->rotation.Y += mouseDelta.X;
-    editor->rotation.X += mouseDelta.Y;
-
-
-    if (editor->rotation.X > (Math::PI / 2 - 0.001))
-        editor->rotation.X = (Math::PI / 2 - 0.001);
-    else if (editor->rotation.X < -(Math::PI / 2 - 0.001))
-        editor->rotation.X = -(Math::PI / 2 - 0.001);
-
-    if (InputHandler::GetKeyboard(KEY_Q))
-    {
-        editor->rotation.Z -= 2 * Time::deltaTime;
-    }
-    if (InputHandler::GetKeyboard(KEY_E))
-    {
-        editor->rotation.Z += 2 * Time::deltaTime;
-    }
+    editor->rotation.X = Math::Clamp(editor->rotation.X + mouseDelta.Y, - Math::PI / 2, Math::PI / 2);
+    editor->rotation.Y = Math::Loop(editor->rotation.Y + mouseDelta.X, 0, Math::PI * 2);
 
     editor->cameraTransform.rotation = {editor->rotation};
 
@@ -151,10 +128,10 @@ void WidgetViewport::HandleCamera()
     if (InputHandler::GetKeyboard(KEY_D))
         StrafeVelocity = FrameSpeed;
 
-    if (InputHandler::GetKeyboard(KEY_SPACE))
+    if (InputHandler::GetKeyboard(KEY_Q) | InputHandler::GetKeyboard(KEY_SPACE))
         editor->cameraTransform.position.Y += Speed * Time::deltaTime;
 
-    if (InputHandler::GetKeyboard(KEY_LEFT_CONTROL))
+    if (InputHandler::GetKeyboard(KEY_Z) | InputHandler::GetKeyboard(KEY_LEFT_CONTROL))
         editor->cameraTransform.position.Y -= Speed * Time::deltaTime;
 
     Math::Vec3f forwardVec = editor->cameraTransform.rotation.Rotate({0, 0, 1}).Normalize();

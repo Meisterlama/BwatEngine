@@ -156,11 +156,11 @@ void CubeMap::UploadCubeMapDds(const char* filename)
     // Parse magic number
     char magic[4] = {};
     file.read((char*)&magic, sizeof(uint32_t));
-    if (strncmp(magic, "DDS ", 4) != 0)
-    {
-        fprintf(stderr, "Not a dds file\n");
-        return;
-    }
+//    if (strncmp(magic, "DDS ", 4) != 0)
+//    {
+//        fprintf(stderr, "Not a dds file\n");
+//        return;
+//    }
 
     // Parse header
     DDSHeader header = {};

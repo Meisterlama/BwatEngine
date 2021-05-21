@@ -50,15 +50,15 @@ public:
     BwatEngine::TransformComponent cameraTransform;
     BwatEngine::Math::Vec3f rotation{};
 
+    bool cursorLocked = false;
 private:
     void BeginWindow();
-    GLuint playImage = BwatEngine::ResourceManager::Instance()->GetOrLoadTexture("Assets/image/play.png",Rendering::Texture::Type::E_DIFFUSE)->id;
 
+    GLuint playImage = BwatEngine::ResourceManager::Instance()->GetOrLoadTexture("Assets/image/play.png",Rendering::Texture::Type::E_DIFFUSE)->id;
     BwatEngine::EntityID editedEntity = 0;
     std::vector<std::unique_ptr<Widget>> widgets;
     bool initialised = false;
     bool editorBegun = false;
-    bool showFPS = false;
     const float toolBarSize = 45.f;
 };
 

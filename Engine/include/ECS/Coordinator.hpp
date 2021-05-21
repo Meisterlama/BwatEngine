@@ -8,7 +8,7 @@
 
 #include "Debug/Logger.hpp"
 
-#include <string>
+#include "Name.hpp"
 
 namespace BwatEngine
 {
@@ -93,7 +93,7 @@ namespace BwatEngine
         template<class C>
         void RegisterComponent()
         {
-            LogInfo("Registered component %s", typeid(C).name());
+            LogInfo("[ECS] Registered component %s", GetName<C>().c_str());
             componentManager.RegisterComponent<C>();
         }
 
@@ -225,7 +225,7 @@ namespace BwatEngine
         template<class S, class... Args>
         std::shared_ptr<S> RegisterSystem(Args&&... args)
         {
-            LogInfo("Registered system %s", typeid(S).name());
+            LogInfo("[ECS] Registered system %s", GetName<S>().c_str());
             std::shared_ptr<S> systemPtr = systemManager.RegisterSystem<S>(args...);
             return systemPtr;
         }
@@ -234,6 +234,7 @@ namespace BwatEngine
         void SetSystemConfig(SystemConfig config)
         {
             systemManager.SetSystemConfig<S>(config);
+            LogInfo("[ECS] Update %s config", GetName<S>().c_str());
         }
 
         /**
@@ -251,6 +252,7 @@ namespace BwatEngine
                 signature.set(ID);
             }
             systemManager.SetSignature<S>(signature);
+            LogInfo("[ECS] Update %s signature requirement", GetName<S>().c_str());
         }
 
         void UpdateSystems(bool gameUpdate)
@@ -291,37 +293,10 @@ namespace BwatEngine
          */
         std::vector<EntityID> GetRootEntities() const;
 
-#ifdef __GNUG__
-#include <cstdlib>
-#include <memory>
-#include <cxxabi.h>
-
-    std::string demangle(const char* name) {
-
-        int status = -4; // some arbitrary value to eliminate the compiler warning
-
-        // enable c++11 by passing the flag -std=c++11 to g++
-        std::unique_ptr<char, void(*)(void*)> res {
-                abi::__cxa_demangle(name, NULL, NULL, &status),
-                std::free
-        };
-
-        return (status==0) ? res.get() : name ;
-    }
-
-#else
-
-    // does nothing if not g++
-std::string demangle(const char* name) {
-    return name;
-}
-
-#endif
-
-        template<typename S>
+        template <typename S>
         std::string GetName()
         {
-
+            return ECS::Internal::demangle(typeid(S).name());
         }
     };
 }

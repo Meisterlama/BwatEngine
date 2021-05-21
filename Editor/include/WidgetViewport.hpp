@@ -15,7 +15,6 @@ public:
 private:
     void HandleCamera();
     Rendering::FrameBufferObject fbo;
-    bool cursorLocked = false;
 };
 
 #endif //BWATENGINE_WIDGETVIEWPORT_HPP

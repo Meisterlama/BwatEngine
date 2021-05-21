@@ -33,18 +33,18 @@ void WidgetHierarchy::ShowEntity(BwatEngine::EntityID entity)
 
     bool isOpen = ImGui::TreeNodeEx(entityName.c_str(), flags);
 
-    if (ImGui::IsItemClicked())
-    {
-        editor->SetEditedEntity(entity);
-    }
-
-    if (ImGui::BeginPopupContextItem("ShowEntityContextMenu" ,ImGuiWindowFlags_NoMove))
+    if (ImGui::BeginPopupContextItem("ShowEntityDeleteContextMenu" ))
     {
         if (ImGui::MenuItem("Delete entity"))
         {
             BwatEngine::Coordinator::GetInstance().DestroyEntity(entity);
         }
         ImGui::EndPopup();
+    }
+
+    if (ImGui::IsItemClicked())
+    {
+        editor->SetEditedEntity(entity);
     }
 
     if (isOpen)
