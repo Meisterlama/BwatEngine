@@ -3,6 +3,7 @@
 
 #include <vector>
 #include <memory>
+#include <ECS/Coordinator.hpp>
 
 #include "ECS/ECS.hpp"
 #include "Widget.hpp"
@@ -61,6 +62,8 @@ private:
     bool initialised = false;
     bool editorBegun = false;
     const float toolBarSize = 45.f;
+
+    void HandleEditorShortcuts();
 };
 
 

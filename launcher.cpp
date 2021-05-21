@@ -43,6 +43,9 @@ int main()
 #if defined(BWATEDITOR)
 	EditorInterface editor(&engine);
 	editor.Initialise();
+#else
+	engine.isPlaying = true;
+	glBindFramebuffer(GL_FRAMEBUFFER, 0);
 #endif
 
 	while (engine.ShouldRun())
