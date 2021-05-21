@@ -23,7 +23,7 @@ public :
     void OnLogCallback(BLogger::LogEvent* ev);
 
 private:
-    std::stringstream ss;
+    std::stringstream ss {};
     int callbackIndex;
 
 };
