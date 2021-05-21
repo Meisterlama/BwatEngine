@@ -1,6 +1,7 @@
 #include "FileDialog.hpp"
 #include "imgui.h"
 #include "ResourceManager/ResourceManager.hpp"
+#include "Serialization/Serialization.hpp"
 
 inline std::vector<std::string> SplitStringToVector(const std::string& text, char delimiter, bool pushEmpty)
 {
@@ -239,23 +240,25 @@ void FileDialog::ShowList()
             }
         }
 
-        if (ImGui::BeginPopupContextItem("LoadResourceContextMenu"))
+        if (isAssetWidget)
         {
-            if (ImGui::MenuItem("Load Resources"))
+            if (ImGui::BeginPopupContextItem("LoadResourceContextMenu"))
             {
-                LoadOnResources(fileList[i]);
-                LoadResources(fileList[i]);
+                if (ImGui::MenuItem("Load Resources"))
+                {
+                    LoadOnResources(fileList[i]);
+                    LoadResources(fileList[i]);
+                }
+                ImGui::EndPopup();
             }
-            ImGui::EndPopup();
         }
-
         ImGui::PopID();
     }
 }
 
 void FileDialog::LoadOnResources(FileInfoStruct file)
 {
-    if (file.ext == ".obj" || file.ext == ".fbx" || file.ext == ".png" || file.ext == ".jpg")
+    if (file.ext == ".obj" || file.ext == ".fbx" || file.ext == ".png" || file.ext == ".jpg" || file.ext == ".bwat")
     {
         //if (BwatEngine::ResourceManager::Instance().
         loadFile = file;
@@ -272,5 +275,16 @@ void FileDialog::LoadResources(FileDialog::FileInfoStruct file)
     {
         BwatEngine::ResourceManager::Instance()->GetOrLoadTexture(file.filePath, Rendering::Texture::Type::E_DIFFUSE);
     }
+}
+
+bool FileDialog::SceneLoad(FileDialog::FileInfoStruct file)
+{
+    if (file.ext == ".bwat")
+    {
+        BwatEngine::Serializer::LoadScene(file.filePath.c_str());
+        return true;
+    }
+    else
+        return false;
 }
 

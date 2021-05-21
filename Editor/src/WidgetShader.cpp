@@ -9,6 +9,7 @@
 WidgetShader::WidgetShader(EditorInterface* editor) : Widget(editor)
 {
     title = "Shader Editing";
+    SetVisible(false);
 }
 
 void WidgetShader::TickVisible()

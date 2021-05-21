@@ -19,9 +19,11 @@ public:
 
     void OpenDialog(const char* aFilters, const std::filesystem::path& aFilePathName);
     void ShowList();
+    bool SceneLoad(FileInfoStruct file);
 
     FileInfoStruct loadFile;
     std::filesystem::path currentPath;
+    bool isAssetWidget = false;
 
 private:
     struct FilterInfoStruct

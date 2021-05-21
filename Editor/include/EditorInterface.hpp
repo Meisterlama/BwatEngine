@@ -44,6 +44,8 @@ public:
     Rendering::FrameBufferObject gameViewFramebuffer;
     void ApplyStyle() const;
 
+    const char* currentScene = nullptr;
+
 
 private:
     void BeginWindow();

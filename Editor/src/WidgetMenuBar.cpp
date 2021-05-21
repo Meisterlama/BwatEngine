@@ -50,13 +50,19 @@ void WidgetMenuBar::MenuWindow()
 
 void WidgetMenuBar::MenuFile()
 {
-    if (ImGui::MenuItem("Save Scene"))
+    if (editor->currentScene != nullptr)
+        enabled = true;
+    if (ImGui::MenuItem("Save Scene", 0, false, enabled))
+    {
+        BwatEngine::Serializer::SaveScene(editor->currentScene);
+    }
+    if (ImGui::MenuItem("Save as..."))
     {
         editor->GetWidgetList().at(7)->SetVisible(true);
     }
     if (ImGui::MenuItem("Load Scene"))
     {
-        BwatEngine::Serializer::LoadScene("test.txt");
+        editor->GetWidgetList().at(8)->SetVisible(true);
     }
 
     ImGui::Separator();

@@ -8,6 +8,7 @@ WidgetAsset::WidgetAsset(EditorInterface *editor) : Widget(editor)
     flags |= ImGuiWindowFlags_NoScrollbar;
 
     assetDirectory.OpenDialog("","Assets");
+    assetDirectory.isAssetWidget = true;
 }
 
 void WidgetAsset::TickVisible()
