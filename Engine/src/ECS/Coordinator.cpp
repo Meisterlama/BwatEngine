@@ -14,6 +14,7 @@ namespace BwatEngine
     {
         DestroyAllEntities();
         systemManager.DestroySystems();
+        LogDebug("[ECS] Coordinator was cleared");
     }
 
     EntityID Coordinator::CreateEntity()
@@ -56,10 +57,12 @@ namespace BwatEngine
             node->parent = nullptr;
         }
         sceneMap.erase(entity);
+
     }
 
     void Coordinator::DestroyAllEntities()
     {
+        LogInfo("[ECS] Destroying all entities...");
         for (size_t size = entities.size(); size != 0; size--)
         {
             DestroyEntity(entities[0]);

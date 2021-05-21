@@ -1,5 +1,6 @@
 #include "ResourceManager/ResourceManager.hpp"
-
+#include "Debug/Logger.hpp"
+#include <fstream>
 
 namespace BwatEngine
 {
@@ -33,6 +34,29 @@ namespace BwatEngine
         return it.first->second.get();
     }
 
+    std::string* ResourceManager::LoadScript(std::string path)
+    {
+
+        std::ifstream file (path, std::ios::binary | std::ios::ate);
+
+        if(!file.is_open())
+        {
+            LogError("file cannot be open at path : %s", path.c_str());
+            return nullptr;
+        }
+
+        std::streamsize size = file.tellg();
+        file.seekg(0, std::ios::beg);
+
+        auto it = scripts.emplace(path, std::make_unique<std::string>(size, '\0'));
+        std::string& strData  = *it.first->second;
+        file.read(strData.data(), size);
+        file.close();
+
+        dirtyScript = true;
+        return it.first->second.get();
+    }
+
     Rendering::Model* ResourceManager::GetOrLoadModel(std::string path)
     {
         Rendering::Model* res = ResourceManager::Instance()->GetModel(path);
@@ -49,6 +73,12 @@ namespace BwatEngine
     {
         Audio::AudioData* res = ResourceManager::Instance()->GetAudio(path);
         return (res != nullptr) ? res : LoadAudio(path);
+    }
+
+    std::string* ResourceManager::GetOrLoadScript(std::string path)
+    {
+        std::string* res = ResourceManager::Instance()->GetScript(path);
+        return (res != nullptr) ? res : LoadScript(path);
     }
 
     std::vector<std::string>& ResourceManager::GetModelList()
@@ -70,6 +100,13 @@ namespace BwatEngine
         if (dirtyAudio)
             UpdateAudioKey();
         return audioKey;
+    }
+
+    std::vector<std::string>& ResourceManager::getScriptList()
+    {
+        if (dirtyScript)
+            UpdateScriptKey();
+        return scriptKey;
     }
 
     void ResourceManager::UpdateModelsKey()
@@ -103,6 +140,17 @@ namespace BwatEngine
         dirtyAudio = false;
     }
 
+    void ResourceManager::UpdateScriptKey()
+    {
+        scriptKey.clear();
+        for(auto &it : scripts)
+        {
+            scriptKey.push_back(it.first);
+        }
+
+        dirtyScript = false;
+    }
+
     Rendering::Texture* ResourceManager::GetTexture(std::string path)
     {
         auto it = textures.find(path);
@@ -130,5 +178,13 @@ namespace BwatEngine
         return nullptr;
     }
 
+    std::string* ResourceManager::GetScript(std::string path)
+    {
+        auto it = scripts.find(path);
+        if (it != scripts.cend())
+            return it->second.get();
+
+        return nullptr;
+    }
 
 }

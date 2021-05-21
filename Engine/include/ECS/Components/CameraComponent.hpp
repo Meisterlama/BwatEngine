@@ -18,7 +18,7 @@ namespace BwatEngine
         float fov = 80.0f;
 
 
-        Math::Mat4f GetProjectionMatrix()
+        Math::Mat4f GetProjectionMatrix() const
         {
             return (isOrtho) ? Math::Mat4f::CreateOrtho(left, right, bottom, top, near, far)
                              : Math::Mat4f::CreatePerspective(fov, aspect, near, far);

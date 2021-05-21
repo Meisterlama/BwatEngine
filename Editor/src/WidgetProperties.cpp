@@ -346,12 +346,11 @@ template<typename T>
 bool WidgetProperties::AddComponentMenuItem(BwatEngine::EntityID entity)
 {
     BwatEngine::Coordinator &coordinator = BwatEngine::Coordinator::GetInstance();
-    BwatEngine::Signature entitySignature = coordinator.GetEntitySignature(entity);
 
     if (!coordinator.HaveComponent<T>(entity))
     {
         //TODO: proper component name
-        if (ImGui::MenuItem(typeid(T).name()))
+        if (ImGui::MenuItem(coordinator.GetName<T>().c_str()))
             //TODO: proper default value for the component
             coordinator.AddComponent<T>(entity);
         return true;
@@ -368,8 +367,8 @@ bool WidgetProperties::ShowComponentMenuItem(BwatEngine::EntityID entity)
 
     if (entitySignature.test(coordinator.GetComponentType<T>()))
     {
-        ImGui::PushID(typeid(T).name());
-        if (ImGui::CollapsingHeader(typeid(T).name(), ImGuiTreeNodeFlags_DefaultOpen))
+        ImGui::PushID(coordinator.GetName<T>().c_str());
+        if (ImGui::CollapsingHeader(coordinator.GetName<T>().c_str(), ImGuiTreeNodeFlags_DefaultOpen))
         {
             bool componentDeleted = false;
             if (ImGui::BeginPopupContextItem("ComponentContextMenu"))
