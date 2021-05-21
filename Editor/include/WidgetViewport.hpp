@@ -14,7 +14,6 @@ public:
 
 private:
     void HandleCamera();
-    Rendering::FrameBufferObject fbo;
 };
 
 #endif //BWATENGINE_WIDGETVIEWPORT_HPP

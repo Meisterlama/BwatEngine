@@ -8,6 +8,7 @@
 #include "WidgetAsset.hpp"
 #include "WidgetShader.hpp"
 #include "WidgetViewport.hpp"
+#include "WidgetGameport.hpp"
 #include "WidgetProperties.hpp"
 #include "WidgetLog.hpp"
 #include "WidgetPostProcess.hpp"
@@ -27,6 +28,7 @@ ImGuizmo::OPERATION EditorInterface::guizmoOperation = ImGuizmo::OPERATION::TRAN
 
 EditorInterface::EditorInterface(BwatEngine::Engine* _engine)
     : gameViewFramebuffer(_engine->GetWindow().GetWidth(), _engine->GetWindow().GetHeight())
+    , sceneViewFramebuffer(_engine->GetWindow().GetWidth(), _engine->GetWindow().GetHeight())
 {
     engine = _engine;
     widgets.clear();
@@ -54,11 +56,12 @@ void EditorInterface::OnTick()
     auto& coordinator = BwatEngine::Coordinator::GetInstance();
 
     auto renderSystem = coordinator.GetSystem<BwatEngine::RenderSystem>();
-    renderSystem->SetEditorCamera(camera, cameraTransform);
 
     // Render game in editor framebuffer
     GLint previousFramebuffer = gameViewFramebuffer.Bind();
     engine->Update();
+    sceneViewFramebuffer.Bind();
+    renderSystem->RenderWithCamera(camera, cameraTransform);
     glBindFramebuffer(GL_FRAMEBUFFER, previousFramebuffer);
 
     ImGui_ImplOpenGL3_NewFrame();
@@ -118,6 +121,7 @@ void EditorInterface::Initialise()
     widgets.emplace_back(std::make_unique<WidgetHierarchy>(this));
     widgets.emplace_back(std::make_unique<WidgetAsset>(this));
     widgets.emplace_back(std::make_unique<WidgetViewport>(this));
+    widgets.emplace_back(std::make_unique<WidgetGameport>(this));
     widgets.emplace_back(std::make_unique<WidgetLog>(this));
     widgets.emplace_back(std::make_unique<WidgetShader>(this));
     widgets.emplace_back(std::make_unique<WidgetPostProcess>(this));

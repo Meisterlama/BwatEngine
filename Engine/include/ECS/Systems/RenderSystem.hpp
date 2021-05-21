@@ -31,20 +31,16 @@ namespace BwatEngine
         int displayWidth;
         int displayHeight;
 
-        bool useEditorCamera = false;
-        CameraComponent camera;
-        TransformComponent cameraTransform;
-
-        Math::Vec3f clearColor = { 0.5f, 0.5f, 0.5f };
+        Math::Vec3f clearColor = { 0.0f, 0.0f, 0.0f };
         Math::Mat4f  lightSpaceMatrix;
 
         RenderSystem(int Width, int Height);
         void SetCamera(EntityID _camera);
-        void SetEditorCamera(CameraComponent camera, TransformComponent cameraTransform);
         virtual void Update() override;
+        void RenderWithCamera(CameraComponent cameraComp, TransformComponent cameraTrans);
         void UpdateShadow();
-        void RenderCubeMap();
-        void RenderEntitiesAndLights();
+        void RenderCubeMap(const CameraComponent& camera, const TransformComponent& cameraTransform);
+        void RenderEntitiesAndLights(const CameraComponent& camera, const TransformComponent& cameraTransform);
         void CheckCameraValid();
         void OptionAndClear(int displayWidth, int displayHeight);
 

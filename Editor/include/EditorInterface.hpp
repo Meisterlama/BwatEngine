@@ -44,6 +44,7 @@ public:
     static ImGuizmo::MODE guizmoMode;
     static ImGuizmo::OPERATION guizmoOperation;
     Rendering::FrameBufferObject gameViewFramebuffer;
+    Rendering::FrameBufferObject sceneViewFramebuffer;
     void ApplyStyle() const;
 
     BwatEngine::CameraComponent camera;

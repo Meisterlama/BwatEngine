@@ -17,7 +17,7 @@ WidgetViewport::WidgetViewport(EditorInterface *editor) : Widget(editor)
 void WidgetViewport::TickVisible()
 {
     ImGui::GetWindowDrawList()->AddImage(
-            (ImTextureID)(size_t)editor->gameViewFramebuffer.textureColor.id, ImVec2(ImGui::GetCursorScreenPos()),
+            (ImTextureID)(size_t)editor->sceneViewFramebuffer.textureColor.id, ImVec2(ImGui::GetCursorScreenPos()),
             ImVec2(ImGui::GetCursorScreenPos().x + ImGui::GetWindowWidth(), ImGui::GetCursorScreenPos().y + ImGui::GetWindowHeight()), ImVec2(0, 1), ImVec2(1, 0));
 
     ImGuizmo::SetOrthographic(false);

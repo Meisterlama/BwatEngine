@@ -33,13 +33,6 @@ void RenderSystem::SetCamera(EntityID _camera)
     cameraID = _camera;
 }
 
-void RenderSystem::SetEditorCamera(CameraComponent _camera, TransformComponent _cameraTransform)
-{
-    useEditorCamera = true;
-    camera = _camera;
-    cameraTransform = _cameraTransform;
-}
-
 // ===================================== MAIN RENDERER ===================================== //
 
 
@@ -48,22 +41,18 @@ void RenderSystem::Update()
     CheckCameraValid();
     OptionAndClear(displayWidth, displayHeight);
 
-    if (!useEditorCamera)
-    {
-        if (cameraID == 0)
-            return;
-        auto& coordinator = Coordinator::GetInstance();
-        cameraTransform = coordinator.GetComponent<TransformComponent>(cameraID);
-        camera = coordinator.GetComponent<CameraComponent>(cameraID);
-    }
+    if (cameraID == 0)
+        return;
+    auto& coordinator = Coordinator::GetInstance();
+    auto& cameraTransform = coordinator.GetComponent<TransformComponent>(cameraID);
+    auto& camera = coordinator.GetComponent<CameraComponent>(cameraID);
 
-    RenderCubeMap();
-    RenderEntitiesAndLights();
-
+    RenderCubeMap(camera, cameraTransform);
+    RenderEntitiesAndLights(camera, cameraTransform);
 }
 
 // Gamma correction go to post process
-void RenderSystem::RenderCubeMap()
+void RenderSystem::RenderCubeMap(const CameraComponent& camera, const TransformComponent& cameraTransform)
 {
     glDepthMask(GL_FALSE);
     cubeMap.shader.Use();
@@ -83,7 +72,7 @@ void RenderSystem::RenderCubeMap()
 
 }
 
-void RenderSystem::RenderEntitiesAndLights()
+void RenderSystem::RenderEntitiesAndLights(const CameraComponent& camera, const TransformComponent& cameraTransform)
 {
     auto& coordinator = Coordinator::GetInstance();
 
@@ -147,8 +136,6 @@ void RenderSystem::RenderEntitiesAndLights()
 
 void RenderSystem::CheckCameraValid()
 {
-    if (useEditorCamera)
-        return;
     auto& coordinator = Coordinator::GetInstance();
 
     if (!coordinator.IsValid(cameraID) || coordinator.GetEntitySignature(cameraID) != signature)
@@ -181,7 +168,7 @@ void RenderSystem::UpdateShadow()
     glEnable(GL_DEPTH_TEST);
     glClear(GL_DEPTH_BUFFER_BIT);
 
-    glClearColor(0.1f, 0.1f, 0.1f, 1.0f);
+    glClearColor(1.0f, 1.0f, 1.0f, 1.0f);
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
     Math::Mat4f lightProjection, lightView;
@@ -222,4 +209,12 @@ void RenderSystem::UpdateShadow()
 
     glBindFramebuffer(GL_FRAMEBUFFER, previousFramebuffer);
 
+}
+
+void RenderSystem::RenderWithCamera(CameraComponent camera, TransformComponent cameraTransform)
+{
+    OptionAndClear(displayWidth, displayHeight);
+    glDisable(GL_FRAMEBUFFER_SRGB);
+    RenderCubeMap(camera, cameraTransform);
+    RenderEntitiesAndLights(camera, cameraTransform);
 }
