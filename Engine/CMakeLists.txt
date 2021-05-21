@@ -7,7 +7,7 @@ file(GLOB_RECURSE BWAT_ENGINE_SRC
 file(GLOB_RECURSE BWAT_ENGINE_HEADERS
         *.hpp)
 
-set(ENGINE_LIBRARIES glad glfw assimp OpenAL stb json dirent AudioFile lua sol2 imgui
+set(ENGINE_LIBRARIES glad glfw assimp OpenAL stb json AudioFile lua sol2 imgui
         PhysXExtensions PhysX PhysXPvdSDK PhysXVehicle PhysXCharacterKinematic PhysXCooking PhysXCommon PhysXFoundation)
 
 add_library(Engine STATIC ${BWAT_ENGINE_SRC} ${BWAT_ENGINE_HEADERS})

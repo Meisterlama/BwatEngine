@@ -70,31 +70,7 @@ void EditorInterface::OnTick()
 
     if (!engine->isPlaying && !cursorLocked)
     {
-        if (BwatEngine::InputHandler::GetKeyboardDown(BwatEngine::KEY_W))
-            guizmoOperation = ImGuizmo::TRANSLATE;
-        if (BwatEngine::InputHandler::GetKeyboardDown(BwatEngine::KEY_E))
-            guizmoOperation = ImGuizmo::ROTATE;
-        if (BwatEngine::InputHandler::GetKeyboardDown(BwatEngine::KEY_R))
-            guizmoOperation = ImGuizmo::SCALE;
-        if (BwatEngine::InputHandler::GetKeyboardDown(BwatEngine::KEY_F))
-        {
-            if (editedEntity != 0 && coordinator.HaveComponent<BwatEngine::TransformComponent>(editedEntity))
-            {
-                auto entityPosition = coordinator.GetComponent<BwatEngine::TransformComponent>(editedEntity).position;
-                auto offset = entityPosition - cameraTransform.position;
-                cameraTransform.rotation = BwatEngine::Math::Quatf::LookAt(entityPosition, cameraTransform.position, BwatEngine::Math::Vec3f{0, 1, 0});
-                rotation = cameraTransform.rotation.GetEulerAngles();
-                if (offset.Z > 0)
-                {
-                    rotation.Y = BwatEngine::Math::PI - rotation.Y;
-                }
-                rotation.X = BwatEngine::Math::Loop(rotation.X, -BwatEngine::Math::PI / 2, BwatEngine::Math::PI / 2);
-                rotation.Y = BwatEngine::Math::Loop(rotation.Y, 0, BwatEngine::Math::PI * 2);
-                rotation.Z = 0;
-
-                LogDebug("OFFSET X:%f, Y%f, Z%f", offset.X, offset.Y, offset.Z);
-            }
-        }
+        HandleEditorShortcuts();
     }
 
     BeginWindow();
@@ -110,6 +86,38 @@ void EditorInterface::OnTick()
     ImGui::Render();
     ImGui_ImplOpenGL3_RenderDrawData(ImGui::GetDrawData());
 
+}
+
+void EditorInterface::HandleEditorShortcuts()
+{
+    auto& coordinator = BwatEngine::Coordinator::GetInstance();
+    if (BwatEngine::InputHandler::GetKeyboardDown(BwatEngine::KEY_W))
+        guizmoOperation = ImGuizmo::TRANSLATE;
+    if (BwatEngine::InputHandler::GetKeyboardDown(BwatEngine::KEY_E))
+        guizmoOperation = ImGuizmo::ROTATE;
+    if (BwatEngine::InputHandler::GetKeyboardDown(BwatEngine::KEY_R))
+        guizmoOperation = ImGuizmo::SCALE;
+    if (BwatEngine::InputHandler::GetKeyboardDown(BwatEngine::KEY_F))
+    {
+        if (editedEntity != 0 && coordinator.HaveComponent<BwatEngine::TransformComponent>(editedEntity))
+        {
+            auto entityPosition = coordinator.GetComponent<BwatEngine::TransformComponent>(editedEntity).position;
+            auto offset = entityPosition - cameraTransform.position;
+            cameraTransform.rotation = BwatEngine::Math::Quatf::LookAt(entityPosition, cameraTransform.position, BwatEngine::Math::Vec3f{0, 1, 0});
+            rotation = cameraTransform.rotation.GetEulerAngles();
+            if (offset.Z > 0)
+            {
+                rotation.Y = BwatEngine::Math::PI - rotation.Y;
+            }
+            rotation.X = BwatEngine::Math::Loop(rotation.X, -BwatEngine::Math::PI / 2, BwatEngine::Math::PI / 2);
+            rotation.Y = BwatEngine::Math::Loop(rotation.Y, 0, BwatEngine::Math::PI * 2);
+            rotation.Z = 0;
+        }
+    }
+    if (BwatEngine::InputHandler::GetKeyboardDown(BwatEngine::KEY_ESCAPE))
+    {
+        SetEditedEntity(0);
+    }
 }
 
 void EditorInterface::Initialise()

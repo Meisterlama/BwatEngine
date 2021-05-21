@@ -4,6 +4,7 @@
 #include "Serialization/Serialization.hpp"
 #include "ResourceManager/ResourceManager.hpp"
 #include "Time.hpp"
+#include "ECS/Coordinator.hpp"
 
 WidgetMenuBar::WidgetMenuBar(EditorInterface *editor) : Widget(editor)
 {
@@ -52,6 +53,10 @@ void WidgetMenuBar::MenuWindow()
 
 void WidgetMenuBar::MenuFile()
 {
+    if (ImGui::MenuItem("New Scene"))
+    {
+        BwatEngine::Coordinator::GetInstance().DestroyAllEntities();
+    }
     if (ImGui::MenuItem("Save Scene"))
     {
         BwatEngine::Serializer::SaveScene(editor->engine->GetScene(), "test.txt");
