@@ -12,9 +12,8 @@ public:
 
     void TickVisible() override;
 
-
 private:
-    Rendering::FrameBufferObject fbo;
+    void HandleCamera();
 };
 
 #endif //BWATENGINE_WIDGETVIEWPORT_HPP

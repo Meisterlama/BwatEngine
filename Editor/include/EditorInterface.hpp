@@ -10,6 +10,8 @@
 #include "ImGuizmo.h"
 #include "Rendering/FrameBuffer.hpp"
 #include "ResourceManager/ResourceManager.hpp"
+#include "ECS/Components/CameraComponent.hpp"
+#include "ECS/Components/TransformComponent.hpp"
 
 
 namespace BwatEngine
@@ -42,18 +44,22 @@ public:
     static ImGuizmo::MODE guizmoMode;
     static ImGuizmo::OPERATION guizmoOperation;
     Rendering::FrameBufferObject gameViewFramebuffer;
+    Rendering::FrameBufferObject sceneViewFramebuffer;
     void ApplyStyle() const;
 
+    BwatEngine::CameraComponent camera;
+    BwatEngine::TransformComponent cameraTransform;
+    BwatEngine::Math::Vec3f rotation{};
 
+    bool cursorLocked = false;
 private:
     void BeginWindow();
-    GLuint playImage = BwatEngine::ResourceManager::Instance()->GetOrLoadTexture("Assets/image/play.png",Rendering::Texture::Type::E_DIFFUSE)->id;
 
+    GLuint playImage = BwatEngine::ResourceManager::Instance()->GetOrLoadTexture("Assets/image/play.png",Rendering::Texture::Type::E_DIFFUSE)->id;
     BwatEngine::EntityID editedEntity = 0;
     std::vector<std::unique_ptr<Widget>> widgets;
     bool initialised = false;
     bool editorBegun = false;
-    bool showFPS = false;
     const float toolBarSize = 45.f;
 };
 

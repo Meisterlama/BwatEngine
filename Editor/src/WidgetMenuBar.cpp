@@ -3,6 +3,7 @@
 #include "Engine.hpp"
 #include "Serialization/Serialization.hpp"
 #include "ResourceManager/ResourceManager.hpp"
+#include "Time.hpp"
 
 WidgetMenuBar::WidgetMenuBar(EditorInterface *editor) : Widget(editor)
 {
@@ -67,6 +68,7 @@ void WidgetMenuBar::MenuFile()
 
 void WidgetMenuBar::MenuOption()
 {
+    ImGui::Text("FPS: %.0f", (BwatEngine::Time::deltaTime != 0) ? 1.f / BwatEngine::Time::deltaTime : 0);
     if (ImGui::BeginMenu("Themes"))
     {
         if (ImGui::MenuItem("Dark"))

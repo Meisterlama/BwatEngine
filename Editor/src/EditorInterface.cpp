@@ -8,6 +8,7 @@
 #include "WidgetAsset.hpp"
 #include "WidgetShader.hpp"
 #include "WidgetViewport.hpp"
+#include "WidgetGameport.hpp"
 #include "WidgetProperties.hpp"
 #include "WidgetLog.hpp"
 #include "WidgetPostProcess.hpp"
@@ -17,12 +18,17 @@
 #include "Time.hpp"
 #include "Engine.hpp"
 #include "ECS/Systems/RenderSystem.hpp"
+#include "ECS/Coordinator.hpp"
+#include "ECS/Components/TransformComponent.hpp"
+
+#include "Inputs/InputHandler.hpp"
 
 ImGuizmo::MODE EditorInterface::guizmoMode = ImGuizmo::MODE::LOCAL;
 ImGuizmo::OPERATION EditorInterface::guizmoOperation = ImGuizmo::OPERATION::TRANSLATE;
 
 EditorInterface::EditorInterface(BwatEngine::Engine* _engine)
     : gameViewFramebuffer(_engine->GetWindow().GetWidth(), _engine->GetWindow().GetHeight())
+    , sceneViewFramebuffer(_engine->GetWindow().GetWidth(), _engine->GetWindow().GetHeight())
 {
     engine = _engine;
     widgets.clear();
@@ -47,14 +53,49 @@ void EditorInterface::Close()
 
 void EditorInterface::OnTick()
 {
+    auto& coordinator = BwatEngine::Coordinator::GetInstance();
+
+    auto renderSystem = coordinator.GetSystem<BwatEngine::RenderSystem>();
+
     // Render game in editor framebuffer
     GLint previousFramebuffer = gameViewFramebuffer.Bind();
     engine->Update();
+    sceneViewFramebuffer.Bind();
+    renderSystem->RenderWithCamera(camera, cameraTransform);
     glBindFramebuffer(GL_FRAMEBUFFER, previousFramebuffer);
 
     ImGui_ImplOpenGL3_NewFrame();
     ImGui_ImplGlfw_NewFrame();
     ImGui::NewFrame();
+
+    if (!engine->isPlaying && !cursorLocked)
+    {
+        if (BwatEngine::InputHandler::GetKeyboardDown(BwatEngine::KEY_W))
+            guizmoOperation = ImGuizmo::TRANSLATE;
+        if (BwatEngine::InputHandler::GetKeyboardDown(BwatEngine::KEY_E))
+            guizmoOperation = ImGuizmo::ROTATE;
+        if (BwatEngine::InputHandler::GetKeyboardDown(BwatEngine::KEY_R))
+            guizmoOperation = ImGuizmo::SCALE;
+        if (BwatEngine::InputHandler::GetKeyboardDown(BwatEngine::KEY_F))
+        {
+            if (editedEntity != 0 && coordinator.HaveComponent<BwatEngine::TransformComponent>(editedEntity))
+            {
+                auto entityPosition = coordinator.GetComponent<BwatEngine::TransformComponent>(editedEntity).position;
+                auto offset = entityPosition - cameraTransform.position;
+                cameraTransform.rotation = BwatEngine::Math::Quatf::LookAt(entityPosition, cameraTransform.position, BwatEngine::Math::Vec3f{0, 1, 0});
+                rotation = cameraTransform.rotation.GetEulerAngles();
+                if (offset.Z > 0)
+                {
+                    rotation.Y = BwatEngine::Math::PI - rotation.Y;
+                }
+                rotation.X = BwatEngine::Math::Loop(rotation.X, -BwatEngine::Math::PI / 2, BwatEngine::Math::PI / 2);
+                rotation.Y = BwatEngine::Math::Loop(rotation.Y, 0, BwatEngine::Math::PI * 2);
+                rotation.Z = 0;
+
+                LogDebug("OFFSET X:%f, Y%f, Z%f", offset.X, offset.Y, offset.Z);
+            }
+        }
+    }
 
     BeginWindow();
     ToolbarUI();
@@ -63,16 +104,11 @@ void EditorInterface::OnTick()
     {
         widget->Tick();
     }
-    
+
     ImGui::End();
 
     ImGui::Render();
     ImGui_ImplOpenGL3_RenderDrawData(ImGui::GetDrawData());
-
-    //GLFWwindow* backup_current_context = glfwGetCurrentContext();
-    //ImGui::UpdatePlatformWindows();
-    //ImGui::RenderPlatformWindowsDefault();
-    //glfwMakeContextCurrent(backup_current_context);
 
 }
 
@@ -85,6 +121,7 @@ void EditorInterface::Initialise()
     widgets.emplace_back(std::make_unique<WidgetHierarchy>(this));
     widgets.emplace_back(std::make_unique<WidgetAsset>(this));
     widgets.emplace_back(std::make_unique<WidgetViewport>(this));
+    widgets.emplace_back(std::make_unique<WidgetGameport>(this));
     widgets.emplace_back(std::make_unique<WidgetLog>(this));
     widgets.emplace_back(std::make_unique<WidgetShader>(this));
     widgets.emplace_back(std::make_unique<WidgetPostProcess>(this));
@@ -267,6 +304,10 @@ void EditorInterface::ToolbarUI()
     {
         guizmoOperation = ImGuizmo::OPERATION::SCALE;
     }
+    ImGui::SameLine();
+    ImGui::Text("Pos X:%.3f Y:%.3f Z:%.3f\nRot X:%.3f Y:%.3f Z:%.3f",
+                cameraTransform.position.X, cameraTransform.position.Y, cameraTransform.position.Z,
+                BwatEngine::Math::ToDegs(rotation.X), BwatEngine::Math::ToDegs(rotation.Y), BwatEngine::Math::ToDegs(rotation.Z));
 
     ImGui::SameLine();
     ImGui::SetCursorPosX(ImGui::GetWindowWidth() - 125);
@@ -289,6 +330,7 @@ void EditorInterface::ToolbarUI()
             //BwatEngine::Serializer::SaveScene(engine->GetScene(), "play.txt");
             engine->isPlaying = true;
             playImage = BwatEngine::ResourceManager::Instance()->GetOrLoadTexture("Assets/image/pause.png",Rendering::Texture::Type::E_DIFFUSE)->id;
+            SetEditedEntity(0);
         }
         else
         {
@@ -296,17 +338,6 @@ void EditorInterface::ToolbarUI()
             //BwatEngine::Serializer::LoadScene(engine->GetScene(), "play.txt");
             playImage = BwatEngine::ResourceManager::Instance()->GetOrLoadTexture("Assets/image/play.png",Rendering::Texture::Type::E_DIFFUSE)->id;
         }
-    }
-    ImGui::SameLine();
-    if (ImGui::Button("Show FPS", ImVec2(70.f, 35.f)))
-    {
-        showFPS = !showFPS;
-    }
-    ImGui::SameLine();
-    ImGui::SetCursorPosY(ImGui::GetWindowHeight()/2);
-    if(showFPS)
-    {
-        ImGui::Text("%f", (BwatEngine::Time::deltaTime != 0) ? 1.f / BwatEngine::Time::deltaTime : 0);
     }
 
     ImGui::End();
