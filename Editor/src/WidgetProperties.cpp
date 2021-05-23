@@ -56,18 +56,17 @@ void TextCenter(std::string text)
     ImGui::Text(text.c_str());
 }
 
-void CreateSelectedBox(Rendering::Texture* component,int index, std::string nameCategory, std::string label)
+void CreateSelectedBox(Rendering::Texture* component,int index, std::string nameCategory)
 {
     std::string name;
+
     if (component != nullptr)
         name = component->path;
     else
         name = "";
 
-    ImGui::Text(nameCategory.c_str());
-    ImGui::SameLine();
-    label = "##name" + std::to_string(index);
-    if (ImGui::BeginCombo(label.c_str(), name.c_str()))
+
+    if (ImGui::BeginCombo(nameCategory.c_str(), name.c_str()))
     {
         auto textList = BwatEngine::ResourceManager::Instance()->GetTextList();
 
@@ -124,103 +123,28 @@ void WidgetProperties::ShowComponent<BwatEngine::RenderableComponent>(BwatEngine
 
         for (int i = 0; i < component.materials.size(); i++)
         {
-            std::string DiffName;
-            if (component.materials[i]->diffuse != nullptr)
-                DiffName = component.materials[i]->diffuse->path;
-            else
-                DiffName = "";
-
-            ImGui::Text("Diffuse Texture");
-            ImGui::SameLine();
-            std::string labelDiff = "##Diff" + std::to_string(i);
-            if(ImGui::BeginCombo(labelDiff.c_str(), DiffName.c_str()))
-            {
-                auto textList = BwatEngine::ResourceManager::Instance()->GetTextList();
-
-                for(auto &text : textList)
-                {
-                    bool selected = (DiffName == text.c_str());
-                    if(ImGui::Selectable(text.c_str(), selected))
-                    {
-                        component.materials[i]->diffuse = BwatEngine::ResourceManager::Instance()->GetOrLoadTexture(text, Rendering::Texture::Type::E_DIFFUSE);
-                    }
-                    if(selected)
-                        ImGui::SetItemDefaultFocus();
-                }
-                ImGui::EndCombo();
-            }
-
-            std::string SpecName;
-            if (component.materials[i]->specular != nullptr)
-                SpecName = component.materials[i]->specular->path;
-            else
-                SpecName = "";
-
-            ImGui::Text("Specular Texture");
-            ImGui::SameLine();
-            std::string labelSpec = "##Spec" + std::to_string(i);
-            if(ImGui::BeginCombo(labelSpec.c_str(), SpecName.c_str()))
-            {
-                auto textList = BwatEngine::ResourceManager::Instance()->GetTextList();
-
-                for(auto &text : textList)
-                {
-                    bool selected = (SpecName == text.c_str());
-                    if(ImGui::Selectable(text.c_str(), selected))
-                    {
-                        component.materials[i]->specular = BwatEngine::ResourceManager::Instance()->GetOrLoadTexture(text, Rendering::Texture::Type::E_SPECULAR);;
-                    }
-                    if(selected)
-                        ImGui::SetItemDefaultFocus();
-                }
-                ImGui::EndCombo();
-            }
-
-            std::string normalName;
-            if (component.materials[i]->normal != nullptr)
-                normalName = component.materials[i]->normal->path;
-            else
-                normalName = "";
-            
-            ImGui::Text("Normal Texture");
-            ImGui::SameLine();
-            std::string labelNorm = "##Norm" + std::to_string(i);
-            if (ImGui::BeginCombo(labelNorm.c_str(), normalName.c_str()))
-            {
-                auto textList = BwatEngine::ResourceManager::Instance()->GetTextList();
-
-                for (auto& text : textList)
-                {
-                    bool selected = (normalName == text.c_str());
-                    if (ImGui::Selectable(text.c_str(), selected))
-                    {
-                        component.materials[i]->normal = BwatEngine::ResourceManager::Instance()->GetOrLoadTexture(text, Rendering::Texture::Type::E_NORMAL);;
-                    }
-                    if (selected)
-                        ImGui::SetItemDefaultFocus();
-                }
-                ImGui::EndCombo();
-            }
+            CreateSelectedBox(component.materials[i]->diffuse, i, "Diffuse");
+            CreateSelectedBox(component.materials[i]->specular, i, "Specular");
+            CreateSelectedBox(component.materials[i]->normal, i, "Normal");
 
             if (ImGui::Button("Clear Texture"))
             {
                 component.materials[i]->diffuse = nullptr;
                 component.materials[i]->specular = nullptr;
                 component.materials[i]->normal = nullptr;
-
-                DiffName = "";
-                SpecName = "";
-                normalName = "";
             }
 
             bool update = false;
 
             bool isTextured = component.materials[i]->isTextured;
-            update |= ImGui::Checkbox("isColor", &isTextured);
+            update |= ImGui::Checkbox("Textured", &isTextured);
 
             if (isTextured)
             {
-                CreateSelectedBox(component.materials[i]->albedoMap, i, "albedo", "albe");
+                CreateSelectedBox(component.materials[i]->albedoMap, i, "Albedo");
+                CreateSelectedBox(component.materials[i]->metallicMap, i, "Metallic");
+                CreateSelectedBox(component.materials[i]->roughnessMap, i, "Roughness");
+                CreateSelectedBox(component.materials[i]->aoMap, i, "Ao");
             }
             else
             {
@@ -232,7 +156,7 @@ void WidgetProperties::ShowComponent<BwatEngine::RenderableComponent>(BwatEngine
             }
 
             bool isColored = component.materials[i]->isColor;
-            update |= ImGui::Checkbox("isColor", &isColored);
+            update |= ImGui::Checkbox("Color", &isColored);
 
             if (component.materials[i]->isColor)
             {
