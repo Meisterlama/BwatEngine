@@ -28,38 +28,28 @@ Material::Material(const aiMaterial& from)
 
 void Material::Bind()
 {
+
     glActiveTexture(GL_TEXTURE0);
-    if(diffuse)
-        diffuse->Use();
-
-    glActiveTexture(GL_TEXTURE1);
-    if (specular)
-        specular->Use();
-
-    glActiveTexture(GL_TEXTURE2);
     if (normal)
         normal->Use();
 
-    if (isTextured)
-    {
-        glActiveTexture(GL_TEXTURE5);
-        if (albedoMap)
-            albedoMap->Use();
+    glActiveTexture(GL_TEXTURE1);
+    if (albedoMap)
+        albedoMap->Use();
+    
+    glActiveTexture(GL_TEXTURE2);
+    if (metallicMap)
+        metallicMap->Use();
+    
+    glActiveTexture(GL_TEXTURE3);
+    if (roughnessMap)
+        roughnessMap->Use();
+    
+    glActiveTexture(GL_TEXTURE4);
+    if (aoMap)
+        aoMap->Use();
 
-        glActiveTexture(GL_TEXTURE6);
-        if (metallicMap)
-            metallicMap->Use();
-
-        glActiveTexture(GL_TEXTURE7);
-        if (roughnessMap)
-            roughnessMap->Use();
-
-        glActiveTexture(GL_TEXTURE8);
-        if (aoMap)
-            aoMap->Use();
-
-    }
-
+    
     glActiveTexture(GL_TEXTURE0);
 
 
@@ -68,24 +58,26 @@ void Material::Bind()
 
 void Material::ApplyToShader(Shader& shader)
 {
+    shader.SetBool("material.isTextured", isTextured);
+
     shader.SetBool("material.isColor", isColor);
     shader.SetVec4("material.color", color.X, color.Y, color.Z, color.W);
 
     shader.SetFloat("material.shininess", shininess);
 
-    if (specular != nullptr)
-        shader.SetInt("material.specular", 1);
+    shader.SetInt("material.normal", 0);
+    shader.SetInt("material.albedoMap", 1);
+    shader.SetInt("material.metallicMap", 2);
+    shader.SetInt("material.roughnessMap", 3);
+    shader.SetInt("material.aoMap", 4);
 
-    if (normal != nullptr)
-        shader.SetInt("material.isNormal", 1);
-    else
-        shader.SetInt("material.isNormal", 0);
+    shader.SetInt("material.isNormal", (int)(normal != nullptr) );
 
     if (!isTextured)
     {
-        shader.SetVec3("albedo",albedo.X,albedo.Y,albedo.Z);
-        shader.SetFloat("metallic", metallic);
-        shader.SetFloat("roughness",roughness);
-        shader.SetFloat("ao",ao);
+        shader.SetVec3("material.albedo",albedo.X,albedo.Y,albedo.Z);
+        shader.SetFloat("material.metallic", metallic);
+        shader.SetFloat("material.roughness",roughness);
+        shader.SetFloat("material.ao",ao);
     }
 }

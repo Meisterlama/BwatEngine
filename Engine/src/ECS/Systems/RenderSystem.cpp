@@ -153,7 +153,7 @@ void RenderSystem::UpdateShadow()
 
     CheckCameraValid();
 
-    glCullFace(GL_FRONT);
+    //glCullFace(GL_FRONT);
 
     GLint previousFramebuffer;
     glGetIntegerv(GL_DRAW_FRAMEBUFFER_BINDING, &previousFramebuffer);
@@ -211,7 +211,7 @@ void RenderSystem::UpdateShadow()
         renderableComponent.model->Draw(&renderableComponent.materials);
     }
 
-    glCullFace(GL_BACK);
+    //glCullFace(GL_BACK);
     glBindFramebuffer(GL_FRAMEBUFFER, previousFramebuffer);
 
 }

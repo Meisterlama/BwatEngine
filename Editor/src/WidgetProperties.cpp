@@ -56,7 +56,7 @@ void TextCenter(std::string text)
     ImGui::Text(text.c_str());
 }
 
-void CreateSelectedBox(Rendering::Texture* component,int index, std::string nameCategory)
+void CreateSelectedBox(Rendering::Texture*& component,int index, std::string nameCategory, bool reset = false)
 {
     std::string name;
 
@@ -70,18 +70,23 @@ void CreateSelectedBox(Rendering::Texture* component,int index, std::string name
     {
         auto textList = BwatEngine::ResourceManager::Instance()->GetTextList();
 
-        for (auto& text : textList)
+        for (auto &text : textList)
         {
-            bool selected = (name == text.c_str());
-            if (ImGui::Selectable(text.c_str(), selected))
-            {
+            std::string path = text;
+            bool selected = (name == path);
+
+            if (ImGui::Selectable(path.c_str(), selected))
                 component = BwatEngine::ResourceManager::Instance()->GetOrLoadTexture(text, Rendering::Texture::Type::E_DIFFUSE);;
-            }
+   
             if (selected)
                 ImGui::SetItemDefaultFocus();
         }
+
         ImGui::EndCombo();
     }
+
+    if (reset)
+        name = "";
 }
 
 template<>
@@ -123,15 +128,17 @@ void WidgetProperties::ShowComponent<BwatEngine::RenderableComponent>(BwatEngine
 
         for (int i = 0; i < component.materials.size(); i++)
         {
-            CreateSelectedBox(component.materials[i]->diffuse, i, "Diffuse");
-            CreateSelectedBox(component.materials[i]->specular, i, "Specular");
-            CreateSelectedBox(component.materials[i]->normal, i, "Normal");
+            bool resetTexture = false;
 
             if (ImGui::Button("Clear Texture"))
             {
-                component.materials[i]->diffuse = nullptr;
-                component.materials[i]->specular = nullptr;
                 component.materials[i]->normal = nullptr;
+                component.materials[i]->albedoMap = nullptr;
+                component.materials[i]->metallicMap = nullptr;
+                component.materials[i]->roughnessMap = nullptr;
+                component.materials[i]->aoMap = nullptr;
+
+                resetTexture = true;
             }
 
             bool update = false;
@@ -139,12 +146,14 @@ void WidgetProperties::ShowComponent<BwatEngine::RenderableComponent>(BwatEngine
             bool isTextured = component.materials[i]->isTextured;
             update |= ImGui::Checkbox("Textured", &isTextured);
 
+            CreateSelectedBox(component.materials[i]->normal, i, "Normal", resetTexture);
+
             if (isTextured)
             {
-                CreateSelectedBox(component.materials[i]->albedoMap, i, "Albedo");
-                CreateSelectedBox(component.materials[i]->metallicMap, i, "Metallic");
-                CreateSelectedBox(component.materials[i]->roughnessMap, i, "Roughness");
-                CreateSelectedBox(component.materials[i]->aoMap, i, "Ao");
+                CreateSelectedBox(component.materials[i]->albedoMap, i, "Albedo", resetTexture);
+                CreateSelectedBox(component.materials[i]->metallicMap, i, "Metallic", resetTexture);
+                CreateSelectedBox(component.materials[i]->roughnessMap, i, "Roughness", resetTexture);
+                CreateSelectedBox(component.materials[i]->aoMap, i, "Ao", resetTexture);
             }
             else
             {

@@ -27,7 +27,7 @@ namespace Rendering
 		Texture* aoMap = nullptr;
 
 
-		BwatEngine::Math::Vec3f albedo = {1,0,0};
+		BwatEngine::Math::Vec3f albedo = {1,1,1};
 		float metallic = 0.f;
 		float roughness = 0.f;
 		float ao = 1.f;

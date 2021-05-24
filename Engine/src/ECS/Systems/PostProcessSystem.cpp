@@ -13,7 +13,7 @@ PostProcessSystem::PostProcessSystem(int width, int height)
 	inversion.SetEnabled(false);
 	bloom.SetEnabled(false);
 	blur.SetEnabled(false);
-	gammaCor.SetEnabled(false);
+	gammaCor.SetEnabled(true);
 }
 
 void PostProcessSystem::Begin()
