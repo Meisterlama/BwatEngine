@@ -66,11 +66,11 @@ void WidgetMenuBar::MenuFile()
     }
     if (ImGui::MenuItem("Save as..."))
     {
-        editor->GetWidgetList().at(7)->SetVisible(true);
+        editor->GetWidgetList().at(8)->SetVisible(true);
     }
     if (ImGui::MenuItem("Load Scene"))
     {
-        editor->GetWidgetList().at(8)->SetVisible(true);
+        editor->GetWidgetList().at(9)->SetVisible(true);
     }
 
     ImGui::Separator();
