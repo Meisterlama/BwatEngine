@@ -131,6 +131,7 @@ void EditorInterface::Initialise()
     widgets.emplace_back(std::make_unique<WidgetHierarchy>(this)); // 1 = Hierarchy
     widgets.emplace_back(std::make_unique<WidgetAsset>(this)); // 2 = Asset
     widgets.emplace_back(std::make_unique<WidgetViewport>(this)); // 3 = Viewport
+    widgets.emplace_back(std::make_unique<WidgetGameport>(this)); // 4 = Gameport
     widgets.emplace_back(std::make_unique<WidgetLog>(this)); // 4 = Log
     widgets.emplace_back(std::make_unique<WidgetShader>(this)); // 5 = Shader
     widgets.emplace_back(std::make_unique<WidgetPostProcess>(this)); // 6 = PostProcess
