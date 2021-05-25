@@ -1,7 +1,5 @@
 #include "ECS/Coordinator.hpp"
 #include "ECS/Systems/RenderSystem.hpp"
-#include "ECS/Components/TransformComponent.hpp"
-#include "ECS/Components/CameraComponent.hpp"
 #include "ECS/Components/RenderableComponent.hpp"
 #include "ECS/Components/LightComponent.hpp"
 
@@ -32,7 +30,7 @@ RenderSystem::RenderSystem(int width, int height) : displayWidth(width), display
 
 void RenderSystem::SetCamera(EntityID _camera)
 {
-    camera = _camera;
+    cameraID = _camera;
 }
 
 // ===================================== MAIN RENDERER ===================================== //
@@ -43,27 +41,23 @@ void RenderSystem::Update()
     CheckCameraValid();
     OptionAndClear(displayWidth, displayHeight);
 
-    if (camera == 0 )
+    if (cameraID == 0)
         return;
+    auto& coordinator = Coordinator::GetInstance();
+    auto& cameraTransform = coordinator.GetComponent<TransformComponent>(cameraID);
+    auto& camera = coordinator.GetComponent<CameraComponent>(cameraID);
 
-    RenderCubeMap();
-    RenderEntitiesAndLights();
-
+    RenderCubeMap(camera, cameraTransform);
+    RenderEntitiesAndLights(camera, cameraTransform);
 }
 
 // Gamma correction go to post process
-void RenderSystem::RenderCubeMap()
+void RenderSystem::RenderCubeMap(const CameraComponent& camera, const TransformComponent& cameraTransform)
 {
-
-    auto& coordinator = Coordinator::GetInstance();
-
-    auto& cameraTransform = coordinator.GetComponent<TransformComponent>(camera);
-    auto& cameraComponent = coordinator.GetComponent<CameraComponent>(camera);
-
     glDepthMask(GL_FALSE);
     cubeMap.shader.Use();
     cubeMap.shader.SetMat4("view", Math::Mat4f::CreateTRSMat(Math::Vec3f(0, 0, 0), cameraTransform.rotation, cameraTransform.scale).Invert());
-    cubeMap.shader.SetMat4("projection", cameraComponent.GetProjectionMatrix());
+    cubeMap.shader.SetMat4("projection", camera.GetProjectionMatrix());
     glBindVertexArray(cubeMap.skyboxVAO);
 
     if (cubeMap.isDds)
@@ -78,12 +72,9 @@ void RenderSystem::RenderCubeMap()
 
 }
 
-void RenderSystem::RenderEntitiesAndLights()
+void RenderSystem::RenderEntitiesAndLights(const CameraComponent& camera, const TransformComponent& cameraTransform)
 {
     auto& coordinator = Coordinator::GetInstance();
-
-    auto& cameraTransform = coordinator.GetComponent<TransformComponent>(camera);
-    auto& cameraComponent = coordinator.GetComponent<CameraComponent>(camera);
 
     Signature signature;
     signature.set(coordinator.GetComponentType<LightComponent>());
@@ -92,7 +83,7 @@ void RenderSystem::RenderEntitiesAndLights()
     shader.Use();
     shader.SetMat4("view", Math::Mat4f::CreateTRSMat(cameraTransform.position, cameraTransform.rotation, cameraTransform.scale).Invert());
     shader.SetVec3("viewPos", cameraTransform.position.X, cameraTransform.position.Y, cameraTransform.position.Z);
-    shader.SetMat4("proj", cameraComponent.GetProjectionMatrix());
+    shader.SetMat4("proj", camera.GetProjectionMatrix());
     shader.SetInt("nbrlights", (int)lights.size());
 
     shader.SetTexture("shadowMap", 10 , shadowMap.depthMap);
@@ -128,10 +119,10 @@ void RenderSystem::CheckCameraValid()
 {
     auto& coordinator = Coordinator::GetInstance();
 
-    if (!coordinator.IsValid(camera) || coordinator.GetEntitySignature(camera) != signature)
+    if (!coordinator.IsValid(cameraID) || coordinator.GetEntitySignature(cameraID) != signature)
     {
         auto cameras = coordinator.GetEntitiesWithSignature(signature);
-        camera = (!cameras.empty()) ? cameras[0] : 0;
+        cameraID = (!cameras.empty()) ? cameras[0] : 0;
     }
 }
 
@@ -163,7 +154,7 @@ void RenderSystem::UpdateShadow()
     glEnable(GL_DEPTH_TEST);
     glClear(GL_DEPTH_BUFFER_BIT);
 
-    glClearColor(0.1f, 0.1f, 0.1f, 1.0f);
+    glClearColor(1.0f, 1.0f, 1.0f, 1.0f);
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
     Math::Mat4f lightProjection, lightView;
@@ -214,4 +205,12 @@ void RenderSystem::UpdateShadow()
     //glCullFace(GL_BACK);
     glBindFramebuffer(GL_FRAMEBUFFER, previousFramebuffer);
 
+}
+
+void RenderSystem::RenderWithCamera(CameraComponent camera, TransformComponent cameraTransform)
+{
+    OptionAndClear(displayWidth, displayHeight);
+    glDisable(GL_FRAMEBUFFER_SRGB);
+    RenderCubeMap(camera, cameraTransform);
+    RenderEntitiesAndLights(camera, cameraTransform);
 }

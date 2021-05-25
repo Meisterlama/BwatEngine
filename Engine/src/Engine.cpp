@@ -27,11 +27,6 @@ void Engine::Update()
 
     InputHandler::Update();
 
-    if (InputHandler::GetKeyboardDown(KEY_ESCAPE))
-    {
-        glfwSetWindowShouldClose(GetGLFWwindow(), true);
-    }
-
     auto& coordinator = Coordinator::GetInstance();
     auto renderSystem = coordinator.GetSystem<RenderSystem>();
     auto postProcessSystem = coordinator.GetSystem<PostProcessSystem>();
@@ -66,5 +61,6 @@ void Engine::Update()
 Engine::~Engine()
 {
     Coordinator::GetInstance().ClearInstance();
+    std::remove("temp.txt");
 }
 

@@ -18,14 +18,23 @@ WidgetLog::~WidgetLog()
     BLogger::LogRemoveCallback(callbackIndex);
 }
 
+#include <vector>
 void WidgetLog::OnLogCallback(BLogger::LogEvent* ev)
 {
-    char buffer[1024];
-    vsprintf(buffer, ev->fmt, ev->ap);
-    ss << buffer << "\n";
+    static std::vector<char> buffer; // Avoid allocation for each call
+    va_list ap;
+    va_copy(ap, ev->ap);
+
+    int size = vsnprintf(nullptr, 0, ev->fmt, ap);
+    if (buffer.size() < size)
+        buffer.resize(size+1);
+
+    vsprintf(buffer.data(), ev->fmt, ev->ap);
+    ss << buffer.data() << "\n";
 }
 
 void WidgetLog::TickVisible()
 {
     ImGui::TextWrapped(ss.str().c_str());
+    //printf("%s\n\n", ss.str().c_str());
 }

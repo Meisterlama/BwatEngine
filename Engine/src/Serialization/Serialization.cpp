@@ -12,7 +12,7 @@
 
 namespace BwatEngine {
 
-    void Serializer::SaveScene(const BwatEngine::Scene &toSave, const char* path) //enlever la scene ici ?
+    void Serializer::SaveScene(const char* path)
     {
         std::ofstream file(path);
 
@@ -38,7 +38,7 @@ namespace BwatEngine {
             file << std::setw(4) << js << std::endl;
     }
 
-        void Serializer::LoadScene(Scene &toLoad, const char* path)
+        void Serializer::LoadScene(const char* path)
         {
             std::ifstream file(path);
 

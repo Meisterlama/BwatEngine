@@ -3,6 +3,8 @@
 #include "Engine.hpp"
 #include "Serialization/Serialization.hpp"
 #include "ResourceManager/ResourceManager.hpp"
+#include "Time.hpp"
+#include "ECS/Coordinator.hpp"
 
 WidgetMenuBar::WidgetMenuBar(EditorInterface *editor) : Widget(editor)
 {
@@ -39,7 +41,7 @@ void WidgetMenuBar::MenuWindow()
 
     for(auto& widget  : widgetList)
     {
-        if (widget->GetTitle() != "MenuBar")
+        if (widget->GetTitle() != "MenuBar" || widget->GetTitle() != "Save Picker")
         {
             if(ImGui::MenuItem(widget->GetTitle().c_str()))
             {
@@ -51,13 +53,24 @@ void WidgetMenuBar::MenuWindow()
 
 void WidgetMenuBar::MenuFile()
 {
-    if (ImGui::MenuItem("Save Scene"))
+    if (ImGui::MenuItem("New Scene"))
     {
-        BwatEngine::Serializer::SaveScene(editor->engine->GetScene(), "test.txt");
+        BwatEngine::Coordinator::GetInstance().DestroyAllEntities();
+        editor->currentScene = nullptr;
+    }
+    if (editor->currentScene != nullptr)
+        enabled = true;
+    if (ImGui::MenuItem("Save Scene", 0, false, enabled))
+    {
+        BwatEngine::Serializer::SaveScene(editor->currentScene);
+    }
+    if (ImGui::MenuItem("Save as..."))
+    {
+        editor->GetWidgetList().at(8)->SetVisible(true);
     }
     if (ImGui::MenuItem("Load Scene"))
     {
-        BwatEngine::Serializer::LoadScene(editor->engine->GetScene(), "test.txt");
+        editor->GetWidgetList().at(9)->SetVisible(true);
     }
 
     ImGui::Separator();
@@ -67,6 +80,7 @@ void WidgetMenuBar::MenuFile()
 
 void WidgetMenuBar::MenuOption()
 {
+    ImGui::Text("FPS: %.0f", (BwatEngine::Time::deltaTime != 0) ? 1.f / BwatEngine::Time::deltaTime : 0);
     if (ImGui::BeginMenu("Themes"))
     {
         if (ImGui::MenuItem("Dark"))

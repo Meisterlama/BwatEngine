@@ -15,5 +15,7 @@ private:
     void MenuFile();
     void MenuOption();
     void MenuWindow();
+
+    bool enabled = false;
 };
 #endif //BWATENGINE_WIDGETMENUBAR_HPP

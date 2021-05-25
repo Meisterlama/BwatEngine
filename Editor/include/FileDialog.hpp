@@ -19,8 +19,11 @@ public:
 
     void OpenDialog(const char* aFilters, const std::filesystem::path& aFilePathName);
     void ShowList();
+    bool SceneLoad(FileInfoStruct file);
 
     FileInfoStruct loadFile;
+    std::filesystem::path currentPath;
+    bool isAssetWidget = false;
 
 private:
     struct FilterInfoStruct
@@ -34,7 +37,6 @@ private:
 
     std::vector<FileInfoStruct> fileList;
     std::vector<FileInfoStruct> filteredFileList;
-    std::filesystem::path currentPath;
     std::set<std::string> selectedFileNames;
     std::string name;
     bool showDialog = false;

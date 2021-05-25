@@ -17,7 +17,14 @@ void WidgetHierarchy::ShowEntity(BwatEngine::EntityID entity)
 {
     auto &coordinator = BwatEngine::Coordinator::GetInstance();
     auto &node = coordinator.GetNode(entity);
-    std::string entityName = coordinator.GetComponent<BwatEngine::DataComponent>(entity).name;
+    std::string entityName;
+    if (coordinator.HaveComponent<BwatEngine::DataComponent>(entity))
+    {
+        entityName = coordinator.GetComponent<BwatEngine::DataComponent>(entity).name;
+    }
+    else
+        entityName = "Entity_" + std::to_string(entity);
+
 
     ImGuiTreeNodeFlags flags =
             ImGuiTreeNodeFlags_SpanAvailWidth | ImGuiTreeNodeFlags_OpenOnDoubleClick | ImGuiTreeNodeFlags_OpenOnArrow;
@@ -33,18 +40,23 @@ void WidgetHierarchy::ShowEntity(BwatEngine::EntityID entity)
 
     bool isOpen = ImGui::TreeNodeEx(entityName.c_str(), flags);
 
-    if (ImGui::IsItemClicked())
-    {
-        editor->SetEditedEntity(entity);
-    }
-
-    if (ImGui::BeginPopupContextItem("ShowEntityContextMenu"))
+    if (ImGui::BeginPopupContextItem("ShowEntityDeleteContextMenu" ))
     {
         if (ImGui::MenuItem("Delete entity"))
         {
-            BwatEngine::Coordinator::GetInstance().DestroyEntity(entity);
+            coordinator.DestroyEntity(entity);
+            editor->SetEditedEntity(0);
+        }
+        if (ImGui::MenuItem("Duplicate entity"))
+        {
+            editor->SetEditedEntity(coordinator.DuplicateEntity(entity));
         }
         ImGui::EndPopup();
+    }
+
+    if (ImGui::IsItemClicked())
+    {
+        editor->SetEditedEntity(entity);
     }
 
     if (isOpen)
