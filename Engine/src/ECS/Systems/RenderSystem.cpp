@@ -144,6 +144,13 @@ void RenderSystem::UpdateShadow()
 
     CheckCameraValid();
 
+    if (cameraID == 0)
+        return;
+
+
+    auto& coordinator = Coordinator::GetInstance();
+    auto& cameraTransform = coordinator.GetComponent<TransformComponent>(cameraID);
+
     //glCullFace(GL_FRONT);
 
     GLint previousFramebuffer;
@@ -161,13 +168,10 @@ void RenderSystem::UpdateShadow()
     float near_plane = -100.f, far_plane = 1000.f;
     lightProjection = Math::Mat4f::CreateOrtho(-300.0f, 300.0f, -300.0f, 300.0f, near_plane, far_plane);
 
-    auto& coordinator = Coordinator::GetInstance();
-
     Signature signature;
     signature.set(coordinator.GetComponentType<LightComponent>());
     auto lights = coordinator.GetEntitiesWithSignature(signature);
 
-    auto& cameraTransform = coordinator.GetComponent<TransformComponent>(camera);
 
     // Generate shadoz of the directional light
     for (unsigned int i = 0; i < lights.size(); i++)
