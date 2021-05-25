@@ -89,6 +89,7 @@ void Bloom::Draw(GLuint gameTexture)
 	glBindTexture(GL_TEXTURE_2D, gameTexture);
 	glActiveTexture(GL_TEXTURE1);
 	glBindTexture(GL_TEXTURE_2D, pingpongBuffer[!horizontal]);
+	glActiveTexture(GL_TEXTURE0);
 	shaderBloomFinal.SetFloat("exposure", exposure);
 	fullScreenQuad.Draw();
 }
