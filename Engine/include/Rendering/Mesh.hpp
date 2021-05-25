@@ -5,6 +5,8 @@
 #include "Math/Math.hpp"
 #include "Material.hpp"
 
+#define MAX_BONE_INFLUENCE 4
+
 namespace Rendering
 {
 
@@ -13,6 +15,9 @@ namespace Rendering
         BwatEngine::Math::Vec3f position;
         BwatEngine::Math::Vec3f normal;
         BwatEngine::Math::Vec2f texCoord;
+
+        int boneIDs[MAX_BONE_INFLUENCE];
+        float weights[MAX_BONE_INFLUENCE];
     };
     
     class Mesh

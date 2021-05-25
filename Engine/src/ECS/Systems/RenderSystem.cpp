@@ -151,7 +151,7 @@ void RenderSystem::UpdateShadow()
     auto& coordinator = Coordinator::GetInstance();
     auto& cameraTransform = coordinator.GetComponent<TransformComponent>(cameraID);
 
-    //glCullFace(GL_FRONT);
+    glCullFace(GL_FRONT);
 
     GLint previousFramebuffer;
     glGetIntegerv(GL_DRAW_FRAMEBUFFER_BINDING, &previousFramebuffer);
@@ -166,7 +166,7 @@ void RenderSystem::UpdateShadow()
 
     Math::Mat4f lightProjection, lightView;
     float near_plane = -100.f, far_plane = 1000.f;
-    lightProjection = Math::Mat4f::CreateOrtho(-300.0f, 300.0f, -300.0f, 300.0f, near_plane, far_plane);
+    lightProjection = Math::Mat4f::CreateOrtho(-200.0f, 200.0f, -200.0f, 200.0f, near_plane, far_plane);
 
     Signature signature;
     signature.set(coordinator.GetComponentType<LightComponent>());
@@ -206,8 +206,10 @@ void RenderSystem::UpdateShadow()
         renderableComponent.model->Draw(&renderableComponent.materials);
     }
 
-    //glCullFace(GL_BACK);
     glBindFramebuffer(GL_FRAMEBUFFER, previousFramebuffer);
+
+
+    glCullFace(GL_BACK);
 
 }
 
