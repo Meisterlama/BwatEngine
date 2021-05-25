@@ -1,6 +1,15 @@
 #include <string>
 #include "ECS/Coordinator.hpp"
+#include "ECS/Components/TransformComponent.hpp"
 #include "ECS/Components/DataComponent.hpp"
+#include "ECS/Components/AudioSourceComponent.hpp"
+#include "ECS/Components/CameraComponent.hpp"
+#include "ECS/Components/LightComponent.hpp"
+#include "ECS/Components/PlayerComponent.hpp"
+#include "ECS/Components/RenderableComponent.hpp"
+#include "ECS/Components/ScriptComponent.hpp"
+
+#include "ResourceManager/ResourceManager.hpp"
 
 namespace BwatEngine
 {
@@ -28,6 +37,37 @@ namespace BwatEngine
             GetComponent<DataComponent>(entity).name = entityName;
 
             return entity;
+    }
+
+    EntityID Coordinator::DuplicateEntity(EntityID entity)
+    {
+        EntityID newEntity = CreateEntity();
+#define CHECK_AND_COPY_COMP(component) \
+        if (HaveComponent<component>(entity)) \
+        { \
+            AddComponent<component>(newEntity, GetComponent<component>(entity)); \
+        }
+
+        CHECK_AND_COPY_COMP(AudioSourceComponent);
+        CHECK_AND_COPY_COMP(CameraComponent);
+        CHECK_AND_COPY_COMP(LightComponent);
+        CHECK_AND_COPY_COMP(PlayerComponent);
+        CHECK_AND_COPY_COMP(ScriptComponent);
+        CHECK_AND_COPY_COMP(TransformComponent);
+
+        if(HaveComponent<RenderableComponent>(entity))
+        {
+            AddComponent<RenderableComponent>(newEntity);
+            auto& entityModel = GetComponent<RenderableComponent>(entity).model;
+            if (entityModel)
+            {
+                Rendering::Model* model = ResourceManager::Instance()->GetOrLoadModel(entityModel->modelPath);
+                GetComponent<RenderableComponent>(newEntity).model = model;
+            }
+        }
+
+#undef CHECK_AND_COPY_COMP
+        return newEntity;
     }
 
     bool Coordinator::IsValid(EntityID entity)
@@ -86,6 +126,21 @@ namespace BwatEngine
         }
 
         return retEntities;
+    }
+
+    EntityID Coordinator::GetEntityWithName(const std::string& name)
+    {
+        Signature signature;
+        signature.set(GetComponentType<DataComponent>());
+        for (EntityID entity : GetEntitiesWithSignature(signature))
+        {
+            std::string entityName = GetComponent<DataComponent>(entity).name;
+            if (entityName == name)
+            {
+                return entity;
+            }
+        }
+        return 0;
     }
 
     Signature Coordinator::GetEntitySignature(EntityID entity) const

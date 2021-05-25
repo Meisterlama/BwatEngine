@@ -37,7 +37,12 @@ void WidgetHierarchy::ShowEntity(BwatEngine::EntityID entity)
     {
         if (ImGui::MenuItem("Delete entity"))
         {
-            BwatEngine::Coordinator::GetInstance().DestroyEntity(entity);
+            coordinator.DestroyEntity(entity);
+            editor->SetEditedEntity(0);
+        }
+        if (ImGui::MenuItem("Duplicate entity"))
+        {
+            editor->SetEditedEntity(coordinator.DuplicateEntity(entity));
         }
         ImGui::EndPopup();
     }
