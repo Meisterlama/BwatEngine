@@ -26,8 +26,7 @@ WidgetProperties::WidgetProperties(EditorInterface *editor) : Widget(editor)
 template<>
 void WidgetProperties::ShowComponent<BwatEngine::DataComponent>(BwatEngine::DataComponent& component)
 {
-    char* buf = (char*)component.name.c_str();
-    ImGui::InputText("Name", buf, 128 * sizeof(char));
+    ImGui::InputText("Name", &component.name);
 }
 
 template<>

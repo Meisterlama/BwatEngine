@@ -457,8 +457,7 @@ namespace BwatEngine {
         void Load<DataComponent>(EntityID entityId, const json &componentData)
         {
             auto &coordinator = Coordinator::GetInstance();
-            auto& entityName = coordinator.GetComponent<DataComponent>(entityId);
-            entityName.name = componentData.at("name").get<std::string>();
+            coordinator.AddComponent<DataComponent>(entityId, componentData.at("name").get<std::string>());
         }
 
 
