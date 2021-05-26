@@ -12,7 +12,7 @@
 
 namespace BwatEngine {
 
-    void Serializer::SaveScene(const char* path) //enlever la scene ici ?
+    void Serializer::SaveScene(const char* path)
     {
         std::ofstream file(path);
 

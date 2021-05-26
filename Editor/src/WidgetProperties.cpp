@@ -26,8 +26,7 @@ WidgetProperties::WidgetProperties(EditorInterface *editor) : Widget(editor)
 template<>
 void WidgetProperties::ShowComponent<BwatEngine::DataComponent>(BwatEngine::DataComponent& component)
 {
-    char* buf = (char*)component.name.c_str();
-    ImGui::InputText("Name", buf, 128 * sizeof(char));
+    ImGui::InputText("Name", &component.name);
 }
 
 template<>
@@ -46,6 +45,47 @@ void WidgetProperties::ShowComponent<BwatEngine::TransformComponent>(BwatEngine:
         }
 
         ImGui::DragFloat3("Scale", component.scale.values, 0.01);
+}
+
+void TextCenter(std::string text) 
+{
+    ImGui::Text("");
+    float font_size = ImGui::GetFontSize() * text.size() / 2;
+    ImGui::SameLine( ImGui::GetWindowSize().x / 2 - font_size + (font_size / 2) - 10);
+    ImGui::Text(text.c_str());
+}
+
+void CreateSelectedBox(Rendering::Texture*& component,int index, std::string nameCategory, bool reset = false)
+{
+    std::string name;
+
+    if (component != nullptr)
+        name = component->path;
+    else
+        name = "";
+
+
+    if (ImGui::BeginCombo(nameCategory.c_str(), name.c_str()))
+    {
+        auto textList = BwatEngine::ResourceManager::Instance()->GetTextList();
+
+        for (auto &text : textList)
+        {
+            std::string path = text;
+            bool selected = (name == path);
+
+            if (ImGui::Selectable(path.c_str(), selected))
+                component = BwatEngine::ResourceManager::Instance()->GetOrLoadTexture(text, Rendering::Texture::Type::E_DIFFUSE);;
+   
+            if (selected)
+                ImGui::SetItemDefaultFocus();
+        }
+
+        ImGui::EndCombo();
+    }
+
+    if (reset)
+        name = "";
 }
 
 template<>
@@ -80,113 +120,69 @@ void WidgetProperties::ShowComponent<BwatEngine::RenderableComponent>(BwatEngine
         if (ImGui::Button("Add Materials"))
         {
             auto material = new Rendering::Material;
-            material->SetDiffuse(*BwatEngine::ResourceManager::Instance()
-                    ->GetOrLoadTexture("Assets/image/moteur.jpg",Rendering::Texture::Type::E_DIFFUSE));
+            material->diffuse = BwatEngine::ResourceManager::Instance()->GetOrLoadTexture("Assets/image/moteur.jpg",Rendering::Texture::Type::E_DIFFUSE);
+
             component.materials.push_back(material);
         }
 
         for (int i = 0; i < component.materials.size(); i++)
         {
-            std::string DiffName;
-            if (component.materials[i]->diffuse != nullptr)
-                DiffName = component.materials[i]->diffuse->path;
-            else
-                DiffName = "";
-
-            ImGui::Text("Diffuse Texture");
-            ImGui::SameLine();
-            std::string labelDiff = "##Diff" + std::to_string(i);
-            if(ImGui::BeginCombo(labelDiff.c_str(), DiffName.c_str()))
-            {
-                auto textList = BwatEngine::ResourceManager::Instance()->GetTextList();
-
-                for(auto &text : textList)
-                {
-                    bool selected = (DiffName == text.c_str());
-                    if(ImGui::Selectable(text.c_str(), selected))
-                    {
-                        component.materials[i]->diffuse = BwatEngine::ResourceManager::Instance()->GetOrLoadTexture(text, Rendering::Texture::Type::E_DIFFUSE);
-                    }
-                    if(selected)
-                        ImGui::SetItemDefaultFocus();
-                }
-                ImGui::EndCombo();
-            }
-
-            std::string SpecName;
-            if (component.materials[i]->specular != nullptr)
-                SpecName = component.materials[i]->specular->path;
-            else
-                SpecName = "";
-
-            ImGui::Text("Specular Texture");
-            ImGui::SameLine();
-            std::string labelSpec = "##Spec" + std::to_string(i);
-            if(ImGui::BeginCombo(labelSpec.c_str(), SpecName.c_str()))
-            {
-                auto textList = BwatEngine::ResourceManager::Instance()->GetTextList();
-
-                for(auto &text : textList)
-                {
-                    bool selected = (SpecName == text.c_str());
-                    if(ImGui::Selectable(text.c_str(), selected))
-                    {
-                        component.materials[i]->specular = BwatEngine::ResourceManager::Instance()->GetOrLoadTexture(text, Rendering::Texture::Type::E_SPECULAR);;
-                    }
-                    if(selected)
-                        ImGui::SetItemDefaultFocus();
-                }
-                ImGui::EndCombo();
-            }
-
-            std::string normalName;
-            if (component.materials[i]->normal != nullptr)
-                normalName = component.materials[i]->normal->path;
-            else
-                normalName = "";
-            
-            ImGui::Text("Normal Texture");
-            ImGui::SameLine();
-            std::string labelNorm = "##Norm" + std::to_string(i);
-            if (ImGui::BeginCombo(labelNorm.c_str(), normalName.c_str()))
-            {
-                auto textList = BwatEngine::ResourceManager::Instance()->GetTextList();
-
-                for (auto& text : textList)
-                {
-                    bool selected = (normalName == text.c_str());
-                    if (ImGui::Selectable(text.c_str(), selected))
-                    {
-                        component.materials[i]->normal = BwatEngine::ResourceManager::Instance()->GetOrLoadTexture(text, Rendering::Texture::Type::E_NORMAL);;
-                    }
-                    if (selected)
-                        ImGui::SetItemDefaultFocus();
-                }
-                ImGui::EndCombo();
-            }
+            bool resetTexture = false;
 
             if (ImGui::Button("Clear Texture"))
             {
-                component.materials[i]->diffuse = nullptr;
-                component.materials[i]->specular = nullptr;
                 component.materials[i]->normal = nullptr;
+                component.materials[i]->albedoMap = nullptr;
+                component.materials[i]->metallicMap = nullptr;
+                component.materials[i]->roughnessMap = nullptr;
+                component.materials[i]->aoMap = nullptr;
 
-                DiffName = "";
-                SpecName = "";
-                normalName = "";
+                resetTexture = true;
             }
 
             bool update = false;
+
+            bool isTextured = component.materials[i]->isTextured;
+            update |= ImGui::Checkbox("Textured", &isTextured);
+
+            CreateSelectedBox(component.materials[i]->normal, i, "Normal", resetTexture);
+
+            if (isTextured)
+            {
+                CreateSelectedBox(component.materials[i]->albedoMap, i, "Albedo", resetTexture);
+                CreateSelectedBox(component.materials[i]->metallicMap, i, "Metallic", resetTexture);
+                CreateSelectedBox(component.materials[i]->roughnessMap, i, "Roughness", resetTexture);
+                CreateSelectedBox(component.materials[i]->aoMap, i, "Ao", resetTexture);
+            }
+            else
+            {
+                ImGui::DragFloat3("Albedo", component.materials[i]->albedo.values,0.1f);
+                ImGui::DragFloat("Metallic", &component.materials[i]->metallic, 0.1f, 0.0f, 100.f);
+                ImGui::DragFloat("Roughness", &component.materials[i]->roughness, 0.01f, 0.0f, 100.f);
+                ImGui::DragFloat("Ao", &component.materials[i]->ao, 0.01f, 0.0f, 100.f);
+
+            }
+
             bool isColored = component.materials[i]->isColor;
-            update |= ImGui::Checkbox("isColor", &isColored);
+            update |= ImGui::Checkbox("Color", &isColored);
 
             if (component.materials[i]->isColor)
             {
                 ImGui::ColorEdit4("Color", component.materials[i]->color.values);
             }
 
+            TextCenter("Shadow Option");
+
+            bool castShadow = component.castShadow;
+            update |= ImGui::Checkbox("Cast Shadow", &castShadow);
+
             if (update)
+            {
+                component.materials[i]->isTextured = isTextured;
                 component.materials[i]->isColor = isColored;
+                component.castShadow = castShadow;
+            }
+
         }
 }
 
@@ -364,7 +360,7 @@ bool WidgetProperties::AddComponentMenuItem(BwatEngine::EntityID entity)
     if (!coordinator.HaveComponent<T>(entity))
     {
         //TODO: proper component name
-        if (ImGui::MenuItem(coordinator.GetName<T>().c_str()))
+        if (ImGui::MenuItem(coordinator.GetInternalName<T>().c_str()))
             //TODO: proper default value for the component
             coordinator.AddComponent<T>(entity);
         return true;
@@ -381,8 +377,8 @@ bool WidgetProperties::ShowComponentMenuItem(BwatEngine::EntityID entity)
 
     if (entitySignature.test(coordinator.GetComponentType<T>()))
     {
-        ImGui::PushID(coordinator.GetName<T>().c_str());
-        if (ImGui::CollapsingHeader(coordinator.GetName<T>().c_str(), ImGuiTreeNodeFlags_DefaultOpen))
+        ImGui::PushID(coordinator.GetInternalName<T>().c_str());
+        if (ImGui::CollapsingHeader(coordinator.GetInternalName<T>().c_str(), ImGuiTreeNodeFlags_DefaultOpen))
         {
             bool componentDeleted = false;
             if (ImGui::BeginPopupContextItem("ComponentContextMenu"))
@@ -432,7 +428,7 @@ void WidgetProperties::ShowComponent<BwatEngine::LightComponent>(BwatEngine::Lig
         }
 
         update |= ImGui::DragFloat3("Position", position.values, 0.1f);
-        update |= ImGui::DragFloat3("Direction", direction.values, 0.01f,-2.0f,2.f);
+        update |= ImGui::DragFloat3("Direction", direction.values, 0.01f, -4.f, 4.f);
 
         update |= ImGui::ColorEdit3("Ambient", ambient.values, ImGuiColorEditFlags_Float);
         update |= ImGui::ColorEdit3("Specular", specular.values, ImGuiColorEditFlags_Float);

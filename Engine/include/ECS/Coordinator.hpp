@@ -56,6 +56,14 @@ namespace BwatEngine
         EntityID CreateEntity();
 
         /**
+         * @brief Duplicate an entity with its components
+         * @param entity EntityID to duplicate
+         * @return EntityID of the newly created entity
+         * @warning Not all components are duplicated
+         */
+        EntityID DuplicateEntity(EntityID entity);
+
+        /**
          * @param entity Entity ID
          * @return True if the entity ID is valid
          */
@@ -81,6 +89,13 @@ namespace BwatEngine
         std::vector<EntityID> GetEntitiesWithSignature(Signature signature);
 
         /**
+         * @param name Name of the entity wanted
+         * @return A EntityID which name is equal to \p name
+         * @warning If multiple entities have the same name, only the first one encountered is returned
+         */
+        EntityID GetEntityWithName(const std::string& name);
+
+        /**
          * @brief Destroy all entities created with the coordinator
          */
         void DestroyAllEntities();
@@ -93,7 +108,7 @@ namespace BwatEngine
         template<class C>
         void RegisterComponent()
         {
-            LogInfo("[ECS] Registered component %s", GetName<C>().c_str());
+            LogInfo("[ECS] Registered component %s", GetInternalName<C>().c_str());
             componentManager.RegisterComponent<C>();
         }
 
@@ -225,7 +240,7 @@ namespace BwatEngine
         template<class S, class... Args>
         std::shared_ptr<S> RegisterSystem(Args&&... args)
         {
-            LogInfo("[ECS] Registered system %s", GetName<S>().c_str());
+            LogInfo("[ECS] Registered system %s", GetInternalName<S>().c_str());
             std::shared_ptr<S> systemPtr = systemManager.RegisterSystem<S>(args...);
             return systemPtr;
         }
@@ -234,7 +249,7 @@ namespace BwatEngine
         void SetSystemConfig(SystemConfig config)
         {
             systemManager.SetSystemConfig<S>(config);
-            LogInfo("[ECS] Update %s config", GetName<S>().c_str());
+            LogInfo("[ECS] Update %s config", GetInternalName<S>().c_str());
         }
 
         /**
@@ -252,7 +267,7 @@ namespace BwatEngine
                 signature.set(ID);
             }
             systemManager.SetSignature<S>(signature);
-            LogInfo("[ECS] Update %s signature requirement", GetName<S>().c_str());
+            LogInfo("[ECS] Update %s signature requirement", GetInternalName<S>().c_str());
         }
 
         void UpdateSystems(bool gameUpdate)
@@ -294,7 +309,7 @@ namespace BwatEngine
         std::vector<EntityID> GetRootEntities() const;
 
         template <typename S>
-        std::string GetName()
+        std::string GetInternalName()
         {
             return ECS::Internal::demangle(typeid(S).name());
         }

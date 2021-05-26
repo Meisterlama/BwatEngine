@@ -17,6 +17,8 @@ namespace BwatEngine
 
         Rendering::Model* model = nullptr;
         std::vector<Rendering::Material*> materials;
+        bool castShadow = true;
+        
     };
 }
 
