@@ -1,8 +1,10 @@
 #include "ECS/Coordinator.hpp"
 #include "ECS/Systems/RenderSystem.hpp"
 #include "ECS/Components/RenderableComponent.hpp"
+#include "ECS/Components/AnimatorComponent.hpp"
 #include "ECS/Components/LightComponent.hpp"
 
+#include "Time.hpp"
 #include "Rendering/Light.hpp"
 #include "Scene.hpp"
 
@@ -25,7 +27,9 @@ RenderSystem::RenderSystem(int width, int height) : displayWidth(width), display
 
     shader.Use();
     shader.SetInt("skybox", 0);
+
     signature.set(Coordinator::GetInstance().GetComponentType<CameraComponent>());
+    signature.set(Coordinator::GetInstance().GetComponentType<TransformComponent>());
 }
 
 void RenderSystem::SetCamera(EntityID _camera)
@@ -38,6 +42,7 @@ void RenderSystem::SetCamera(EntityID _camera)
 
 void RenderSystem::Update()
 {
+
     CheckCameraValid();
     OptionAndClear(displayWidth, displayHeight);
 
@@ -90,6 +95,7 @@ void RenderSystem::RenderEntitiesAndLights(const CameraComponent& camera, const 
     shader.SetMat4("lightSpaceMatrix", lightSpaceMatrix);
     
     shader.SetTextureCubemap("envMap", 20, cubeMap.id);
+
     
     for (unsigned int i = 0; i < lights.size(); i++)
     {
@@ -100,6 +106,17 @@ void RenderSystem::RenderEntitiesAndLights(const CameraComponent& camera, const 
     
     for (auto entity : entities)
     {
+        if (coordinator.HaveComponent<AnimatorComponent>(entity))
+        {
+            shader.SetBool("skinned", true);
+            auto& animComponent = coordinator.GetComponent< AnimatorComponent>(entity);
+            auto transforms = animComponent.animator.GetFinalBoneMatrices();
+            for (int i = 0; i < transforms.size(); ++i)
+                shader.SetMat4("finalBonesMatrices[" + std::to_string(i) + "]", transforms[i]);
+        }
+        else
+            shader.SetBool("skinned", false);
+
         auto& renderableComponent = coordinator.GetComponent<RenderableComponent>(entity);
 
         if (renderableComponent.model == nullptr)
@@ -113,6 +130,8 @@ void RenderSystem::RenderEntitiesAndLights(const CameraComponent& camera, const 
         
         renderableComponent.model->Draw(&renderableComponent.materials);
     }
+
+    
 }
 
 void RenderSystem::CheckCameraValid()

@@ -26,11 +26,11 @@ namespace Rendering
         ~Animation() {};
 
         Bone* FindBone(const std::string& name);
+        BoneInfo* FindBoneInfo(const std::string& name);
 
         inline float GetTicksPerSecond() { return ticksPerSecond; }
         inline float GetDuration() { return duration; }
         inline const AssimpNodeData& GetRootNode() { return rootNode; }
-        inline const std::map<std::string, BoneInfo>& GetBoneIDMap(){ return boneInfoMap;}
 
     private:
 
@@ -41,7 +41,7 @@ namespace Rendering
         int ticksPerSecond;
         std::vector<Bone> bones;
         AssimpNodeData rootNode;
-        std::map<std::string, BoneInfo> boneInfoMap;
+        std::map<std::string, BoneInfo> allBoneInfoMap;
     };
 }
 

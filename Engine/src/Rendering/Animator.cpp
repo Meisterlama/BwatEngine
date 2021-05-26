@@ -2,10 +2,10 @@
 
 using namespace Rendering;
 
-Animator::Animator(Animation* Animation)
+Animator::Animator(Animation* animation)
 {
     currentTime = 0.0;
-    currentAnimation = currentAnimation;
+    currentAnimation = animation;
 
     finalBoneMatrices.reserve(100);
 
@@ -45,11 +45,11 @@ void Animator::CalculateBoneTransform(const AssimpNodeData* node, Math::Mat4f pa
 
     Math::Mat4f globalTransformation = parentTransform * nodeTransform;
 
-    auto boneInfoMap = currentAnimation->GetBoneIDMap();
-    if (boneInfoMap.find(nodeName) != boneInfoMap.end())
+    BoneInfo* boneInfo = currentAnimation->FindBoneInfo(nodeName);
+    if (boneInfo)
     {
-        int index = boneInfoMap[nodeName].id;
-        Math::Mat4f offset = boneInfoMap[nodeName].offset;
+        int index = boneInfo->id;
+        Math::Mat4f offset = boneInfo->offset;
         finalBoneMatrices[index] = globalTransformation * offset;
     }
 

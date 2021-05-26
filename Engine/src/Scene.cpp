@@ -13,6 +13,7 @@
 #include "ECS/Components/AudioSourceComponent.hpp"
 #include "ECS/Components/LightComponent.hpp"
 #include "ECS/Components/DataComponent.hpp"
+#include "ECS/Components/AnimatorComponent.hpp"
 
 #include "ECS/Systems/PhysicsSystem.hpp"
 #include "ECS/Systems/PlayerControlSystem.hpp"
@@ -20,6 +21,7 @@
 #include "ECS/Systems/SoundSystem.hpp"
 #include "ECS/Systems/ScriptSystem.hpp"
 #include "ECS/Systems/PostProcessSystem.hpp"
+#include "ECS/Systems/AnimationSystem.hpp"
 
 #include "ResourceManager/ResourceManager.hpp"
 #include "Serialization/Serialization.hpp"
@@ -44,6 +46,7 @@ Scene::Scene(Window& window)
     coordinator.RegisterComponent<AudioSourceComponent>();
     coordinator.RegisterComponent<LightComponent>();
     coordinator.RegisterComponent<DataComponent>();
+    coordinator.RegisterComponent<AnimatorComponent>();
 
     coordinator.RegisterSystem<PhysicsSystem>(&scenePhysic);
     coordinator.SetSystemSignature<PhysicsSystem, RigidBodyComponent, TransformComponent, ColliderComponent>();
@@ -73,6 +76,11 @@ Scene::Scene(Window& window)
     coordinator.RegisterSystem<PostProcessSystem>(window.GetWidth(), window.GetHeight());
     coordinator.SetSystemConfig<PostProcessSystem>(SystemConfig{SystemConfig::ManualUpdate});
 
+    // ===================================  ANIMATION  =================================== //
+    coordinator.RegisterSystem<AnimationSystem>();
+    coordinator.SetSystemSignature<AnimationSystem, RenderableComponent, AnimatorComponent>();
+    coordinator.SetSystemConfig<AnimationSystem>(SystemConfig{ SystemConfig::AlwaysUpdate });
+    
 
     Serializer::LoadScene("sampleScene.bwat");
 

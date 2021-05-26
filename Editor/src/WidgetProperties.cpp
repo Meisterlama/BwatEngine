@@ -8,6 +8,7 @@
 #include <ECS/Components/LightComponent.hpp>
 #include <ECS/Components/DataComponent.hpp>
 #include <ECS/Components/ScriptComponent.hpp>
+#include <ECS/Components/AnimatorComponent.hpp>
 
 #include "ResourceManager/ResourceManager.hpp"
 #include "ECS/Coordinator.hpp"
@@ -305,6 +306,8 @@ void WidgetProperties::TickVisible()
                 hasComponentAvailable |= AddComponentMenuItem<LightComponent>(currentEntity);
                 hasComponentAvailable |= AddComponentMenuItem<DataComponent>(currentEntity);
                 hasComponentAvailable |= AddComponentMenuItem<ScriptComponent>(currentEntity);
+                hasComponentAvailable |= AddComponentMenuItem<AnimatorComponent>(currentEntity);
+
                 ImGui::EndMenu();
             }
 
@@ -321,6 +324,7 @@ void WidgetProperties::TickVisible()
     ShowComponentMenuItem<CameraComponent>(currentEntity);
     ShowComponentMenuItem<PlayerComponent>(currentEntity);
     ShowComponentMenuItem<LightComponent>(currentEntity);
+    ShowComponentMenuItem<AnimatorComponent>(currentEntity);
 }
 
 void WidgetProperties::Inspect(BwatEngine::EntityID entity)
@@ -462,4 +466,44 @@ void WidgetProperties::ShowComponent<BwatEngine::LightComponent>(BwatEngine::Lig
             component.outerCutoff  = outerCutOff;
 
         }
+}
+
+template<>
+void WidgetProperties::ShowComponent<BwatEngine::AnimatorComponent>(BwatEngine::AnimatorComponent& component)
+{
+
+    std::string name;
+    name = component.pathAnimation;
+
+
+    if (ImGui::BeginCombo("Animation", name.c_str()))
+    {
+        auto textList = BwatEngine::ResourceManager::Instance()->GetModelList();
+
+        for (auto& text : textList)
+        {
+            std::string path = text;
+            bool selected = (name == path);
+
+            if (ImGui::Selectable(path.c_str(), selected))
+                component.pathAnimation = text;
+
+            if (selected)
+                ImGui::SetItemDefaultFocus();
+        }
+
+        ImGui::EndCombo();
+    }
+
+    std::string animationName = component.pathAnimation;
+
+    if (ImGui::InputText("Animation File", &animationName, ImGuiInputTextFlags_EnterReturnsTrue))
+    {
+        component.pathAnimation = animationName;
+    }
+
+    if (ImGui::Button("Reload"))
+    {
+        component.needLink = true;
+    }
 }

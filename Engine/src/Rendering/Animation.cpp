@@ -36,6 +36,12 @@ Bone* Animation::FindBone(const std::string& name)
         return &(*iter);
 }
 
+BoneInfo* Animation::FindBoneInfo(const std::string& name)
+{
+    auto found = allBoneInfoMap.find(name);
+    return (found != allBoneInfoMap.end()) ? &found->second : nullptr;
+}
+
 void Animation::ReadMissingBones(const aiAnimation* animation, Rendering::Model& model)
 {
     int size = animation->mNumChannels;
@@ -58,26 +64,25 @@ void Animation::ReadMissingBones(const aiAnimation* animation, Rendering::Model&
             boneInfoMap[channel->mNodeName.data].id, channel));
     }
 
-    boneInfoMap = boneInfoMap;
+    allBoneInfoMap = boneInfoMap;
 }
 
-BwatEngine::Math::Mat4f ConvertMatrixToBwatFormat(const aiMatrix4x4& from)
+static BwatEngine::Math::Mat4f ConvertMatrixToBFormat(const aiMatrix4x4& from)
 {
     BwatEngine::Math::Mat4f to;
-    //the a,b,c,d in assimp is the row ; the 1,2,3,4 is the column
-    to.v1 = from.a1; to.v1 = from.a2; to.v2 = from.a3; to.v3 = from.a4;
-    to.v4 = from.b1; to.v5 = from.b2; to.v6 = from.b3; to.v7 = from.b4;
-    to.v8 = from.c1; to.v9 = from.c2; to.v10 = from.c3; to.v11 = from.c4;
-    to.v12 = from.d1; to.v13 = from.d2; to.v14 = from.d3; to.v15 = from.d4;
-    return to;
+    memcpy(to.values, &from.a1, sizeof(BwatEngine::Math::Mat4f));
+    return to.GetTransposed();
 }
 
 void Animation::ReadHeirarchyData(AssimpNodeData& dest, const aiNode* src)
 {
     assert(src);
 
+    if (src == nullptr)
+        return;
+
     dest.name = src->mName.data;
-    dest.transformation = ConvertMatrixToBwatFormat(src->mTransformation);
+    dest.transformation = ConvertMatrixToBFormat(src->mTransformation);
     dest.childrenCount = src->mNumChildren;
 
     for (int i = 0; i < src->mNumChildren; i++)

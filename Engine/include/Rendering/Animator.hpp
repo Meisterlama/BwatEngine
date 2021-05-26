@@ -11,20 +11,20 @@ namespace Rendering
     {
     public:
 
-        Animator::Animator(Animation* Animation);
+        Animator(Animation* Animation = nullptr);
 
         void Animator::UpdateAnimation(float dt);
         void Animator::PlayAnimation(Animation* pAnimation);
         void Animator::CalculateBoneTransform(const AssimpNodeData* node, Math::Mat4f parentTransform);
 
-        std::vector<Math::Mat4f> GetFinalBoneMatrices() { return finalBoneMatrices; };
+        const std::vector<Math::Mat4f>& GetFinalBoneMatrices() { return finalBoneMatrices; };
 
     private:
 
         std::vector<Math::Mat4f> finalBoneMatrices;
         Animation* currentAnimation;
-        float currentTime;
-        float deltaTime;
+        float currentTime = 0.f;
+        float deltaTime = 0.f;
     };
 }
 
