@@ -14,10 +14,10 @@ namespace BwatEngine::Audio
             Buffer buffer{};
             ALuint sourceID{};
             float length{};
-
         public:
+            AudioData* audioData = nullptr;
+
             Source();
-            Source(const AudioData& audioData);
 
             ~Source();
 
@@ -27,11 +27,11 @@ namespace BwatEngine::Audio
             void SetVelocity(Math::Vec3f vel);
             void SetLooping(bool loop);
 
-            float GetPitch();
-            float GetGain();
-            bool GetLooping();
+            float GetPitch() const;
+            float GetGain() const;
+            bool GetLooping() const;
 
-            void SetAudioData(const AudioData& audioData);
+            void Refresh();
 
             void Play();
             void Stop();

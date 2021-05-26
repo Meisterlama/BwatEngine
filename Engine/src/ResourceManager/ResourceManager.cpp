@@ -20,9 +20,9 @@ namespace BwatEngine
         return it.first->second.get();
     }
 
-    Rendering::Texture* ResourceManager::LoadTexture(std::string path, Rendering::Texture::Type type)
+    Rendering::Texture * ResourceManager::LoadTexture(std::string path)
     {
-        auto it = textures.emplace(path, std::make_unique<Rendering::Texture>(path, type));
+        auto it = textures.emplace(path, std::make_unique<Rendering::Texture>(path));
         dirtyTextures = true;
         return it.first->second.get();
     }
@@ -66,7 +66,7 @@ namespace BwatEngine
     Rendering::Texture* ResourceManager::GetOrLoadTexture(std::string path, Rendering::Texture::Type type)
     {
         Rendering::Texture* res = ResourceManager::Instance()->GetTexture(path);
-        return (res != nullptr) ? res : LoadTexture(path, type);
+        return (res != nullptr) ? res : LoadTexture(path);
     }
 
     Audio::AudioData *ResourceManager::GetOrLoadAudio(std::string path)
@@ -95,14 +95,14 @@ namespace BwatEngine
         return texturesKey;
     }
 
-    std::vector<std::string> &ResourceManager::getAudioList()
+    std::vector<std::string> &ResourceManager::GetAudioList()
     {
         if (dirtyAudio)
             UpdateAudioKey();
         return audioKey;
     }
 
-    std::vector<std::string>& ResourceManager::getScriptList()
+    std::vector<std::string>& ResourceManager::GetScriptList()
     {
         if (dirtyScript)
             UpdateScriptKey();
@@ -132,9 +132,9 @@ namespace BwatEngine
     void ResourceManager::UpdateAudioKey()
     {
         audioKey.clear();
-        for (auto &it : textures)
+        for (auto &it : audio)
         {
-            texturesKey.push_back(it.first);
+            audioKey.push_back(it.first);
         }
 
         dirtyAudio = false;
