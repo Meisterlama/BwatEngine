@@ -24,6 +24,7 @@
 #include "ResourceManager/ResourceManager.hpp"
 #include "Serialization/Serialization.hpp"
 
+
 using namespace BwatEngine;
 
 Scene::Scene(Window& window)
@@ -72,6 +73,4 @@ Scene::Scene(Window& window)
     // =================================== POST PROCESS =================================== //
     coordinator.RegisterSystem<PostProcessSystem>(window.GetWidth(), window.GetHeight());
     coordinator.SetSystemConfig<PostProcessSystem>(SystemConfig{SystemConfig::ManualUpdate});
-
-    Serializer::LoadScene("sampleScene.bwat");
 }
