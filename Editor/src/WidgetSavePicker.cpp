@@ -22,7 +22,7 @@ void WidgetSavePicker::TickVisible()
     if (ImGui::Button("Save"))
     {
         BwatEngine::Serializer::SaveScene(path.c_str());
-        editor->currentScene = path.c_str();
+        editor->currentScene = path;
         SetVisible(false);
     }
 }

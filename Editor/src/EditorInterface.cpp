@@ -24,6 +24,9 @@
 #include "ECS/Components/TransformComponent.hpp"
 
 #include "Inputs/InputHandler.hpp"
+#include "json.hpp"
+
+using json = nlohmann::json;
 
 ImGuizmo::MODE EditorInterface::guizmoMode = ImGuizmo::MODE::LOCAL;
 ImGuizmo::OPERATION EditorInterface::guizmoOperation = ImGuizmo::OPERATION::TRANSLATE;
@@ -44,6 +47,17 @@ EditorInterface::EditorInterface(BwatEngine::Engine* _engine)
 
     ImGui_ImplGlfw_InitForOpenGL(engine->GetGLFWwindow(), false);
     ImGui_ImplOpenGL3_Init("#version 330");
+
+    LoadData("editor.conf");
+
+    if (currentScene != "")
+    {
+        BwatEngine::Serializer::LoadScene(currentScene.c_str());
+    }
+    else
+    {
+        BwatEngine::Serializer::LoadScene("SampleScene.bwat");
+    }
 }
 
 void EditorInterface::Close()
@@ -356,4 +370,35 @@ void EditorInterface::ToolbarUI()
     }
 
     ImGui::End();
+}
+
+void EditorInterface::SaveData(const char* path)
+{
+    std::ofstream file(path);
+
+    json js;
+    std::string data = currentScene;
+
+    js =json
+        {
+            {"current scene", data}
+        };
+    file << js << std::endl;
+}
+
+void EditorInterface::LoadData(const char* path)
+{
+    std::ifstream file(path);
+
+    if (!file)
+    {
+        LogError("No File at path :%s", path);
+        return;
+    }
+
+    json js;
+    file >> js;
+
+
+    currentScene = js.at("current scene").get<std::string>().c_str();
 }

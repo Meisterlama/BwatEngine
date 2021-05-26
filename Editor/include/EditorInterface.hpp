@@ -15,6 +15,7 @@
 #include "ECS/Components/TransformComponent.hpp"
 
 
+
 namespace BwatEngine
 {
     class Engine;
@@ -28,6 +29,7 @@ public:
     EditorInterface(BwatEngine::Engine* _engine);
     ~EditorInterface()
     {
+        SaveData("editor.conf");
         Close();
     };
 
@@ -35,6 +37,8 @@ public:
     void Initialise();
     void Close();
     void ToolbarUI();
+    void SaveData(const char* path);
+    void LoadData(const char* path);
 
     void SetEditedEntity(BwatEngine::EntityID entity);
     std::vector<std::unique_ptr<Widget>>&  GetWidgetList() { return widgets; };
@@ -48,7 +52,7 @@ public:
     Rendering::FrameBufferObject sceneViewFramebuffer;
     void ApplyStyle() const;
 
-    const char* currentScene = nullptr;
+    std::string currentScene = "";
 
 
     BwatEngine::CameraComponent camera;

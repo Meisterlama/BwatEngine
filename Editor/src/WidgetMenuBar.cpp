@@ -56,13 +56,13 @@ void WidgetMenuBar::MenuFile()
     if (ImGui::MenuItem("New Scene"))
     {
         BwatEngine::Coordinator::GetInstance().DestroyAllEntities();
-        editor->currentScene = nullptr;
+        editor->currentScene = "";
     }
-    if (editor->currentScene != nullptr)
+    if (editor->currentScene != "")
         enabled = true;
     if (ImGui::MenuItem("Save Scene", 0, false, enabled))
     {
-        BwatEngine::Serializer::SaveScene(editor->currentScene);
+        BwatEngine::Serializer::SaveScene(editor->currentScene.c_str());
     }
     if (ImGui::MenuItem("Save as..."))
     {
