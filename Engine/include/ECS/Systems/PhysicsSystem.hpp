@@ -2,6 +2,7 @@
 #define ENGINE_ECS_SYSTEMS_PHYSICS_HPP
 
 #include "ECS/System.hpp"
+#include "Physic/PhysicScene.hpp"
 
 namespace BwatEngine
 {
@@ -13,7 +14,6 @@ namespace BwatEngine
 
         PhysicsSystem(PhysicScene* physicScene) : ptrPhysicScene(physicScene) {};
         virtual void Update() override;
-        
     private:
 
         PhysicScene* ptrPhysicScene = nullptr;

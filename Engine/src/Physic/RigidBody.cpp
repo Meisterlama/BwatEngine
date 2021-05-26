@@ -1,3 +1,4 @@
+#include "ECS/Coordinator.hpp"
 #include "Physic/RigidBody.hpp"
 
 using namespace BwatEngine;
@@ -140,14 +141,4 @@ Math::Vec3f RigidBody::GetVelocity() const
 	if (!isStatic)
 		return ToBwatVec3(rigidBody->getLinearVelocity());
 	return {0.f};
-}
-
-void RigidBody::OnContact(RigidBody& actor2, COLLISION_TYPE colType)
-{
-	if (collisionFunction[colType]) collisionFunction[colType](actor2);
-}
-
-void RigidBody::setContactFunc(COLLISION_TYPE colType, OnCollisionFunction&& func)
-{
-	collisionFunction[colType] = std::move(func);
 }

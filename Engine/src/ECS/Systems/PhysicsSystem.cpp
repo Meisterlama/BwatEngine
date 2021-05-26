@@ -1,11 +1,9 @@
 #include "ECS/Systems/PhysicsSystem.hpp"
 #include "Time.hpp"
-#include "Physic/PhysicCast.hpp"
 #include "ECS/Components/ColliderComponent.hpp"
 #include "ECS/Coordinator.hpp"
 #include "ECS/Components/RigidBodyComponent.hpp"
 #include "ECS/Components/TransformComponent.hpp"
-#include "Physic/PhysicScene.hpp"
 
 
 using namespace BwatEngine;
@@ -43,6 +41,4 @@ void PhysicsSystem::Update()
 
     ptrPhysicScene->GetPhysicScene()->simulate(Time::deltaTime);
     ptrPhysicScene->GetPhysicScene()->fetchResults(true);
-
-    ptrPhysicScene->gContactReportCallback.Flush();
 };

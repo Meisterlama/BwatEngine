@@ -42,7 +42,10 @@ void ScriptSystem::Update()
 
         lua["Start"] = sol::nil;
         lua["Update"] = sol::nil;
-        auto loaded_script = lua.script_file(scriptComponent.scriptPath, sol::script_pass_on_error);
+        lua["OnEnter"] = sol::nil;
+        lua["OnExit"] = sol::nil;
+        lua["OnCollision"] = sol::nil;
+        auto loadedScript = lua.script_file(scriptComponent.scriptPath, sol::script_pass_on_error);
 
         if (scriptComponent.waitingForChanges && scriptComponent.oldPath == scriptComponent.scriptPath)
             continue;
@@ -53,9 +56,9 @@ void ScriptSystem::Update()
             scriptComponent.isStarted = false;
         }
 
-        if (!loaded_script.valid())
+        if (!loadedScript.valid())
         {
-            sol::error err = loaded_script;
+            sol::error err = loadedScript;
             scriptComponent.oldPath = scriptComponent.scriptPath;
             scriptComponent.waitingForChanges = true;
             scriptComponent.isStarted = false;
@@ -71,6 +74,9 @@ void ScriptSystem::Update()
 
         auto startFunction = lua["Start"];
         auto updateFunction = lua["Update"];
+        auto onEnter = lua["OnEnter"];
+        auto onExit = lua["OnExit"];
+        auto onCollision = lua["OnCollision"];
 
         if (startFunction.valid() && !scriptComponent.isStarted)
         {
@@ -96,6 +102,29 @@ void ScriptSystem::Update()
                 LogDebug("[LUA] Error while calling Update on entity %i: %s", entity, err.what());
             }
         }
+
+
+        for (auto contact : scriptComponent.contacts)
+        {
+            switch (contact.collisionType)
+            {
+                case TriggerEnter:
+                case Enter:
+                    if (onEnter.valid())
+                        onEnter(contact.otherEntity);
+                    break;
+                case Continue:
+                    if (onCollision.valid())
+                        onCollision(contact.otherEntity);
+                    break;
+                case TriggerExit:
+                case Exit:
+                    if (onExit.valid())
+                        onExit(contact.otherEntity);
+                    break;
+            }
+        }
+        scriptComponent.contacts.clear();
     }
     lua.collect_garbage();
 }
