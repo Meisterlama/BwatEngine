@@ -14,7 +14,7 @@ namespace BwatEngine
 
 		physx::PxMaterial* material = nullptr;
 		physx::PxShape* shape = nullptr;
-
+        bool isTrigger = false;
 	public:
 
 		~Collider()
@@ -26,8 +26,9 @@ namespace BwatEngine
         }
 		physx::PxShape* GetShape() { return shape; }
         physx::PxMaterial* GetMaterial() { return material; }
-		void SetFriction(float friction);
-
+        bool GetIsTrigger() { return isTrigger; }
+        void SetFriction(float friction);
+        void SetIsTrigger(bool _isTrigger);
 	};
 
 	class BoxCollider : public Collider

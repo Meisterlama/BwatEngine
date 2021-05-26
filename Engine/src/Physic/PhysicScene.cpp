@@ -1,8 +1,7 @@
 #include "Physic/PhysicScene.hpp"
 #include "Physic/Physic.hpp"
-#include <iostream>
-
-#define STRINGIFY(input) #input
+#include "ECS/Coordinator.hpp"
+#include "ECS/Components/ScriptComponent.hpp"
 
 using namespace physx;
 using namespace BwatEngine;
@@ -10,33 +9,86 @@ using namespace BwatEngine;
 
 void ContactReportCallback::onContact(const PxContactPairHeader& pairHeader, const PxContactPair* pairs, PxU32 nbPairs)
 {
-	contacts.push_back({ pairHeader, pairs[0].flags });
+    auto& coordinator = BwatEngine::Coordinator::GetInstance();
+
+    BwatEngine::RigidBody& actor0 = *(BwatEngine::RigidBody*)pairHeader.actors[0]->userData;
+    BwatEngine::RigidBody& actor1 = *(BwatEngine::RigidBody*)pairHeader.actors[1]->userData;
+
+    BwatEngine::EntityID entity0 = coordinator.GetEntityIDFrom(actor0);
+    BwatEngine::EntityID entity1 = coordinator.GetEntityIDFrom(actor1);
+
+    CollisionType collisionType;
+
+    if (pairs[0].flags.isSet(PxContactPairFlag::Enum::eACTOR_PAIR_HAS_FIRST_TOUCH))
+    {
+        collisionType = Enter;
+    }
+    else if (pairs[0].flags.isSet(PxContactPairFlag::Enum::eACTOR_PAIR_LOST_TOUCH))
+    {
+        collisionType = Exit;
+    }
+    else
+    {
+        collisionType = Continue;
+    }
+
+    if (coordinator.HaveComponent<ScriptComponent>(entity0))
+    {
+        coordinator.GetComponent<ScriptComponent>(entity0).contacts.push_back(
+                Contact{
+                    entity1,
+                    collisionType,
+                });
+    }
+    if (coordinator.HaveComponent<ScriptComponent>(entity1))
+    {
+        coordinator.GetComponent<ScriptComponent>(entity1).contacts.push_back(
+                Contact{
+                    entity0,
+                    collisionType,
+                });
+    }
 }
 
-void ContactReportCallback::Flush()
+void ContactReportCallback::onTrigger(PxTriggerPair *pairs, PxU32 count)
 {
-	for (const Contact& contact : contacts)
-	{
-		BwatEngine::RigidBody& actor0 = *(BwatEngine::RigidBody*)contact.pairHeader.actors[0]->userData;
-		BwatEngine::RigidBody& actor1 = *(BwatEngine::RigidBody*)contact.pairHeader.actors[1]->userData;
+    auto& coordinator = BwatEngine::Coordinator::GetInstance();
+    for (PxU32 i = 0; i < count; i++)
+    {
+        BwatEngine::RigidBody& actor0 = *(BwatEngine::RigidBody*)pairs[i].triggerActor->userData;
+        BwatEngine::RigidBody& actor1 = *(BwatEngine::RigidBody*)pairs[i].otherActor->userData;
 
-		if (contact.flags.isSet(PxContactPairFlag::Enum::eACTOR_PAIR_HAS_FIRST_TOUCH))
-		{
-			actor1.OnContact(actor0, COLLISION_TYPE::OnEnterCollision);
-			actor0.OnContact(actor1, COLLISION_TYPE::OnEnterCollision);
-		}
+        BwatEngine::EntityID entity0 = coordinator.GetEntityIDFrom(actor0);
+        BwatEngine::EntityID entity1 = coordinator.GetEntityIDFrom(actor1);
 
-		actor1.OnContact(actor0, COLLISION_TYPE::OnStayCollision);
-		actor0.OnContact(actor1, COLLISION_TYPE::OnStayCollision);
+        CollisionType collisionType;
 
-		if (contact.flags.isSet(PxContactPairFlag::Enum::eACTOR_PAIR_LOST_TOUCH))
-		{
-			actor1.OnContact(actor0, COLLISION_TYPE::OnExitCollision);
-			actor0.OnContact(actor1, COLLISION_TYPE::OnExitCollision);
-		}
-	}
+        if (pairs[i].status == physx::PxPairFlag::eNOTIFY_TOUCH_FOUND)
+        {
+            collisionType = TriggerEnter;
+        }
+        else if (pairs[i].status == physx::PxPairFlag::eNOTIFY_TOUCH_LOST)
+        {
+            collisionType = TriggerExit;
+        }
 
-	contacts.clear();
+        if (coordinator.HaveComponent<ScriptComponent>(entity0))
+        {
+            coordinator.GetComponent<ScriptComponent>(entity0).contacts.push_back(
+                    Contact{
+                            entity1,
+                            collisionType,
+                    });
+        }
+        if (coordinator.HaveComponent<ScriptComponent>(entity1))
+        {
+            coordinator.GetComponent<ScriptComponent>(entity1).contacts.push_back(
+                    Contact{
+                            entity0,
+                            collisionType,
+                    });
+        }
+    }
 }
 
 PxFilterFlags contactReportFilterShader(PxFilterObjectAttributes attributes0, PxFilterData filterData0,
@@ -49,6 +101,12 @@ PxFilterFlags contactReportFilterShader(PxFilterObjectAttributes attributes0, Px
 	PX_UNUSED(filterData1);
 	PX_UNUSED(constantBlockSize);
 	PX_UNUSED(constantBlock);
+
+    if(PxFilterObjectIsTrigger(attributes0) || PxFilterObjectIsTrigger(attributes1))
+    {
+        pairFlags = PxPairFlag::eTRIGGER_DEFAULT;
+        return PxFilterFlag::eDEFAULT;
+    }
 
 	// all initial and persisting reports for everything, with per-point data
 	pairFlags = PxPairFlag::eSOLVE_CONTACT | PxPairFlag::eDETECT_DISCRETE_CONTACT

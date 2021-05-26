@@ -1,44 +1,45 @@
 #ifndef PHYSICSCENE_HPP
 #define PHYSICSCENE_HPP
 
-#include <vector>
 #include "Physic/Physic.hpp"
 #include "Physic/PhysicCast.hpp"
 #include "PxSimulationEventCallback.h"
 #include "Physic/RigidBody.hpp"
-#include "Debug/Logger.hpp"
+
+#include "ECS/ECS.hpp"
 
 #include "Math/Vector/Vector3.hpp"
 
 using namespace physx;
 
+enum CollisionType {
+    Unknown,
+    Enter,
+    Continue,
+    Exit,
+    TriggerEnter,
+    TriggerExit,
+};
 
+struct Contact
+{
+    BwatEngine::EntityID otherEntity;
+    CollisionType collisionType;
+};
 
 class ContactReportCallback : public PxSimulationEventCallback
 {
 
-private : 
-	
-	struct Contact
-	{
-		PxContactPairHeader pairHeader;
-		PxContactPairFlags flags;
-	};
+private :
 
 	bool enter = false; 
-
-	std::vector<Contact> contacts;
 
 	void onConstraintBreak(PxConstraintInfo* constraints, PxU32 count) { PX_UNUSED(constraints); PX_UNUSED(count);}
 	void onWake(PxActor** actors, PxU32 count) { PX_UNUSED(actors); PX_UNUSED(count);}
 	void onSleep(PxActor** actors, PxU32 count) { PX_UNUSED(actors); PX_UNUSED(count);}
-	void onTrigger(PxTriggerPair* pairs, PxU32 count) { PX_UNUSED(pairs); PX_UNUSED(count);}
+	void onTrigger(PxTriggerPair* pairs, PxU32 count);
 	void onAdvance(const PxRigidBody* const*, const PxTransform*, const PxU32) {}
 	void onContact(const PxContactPairHeader& pairHeader, const PxContactPair* pairs, PxU32 nbPairs);
-
-public:
-
-	void Flush();
 };
 
 namespace BwatEngine
@@ -57,8 +58,7 @@ namespace BwatEngine
 
 		void Init(Physic& physic);
 		void SetGravity(Math::Vec3f gravity);
-		physx::PxScene* GetPhysicScene() { return physicScene; }
-	};
+		physx::PxScene* GetPhysicScene() { return physicScene; }};
 }
 
 

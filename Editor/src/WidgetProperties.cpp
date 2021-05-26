@@ -280,7 +280,18 @@ void WidgetProperties::ShowComponent<BwatEngine::ScriptComponent>(BwatEngine::Sc
 }
 
 template<>
-void WidgetProperties::ShowComponent<BwatEngine::ColliderComponent>(BwatEngine::ColliderComponent &component) {}
+void WidgetProperties::ShowComponent<BwatEngine::ColliderComponent>(BwatEngine::ColliderComponent &component)
+{
+    bool shouldUpdate = false;
+    bool isTrigger = component.collider->GetIsTrigger();
+
+    shouldUpdate |= ImGui::Checkbox("Is Trigger", &isTrigger);
+
+    if (shouldUpdate)
+    {
+        component.collider->SetIsTrigger(isTrigger);
+    }
+}
 template<>
 void WidgetProperties::ShowComponent<BwatEngine::PlayerComponent>(BwatEngine::PlayerComponent &component) {}
 
@@ -289,7 +300,9 @@ void WidgetProperties::TickVisible()
     using namespace BwatEngine;
 
     Coordinator &coordinator = Coordinator::GetInstance();
-    Signature entitySignature = coordinator.GetEntitySignature(currentEntity);
+
+    if (!coordinator.IsValid(currentEntity))
+        return;
 
     if (currentEntity != 0)
     {
@@ -325,6 +338,7 @@ void WidgetProperties::TickVisible()
     ShowComponentMenuItem<CameraComponent>(currentEntity);
     ShowComponentMenuItem<PlayerComponent>(currentEntity);
     ShowComponentMenuItem<LightComponent>(currentEntity);
+    ShowComponentMenuItem<ScriptComponent>(currentEntity);
 }
 
 void WidgetProperties::Inspect(BwatEngine::EntityID entity)
