@@ -6,6 +6,7 @@
 #include "ECS/Components/CameraComponent.hpp"
 #include "ECS/Components/PlayerComponent.hpp"
 #include "ECS/Components/ColliderComponent.hpp"
+#include "ECS/Components/AudioSourceComponent.hpp"
 #include "ECS/Components/ScriptComponent.hpp"
 #include "ECS/Components/LightComponent.hpp"
 #include "ECS/Components/DataComponent.hpp"
@@ -220,6 +221,21 @@ namespace BwatEngine {
         }
 
         template<>
+        void SerializeComponent<AudioSourceComponent>(const AudioSourceComponent &audio, json &js)
+        {
+            js +=
+                json{
+                    "audio",
+                    {
+                        {"path", (audio.source.audioData) ? audio.source.audioData->path : ""},
+                        {"gain", audio.source.GetGain()},
+                        {"pitch", audio.source.GetPitch()},
+                        {"looping", audio.source.GetLooping()},
+                    }
+                };
+        }
+
+        template<>
         void SerializeComponent<LightComponent>(const LightComponent &light, json &js)
         {
             if (light.typeoflight == Rendering::Spot)
@@ -422,6 +438,20 @@ namespace BwatEngine {
         {
             auto &coordinator = Coordinator::GetInstance();
             coordinator.AddComponent<ScriptComponent>(entityId, {componentData.at("path").get<std::string>()});
+        }
+
+        template<>
+        void Load<AudioSourceComponent>(EntityID entityId, const json &componentData)
+        {
+            auto& resourceManager = *ResourceManager::Instance();
+            auto& coordinator = Coordinator::GetInstance();
+            coordinator.AddComponent<AudioSourceComponent>(entityId);
+            auto& audioComponent = coordinator.GetComponent<AudioSourceComponent>(entityId);
+            audioComponent.source.audioData = resourceManager.GetOrLoadAudio(componentData.at("path").get<std::string>());
+            audioComponent.source.Refresh();
+            audioComponent.source.SetGain(componentData.at("gain").get<float>());
+            audioComponent.source.SetPitch(componentData.at("pitch").get<float>());
+            audioComponent.source.SetLooping(componentData.at("looping").get<bool>());
         }
 
         template<>

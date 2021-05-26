@@ -6,7 +6,31 @@ namespace BwatEngine::Audio
 
     AudioData::AudioData(std::string path)
     {
-        *this = LoadWavFile(path);
+        AudioFile<float> audioFile(path);
+
+        std::vector<uint8_t> data;
+        audioFile.savePCMToBuffer(data);
+
+        sampleRate = audioFile.getSampleRate();
+        this->path = path;
+        samples = std::move(data);
+
+        if (audioFile.isStereo())
+        {
+            if (audioFile.getBitDepth() == 8)
+                format = AL_FORMAT_STEREO8;
+            else
+                format = AL_FORMAT_STEREO16;
+        }
+        else
+        {
+            if (audioFile.getBitDepth() == 8)
+                format = AL_FORMAT_MONO8;
+            else
+                format = AL_FORMAT_MONO16;
+        }
+
+        length = audioFile.getLengthInSeconds();
     }
 
     AudioData LoadWavFile(std::string path)

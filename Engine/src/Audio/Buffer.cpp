@@ -10,8 +10,8 @@ namespace BwatEngine::Audio
 
     Audio::Buffer::~Buffer()
     {
-//        alDeleteBuffers(1, &bufferID);
-//        CheckALErrors();
+        alDeleteBuffers(1, &bufferID);
+        CheckALErrors();
     }
 
     void Audio::Buffer::BufferAudioData(const AudioData &audioData)

@@ -120,7 +120,6 @@ void WidgetProperties::ShowComponent<BwatEngine::RenderableComponent>(BwatEngine
         if (ImGui::Button("Add Materials"))
         {
             auto material = new Rendering::Material;
-            material->diffuse = BwatEngine::ResourceManager::Instance()->GetOrLoadTexture("Assets/image/moteur.jpg",Rendering::Texture::Type::E_DIFFUSE);
 
             component.materials.push_back(material);
         }
@@ -217,24 +216,47 @@ void WidgetProperties::ShowComponent<BwatEngine::RigidBodyComponent>(BwatEngine:
 template<>
 void WidgetProperties::ShowComponent<BwatEngine::AudioSourceComponent>(BwatEngine::AudioSourceComponent &component)
 {
-        bool update = false;
-        float gain = component.source.GetGain();
-        float pitch = component.source.GetPitch();
-        bool loop = component.source.GetLooping();
+    bool update = false;
+    float gain = component.source.GetGain();
+    float pitch = component.source.GetPitch();
+    bool loop = component.source.GetLooping();
 
-        update |= ImGui::DragFloat("gain", &gain, 0.1f, 0.0f, 100.f);
-        update |= ImGui::DragFloat("pitch", &pitch, 0.01f, 0.0f, 100.f);
-        update |= ImGui::Checkbox("loop", &loop);
+    update |= ImGui::DragFloat("gain", &gain, 0.1f, 0.0f, 100.f);
+    update |= ImGui::DragFloat("pitch", &pitch, 0.01f, 0.0f, 100.f);
+    update |= ImGui::Checkbox("loop", &loop);
 
-        if (update)
+    std::string audioSourcePath;
+    if (component.source.audioData)
+        audioSourcePath = component.source.audioData->path;
+
+    if(ImGui::BeginCombo("##Audio", audioSourcePath.c_str()))
+    {
+        auto audioList = BwatEngine::ResourceManager::Instance()->GetAudioList();
+
+        for(auto &audio : audioList)
         {
-            component.source.SetGain(gain);
-            component.source.SetPitch(pitch);
-            component.source.SetLooping(loop);
+            std::string path = audio;
+            bool selected = (audioSourcePath == path);
+            if(ImGui::Selectable(path.c_str(), selected))
+            {
+                component.source.audioData = BwatEngine::ResourceManager::Instance()->GetOrLoadAudio(path);
+                component.source.Refresh();
+            }
+            if(selected)
+                ImGui::SetItemDefaultFocus();
         }
+        ImGui::EndCombo();
+    }
 
-        if(ImGui::Button("Play"))
-            component.source.Play();
+    if (update)
+    {
+        component.source.SetGain(gain);
+        component.source.SetPitch(pitch);
+        component.source.SetLooping(loop);
+    }
+
+    if (ImGui::Button("Play"))
+        component.source.Play();
 }
 
 template<>
@@ -260,18 +282,15 @@ void WidgetProperties::ShowComponent<BwatEngine::CameraComponent>(BwatEngine::Ca
 template<>
 void WidgetProperties::ShowComponent<BwatEngine::ScriptComponent>(BwatEngine::ScriptComponent &component)
 {
-    if (ImGui::CollapsingHeader("Script Component", ImGuiTreeNodeFlags_DefaultOpen))
+    std::string ScriptName = component.scriptPath;
+    if (ImGui::InputText("ScriptFile", &ScriptName, ImGuiInputTextFlags_EnterReturnsTrue))
     {
-        std::string ScriptName = component.scriptPath;
-        if(ImGui::InputText("ScriptFile", &ScriptName, ImGuiInputTextFlags_EnterReturnsTrue))
-        {
-            component.scriptPath = ScriptName;
-        }
-        if (ImGui::Button("Reload"))
-        {
-            component.isStarted = false;
-            component.waitingForChanges = false;
-        }
+        component.scriptPath = ScriptName;
+    }
+    if (ImGui::Button("Reload"))
+    {
+        component.isStarted = false;
+        component.waitingForChanges = false;
     }
 }
 
