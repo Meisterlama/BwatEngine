@@ -258,22 +258,26 @@ void FileDialog::ShowList()
 
 void FileDialog::LoadOnResources(FileInfoStruct file)
 {
-    if (file.ext == ".obj" || file.ext == ".fbx" || file.ext == ".png" || file.ext == ".jpg" || file.ext == ".bwat")
-    {
-        //if (BwatEngine::ResourceManager::Instance().
-        loadFile = file;
-    }
+    loadFile = file;
 }
 
 void FileDialog::LoadResources(FileDialog::FileInfoStruct file)
 {
     if (file.ext == ".obj" || file.ext == ".fbx")
     {
-        BwatEngine::ResourceManager::Instance()->GetOrLoadModel(file.filePath);
+        BwatEngine::ResourceManager::Instance()->LoadModel(file.filePath);
     }
-    if (file.ext == ".png" || file.ext == ".jpg")
+    else if (file.ext == ".png" || file.ext == ".jpg")
     {
-        BwatEngine::ResourceManager::Instance()->GetOrLoadTexture(file.filePath, Rendering::Texture::Type::E_DIFFUSE);
+        BwatEngine::ResourceManager::Instance()->GetOrLoadTexture(file.filePath);
+    }
+    else if (file.ext == ".wav")
+    {
+        BwatEngine::ResourceManager::Instance()->LoadAudio(file.filePath);
+    }
+    else
+    {
+        LogError("[EDITOR] Cannot load unsupported file format.");
     }
 }
 

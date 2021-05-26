@@ -26,6 +26,8 @@ WidgetProperties::WidgetProperties(EditorInterface *editor) : Widget(editor)
 template<>
 void WidgetProperties::ShowComponent<BwatEngine::DataComponent>(BwatEngine::DataComponent& component)
 {
+    auto& coordinator = BwatEngine::Coordinator::GetInstance();
+    ImGui::Text("Entity ID: %i", coordinator.GetEntityIDFrom(component));
     ImGui::InputText("Name", &component.name);
 }
 
@@ -47,7 +49,7 @@ void WidgetProperties::ShowComponent<BwatEngine::TransformComponent>(BwatEngine:
         ImGui::DragFloat3("Scale", component.scale.values, 0.01);
 }
 
-void TextCenter(std::string text) 
+void TextCenter(std::string text)
 {
     ImGui::Text("");
     float font_size = ImGui::GetFontSize() * text.size() / 2;

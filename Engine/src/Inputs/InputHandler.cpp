@@ -89,6 +89,8 @@ namespace BwatEngine
             inputHandler->mouse[buttonState.first].down = false;
             inputHandler->mouse[buttonState.first].up = false;
         }
+        inputHandler->scrollDelta = {0.0};
+
         glfwPollEvents();
         if (inputHandler->ignoreNextDelta)
         {

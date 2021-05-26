@@ -108,20 +108,27 @@ void WidgetViewport::HandleCamera()
 
     editor->cameraTransform.rotation = {editor->rotation};
 
-    float Speed = 25.f;
-    float FrameSpeed = Speed * Time::deltaTime;
+    static float Speed = 25.f;
 
+    const float minSpeed = 1.f;
+    const float maxSpeed = 100.f;
+
+    float speedRatio = (Speed - minSpeed) / maxSpeed;
+
+    Speed += InputHandler::GetScrollDelta().Y * 5 *(0.5 + speedRatio);
+
+    Speed = Math::Clamp(Speed, minSpeed, maxSpeed);
+
+    float FrameSpeed = Speed * Time::deltaTime;
 
     if (InputHandler::GetKeyboard(KEY_LEFT_SHIFT))
         FrameSpeed *= 5.f;
-
 
     float ForwardVelocity = 0.f;
     if (InputHandler::GetKeyboard(KEY_W))
         ForwardVelocity = -FrameSpeed;
     if (InputHandler::GetKeyboard(KEY_S))
         ForwardVelocity = FrameSpeed;
-
 
     float StrafeVelocity = 0.f;
     if (InputHandler::GetKeyboard(KEY_A))
@@ -130,10 +137,10 @@ void WidgetViewport::HandleCamera()
         StrafeVelocity = FrameSpeed;
 
     if (InputHandler::GetKeyboard(KEY_Q) | InputHandler::GetKeyboard(KEY_SPACE))
-        editor->cameraTransform.position.Y += Speed * Time::deltaTime;
+        editor->cameraTransform.position.Y += FrameSpeed;
 
     if (InputHandler::GetKeyboard(KEY_Z) | InputHandler::GetKeyboard(KEY_LEFT_CONTROL))
-        editor->cameraTransform.position.Y -= Speed * Time::deltaTime;
+        editor->cameraTransform.position.Y -= FrameSpeed;
 
     Math::Vec3f forwardVec = editor->cameraTransform.rotation.Rotate({0, 0, 1}).Normalize();
     Math::Vec3f rightVec = editor->cameraTransform.rotation.Rotate({1, 0, 0}).Normalize();
