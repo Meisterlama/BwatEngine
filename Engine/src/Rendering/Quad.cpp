@@ -1,9 +1,9 @@
 #include "Rendering/Quad.hpp"
-#include "Rendering/Shader.hpp"
+
 
 using namespace Rendering;
 
-Quad::Quad(float screenX, float screenY, float x, float y)
+Quad::Quad(BwatEngine::Math::Vec2f screenSize, BwatEngine::Math::Vec2f pointA, BwatEngine::Math::Vec2f pointB)
 {
     float vertices[]= {
         // positions   // texCoords
@@ -32,10 +32,12 @@ Quad::Quad(float screenX, float screenY, float x, float y)
 
 Quad::~Quad()
 {
-
+    glDeleteVertexArrays(1, &quadVAO);
+    glDeleteBuffers(1, &quadVBO);
 }
 
 void Quad::Draw()
 {
-
+    glBindVertexArray(quadVAO);
+    glDrawArrays(GL_TRIANGLES, 0, 6);
 }

@@ -2,6 +2,7 @@
 #define RENDERUI_HPP
 
 #include "Math/Math.hpp"
+#include "Rendering/Quad.hpp"
 #include <vector>
 
 namespace Rendering
@@ -21,8 +22,9 @@ namespace Rendering
 
     class Render2d
     {
-        Render2d(BwatEngine::Math::Transform transform, std::string texPath);
+        Render2d(Rendering::Quad quad);
         ~Render2d();
+        void Draw();
         std::vector<Image2D> images;
 
     };

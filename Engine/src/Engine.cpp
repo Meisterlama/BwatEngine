@@ -6,6 +6,7 @@
 #include "ECS/Systems/ScriptSystem.hpp"
 #include "ECS/Systems/SoundSystem.hpp"
 #include "ECS/Systems/PostProcessSystem.hpp"
+#include "ECS/Systems/RenderUISystem.hpp"
 
 #include "Inputs/InputHandler.hpp"
 #include "Time.hpp"
