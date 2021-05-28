@@ -33,7 +33,7 @@ void AnimationSystem::Update()
 		}
 
 		if (component.isValid)	
-			component.animator.UpdateAnimation(Time::deltaTime);
+			component.animator.UpdateAnimation(Time::deltaTime * component.speedAnimation);
 	}
 
 }

@@ -134,7 +134,7 @@ Math::Mat4f Bone::InterpolateRotation(float animationTime)
     float scaleFactor = GetScaleFactor(rotationsK[p0Index].timeStamp,
         rotationsK[p1Index].timeStamp, animationTime);
     Math::Quatf finalRotation = Math::SLerp(rotationsK[p0Index].orientation,rotationsK[p1Index].orientation, scaleFactor);
-    finalRotation = finalRotation.GetNormalized();
+    finalRotation =  finalRotation.GetNormalized(); // rotationsK[p1Index].orientation
 
     return Math::Mat4f::CreateRotationMat(finalRotation);
 }

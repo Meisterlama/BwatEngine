@@ -113,6 +113,7 @@ void RenderSystem::RenderEntitiesAndLights(const CameraComponent& camera, const 
             auto transforms = animComponent.animator.GetFinalBoneMatrices();
             for (int i = 0; i < transforms.size(); ++i)
                 shader.SetMat4("finalBonesMatrices[" + std::to_string(i) + "]", transforms[i]);
+            
         }
         else
             shader.SetBool("skinned", false);
@@ -214,6 +215,18 @@ void RenderSystem::UpdateShadow()
     // draw all model in deph test 
     for (auto entity : entities)
     {
+        if (coordinator.HaveComponent<AnimatorComponent>(entity))
+        {
+            shadowMap.shader.SetBool("skinned", true);
+            auto& animComponent = coordinator.GetComponent< AnimatorComponent>(entity);
+            auto transforms = animComponent.animator.GetFinalBoneMatrices();
+            for (int i = 0; i < transforms.size(); ++i)
+                shadowMap.shader.SetMat4("finalBonesMatrices[" + std::to_string(i) + "]", transforms[i]);
+
+        }
+        else
+            shadowMap.shader.SetBool("skinned", false);
+
         auto& renderableComponent = coordinator.GetComponent<RenderableComponent>(entity);
 
         if (renderableComponent.model == nullptr || !renderableComponent.castShadow)

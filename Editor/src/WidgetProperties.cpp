@@ -495,15 +495,19 @@ void WidgetProperties::ShowComponent<BwatEngine::AnimatorComponent>(BwatEngine::
         ImGui::EndCombo();
     }
 
-    std::string animationName = component.pathAnimation;
-
-    if (ImGui::InputText("Animation File", &animationName, ImGuiInputTextFlags_EnterReturnsTrue))
-    {
-        component.pathAnimation = animationName;
-    }
-
     if (ImGui::Button("Reload"))
     {
         component.needLink = true;
     }
+
+    bool update = false;
+    float speedAnim = component.speedAnimation;
+
+    update |= ImGui::DragFloat("Speed Animation", &speedAnim, 1.0f, 0.0f);
+
+    if (update)
+    {
+        component.speedAnimation = speedAnim;
+    }
+
 }

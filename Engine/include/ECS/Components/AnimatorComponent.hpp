@@ -15,6 +15,8 @@ namespace BwatEngine
 		bool needLink = false;
 		bool isValid = false;
 		std::string pathAnimation;
+
+		float speedAnimation = 60.f;
 	};
 
 }
