@@ -4,6 +4,9 @@
 #include "Math/Math.hpp"
 #include "Rendering/Quad.hpp"
 #include <vector>
+#include "glad/glad.h"
+#include "Rendering/Shader.hpp"
+
 
 namespace Rendering
 {
@@ -22,10 +25,16 @@ namespace Rendering
 
     class Render2d
     {
+    public:
+
+        Render2d();
         Render2d(Rendering::Quad quad);
         ~Render2d();
-        void Draw();
+        void Draw(GLuint gameTexture);
         std::vector<Image2D> images;
+        Rendering::Quad usedQuad;
+        Rendering::Shader shader;
+
 
     };
 

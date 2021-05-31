@@ -8,7 +8,7 @@ namespace Rendering
     class Quad
     {
     public:
-        Quad(BwatEngine::Math::Vec2f screenSize, BwatEngine::Math::Vec2f pointA, BwatEngine::Math::Vec2f pointB);
+        Quad();
         ~Quad();
         void Draw();
 

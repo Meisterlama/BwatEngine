@@ -1,9 +1,10 @@
 #include "Rendering/Quad.hpp"
+#include "glad/glad.h"
 
 
 using namespace Rendering;
 
-Quad::Quad(BwatEngine::Math::Vec2f screenSize, BwatEngine::Math::Vec2f pointA, BwatEngine::Math::Vec2f pointB)
+Quad::Quad()
 {
     float vertices[]= {
         // positions   // texCoords

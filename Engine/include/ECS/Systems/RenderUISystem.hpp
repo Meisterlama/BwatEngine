@@ -6,6 +6,8 @@
 
 
 #include "Rendering/RenderUI.hpp"
+#include "Rendering/FrameBuffer.hpp"
+
 
 namespace BwatEngine
 {
@@ -14,11 +16,18 @@ namespace BwatEngine
     {
     private:
         Rendering::Quad quad;
+        Rendering::Render2d render;
+        Rendering::FrameBufferObject framebuffer;
+
+        Rendering::Texture* text;
+
     public:
 
-        RenderUISystem();
-        virtual void Update() override;
+        bool isRenderUI = true;
+        RenderUISystem(int width, int height);
 
+        virtual void Update() override;
+        void Begin();
     };
 }
 

@@ -11,6 +11,10 @@
 #include "Inputs/InputHandler.hpp"
 #include "Time.hpp"
 
+
+
+
+
 using namespace BwatEngine;
 
 //initialization
@@ -31,6 +35,7 @@ void Engine::Update()
     auto& coordinator = Coordinator::GetInstance();
     auto renderSystem = coordinator.GetSystem<RenderSystem>();
     auto postProcessSystem = coordinator.GetSystem<PostProcessSystem>();
+    auto renderUISystem = coordinator.GetSystem<RenderUISystem>();
 
     renderSystem->displayHeight = GetWindow().GetHeight();
     renderSystem->displayWidth = GetWindow().GetWidth();
@@ -41,8 +46,12 @@ void Engine::Update()
     GLint targetFramebuffer;
     glGetIntegerv(GL_DRAW_FRAMEBUFFER_BINDING, &targetFramebuffer);
 
+
     if (postProcessSystem->isPostProcess)
         postProcessSystem->Begin();
+
+    if (renderUISystem->isRenderUI)
+        renderUISystem->Begin();
 
     renderSystem->Update();
 
@@ -51,6 +60,14 @@ void Engine::Update()
         glBindFramebuffer(GL_FRAMEBUFFER, targetFramebuffer);
         postProcessSystem->Apply();
     }
+
+    if (renderUISystem->isRenderUI)
+    {
+        glBindFramebuffer(GL_FRAMEBUFFER, targetFramebuffer);
+        renderUISystem->Update();
+    }
+
+
 
     glDisable(GL_FRAMEBUFFER_SRGB);
 
