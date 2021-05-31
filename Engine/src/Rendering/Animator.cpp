@@ -57,3 +57,8 @@ void Animator::CalculateBoneTransform(const AssimpNodeData* node, Math::Mat4f pa
         CalculateBoneTransform(&node->children[i], globalTransformation);
 }
 
+void Animator::ClearAnimation()
+{
+    currentAnimation = nullptr;
+    currentTime = 0.0f;
+}

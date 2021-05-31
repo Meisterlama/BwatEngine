@@ -18,6 +18,7 @@ namespace Rendering
         void Animator::CalculateBoneTransform(const AssimpNodeData* node, Math::Mat4f parentTransform);
 
         const std::vector<Math::Mat4f>& GetFinalBoneMatrices() { return finalBoneMatrices; };
+        void ClearAnimation();
 
     private:
 

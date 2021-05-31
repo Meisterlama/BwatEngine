@@ -9,14 +9,21 @@ namespace BwatEngine
 	{
 		AnimatorComponent() = default;
 
-		Rendering::Animation animation;
 		Rendering::Animator animator;
 
-		bool needLink = false;
-		bool isValid = false;
-		std::string pathAnimation;
+		Rendering::Model* model = nullptr;
 
-		float speedAnimation = 60.f;
+		std::vector<Rendering::Animation> animations;
+		std::vector<std::string> names;
+
+		bool isValid = false;
+		float speedAnimation = 30.f;
+		int indexSave = -1;
+
+		void SetNewAnimation(std::string name, std::string pathAnim );
+		void SetAnimationModel(Rendering::Model* model);
+		void PlayAnimation(std::string name);
+		void DeleteAnimation(std::string name);
 	};
 
 }

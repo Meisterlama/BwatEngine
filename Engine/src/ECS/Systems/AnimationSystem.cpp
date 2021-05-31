@@ -24,13 +24,9 @@ void AnimationSystem::Update()
 		auto& component = coordinator.GetComponent<AnimatorComponent>(entity);
 		auto& rendComponent = coordinator.GetComponent<RenderableComponent>(entity);
 
-		if (component.needLink)
-		{
-			component.animation = { component.pathAnimation , rendComponent.model }; 
-			component.needLink = false;
-			component.isValid = true;
-			component.animator.PlayAnimation(&component.animation);
-		}
+		component.SetAnimationModel(rendComponent.model);
+
+		//component.Play(component.pathAnimation, rendComponent.model);
 
 		if (component.isValid)	
 			component.animator.UpdateAnimation(Time::deltaTime * component.speedAnimation);

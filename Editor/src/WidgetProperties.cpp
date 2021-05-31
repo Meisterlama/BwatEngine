@@ -471,22 +471,24 @@ void WidgetProperties::ShowComponent<BwatEngine::LightComponent>(BwatEngine::Lig
 template<>
 void WidgetProperties::ShowComponent<BwatEngine::AnimatorComponent>(BwatEngine::AnimatorComponent& component)
 {
+    static std::string saveName;
 
-    std::string name;
-    name = component.pathAnimation;
+    ImGui::InputText("Animation Name", &saveName);
+
+    static std::string namemodel;
 
 
-    if (ImGui::BeginCombo("Animation", name.c_str()))
+    if (ImGui::BeginCombo("Animation", namemodel.c_str()))
     {
         auto textList = BwatEngine::ResourceManager::Instance()->GetModelList();
 
         for (auto& text : textList)
         {
             std::string path = text;
-            bool selected = (name == path);
+            bool selected = (namemodel == path);
 
             if (ImGui::Selectable(path.c_str(), selected))
-                component.pathAnimation = text;
+                namemodel = text;
 
             if (selected)
                 ImGui::SetItemDefaultFocus();
@@ -495,11 +497,40 @@ void WidgetProperties::ShowComponent<BwatEngine::AnimatorComponent>(BwatEngine::
         ImGui::EndCombo();
     }
 
-    if (ImGui::Button("Reload"))
+    bool checkButton = !saveName.empty() && !namemodel.empty();
+
+    if (checkButton && ImGui::Button("Add Animation"))
     {
-        component.needLink = true;
+        component.SetNewAnimation(saveName, namemodel);
     }
 
+    for (int i = 0; i < component.names.size(); i++)
+    {
+        ImGui::Text("Animation name : %s" , component.names[i].c_str());
+        
+        std::string playText = "Play##" + component.names[i];
+
+        if (ImGui::Button(playText.c_str()))
+            component.PlayAnimation(component.names[i]);
+        
+        ImGui::SameLine();
+        
+        std::string deleteText = "Delete##" + component.names[i];
+
+        if (ImGui::Button(deleteText.c_str()))
+            component.DeleteAnimation(component.names[i]);
+    }
+
+    if (component.names.size() > 0)
+    {
+        if (ImGui::Button("Pause Animation"))
+        component.isValid = false;
+
+        ImGui::SameLine();
+
+        if (ImGui::Button("Continue Animation"))
+            component.isValid = true;
+    }
     bool update = false;
     float speedAnim = component.speedAnimation;
 
