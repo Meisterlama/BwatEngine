@@ -6,6 +6,27 @@ using namespace BwatEngine;
 
 // ================================ Mother Function ================================ //
 
+Collider::Collider(Collider::ShapeType shapeType)
+{
+    material = Physic::GetPhysics()->createMaterial(0, 0, 0);
+    SetShape(shapeType);
+}
+
+const char *Collider::GetShapeTypeName(Collider::ShapeType _shapeType)
+{
+    switch (_shapeType)
+    {
+        case CUBE:
+            return "Cube";
+        case SPHERE:
+            return "Sphere";
+        case PLANE:
+            return "Plane";
+        case MESH:
+            return "Mesh";
+    }
+}
+
 void Collider::SetFriction(float friction)
 {
 	material->setStaticFriction(friction);
@@ -29,16 +50,26 @@ void Collider::SetIsTrigger(bool _isTrigger)
     }
 }
 
-// ================================ Children Function ================================ // 
-
-BoxCollider::BoxCollider(Math::Vec3f scale)
+void Collider::SetShape(Collider::ShapeType shapeType)
 {
-	material = Physic::GetPhysics()->createMaterial(0, 0, 0);
-	shape = Physic::GetPhysics()->createShape(physx::PxBoxGeometry{ ToPxVec3(scale / 2.f) }, *material, true);
-}
-
-SphereCollider::SphereCollider(float radius)
-{
-	material = Physic::GetPhysics()->createMaterial(0, 0, 0);
-	shape = Physic::GetPhysics()->createShape(physx::PxSphereGeometry(radius), *material, true);
+    switch (shapeType)
+    {
+        case CUBE:
+            shape = Physic::GetPhysics()->createShape(
+                    physx::PxBoxGeometry{ ToPxVec3(0.5f) }, *material, true
+            );
+            break;
+        case SPHERE:
+            shape = Physic::GetPhysics()->createShape(
+                    physx::PxSphereGeometry(1.0f), *material, true
+            );
+            break;
+        case PLANE:
+            shape = Physic::GetPhysics()->createShape(
+                    physx::PxPlaneGeometry(), *material, true
+            );
+            break;
+        case MESH:
+            break;
+    }
 }

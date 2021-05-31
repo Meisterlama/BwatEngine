@@ -10,13 +10,24 @@ namespace BwatEngine
 {
 	class Collider
 	{
-	protected:
+    public:
+        enum ShapeType {
+            CUBE,
+            SPHERE,
+            PLANE,
+            MESH,
+            SIZE,
+        };
+	private:
 
 		physx::PxMaterial* material = nullptr;
 		physx::PxShape* shape = nullptr;
         bool isTrigger = false;
-	public:
+        ShapeType shapeType;
 
+    public:
+
+	    Collider(ShapeType shapeType = CUBE);
 		~Collider()
         {
 		    if(material)
@@ -24,23 +35,14 @@ namespace BwatEngine
 		    if (shape)
 		        shape->release();
         }
-		physx::PxShape* GetShape() { return shape; }
-        physx::PxMaterial* GetMaterial() { return material; }
+		physx::PxShape* GetShape() const { return shape; }
+        physx::PxMaterial* GetMaterial() const { return material; }
         bool GetIsTrigger() { return isTrigger; }
+        ShapeType GetShapeType() { return shapeType; }
+        static const char* GetShapeTypeName(ShapeType _shapeType);
         void SetFriction(float friction);
         void SetIsTrigger(bool _isTrigger);
-	};
-
-	class BoxCollider : public Collider
-	{
-	public:
-		BoxCollider(Math::Vec3f scale);
-	};
-
-	class SphereCollider : public Collider
-	{
-	public:
-		SphereCollider(float radius);
+        void SetShape(ShapeType shapeType = CUBE);
 	};
 }
 

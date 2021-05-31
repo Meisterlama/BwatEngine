@@ -300,13 +300,29 @@ template<>
 void WidgetProperties::ShowComponent<BwatEngine::ColliderComponent>(BwatEngine::ColliderComponent &component)
 {
     bool shouldUpdate = false;
-    bool isTrigger = component.collider->GetIsTrigger();
+    bool isTrigger = component.GetIsTrigger();
 
     shouldUpdate |= ImGui::Checkbox("Is Trigger", &isTrigger);
 
+    if(ImGui::BeginCombo("##Collider", BwatEngine::ColliderComponent::GetShapeTypeName(component.GetShapeType())))
+    {
+        for(int i = 0; i < BwatEngine::ColliderComponent::ShapeType::SIZE; i++)
+        {
+            bool selected = (component.GetShapeType() == i);
+            if(ImGui::Selectable(BwatEngine::ColliderComponent::GetShapeTypeName(
+                    static_cast<BwatEngine::Collider::ShapeType>(i)), selected))
+            {
+                component.SetShape(static_cast<BwatEngine::Collider::ShapeType>(i));
+            }
+            if(selected)
+                ImGui::SetItemDefaultFocus();
+        }
+        ImGui::EndCombo();
+    }
+
     if (shouldUpdate)
     {
-        component.collider->SetIsTrigger(isTrigger);
+        component.SetIsTrigger(isTrigger);
     }
 }
 template<>

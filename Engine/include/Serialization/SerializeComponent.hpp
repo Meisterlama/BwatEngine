@@ -189,8 +189,8 @@ namespace BwatEngine {
         template<>
         void SerializeComponent<ColliderComponent>(const ColliderComponent &collider, json &js) {
 
-            auto *shape = collider.collider->GetShape();
-            auto *mats = collider.collider->GetMaterial();
+            auto *shape = collider.GetShape();
+            auto *mats = collider.GetMaterial();
             js +=
                     json{
                             "collider",
@@ -427,9 +427,9 @@ namespace BwatEngine {
             auto &coordinator = Coordinator::GetInstance();
             json mats = componentData.at("materials");
             auto eTransform = coordinator.GetComponent<TransformComponent>(entityId);
-            coordinator.AddComponent<ColliderComponent>(entityId, eTransform.scale);
+            coordinator.AddComponent<ColliderComponent>(entityId);
             auto& collider = coordinator.GetComponent<ColliderComponent>(entityId);
-            collider.collider->SetFriction(mats.at("static").get<float>());
+            collider.SetFriction(mats.at("static").get<float>());
 
         }
 
