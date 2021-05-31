@@ -35,15 +35,16 @@ namespace BwatEngine {
             Serializable::SaveComponent<LightComponent>(currentEntity, js["Entity"][i]);
             Serializable::SaveComponent<DataComponent>(currentEntity, js["Entity"][i]);
             Serializable::SaveComponent<AnimatorComponent>(currentEntity, js["Entity"][i]);
-
+            Serializable::SaveComponent<AudioSourceComponent>(currentEntity, js["Entity"][i]);
         }
 
-            file << std::setw(4) << js << std::endl;
+            file << std::setw(2) << js << std::endl;
     }
 
     void Serializer::LoadScene(const char* path)
     {
         std::ifstream file(path);
+
 
         if (!file)
         {
@@ -86,6 +87,8 @@ namespace BwatEngine {
                    Serializable::Load<LightComponent>(newEntity, componentData);
                else if (componentId == "data")
                    Serializable::Load<DataComponent>(newEntity, componentData);
+               else if (componentId == "audio")
+                    Serializable::Load<AudioSourceComponent>(newEntity, componentData);
                else if (componentId == "animator")
                    Serializable::Load<AnimatorComponent>(newEntity, componentData);
 

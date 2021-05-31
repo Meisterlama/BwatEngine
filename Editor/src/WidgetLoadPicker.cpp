@@ -19,7 +19,7 @@ void WidgetLoadPicker::TickVisible()
         if(assetDirectory.SceneLoad(assetDirectory.loadFile))
         {
             SetVisible(false);
-            editor->currentScene = assetDirectory.loadFile.filePath.c_str();
+            editor->currentScene = assetDirectory.loadFile.filePath;
         }
 
     }

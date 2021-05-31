@@ -33,7 +33,7 @@ namespace BwatEngine
 
         Rendering::Model* LoadModel(std::string path);
 
-        Rendering::Texture* LoadTexture(std::string path, Rendering::Texture::Type type);
+        Rendering::Texture *LoadTexture(std::string path);
 
         Audio::AudioData* LoadAudio(std::string path);
 
@@ -58,9 +58,9 @@ namespace BwatEngine
 
         std::vector<std::string>& GetTextList();
 
-        std::vector<std::string>& getAudioList();
+        std::vector<std::string>& GetAudioList();
 
-        std::vector<std::string>& getScriptList();
+        std::vector<std::string>& GetScriptList();
 
     private:
 

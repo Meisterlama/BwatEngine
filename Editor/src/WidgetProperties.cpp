@@ -27,6 +27,8 @@ WidgetProperties::WidgetProperties(EditorInterface *editor) : Widget(editor)
 template<>
 void WidgetProperties::ShowComponent<BwatEngine::DataComponent>(BwatEngine::DataComponent& component)
 {
+    auto& coordinator = BwatEngine::Coordinator::GetInstance();
+    ImGui::Text("Entity ID: %i", coordinator.GetEntityIDFrom(component));
     ImGui::InputText("Name", &component.name);
 }
 
@@ -48,7 +50,7 @@ void WidgetProperties::ShowComponent<BwatEngine::TransformComponent>(BwatEngine:
         ImGui::DragFloat3("Scale", component.scale.values, 0.01);
 }
 
-void TextCenter(std::string text) 
+void TextCenter(std::string text)
 {
     ImGui::Text("");
     float font_size = ImGui::GetFontSize() * text.size() / 2;
@@ -121,7 +123,6 @@ void WidgetProperties::ShowComponent<BwatEngine::RenderableComponent>(BwatEngine
         if (ImGui::Button("Add Materials"))
         {
             auto material = new Rendering::Material;
-            material->diffuse = BwatEngine::ResourceManager::Instance()->GetOrLoadTexture("Assets/image/moteur.jpg",Rendering::Texture::Type::E_DIFFUSE);
 
             component.materials.push_back(material);
         }
@@ -218,24 +219,47 @@ void WidgetProperties::ShowComponent<BwatEngine::RigidBodyComponent>(BwatEngine:
 template<>
 void WidgetProperties::ShowComponent<BwatEngine::AudioSourceComponent>(BwatEngine::AudioSourceComponent &component)
 {
-        bool update = false;
-        float gain = component.source.GetGain();
-        float pitch = component.source.GetPitch();
-        bool loop = component.source.GetLooping();
+    bool update = false;
+    float gain = component.source.GetGain();
+    float pitch = component.source.GetPitch();
+    bool loop = component.source.GetLooping();
 
-        update |= ImGui::DragFloat("gain", &gain, 0.1f, 0.0f, 100.f);
-        update |= ImGui::DragFloat("pitch", &pitch, 0.01f, 0.0f, 100.f);
-        update |= ImGui::Checkbox("loop", &loop);
+    update |= ImGui::DragFloat("gain", &gain, 0.1f, 0.0f, 100.f);
+    update |= ImGui::DragFloat("pitch", &pitch, 0.01f, 0.0f, 100.f);
+    update |= ImGui::Checkbox("loop", &loop);
 
-        if (update)
+    std::string audioSourcePath;
+    if (component.source.audioData)
+        audioSourcePath = component.source.audioData->path;
+
+    if(ImGui::BeginCombo("##Audio", audioSourcePath.c_str()))
+    {
+        auto audioList = BwatEngine::ResourceManager::Instance()->GetAudioList();
+
+        for(auto &audio : audioList)
         {
-            component.source.SetGain(gain);
-            component.source.SetPitch(pitch);
-            component.source.SetLooping(loop);
+            std::string path = audio;
+            bool selected = (audioSourcePath == path);
+            if(ImGui::Selectable(path.c_str(), selected))
+            {
+                component.source.audioData = BwatEngine::ResourceManager::Instance()->GetOrLoadAudio(path);
+                component.source.Refresh();
+            }
+            if(selected)
+                ImGui::SetItemDefaultFocus();
         }
+        ImGui::EndCombo();
+    }
 
-        if(ImGui::Button("Play"))
-            component.source.Play();
+    if (update)
+    {
+        component.source.SetGain(gain);
+        component.source.SetPitch(pitch);
+        component.source.SetLooping(loop);
+    }
+
+    if (ImGui::Button("Play"))
+        component.source.Play();
 }
 
 template<>
@@ -261,23 +285,31 @@ void WidgetProperties::ShowComponent<BwatEngine::CameraComponent>(BwatEngine::Ca
 template<>
 void WidgetProperties::ShowComponent<BwatEngine::ScriptComponent>(BwatEngine::ScriptComponent &component)
 {
-    if (ImGui::CollapsingHeader("Script Component", ImGuiTreeNodeFlags_DefaultOpen))
+    std::string ScriptName = component.scriptPath;
+    if (ImGui::InputText("ScriptFile", &ScriptName, ImGuiInputTextFlags_EnterReturnsTrue))
     {
-        std::string ScriptName = component.scriptPath;
-        if(ImGui::InputText("ScriptFile", &ScriptName, ImGuiInputTextFlags_EnterReturnsTrue))
-        {
-            component.scriptPath = ScriptName;
-        }
-        if (ImGui::Button("Reload"))
-        {
-            component.isStarted = false;
-            component.waitingForChanges = false;
-        }
+        component.scriptPath = ScriptName;
+    }
+    if (ImGui::Button("Reload"))
+    {
+        component.isStarted = false;
+        component.waitingForChanges = false;
     }
 }
 
 template<>
-void WidgetProperties::ShowComponent<BwatEngine::ColliderComponent>(BwatEngine::ColliderComponent &component) {}
+void WidgetProperties::ShowComponent<BwatEngine::ColliderComponent>(BwatEngine::ColliderComponent &component)
+{
+    bool shouldUpdate = false;
+    bool isTrigger = component.collider->GetIsTrigger();
+
+    shouldUpdate |= ImGui::Checkbox("Is Trigger", &isTrigger);
+
+    if (shouldUpdate)
+    {
+        component.collider->SetIsTrigger(isTrigger);
+    }
+}
 template<>
 void WidgetProperties::ShowComponent<BwatEngine::PlayerComponent>(BwatEngine::PlayerComponent &component) {}
 
@@ -286,7 +318,9 @@ void WidgetProperties::TickVisible()
     using namespace BwatEngine;
 
     Coordinator &coordinator = Coordinator::GetInstance();
-    Signature entitySignature = coordinator.GetEntitySignature(currentEntity);
+
+    if (!coordinator.IsValid(currentEntity))
+        return;
 
     if (currentEntity != 0)
     {
@@ -325,6 +359,7 @@ void WidgetProperties::TickVisible()
     ShowComponentMenuItem<PlayerComponent>(currentEntity);
     ShowComponentMenuItem<LightComponent>(currentEntity);
     ShowComponentMenuItem<AnimatorComponent>(currentEntity);
+    ShowComponentMenuItem<ScriptComponent>(currentEntity);
 }
 
 void WidgetProperties::Inspect(BwatEngine::EntityID entity)

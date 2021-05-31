@@ -150,7 +150,6 @@ namespace BwatEngine::Math
     typedef Internal::Vector3<signed int> Vec3i;
 
     typedef Internal::Vector3<unsigned int> Vec3u;
-}
 template<typename T>
 [[nodiscard]] ML_FUNC_DECL BwatEngine::Math::Internal::Vector3<T> operator-(BwatEngine::Math::Internal::Vector3<T> vec);
 
@@ -162,7 +161,7 @@ template<typename T>
 [[nodiscard]] ML_FUNC_DECL BwatEngine::Math::Internal::Vector3<T> Lerp(BwatEngine::Math::Internal::Vector3<T> begin,
                                                                        BwatEngine::Math::Internal::Vector3<T> end,
                                                                        float ratio);
-
+}
 #pragma endregion
 
 #pragma region Definitions

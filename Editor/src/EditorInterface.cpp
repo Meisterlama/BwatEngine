@@ -24,6 +24,9 @@
 #include "ECS/Components/TransformComponent.hpp"
 
 #include "Inputs/InputHandler.hpp"
+#include "json.hpp"
+
+using json = nlohmann::json;
 
 ImGuizmo::MODE EditorInterface::guizmoMode = ImGuizmo::MODE::LOCAL;
 ImGuizmo::OPERATION EditorInterface::guizmoOperation = ImGuizmo::OPERATION::TRANSLATE;
@@ -44,6 +47,17 @@ EditorInterface::EditorInterface(BwatEngine::Engine* _engine)
 
     ImGui_ImplGlfw_InitForOpenGL(engine->GetGLFWwindow(), false);
     ImGui_ImplOpenGL3_Init("#version 330");
+
+    LoadData("editor.conf");
+
+    if (currentScene != "")
+    {
+        BwatEngine::Serializer::LoadScene(currentScene.c_str());
+    }
+    else
+    {
+        BwatEngine::Serializer::LoadScene("SampleScene.bwat");
+    }
 }
 
 void EditorInterface::Close()
@@ -92,33 +106,49 @@ void EditorInterface::OnTick()
 
 void EditorInterface::HandleEditorShortcuts()
 {
-    auto& coordinator = BwatEngine::Coordinator::GetInstance();
-    if (BwatEngine::InputHandler::GetKeyboardDown(BwatEngine::KEY_W))
-        guizmoOperation = ImGuizmo::TRANSLATE;
-    if (BwatEngine::InputHandler::GetKeyboardDown(BwatEngine::KEY_E))
-        guizmoOperation = ImGuizmo::ROTATE;
-    if (BwatEngine::InputHandler::GetKeyboardDown(BwatEngine::KEY_R))
-        guizmoOperation = ImGuizmo::SCALE;
-    if (BwatEngine::InputHandler::GetKeyboardDown(BwatEngine::KEY_F))
+    using namespace BwatEngine;
+    auto& coordinator = Coordinator::GetInstance();
+    if (InputHandler::GetKeyboard(KEY_LEFT_CONTROL))
     {
-        if (editedEntity != 0 && coordinator.HaveComponent<BwatEngine::TransformComponent>(editedEntity))
+        if (InputHandler::GetKeyboardDown(KEY_D))
         {
-            auto entityPosition = coordinator.GetComponent<BwatEngine::TransformComponent>(editedEntity).position;
-            auto offset = entityPosition - cameraTransform.position;
-            cameraTransform.rotation = BwatEngine::Math::Quatf::LookAt(entityPosition, cameraTransform.position, BwatEngine::Math::Vec3f{0, 1, 0});
-            rotation = cameraTransform.rotation.GetEulerAngles();
-            if (offset.Z > 0)
-            {
-                rotation.Y = BwatEngine::Math::PI - rotation.Y;
-            }
-            rotation.X = BwatEngine::Math::Loop(rotation.X, -BwatEngine::Math::PI / 2, BwatEngine::Math::PI / 2);
-            rotation.Y = BwatEngine::Math::Loop(rotation.Y, 0, BwatEngine::Math::PI * 2);
-            rotation.Z = 0;
+            SetEditedEntity(coordinator.DuplicateEntity(editedEntity));
         }
     }
-    if (BwatEngine::InputHandler::GetKeyboardDown(BwatEngine::KEY_ESCAPE))
+    else
     {
-        SetEditedEntity(0);
+        if (InputHandler::GetKeyboardDown(KEY_W))
+            guizmoOperation = ImGuizmo::TRANSLATE;
+        if (InputHandler::GetKeyboardDown(KEY_E))
+            guizmoOperation = ImGuizmo::ROTATE;
+        if (InputHandler::GetKeyboardDown(KEY_R))
+            guizmoOperation = ImGuizmo::SCALE;
+        if (InputHandler::GetKeyboardDown(KEY_F))
+        {
+            if (editedEntity != 0 && coordinator.HaveComponent<TransformComponent>(editedEntity))
+            {
+                auto entityPosition = coordinator.GetComponent<TransformComponent>(editedEntity).position;
+                auto offset = entityPosition - cameraTransform.position;
+                cameraTransform.rotation = Math::Quatf::LookAt(entityPosition, cameraTransform.position,
+                                                               Math::Vec3f{0, 1, 0});
+                rotation = cameraTransform.rotation.GetEulerAngles();
+                if (offset.Z > 0)
+                {
+                    rotation.Y = Math::PI - rotation.Y;
+                }
+                rotation.X = Math::Loop(rotation.X, -Math::PI / 2, Math::PI / 2);
+                rotation.Y = Math::Loop(rotation.Y, 0, Math::PI * 2);
+                rotation.Z = 0;
+            }
+        }
+        if (InputHandler::GetKeyboardDown(KEY_ESCAPE))
+        {
+            SetEditedEntity(0);
+        }
+        if (InputHandler::GetKeyboardDown(KEY_DELETE))
+        {
+            coordinator.DestroyEntity(editedEntity);
+        }
     }
 }
 
@@ -356,4 +386,35 @@ void EditorInterface::ToolbarUI()
     }
 
     ImGui::End();
+}
+
+void EditorInterface::SaveData(const char* path)
+{
+    std::ofstream file(path);
+
+    json js;
+    std::string data = currentScene;
+
+    js =json
+        {
+            {"current scene", data}
+        };
+    file << js << std::endl;
+}
+
+void EditorInterface::LoadData(const char* path)
+{
+    std::ifstream file(path);
+
+    if (!file)
+    {
+        LogError("No File at path :%s", path);
+        return;
+    }
+
+    json js;
+    file >> js;
+
+
+    currentScene = js.at("current scene").get<std::string>().c_str();
 }

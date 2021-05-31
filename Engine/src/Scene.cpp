@@ -26,6 +26,7 @@
 #include "ResourceManager/ResourceManager.hpp"
 #include "Serialization/Serialization.hpp"
 
+
 using namespace BwatEngine;
 
 Scene::Scene(Window& window)
