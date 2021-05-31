@@ -5,6 +5,7 @@
 #include "ECS/Components/AudioSourceComponent.hpp"
 #include "ECS/Components/CameraComponent.hpp"
 #include "ECS/Components/RigidBodyComponent.hpp"
+#include "ECS/Components/DataComponent.hpp"
 
 namespace BwatEngine
 {
@@ -86,6 +87,14 @@ namespace BwatEngine
         }
     }
 
+    namespace DataScripting
+    {
+        std::string GetName(EntityID entity)
+        {
+            return Coordinator::GetInstance().GetComponent<DataComponent>(entity).name;
+        }
+    }
+
     sol::table open_components(sol::this_state s)
     {
         sol::state_view lua(s);
@@ -150,6 +159,8 @@ namespace BwatEngine
         REGISTER_FUNC(RigidBodyScripting, SetMass);
         REGISTER_FUNC(RigidBodyScripting, GetMass);
         REGISTER_FUNC(RigidBodyScripting, AddForce);
+
+        REGISTER_FUNC(DataScripting, GetName);
         return module;
     }
 }
