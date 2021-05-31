@@ -50,3 +50,11 @@ void Mesh::Draw()
     glDrawElements(GL_TRIANGLES, indices.size(), GL_UNSIGNED_INT, 0);
     glBindVertexArray(0);
 }
+
+void Mesh::DrawWireFrame()
+{
+    // draw mesh
+    glBindVertexArray(VAO);
+    glDrawElements(GL_LINES, indices.size(), GL_UNSIGNED_INT, 0);
+    glBindVertexArray(0);
+}

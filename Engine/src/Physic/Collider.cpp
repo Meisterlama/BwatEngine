@@ -50,9 +50,12 @@ void Collider::SetIsTrigger(bool _isTrigger)
     }
 }
 
-void Collider::SetShape(Collider::ShapeType shapeType)
+void Collider::SetShape(Collider::ShapeType _shapeType)
 {
-    switch (shapeType)
+    if (shape)
+        shape->release();
+    shapeType = _shapeType;
+    switch (_shapeType)
     {
         case CUBE:
             shape = Physic::GetPhysics()->createShape(
@@ -72,4 +75,14 @@ void Collider::SetShape(Collider::ShapeType shapeType)
         case MESH:
             break;
     }
+}
+
+void Collider::SetBoxExtent(Math::Vec3f halfExtents)
+{
+    shape->setGeometry(physx::PxBoxGeometry{ ToPxVec3(halfExtents) });
+}
+
+void Collider::SetSphereRadius(float radius)
+{
+    shape->setGeometry(physx::PxSphereGeometry{radius});
 }

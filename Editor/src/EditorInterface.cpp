@@ -20,6 +20,7 @@
 #include "Time.hpp"
 #include "Engine.hpp"
 #include "ECS/Systems/RenderSystem.hpp"
+#include "ECS/Systems/ColliderDrawSystem.hpp"
 #include "ECS/Coordinator.hpp"
 #include "ECS/Components/TransformComponent.hpp"
 
@@ -72,12 +73,14 @@ void EditorInterface::OnTick()
     auto& coordinator = BwatEngine::Coordinator::GetInstance();
 
     auto renderSystem = coordinator.GetSystem<BwatEngine::RenderSystem>();
+    auto colliderDrawSystem = coordinator.GetSystem<BwatEngine::ColliderDrawSystem>();
 
     // Render game in editor framebuffer
     GLint previousFramebuffer = gameViewFramebuffer.Bind();
     engine->Update();
     sceneViewFramebuffer.Bind();
     renderSystem->RenderWithCamera(camera, cameraTransform);
+    colliderDrawSystem->DrawWithCamera(camera, cameraTransform);
     glBindFramebuffer(GL_FRAMEBUFFER, previousFramebuffer);
 
     ImGui_ImplOpenGL3_NewFrame();

@@ -14,6 +14,7 @@
 
 #include <Rendering/Model.hpp>
 #include "WidgetProperties.hpp"
+#include "Physic/PhysicCast.hpp"
 
 #include "imgui_stdlib.h"
 
@@ -318,6 +319,40 @@ void WidgetProperties::ShowComponent<BwatEngine::ColliderComponent>(BwatEngine::
                 ImGui::SetItemDefaultFocus();
         }
         ImGui::EndCombo();
+    }
+
+    PxShape* shape = component.GetShape();
+
+    switch (component.GetShapeType())
+    {
+        case BwatEngine::Collider::CUBE:
+        {
+            PxBoxGeometry boxGeometry;
+            shape->getBoxGeometry(boxGeometry);
+            BwatEngine::Math::Vec3f boxExtents = BwatEngine::ToBwatVec3(boxGeometry.halfExtents);
+            if(ImGui::DragFloat3("Box Extent", boxExtents.values, 0.1f, 0.0f))
+            {
+                component.SetBoxExtent(boxExtents);
+            }
+            break;
+        }
+        case BwatEngine::Collider::SPHERE:
+        {
+            PxSphereGeometry sphereGeometry;
+            shape->getSphereGeometry(sphereGeometry);
+            float radius = sphereGeometry.radius;
+            if (ImGui::DragFloat("Radius", &radius, 0.1f, 0.0f))
+            {
+                component.SetSphereRadius(radius);
+            }
+            break;
+        }
+        case BwatEngine::Collider::PLANE:
+        {
+            PxPlaneGeometry planeGeometry;
+            shape->getPlaneGeometry(planeGeometry);
+            break;
+        }
     }
 
     if (shouldUpdate)

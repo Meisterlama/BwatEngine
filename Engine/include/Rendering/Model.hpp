@@ -39,7 +39,9 @@ namespace Rendering
 		void AddMesh(std::vector<Vertex> vertices, std::vector<unsigned int> indices,Material material);
 		std::vector<Material*> GetDefaultMaterials() const;
 		void Draw(std::vector<Material*>* materials = nullptr);
-	};
+
+        void DrawWireFrame(std::vector<Material *> *materials = nullptr);
+    };
 
 }
 

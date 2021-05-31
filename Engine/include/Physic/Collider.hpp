@@ -42,8 +42,13 @@ namespace BwatEngine
         static const char* GetShapeTypeName(ShapeType _shapeType);
         void SetFriction(float friction);
         void SetIsTrigger(bool _isTrigger);
-        void SetShape(ShapeType shapeType = CUBE);
-	};
+        void SetShape(ShapeType _shapeType = CUBE);
+
+        void SetBoxExtent(Math::Vec3f halfExtents);
+        void SetSphereRadius(float radius);
+
+        void SetScale(Math::Vec3f scale);
+    };
 }
 
 #endif // !COLLIDER_HPP
