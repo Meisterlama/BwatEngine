@@ -26,8 +26,6 @@ void AnimationSystem::Update()
 
 		component.SetAnimationModel(rendComponent.model);
 
-		//component.Play(component.pathAnimation, rendComponent.model);
-
 		if (component.isValid)	
 			component.animator.UpdateAnimation(Time::deltaTime * component.speedAnimation);
 	}

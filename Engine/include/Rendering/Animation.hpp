@@ -32,6 +32,8 @@ namespace Rendering
         inline float GetDuration() { return duration; }
         inline const AssimpNodeData& GetRootNode() { return rootNode; }
 
+        std::string path;
+
     private:
 
         void ReadMissingBones(const aiAnimation* animation, Model& model);

@@ -19,6 +19,7 @@ Animation::Animation(const std::string& animationPath, Rendering::Model* model)
     ticksPerSecond = animation->mTicksPerSecond;
     ReadHeirarchyData(rootNode, scene->mRootNode);
     ReadMissingBones(animation, *model);
+    path = animationPath;
 }
 
 
