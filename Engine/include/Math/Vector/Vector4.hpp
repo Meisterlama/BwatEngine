@@ -33,19 +33,21 @@ namespace BwatEngine::Math
              * @param x Values of all members
              */
             ML_FUNC_DECL Vector4(T x = 0)
-                : X(x), Y(x), Z(x), W(x)
+                    : X(x), Y(x), Z(x), W(x)
             {}
 
             ML_FUNC_DECL Vector4(T x, T y, T z, T w)
-                : X(x), Y(y), Z(z), W(w)
+                    : X(x), Y(y), Z(z), W(w)
             {}
 
             ML_FUNC_DECL Vector4(const Vector4 &vec) = default;
+
             ML_FUNC_DECL Vector4(Vector4 &&vec) noexcept = default;
 
             template<typename U>
             ML_FUNC_DECL Vector4(const Vector4<U> &vec)
-                : X(static_cast<T>(vec.X)), Y(static_cast<T>(vec.Y)), Z(static_cast<T>(vec.Z)), W(static_cast<T>(vec.W))
+                    : X(static_cast<T>(vec.X)), Y(static_cast<T>(vec.Y)), Z(static_cast<T>(vec.Z)),
+                      W(static_cast<T>(vec.W))
             {}
 
             ~Vector4() = default;
@@ -107,6 +109,7 @@ namespace BwatEngine::Math
             [[nodiscard]] ML_FUNC_DECL Vector4 GetSafeNormalized() const;
 
             [[nodiscard]] ML_FUNC_DECL bool Equals(const Vector4 &rhs) const;
+
             [[nodiscard]] ML_FUNC_DECL bool IsZero() const;
 
             ML_FUNC_DECL Vector4 &operator=(const Vector4 &other);
@@ -116,22 +119,31 @@ namespace BwatEngine::Math
             [[nodiscard]] ML_FUNC_DECL bool operator!=(const Vector4 &rhs) const;
 
             [[nodiscard]] ML_FUNC_DECL const T &operator[](int idx) const;
+
             [[nodiscard]] ML_FUNC_DECL T &operator[](int idx);
 
             ML_FUNC_DECL Vector4 &Add(const Vector4 &vec);
+
             [[nodiscard]] ML_FUNC_DECL Vector4 operator+(const Vector4 &rhs) const;
+
             ML_FUNC_DECL Vector4 &operator+=(const Vector4 &vec);
+
             ML_FUNC_DECL Vector4 &operator++();
 
             ML_FUNC_DECL Vector4 &Sub(const Vector4 &vec);
+
             [[nodiscard]] ML_FUNC_DECL Vector4 operator-(const Vector4 &rhs) const;
+
             ML_FUNC_DECL Vector4 &operator-=(const Vector4 &vec);
+
             ML_FUNC_DECL Vector4 &operator--();
 
             [[nodiscard]] ML_FUNC_DECL Vector4 operator*(const float &scalar) const;
+
             ML_FUNC_DECL Vector4 &operator*=(const float &scalar);
 
             [[nodiscard]] ML_FUNC_DECL Vector4 operator/(const float &scalar) const;
+
             ML_FUNC_DECL Vector4 &operator/=(const float &scalar);
 
         };
@@ -140,19 +152,20 @@ namespace BwatEngine::Math
     typedef BwatEngine::Math::Internal::Vector4<double> Vec4d;
     typedef BwatEngine::Math::Internal::Vector4<signed int> Vec4i;
     typedef BwatEngine::Math::Internal::Vector4<unsigned int> Vec4u;
+
+    template<typename T>
+    [[nodiscard]] ML_FUNC_DECL BwatEngine::Math::Internal::Vector4<T>
+    operator-(BwatEngine::Math::Internal::Vector4<T> vec);
+
+    template<typename T>
+    [[nodiscard]] ML_FUNC_DECL BwatEngine::Math::Internal::Vector4<T> operator*(const float &scalar,
+                                                                                BwatEngine::Math::Internal::Vector4<T> rhs);
+
+    template<typename T>
+    [[nodiscard]] ML_FUNC_DECL BwatEngine::Math::Internal::Vector4<T> Lerp(BwatEngine::Math::Internal::Vector4<T> begin,
+                                                                           BwatEngine::Math::Internal::Vector4<T> end,
+                                                                           float ratio);
 }
-template<typename T>
-[[nodiscard]] ML_FUNC_DECL BwatEngine::Math::Internal::Vector4<T> operator-(BwatEngine::Math::Internal::Vector4<T> vec);
-
-template<typename T>
-[[nodiscard]] ML_FUNC_DECL BwatEngine::Math::Internal::Vector4<T> operator*(const float& scalar,
-                                                                            BwatEngine::Math::Internal::Vector4<T> rhs);
-
-template<typename T>
-[[nodiscard]] ML_FUNC_DECL BwatEngine::Math::Internal::Vector4<T> Lerp(BwatEngine::Math::Internal::Vector4<T> begin,
-                                                                       BwatEngine::Math::Internal::Vector4<T> end,
-                                                                       float ratio);
-
 #pragma endregion
 
 #pragma region Definitions

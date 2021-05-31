@@ -6,9 +6,9 @@
 #include "Math/Quaternion.hpp"
 #include "Math/Common.hpp"
 
-#pragma region Declarations
 namespace BwatEngine::Math
 {
+#pragma region Declarations
     namespace Internal
     {
         template<typename T>
@@ -305,7 +305,6 @@ namespace BwatEngine::Math
 
     typedef Internal::Matrix4<float> Mat4f;
     typedef Internal::Matrix4<double> Mat4d;
-}
 
     template<typename T>
     [[nodiscard]] ML_FUNC_DECL BwatEngine::Math::Internal::Matrix4<T> operator-(BwatEngine::Math::Internal::Matrix4<T> mat);
@@ -321,7 +320,7 @@ namespace BwatEngine::Math
     [[nodiscard]] ML_FUNC_DECL BwatEngine::Math::Internal::Matrix4<T> Lerp(BwatEngine::Math::Internal::Matrix4<T> begin,
                                                                            BwatEngine::Math::Internal::Matrix4<T> end,
                                                                            T ratio);
-
+}
 #pragma endregion
 
 #pragma region Definitions
