@@ -656,10 +656,10 @@ namespace BwatEngine::Math
 
         if (Abs(sinHalfTheta) < 0.001)
             return Internal::Quaternion<T>{
-                    begin.X * 0.5 + end.X * 0.5,
-                    begin.Y * 0.5 + end.Y * 0.5,
-                    begin.Z * 0.5 + end.Z * 0.5,
-                    begin.W * 0.5 + end.W * 0.5};
+                    begin.X * (T)0.5 + end.X * (T)0.5,
+                    begin.Y * (T)0.5 + end.Y * (T)0.5,
+                    begin.Z * (T)0.5 + end.Z * (T)0.5,
+                    begin.W * (T)0.5 + end.W * (T)0.5};
         float ratioA = Sin((1 - ratio) * halfTheta) / sinHalfTheta;
         float ratioB = Sin(ratio * halfTheta) / sinHalfTheta;
 

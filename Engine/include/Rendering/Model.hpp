@@ -2,6 +2,8 @@
 
 #include <memory>
 #include <vector>
+#include <map>
+#include <string>
 #include "Mesh.hpp"
 #include "glad/glad.h"
 #include "Shader.hpp"
@@ -17,6 +19,12 @@ namespace Rendering
 {
 	class Material;
 
+	struct BoneInfo
+	{
+		int id;
+		BwatEngine::Math::Mat4f offset;
+	};
+
 	class Model
 	{
 	private:
@@ -25,9 +33,15 @@ namespace Rendering
 		std::vector<std::unique_ptr<Mesh>> meshes;
 		std::string directory{};
 
+		std::map<std::string, BoneInfo> boneInfoMap; 
+		int boneCounter = 0;
+
 		void LoadModel(const std::string path);
 		void ProcessNode(aiNode* node, const aiScene* scene);
 		void ProcessMesh(aiMesh* mesh, const aiScene* scene);
+		//bones
+		void SetVertexBoneDataToDefault(Vertex& vertex);
+		void ExtractBoneWeightForVertices(std::vector<Vertex>& vertices, aiMesh* mesh, const aiScene* scene);
 
 	public:
 
@@ -39,6 +53,9 @@ namespace Rendering
 		void AddMesh(std::vector<Vertex> vertices, std::vector<unsigned int> indices,Material material);
 		std::vector<Material*> GetDefaultMaterials() const;
 		void Draw(std::vector<Material*>* materials = nullptr);
+
+		std::map<std::string, BoneInfo>& GetBoneInfoMap() { return boneInfoMap; };
+		int& GetBoneCount() { return boneCounter; };
 	};
 
 }

@@ -8,6 +8,7 @@
 #include <ECS/Components/LightComponent.hpp>
 #include <ECS/Components/DataComponent.hpp>
 #include <ECS/Components/ScriptComponent.hpp>
+#include <ECS/Components/AnimatorComponent.hpp>
 
 #include "ResourceManager/ResourceManager.hpp"
 #include "ECS/Coordinator.hpp"
@@ -339,6 +340,8 @@ void WidgetProperties::TickVisible()
                 hasComponentAvailable |= AddComponentMenuItem<LightComponent>(currentEntity);
                 hasComponentAvailable |= AddComponentMenuItem<DataComponent>(currentEntity);
                 hasComponentAvailable |= AddComponentMenuItem<ScriptComponent>(currentEntity);
+                hasComponentAvailable |= AddComponentMenuItem<AnimatorComponent>(currentEntity);
+
                 ImGui::EndMenu();
             }
 
@@ -355,6 +358,7 @@ void WidgetProperties::TickVisible()
     ShowComponentMenuItem<CameraComponent>(currentEntity);
     ShowComponentMenuItem<PlayerComponent>(currentEntity);
     ShowComponentMenuItem<LightComponent>(currentEntity);
+    ShowComponentMenuItem<AnimatorComponent>(currentEntity);
     ShowComponentMenuItem<ScriptComponent>(currentEntity);
 }
 
@@ -497,4 +501,79 @@ void WidgetProperties::ShowComponent<BwatEngine::LightComponent>(BwatEngine::Lig
             component.outerCutoff  = outerCutOff;
 
         }
+}
+
+template<>
+void WidgetProperties::ShowComponent<BwatEngine::AnimatorComponent>(BwatEngine::AnimatorComponent& component)
+{
+    static std::string saveName;
+
+    ImGui::InputText("Animation Name", &saveName);
+
+    static std::string namemodel;
+
+
+    if (ImGui::BeginCombo("Animation", namemodel.c_str()))
+    {
+        auto textList = BwatEngine::ResourceManager::Instance()->GetModelList();
+
+        for (auto& text : textList)
+        {
+            std::string path = text;
+            bool selected = (namemodel == path);
+
+            if (ImGui::Selectable(path.c_str(), selected))
+                namemodel = text;
+
+            if (selected)
+                ImGui::SetItemDefaultFocus();
+        }
+
+        ImGui::EndCombo();
+    }
+
+    bool checkButton = !saveName.empty() && !namemodel.empty();
+
+    if (checkButton && ImGui::Button("Add Animation"))
+    {
+        component.SetNewAnimation(saveName, namemodel);
+    }
+
+    for (int i = 0; i < component.names.size(); i++)
+    {
+        ImGui::Text("Animation name : %s" , component.names[i].c_str());
+        
+        std::string playText = "Play##" + component.names[i];
+
+        if (ImGui::Button(playText.c_str()))
+            component.PlayAnimation(component.names[i]);
+        
+        ImGui::SameLine();
+        
+        std::string deleteText = "Delete##" + component.names[i];
+
+        if (ImGui::Button(deleteText.c_str()))
+            component.DeleteAnimation(component.names[i]);
+    }
+
+    if (component.names.size() > 0)
+    {
+        if (ImGui::Button("Pause Animation"))
+        component.isValid = false;
+
+        ImGui::SameLine();
+
+        if (ImGui::Button("Continue Animation"))
+            component.isValid = true;
+    }
+    bool update = false;
+    float speedAnim = component.speedAnimation;
+
+    update |= ImGui::DragFloat("Speed Animation", &speedAnim, 1.0f, 0.0f);
+
+    if (update)
+    {
+        component.speedAnimation = speedAnim;
+    }
+
 }

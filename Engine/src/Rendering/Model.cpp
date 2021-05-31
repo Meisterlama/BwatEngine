@@ -17,7 +17,7 @@ void Model::LoadModel(const std::string path)
     modelPath = path;
 
     Assimp::Importer import;
-    const aiScene* scene = import.ReadFile(path, aiProcess_Triangulate | aiProcess_FlipUVs);
+    const aiScene* scene = import.ReadFile(path, aiProcess_Triangulate ); // | aiProcess_FlipUVs
 
     if (!scene || scene->mFlags & AI_SCENE_FLAGS_INCOMPLETE || !scene->mRootNode)
     {
@@ -99,6 +99,8 @@ void Model::ProcessMesh(aiMesh* mesh, const aiScene* scene)
 
     Rendering::Material myMaterial(*material);
 
+    ExtractBoneWeightForVertices(vertices, mesh, scene);
+
     // return a mesh object created from the extracted mesh data
     meshes.emplace_back(std::make_unique<Mesh>(vertices, indices, myMaterial));
 }
@@ -130,3 +132,67 @@ void Model::AddMesh(std::vector<Vertex> vertices, std::vector<unsigned int> indi
     meshes.emplace_back(std::make_unique<Mesh>(vertices, indices, material));
 }
 
+// ============================= Bones ============================= //
+
+void Model::SetVertexBoneDataToDefault(Vertex& vertex)
+{
+    for (int i = 0; i < MAX_BONE_INFLUENCE; i++)
+    {
+        vertex.boneIDs[i] = -1;
+        vertex.weights[i] = 0.0f;
+    }
+}
+
+void SetVertexBoneData(Vertex& vertex, int boneID, float weight)
+{
+    for (int i = 0; i < MAX_BONE_INFLUENCE; ++i)
+    {
+        if (vertex.boneIDs[i] < 0)
+        {
+            vertex.weights[i] = weight;
+            vertex.boneIDs[i] = boneID;
+            break;
+        }
+    }
+}
+
+
+static BwatEngine::Math::Mat4f ConvertMatrixToBFormat(const aiMatrix4x4& from)
+{
+    BwatEngine::Math::Mat4f to;
+    memcpy(to.values, &from.a1, sizeof(BwatEngine::Math::Mat4f));
+    return to.GetTransposed();
+}
+void Model::ExtractBoneWeightForVertices(std::vector<Vertex>& vertices, aiMesh* mesh,const aiScene* scene)
+{
+    for (int boneIndex = 0; boneIndex < mesh->mNumBones; ++boneIndex)
+    {
+        int boneID = -1;
+        std::string boneName = mesh->mBones[boneIndex]->mName.C_Str();
+        if (boneInfoMap.find(boneName) == boneInfoMap.end())
+        {
+            BoneInfo newBoneInfo;
+            newBoneInfo.id = boneCounter;
+            // MAYBE need Transpose //
+            newBoneInfo.offset = ConvertMatrixToBFormat(mesh->mBones[boneIndex]->mOffsetMatrix);
+            boneInfoMap[boneName] = newBoneInfo;
+            boneID = boneCounter;
+            boneCounter++;
+        }
+        else
+        {
+            boneID = boneInfoMap[boneName].id;
+        }
+        assert(boneID != -1);
+        auto weights = mesh->mBones[boneIndex]->mWeights;
+        int numWeights = mesh->mBones[boneIndex]->mNumWeights;
+
+        for (int weightIndex = 0; weightIndex < numWeights; ++weightIndex)
+        {
+            int vertexId = weights[weightIndex].mVertexId;
+            float weight = weights[weightIndex].mWeight;
+            assert(vertexId <= vertices.size());
+            SetVertexBoneData(vertices[vertexId], boneID, weight);
+        }
+    }
+}

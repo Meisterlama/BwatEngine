@@ -289,6 +289,31 @@ namespace BwatEngine {
                     };
         }
 
+        
+        template<>
+        void SerializeComponent<AnimatorComponent>(const AnimatorComponent& animator, json& js)
+        {
+            json animatorTmp;
+
+            for (int i = 0; i < animator.names.size(); i++)
+            {
+                animatorTmp["names"][i] = json
+                {
+                    {"name" , animator.names[i]}
+                };
+
+                animatorTmp["animations"][i] = json
+                {
+                    {"animation", animator.animations[i].path}
+                };
+            }
+
+            if (animator.model) 
+                animatorTmp["model"] = animator.model->modelPath;
+
+            js += json{ "animator", animatorTmp };
+        }
+
         //*********************** LOAD FUNCTIONS ***********************//
         template<typename T>
         void Load(EntityID entityId, const json &componentData) {
@@ -488,6 +513,35 @@ namespace BwatEngine {
         {
             auto &coordinator = Coordinator::GetInstance();
             coordinator.AddComponent<DataComponent>(entityId, componentData.at("name").get<std::string>());
+        }
+
+        template<>
+        void Load<AnimatorComponent>(EntityID entityId, const json& componentData)
+        {
+            auto& coordinator = Coordinator::GetInstance();
+            auto* resourceMan = ResourceManager::Instance();
+            
+            AnimatorComponent animatorComp;
+
+            if (componentData.contains("model"))
+                animatorComp.model = resourceMan->GetOrLoadModel(componentData.at("model").get<std::string>());
+
+            if (!componentData.contains("names"))
+            {
+                coordinator.AddComponent<AnimatorComponent>(entityId, animatorComp);
+                return;
+            }
+
+            json names = componentData.at("names");
+            json animationPath = componentData.at("animations");
+            
+            // load name and animation
+            for (int i = 0; i < names.size(); i++)
+            {
+                animatorComp.SetNewAnimation(names[i].at("name").get<std::string>(), animationPath[i].at("animation").get<std::string>());
+            }
+
+            coordinator.AddComponent<AnimatorComponent>(entityId, animatorComp );
         }
 
 
