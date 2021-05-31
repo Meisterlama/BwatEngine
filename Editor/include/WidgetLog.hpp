@@ -3,6 +3,8 @@
 
 #include "Widget.hpp"
 #include <sstream>
+#include <vector>
+
 
 namespace BLogger
 {
@@ -25,6 +27,7 @@ public :
 private:
     std::stringstream ss {};
     int callbackIndex;
+    std::vector<char> buffer;
 
 };
 

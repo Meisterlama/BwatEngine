@@ -18,15 +18,14 @@ WidgetLog::~WidgetLog()
     BLogger::LogRemoveCallback(callbackIndex);
 }
 
-#include <vector>
+
 void WidgetLog::OnLogCallback(BLogger::LogEvent* ev)
 {
-    static std::vector<char> buffer; // Avoid allocation for each call
     va_list ap;
     va_copy(ap, ev->ap);
 
-    int size = vsnprintf(nullptr, 0, ev->fmt, ap);
-    if (buffer.size() < size)
+    size_t size = (size_t)vsnprintf(nullptr, 0, ev->fmt, ap);
+    if (buffer.size() < size+1)
         buffer.resize(size+1);
 
     vsprintf(buffer.data(), ev->fmt, ev->ap);
