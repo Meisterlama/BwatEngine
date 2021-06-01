@@ -9,19 +9,20 @@ Material::Material(const aiMaterial& from)
 {
     {
         aiString path;
-        if (from.GetTexture(aiTextureType_DIFFUSE, 0, &path) == aiReturn_SUCCESS)
-            diffuse =  BwatEngine::ResourceManager::Instance()->GetOrLoadTexture(path.C_Str(), Rendering::Texture::Type::E_DIFFUSE);
-            
-    }
-    {
-        aiString path;
-        if (from.GetTexture(aiTextureType_SPECULAR, 0, &path) == aiReturn_SUCCESS)
-            specular = BwatEngine::ResourceManager::Instance()->GetOrLoadTexture(path.C_Str(), Rendering::Texture::Type::E_SPECULAR);
-    }
-    {
-        aiString path;
         if (from.GetTexture(aiTextureType_NORMALS, 0, &path) == aiReturn_SUCCESS)
-            normal = BwatEngine::ResourceManager::Instance()->GetOrLoadTexture(path.C_Str(), Rendering::Texture::Type::E_NORMAL);
+            normal = BwatEngine::ResourceManager::Instance()->GetOrLoadTexture(path.C_Str());
+    }
+
+    {
+        aiString path;
+        if (from.GetTexture(aiTextureType_BASE_COLOR, 0, &path) == aiReturn_SUCCESS)
+            albedoMap = BwatEngine::ResourceManager::Instance()->GetOrLoadTexture(path.C_Str());
+    }
+
+    {
+        aiString path;
+        if (from.GetTexture(aiTextureType_AMBIENT_OCCLUSION, 0, &path) == aiReturn_SUCCESS)
+            aoMap = BwatEngine::ResourceManager::Instance()->GetOrLoadTexture(path.C_Str());
     }
  
 }
@@ -60,10 +61,8 @@ void Material::ApplyToShader(Shader& shader)
 {
     shader.SetBool("material.isTextured", isTextured);
 
-    shader.SetBool("material.isColor", isColor);
-    shader.SetVec4("material.color", color.X, color.Y, color.Z, color.W);
-
-    shader.SetFloat("material.shininess", shininess);
+    shader.SetBool("isTilling", isTilling);
+    shader.SetVec2("tile", tile.X, tile.Y);
 
     shader.SetInt("material.normal", 0);
     shader.SetInt("material.albedoMap", 1);

@@ -13,7 +13,7 @@ PostProcess::PostProcess(Rendering::FullScreenQuad& fullScreenQuad)
 
 Inversion::Inversion(Rendering::FullScreenQuad& fullScreenQuad)
 	: PostProcess(fullScreenQuad)
-	, shader({ "Assets/Shaders/PostProcess/postProcess.vs", "Assets/Shaders/PostProcess/inversion.fs" })
+	, shader({ "EngineAssets/Shaders/PostProcess/postProcess.vs", "EngineAssets/Shaders/PostProcess/inversion.fs" })
 {
 }
 
@@ -28,9 +28,9 @@ void Inversion::Draw(GLuint gameTexture)
 
 Bloom::Bloom(Rendering::FullScreenQuad& fullScreenQuad,int width, int height)
 	: PostProcess(fullScreenQuad)
-	, shader({ "Assets/Shaders/PostProcess/postProcess.vs", "Assets/Shaders/PostProcess/bloom.fs" })
-	, shaderGaussianBlur({ "Assets/Shaders/PostProcess/postProcess.vs", "Assets/Shaders/PostProcess/gaussianBlur.fs" })
-	, shaderBloomFinal ({ "Assets/Shaders/PostProcess/postProcess.vs", "Assets/Shaders/PostProcess/bloomFinal.fs" })
+	, shader({ "EngineAssets/Shaders/PostProcess/postProcess.vs", "EngineAssets/Shaders/PostProcess/bloom.fs" })
+	, shaderGaussianBlur({ "EngineAssets/Shaders/PostProcess/postProcess.vs", "EngineAssets/Shaders/PostProcess/gaussianBlur.fs" })
+	, shaderBloomFinal ({ "EngineAssets/Shaders/PostProcess/postProcess.vs", "EngineAssets/Shaders/PostProcess/bloomFinal.fs" })
 {
 	
 	internalFBO.Resize(width, height);
@@ -98,7 +98,7 @@ void Bloom::Draw(GLuint gameTexture)
 
 Blur::Blur(Rendering::FullScreenQuad& fullscreenQuad)
 	: PostProcess(fullscreenQuad)
-	, shader({ "Assets/Shaders/PostProcess/postProcess.vs", "Assets/Shaders/PostProcess/blur.fs" })
+	, shader({ "EngineAssets/Shaders/PostProcess/postProcess.vs", "EngineAssets/Shaders/PostProcess/blur.fs" })
 {
 
 }
@@ -115,7 +115,7 @@ void Blur::Draw(GLuint gameTexture)
 
 GammaCorection::GammaCorection(Rendering::FullScreenQuad& fullscreenQuad)
 	: PostProcess(fullscreenQuad)
-	, shader({ "Assets/Shaders/PostProcess/postProcess.vs", "Assets/Shaders/PostProcess/gamma.fs" })
+	, shader({ "EngineAssets/Shaders/PostProcess/postProcess.vs", "EngineAssets/Shaders/PostProcess/gamma.fs" })
 {
 
 }

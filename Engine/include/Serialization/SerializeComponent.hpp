@@ -145,19 +145,7 @@ namespace BwatEngine {
             for (int i = 0; i < renderable.materials.size(); i++)
             {
                 Rendering::Material *material = renderable.materials[i];
-                if (material->diffuse != nullptr) {
-                    temp["materials"]["material"][i] +=
-                            json{
-                                    {"diffuse", material->diffuse->path}
-                            };
-                }
-
-                if (material->specular != nullptr) {
-                    temp["materials"]["material"][i] +=
-                            json{
-                                    {"specular", material->specular->path}
-                            };
-                }
+               
 
                 if (material->normal != nullptr){
                     temp["materials"]["material"][i] +=
@@ -165,13 +153,6 @@ namespace BwatEngine {
                                     {"normal", material->normal->path}
                             };
                 }
-
-                temp["materials"]["material"][i] +=
-                        json {
-                                {"isColor", material->isColor},
-                            SerializeVector4f("color", material->color)
-                        };
-
 
             }
 
@@ -415,30 +396,10 @@ namespace BwatEngine {
                     auto newMaterial = new Rendering::Material;
                     for (int j = 0; j < materials[i].size(); j++)
                     {
-                        if (materials[i][j].contains("diffuse"))
-                            newMaterial->diffuse = resourceMan->GetOrLoadTexture(materials[i][j].at("diffuse").get<std::string>(),
-                                                                                 Rendering::Texture::Type::E_DIFFUSE);
-                        if (materials[i][j].contains("specular"))
-                            newMaterial->specular =  resourceMan->GetOrLoadTexture(materials[i][j].at("specular").get<std::string>(),
-                                                                                   Rendering::Texture::Type::E_DIFFUSE);
                         if (materials[i][j].contains("normal"))
                             newMaterial->normal = resourceMan->GetOrLoadTexture(materials[i][j].at("normal").get<std::string>(),
                                                                                 Rendering::Texture::Type::E_NORMAL);
-                        if (materials[i][j].contains("isColor"))
-                        {
-                            newMaterial->isColor = materials[i][j].at("isColor").get<bool>();
-                            if (newMaterial->isColor)
-                            {
-                                json color = materials[i][j].at("color");
-                                newMaterial->color.X = color.at("X").get<float>();
-                                newMaterial->color.Y = color.at("Y").get<float>();
-                                newMaterial->color.Z = color.at("Z").get<float>();
-                                newMaterial->color.W = color.at("W").get<float>();
-                            }
-
-
-                        }
-
+              
                     }
                     renderable.materials.push_back(newMaterial);
                 }

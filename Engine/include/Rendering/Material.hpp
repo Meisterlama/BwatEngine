@@ -15,13 +15,11 @@ namespace Rendering
 		Material(const aiMaterial& from);
 		Material() {}
 
-		Texture* diffuse = nullptr;
-		Texture* specular = nullptr;
-		Texture* normal = nullptr;
 
 		bool isTextured = false;
 
 		Texture* albedoMap = nullptr;
+		Texture* normal = nullptr;
 		Texture* metallicMap = nullptr;
 		Texture* roughnessMap = nullptr;
 		Texture* aoMap = nullptr;
@@ -32,10 +30,8 @@ namespace Rendering
 		float roughness = 0.f;
 		float ao = 1.f;
 
-		bool isColor = false;
-		BwatEngine::Math::Vec4f color = {0,0,0,1};
-
-		float shininess = 32.f;
+		bool isTilling = false;
+		BwatEngine::Math::Vec2f tile = {1,1};
 
 		void ApplyToShader(Shader& shader);
 		void Bind();

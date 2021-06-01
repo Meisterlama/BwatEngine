@@ -165,12 +165,12 @@ void WidgetProperties::ShowComponent<BwatEngine::RenderableComponent>(BwatEngine
 
             }
 
-            bool isColored = component.materials[i]->isColor;
-            update |= ImGui::Checkbox("Color", &isColored);
+            bool isColored = component.materials[i]->isTilling;
+            update |= ImGui::Checkbox("Tilling", &isColored);
 
-            if (component.materials[i]->isColor)
+            if (component.materials[i]->isTilling)
             {
-                ImGui::ColorEdit4("Color", component.materials[i]->color.values);
+                ImGui::DragFloat2("Tiles", component.materials[i]->tile.values);
             }
 
             TextCenter("Shadow Option");
@@ -181,7 +181,7 @@ void WidgetProperties::ShowComponent<BwatEngine::RenderableComponent>(BwatEngine
             if (update)
             {
                 component.materials[i]->isTextured = isTextured;
-                component.materials[i]->isColor = isColored;
+                component.materials[i]->isTilling = isColored;
                 component.castShadow = castShadow;
             }
 
@@ -435,6 +435,7 @@ void WidgetProperties::ShowComponent<BwatEngine::LightComponent>(BwatEngine::Lig
         BwatEngine::Math::Vec3f ambient = component.ambient;
         BwatEngine::Math::Vec3f specular = component.specular;
         BwatEngine::Math::Vec3f diffuse = component.diffuse;
+        float intensity = component.intensity;
 
         const char* items[] = { "Directional", "Point", "Spot", };
 
@@ -459,6 +460,7 @@ void WidgetProperties::ShowComponent<BwatEngine::LightComponent>(BwatEngine::Lig
         update |= ImGui::ColorEdit3("Specular", specular.values, ImGuiColorEditFlags_Float);
         update |= ImGui::ColorEdit3("Diffuse", diffuse.values, ImGuiColorEditFlags_Float);
 
+        update |= ImGui::DragFloat("Intensity", &intensity, 0.1f, 0.0f);
 
         float constant = component.constant;
         float linear = component.linear;
@@ -490,6 +492,8 @@ void WidgetProperties::ShowComponent<BwatEngine::LightComponent>(BwatEngine::Lig
             component.ambient = ambient;
             component.specular = specular;
             component.diffuse = diffuse;
+
+            component.intensity = intensity;
 
             // Point Light 
             component.constant     = constant;
