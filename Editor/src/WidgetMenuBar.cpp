@@ -62,7 +62,7 @@ void WidgetMenuBar::MenuFile()
         enabled = true;
     if (ImGui::MenuItem("Save Scene", 0, false, enabled))
     {
-        BwatEngine::Serializer::SaveScene(editor->currentScene.c_str());
+        BwatEngine::Serialization::SaveScene(editor->currentScene.c_str());
     }
     if (ImGui::MenuItem("Save as..."))
     {

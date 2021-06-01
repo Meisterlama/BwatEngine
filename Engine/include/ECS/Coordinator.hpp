@@ -56,14 +56,6 @@ namespace BwatEngine
         EntityID CreateEntity();
 
         /**
-         * @brief Duplicate an entity with its components
-         * @param entity EntityID to duplicate
-         * @return EntityID of the newly created entity
-         * @warning Not all components are duplicated
-         */
-        EntityID DuplicateEntity(EntityID entity);
-
-        /**
          * @param entity Entity ID
          * @return True if the entity ID is valid
          */

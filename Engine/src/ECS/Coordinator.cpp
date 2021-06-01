@@ -35,37 +35,6 @@ namespace BwatEngine
             return entity;
     }
 
-    EntityID Coordinator::DuplicateEntity(EntityID entity)
-    {
-        EntityID newEntity = CreateEntity();
-#define CHECK_AND_COPY_COMP(component) \
-        if (HaveComponent<component>(entity)) \
-        { \
-            AddComponent<component>(newEntity, GetComponent<component>(entity)); \
-        }
-
-        CHECK_AND_COPY_COMP(AudioSourceComponent);
-        CHECK_AND_COPY_COMP(CameraComponent);
-        CHECK_AND_COPY_COMP(LightComponent);
-        CHECK_AND_COPY_COMP(PlayerComponent);
-        CHECK_AND_COPY_COMP(ScriptComponent);
-        CHECK_AND_COPY_COMP(TransformComponent);
-
-        if(HaveComponent<RenderableComponent>(entity))
-        {
-            AddComponent<RenderableComponent>(newEntity);
-            auto& entityModel = GetComponent<RenderableComponent>(entity).model;
-            if (entityModel)
-            {
-                Rendering::Model* model = ResourceManager::Instance()->GetOrLoadModel(entityModel->modelPath);
-                GetComponent<RenderableComponent>(newEntity).model = model;
-            }
-        }
-
-#undef CHECK_AND_COPY_COMP
-        return newEntity;
-    }
-
     bool Coordinator::IsValid(EntityID entity)
     {
         return entityManager.IsValid(entity);

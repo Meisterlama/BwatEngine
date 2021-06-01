@@ -21,7 +21,7 @@ void WidgetSavePicker::TickVisible()
     std::string path = assetDirectory.currentPath.string() + "/" + saveFile + ".bwat";
     if (ImGui::Button("Save"))
     {
-        BwatEngine::Serializer::SaveScene(path.c_str());
+        BwatEngine::Serialization::SaveScene(path.c_str());
         editor->currentScene = path;
         SetVisible(false);
     }

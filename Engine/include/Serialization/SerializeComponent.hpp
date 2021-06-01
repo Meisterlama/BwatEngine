@@ -1,8 +1,8 @@
 #ifndef ENGINE_SERIALIZECOMPONENT_HPP
 #define ENGINE_SERIALIZECOMPONENT_HPP
 
-#include <ECS/Components/RigidBodyComponent.hpp>
 #include "ECS/Coordinator.hpp"
+#include "ECS/Components/RigidBodyComponent.hpp"
 #include "ECS/Components/CameraComponent.hpp"
 #include "ECS/Components/PlayerComponent.hpp"
 #include "ECS/Components/ColliderComponent.hpp"
@@ -10,542 +10,183 @@
 #include "ECS/Components/ScriptComponent.hpp"
 #include "ECS/Components/LightComponent.hpp"
 #include "ECS/Components/DataComponent.hpp"
+#include "ECS/Components/TransformComponent.hpp"
+#include "ECS/Components/RenderableComponent.hpp"
+#include "ECS/Components/AnimatorComponent.hpp"
 #include "ResourceManager/ResourceManager.hpp"
 
+#include "Serialization/Utils.hpp"
+
+
+
 using json = nlohmann::json;
-using ordered_json = nlohmann::ordered_json;
 
-namespace BwatEngine {
+namespace BwatEngine::Serialization
+{
 
-    namespace Serializable {
+    template<typename T>
+    json SerializeComponent(const T &);
 
+    template<>
+    json SerializeComponent<TransformComponent>(const TransformComponent &transform)
+    {
+        json ret;
 
-        json SerializeVector3f(const char* vectorName, const Math::Vec3f& vector)
+        ret["Type"] = "transform";
+        ret["Data"]["position"] = SerializeVector3f(transform.position);
+        ret["Data"]["rotation"] = SerializeQuatf(transform.rotation);
+        ret["Data"]["scale"] = SerializeVector3f(transform.scale);
+
+        return ret;
+    }
+
+    template<>
+    json SerializeComponent<CameraComponent>(const CameraComponent &camera)
+    {
+        json ret;
+
+        ret["Type"] = "camera";
+        ret["Data"]["ortho"] = camera.isOrtho;
+        ret["Data"]["near"] = camera.near;
+        ret["Data"]["far"] = camera.far;
+        if (camera.isOrtho)
         {
-            return  json{
-                            vectorName,
-                            {
-                                {"X", vector.X},
-                                {"Y", vector.Y},
-                                {"Z", vector.Z}
-                            }
-                            };
-        }
-
-        json SerializeVector4f(const char* vectorName, const Math::Vec4f& vector)
+            ret["Data"]["left"] = camera.left;
+            ret["Data"]["right"] = camera.right;
+            ret["Data"]["bottom"] = camera.bottom;
+            ret["Data"]["top"] = camera.top;
+        } else
         {
-            return json{
-                    vectorName,
-                    {
-                        {"X", vector.X},
-                        {"Y", vector.Y},
-                        {"Z", vector.Z},
-                        {"W", vector.W}
-                    }
-            };
+            ret["Data"]["fov"] = camera.fov;
+            ret["Data"]["aspect"] = camera.aspect;
         }
 
-        json SerializeVector4f(const char* vectorName, const Math::Quatf& vector)
+        return ret;
+    }
+
+    template<>
+    json SerializeComponent<RigidBodyComponent>(const RigidBodyComponent &rigidbody)
+    {
+        json ret;
+
+        ret["Type"] = "rigidbody";
+        ret["Data"]["static"] = rigidbody.GetIsStatic();
+        ret["Data"]["mass"] = rigidbody.GetMass();
+        ret["Data"]["velocity"] = SerializeVector3f(rigidbody.GetVelocity());
+
+        return ret;
+    }
+
+    template<>
+    json SerializeComponent<RenderableComponent>(const RenderableComponent& renderable)
+    {
+        json ret;
+
+        ret["Type"] = "renderable";
+
+        for (int i = 0; i < renderable.materials.size();i++)
         {
-            return json{
-                    vectorName,
-                    {
-                        {"X", vector.X},
-                        {"Y", vector.Y},
-                        {"Z", vector.Z},
-                        {"W", vector.W}
-                    }
-            };
+            json materialJs;
+
+            Rendering::Material& material = *(renderable.materials[i]);
+
+            materialJs["diffuse"] = (material.diffuse) ? material.diffuse->path : "";
+            materialJs["specular"] = (material.specular) ? material.specular->path : "";
+            materialJs["normal"] = (material.normal) ? material.normal->path : "";
+
+            materialJs["isColor"] = material.isColor;
+            materialJs["color"] = SerializeVector4f(material.color);
+
+            ret["Data"]["materials"].push_back(materialJs);
         }
 
-        template<typename T>
-        void SerializeComponent(const T &, json &js) {
-        }
+        ret["Data"]["model"] = (renderable.model) ? renderable.model->modelPath : "";
 
-        template<typename T>
-        void SaveComponent(EntityID entityId, json &js) {
-            auto &coordinator = Coordinator::GetInstance();
-            if (coordinator.HaveComponent<T>(entityId))
-                Serializable::SerializeComponent<T>(coordinator.GetComponent<T>(entityId), js);
+        return ret;
+    }
 
-        }
+    template<>
+    json SerializeComponent<ColliderComponent>(const ColliderComponent& collider)
+    {
+        json ret;
 
-        template<>
-        void SerializeComponent<BwatEngine::TransformComponent>(const TransformComponent &transform, json &js)
+        ret["Type"] = "collider";
+
+        //TODO: Update when collider branch merged
+        return ret;
+    }
+
+    template<>
+    json SerializeComponent<ScriptComponent>(const ScriptComponent& script)
+    {
+        json ret;
+
+        ret["Type"] = "script";
+        ret["Data"]["path"] = script.scriptPath;
+
+        return ret;
+    }
+
+    template<>
+    json SerializeComponent<AudioSourceComponent>(const AudioSourceComponent& audio)
+    {
+        json ret;
+
+        ret["Type"] = "audio";
+        ret["Data"]["path"] = (audio.source.audioData) ? audio.source.audioData->path : "";
+        ret["Data"]["gain"] = audio.source.GetGain();
+        ret["Data"]["pitch"] = audio.source.GetPitch();
+        ret["Data"]["looping"] = audio.source.GetLooping();
+
+        return ret;
+    }
+
+    template<>
+    json SerializeComponent<LightComponent>(const LightComponent& light)
+    {
+        json ret;
+
+        ret["Type"] = "light";
+        ret["Data"]["lightType"] = light.typeoflight;
+
+        ret["Data"]["position"] = SerializeVector3f(light.position);
+        ret["Data"]["direction"] = SerializeVector3f(light.direction);
+
+        ret["Data"]["ambient"] = SerializeVector3f(light.ambient);
+        ret["Data"]["diffuse"] = SerializeVector3f(light.diffuse);
+        ret["Data"]["specular"] = SerializeVector3f(light.specular);
+
+        ret["Data"]["constant"] = light.constant;
+        ret["Data"]["linear"] = light.linear;
+        ret["Data"]["quadratic"] = light.quadratic;
+
+        if (light.typeoflight == Rendering::Spot)
         {
-            js +=
-                json{
-                    "transform",
-                    {
-                        SerializeVector3f("position", transform.position),
-                        SerializeVector4f("rotation", transform.rotation.GetSafeNormalized()),
-                        SerializeVector3f("scale", transform.scale)
-                    }
-                };
+            ret["Data"]["cutoff"] = light.cutoff;
+            ret["Data"]["outerCutoff"] = light.outerCutoff;
         }
 
-
-
-        template<>
-        void SerializeComponent<CameraComponent>(const CameraComponent &camera, json &js) {
-            if (camera.isOrtho) {
-                js +=
-                        json{
-                                "camera",
-                                {
-                                    {"ortho", camera.isOrtho},
-                                    {"left", camera.left},
-                                    {"right", camera.right},
-                                    {"bottom", camera.bottom},
-                                    {"top", camera.top},
-                                    {"near", camera.near},
-                                    {"far", camera.far}
-                                }
-
-                        };
-            } else {
-                js +=
-                        json{
-                                "camera",
-                                {
-                                    {"ortho", camera.isOrtho},
-                                    {"fov", camera.fov},
-                                    {"aspect", camera.aspect},
-                                    {"near", camera.near},
-                                    {"far", camera.far}
-                                }
-
-                        };
-            }
-
-        }
-
-        template<>
-        void SerializeComponent<PlayerComponent>(const PlayerComponent &player, json &js) {
-            js += json{"player"};
-        }
-
-        template<>
-        void SerializeComponent<BwatEngine::RigidBodyComponent>(const RigidBodyComponent &rigidBody, json &js) {
-            js +=
-                    json{
-                            "rigidBody",
-                            {
-                                 {"static", rigidBody.GetIsStatic()},
-                                 {"mass", rigidBody.GetMass()},
-                                 SerializeVector3f("velocity", rigidBody.GetVelocity())
-                            }
-            };
-        }
-
-        template<>
-        void SerializeComponent<RenderableComponent>(const RenderableComponent &renderable, json &js) {
-
-            json temp;
-            for (int i = 0; i < renderable.materials.size(); i++)
-            {
-                Rendering::Material *material = renderable.materials[i];
-                if (material->diffuse != nullptr) {
-                    temp["materials"]["material"][i] +=
-                            json{
-                                    {"diffuse", material->diffuse->path}
-                            };
-                }
-
-                if (material->specular != nullptr) {
-                    temp["materials"]["material"][i] +=
-                            json{
-                                    {"specular", material->specular->path}
-                            };
-                }
-
-                if (material->normal != nullptr){
-                    temp["materials"]["material"][i] +=
-                            json{
-                                    {"normal", material->normal->path}
-                            };
-                }
-
-                temp["materials"]["material"][i] +=
-                        json {
-                                {"isColor", material->isColor},
-                            SerializeVector4f("color", material->color)
-                        };
-
-
-            }
-
-            if (renderable.model != nullptr) {
-                temp["model"] = renderable.model->modelPath;
-
-            }
-
-
-            js += json{"renderable", temp};
-
-
-        }
-
-        template<>
-        void SerializeComponent<ColliderComponent>(const ColliderComponent &collider, json &js) {
-
-            auto *shape = collider.collider->GetShape();
-            auto *mats = collider.collider->GetMaterial();
-            js +=
-                    json{
-                            "collider",
-                            {
-                                    {"shape",
-                                     ""}, //TODO: add the correct Shape when the collider class allow us to get it
-                                    {"materials",
-                                     {
-                                             {"dynamic", mats->getDynamicFriction()},
-                                             {"static", mats->getStaticFriction()},
-                                             {"restitution", mats->getRestitution()}
-                                     }
-                                    }
-                            }
-                    };
-        }
-
-        template<>
-        void SerializeComponent<ScriptComponent>(const ScriptComponent &script, json &js)
-        {
-            js +=
-                json{
-                    "script",
-                    {
-                        {"path", script.scriptPath}
-                    }
-                };
-        }
-
-        template<>
-        void SerializeComponent<AudioSourceComponent>(const AudioSourceComponent &audio, json &js)
-        {
-            js +=
-                json{
-                    "audio",
-                    {
-                        {"path", (audio.source.audioData) ? audio.source.audioData->path : ""},
-                        {"gain", audio.source.GetGain()},
-                        {"pitch", audio.source.GetPitch()},
-                        {"looping", audio.source.GetLooping()},
-                    }
-                };
-        }
-
-        template<>
-        void SerializeComponent<LightComponent>(const LightComponent &light, json &js)
-        {
-            if (light.typeoflight == Rendering::Spot)
-            {
-                js +=
-                    json{
-                        "light",
-                        {
-                                SerializeVector3f("position", light.position),
-                                SerializeVector3f("direction", light.direction),
-                                SerializeVector3f("ambient", light.ambient),
-                                SerializeVector3f("diffuse", light.diffuse),
-                                SerializeVector3f("specular", light.specular),
-                                {"constant", light.constant},
-                                {"linear", light.linear},
-                                {"quadratic", light.quadratic},
-                                {"cutoff", light.cutoff},
-                                {"outerCutoff", light.outerCutoff},
-                                {"typeOfLight", light.typeoflight}
-                        }
-                    };
-            }
-            else
-            {
-                js +=
-                        json{
-                                "light",
-                                {
-                                        SerializeVector3f("position", light.position),
-                                        SerializeVector3f("direction", light.direction),
-                                        SerializeVector3f("ambient", light.ambient),
-                                        SerializeVector3f("diffuse", light.diffuse),
-                                        SerializeVector3f("specular", light.specular),
-                                        {"constant", light.constant},
-                                        {"linear", light.linear},
-                                        {"quadratic", light.quadratic},
-                                        {"typeOfLight", light.typeoflight}
-                                }
-                        };
-            }
-        }
-
-        template<>
-        void SerializeComponent<DataComponent>(const DataComponent &data, json &js)
-        {
-            js += json{
-                        "data",
-                        {
-                            {"name", data.name}
-                        }
-                    };
-        }
-
-        
-        template<>
-        void SerializeComponent<AnimatorComponent>(const AnimatorComponent& animator, json& js)
-        {
-            json animatorTmp;
-
-            for (int i = 0; i < animator.names.size(); i++)
-            {
-                animatorTmp["names"][i] = json
-                {
-                    {"name" , animator.names[i]}
-                };
-
-                animatorTmp["animations"][i] = json
-                {
-                    {"animation", animator.animations[i].path}
-                };
-            }
-
-            if (animator.model) 
-                animatorTmp["model"] = animator.model->modelPath;
-
-            js += json{ "animator", animatorTmp };
-        }
-
-        //*********************** LOAD FUNCTIONS ***********************//
-        template<typename T>
-        void Load(EntityID entityId, const json &componentData) {
-
-        }
-
-        template<>
-        void Load<TransformComponent>(EntityID entityId, const json &componentData) {
-
-            auto &coordinator = Coordinator::GetInstance();
-            json position = componentData.at("position");
-            json rotation = componentData.at("rotation");
-            json scale = componentData.at("scale");
-
-            coordinator.AddComponent<TransformComponent>(entityId,
-                                                         Math::Vec3f{position.at("X").get<float>(),
-                                                                     position.at("Y").get<float>(),
-                                                                     position.at("Z").get<float>()},
-                                                         Math::Quatf {rotation.at("W").get<float>(),
-                                                                     rotation.at("X").get<float>(),
-                                                                     rotation.at("Y").get<float>(),
-                                                                     rotation.at("Z").get<float>()},
-                                                         Math::Vec3f{scale.at("X").get<float>(),
-                                                                     scale.at("Y").get<float>(),
-                                                                     scale.at("Z").get<float>()});
-
-        }
-
-        template<>
-        void Load<CameraComponent>(EntityID entityId, const json &componentData) {
-            auto &coordinator = Coordinator::GetInstance();
-            bool isOrtho = componentData.at("ortho").get<bool>();
-            if (isOrtho) {
-                coordinator.AddComponent<CameraComponent>(entityId,
-                                                          {isOrtho,
-                                                           componentData.at("near").get<float>(),
-                                                           componentData.at("far").get<float>(),
-                                                           componentData.at("left").get<float>(),
-                                                           componentData.at("right").get<float>(),
-                                                           componentData.at("top").get<float>(),
-                                                           componentData.at("bottom").get<float>(),
-                                                           0,
-                                                           0,
-                                                          });
-            } else {
-                coordinator.AddComponent<CameraComponent>(entityId,
-                                                          {isOrtho,
-                                                           componentData.at("near").get<float>(),
-                                                           componentData.at("far").get<float>(),
-                                                           0,
-                                                           0,
-                                                           0,
-                                                           0,
-                                                           componentData.at("aspect").get<float>(),
-                                                           componentData.at("fov").get<float>(),
-                                                          });
-            }
-
-        }
-
-        template<>
-        void Load<PlayerComponent>(EntityID entityId, const json &componentData) {
-            auto &coordinator = Coordinator::GetInstance();
-            coordinator.AddComponent<PlayerComponent>(entityId, {});
-        }
-
-        template<>
-        void Load<RigidBodyComponent>(EntityID entityId, const json &componentData) {
-            auto &coordinator = Coordinator::GetInstance();
-            auto& eTransform = coordinator.GetComponent<TransformComponent>(entityId);
-            coordinator.AddComponent<RigidBodyComponent>(entityId, eTransform, true);
-            auto& rigidBody = coordinator.GetComponent<RigidBodyComponent>(entityId);
-
-            auto velocity = componentData.at("velocity");
-
-            rigidBody.SetStatic(componentData.at("static").get<bool>());
-            rigidBody.SetMass(componentData.at("mass").get<float>());
-            rigidBody.SetVelocity(Math::Vec3f{
-                velocity.at("X").get<float>(),
-                velocity.at("Y").get<float>(),
-                velocity.at("Z").get<float>(),
-            });
-        }
-
-        template<>
-        void Load<RenderableComponent>(EntityID entityId, const json &componentData) {
-            auto &coordinator = Coordinator::GetInstance();
-            auto *resourceMan = ResourceManager::Instance();
-            coordinator.AddComponent<RenderableComponent>(entityId, {});
-            auto &renderable = coordinator.GetComponent<RenderableComponent>(entityId);
-            if (componentData.contains("model"))
-                renderable.model = resourceMan->GetOrLoadModel(componentData.at("model").get<std::string>());
-
-            if (componentData.contains("materials")) {
-                json materials = componentData.at("materials").at("material");
-                for (int i = 0; i < materials.size(); i++)
-                {
-
-                    auto newMaterial = new Rendering::Material;
-                    for (int j = 0; j < materials[i].size(); j++)
-                    {
-                        if (materials[i][j].contains("diffuse"))
-                            newMaterial->diffuse = resourceMan->GetOrLoadTexture(materials[i][j].at("diffuse").get<std::string>(),
-                                                                                 Rendering::Texture::Type::E_DIFFUSE);
-                        if (materials[i][j].contains("specular"))
-                            newMaterial->specular =  resourceMan->GetOrLoadTexture(materials[i][j].at("specular").get<std::string>(),
-                                                                                   Rendering::Texture::Type::E_DIFFUSE);
-                        if (materials[i][j].contains("normal"))
-                            newMaterial->normal = resourceMan->GetOrLoadTexture(materials[i][j].at("normal").get<std::string>(),
-                                                                                Rendering::Texture::Type::E_NORMAL);
-                        if (materials[i][j].contains("isColor"))
-                        {
-                            newMaterial->isColor = materials[i][j].at("isColor").get<bool>();
-                            if (newMaterial->isColor)
-                            {
-                                json color = materials[i][j].at("color");
-                                newMaterial->color.X = color.at("X").get<float>();
-                                newMaterial->color.Y = color.at("Y").get<float>();
-                                newMaterial->color.Z = color.at("Z").get<float>();
-                                newMaterial->color.W = color.at("W").get<float>();
-                            }
-
-
-                        }
-
-                    }
-                    renderable.materials.push_back(newMaterial);
-                }
-
-            }
-
-        }
-
-        template<>
-        void Load<ColliderComponent>(EntityID entityId, const json &componentData) {
-            auto &coordinator = Coordinator::GetInstance();
-            json mats = componentData.at("materials");
-            auto eTransform = coordinator.GetComponent<TransformComponent>(entityId);
-            coordinator.AddComponent<ColliderComponent>(entityId, eTransform.scale);
-            auto& collider = coordinator.GetComponent<ColliderComponent>(entityId);
-            collider.collider->SetFriction(mats.at("static").get<float>());
-
-        }
-
-        template<>
-        void Load<ScriptComponent>(EntityID entityId, const json &componentData)
-        {
-            auto &coordinator = Coordinator::GetInstance();
-            coordinator.AddComponent<ScriptComponent>(entityId, {componentData.at("path").get<std::string>()});
-        }
-
-        template<>
-        void Load<AudioSourceComponent>(EntityID entityId, const json &componentData)
-        {
-            auto& resourceManager = *ResourceManager::Instance();
-            auto& coordinator = Coordinator::GetInstance();
-            coordinator.AddComponent<AudioSourceComponent>(entityId);
-            auto& audioComponent = coordinator.GetComponent<AudioSourceComponent>(entityId);
-            audioComponent.source.audioData = resourceManager.GetOrLoadAudio(componentData.at("path").get<std::string>());
-            audioComponent.source.Refresh();
-            audioComponent.source.SetGain(componentData.at("gain").get<float>());
-            audioComponent.source.SetPitch(componentData.at("pitch").get<float>());
-            audioComponent.source.SetLooping(componentData.at("looping").get<bool>());
-        }
-
-        template<>
-        void Load<LightComponent>(EntityID entityId, const json &componentData)
-        {
-            auto &coordinator = Coordinator::GetInstance();
-            json position = componentData.at("position");
-            json direction = componentData.at("direction");
-            json ambient = componentData.at("ambient");
-            json diffuse = componentData.at("diffuse");
-            json specular = componentData.at("specular");
-            Rendering::Light myLight;
-            myLight.position = {position.at("X").get<float>(), position.at("Y").get<float>(), position.at("Z").get<float>()};
-            myLight.direction = {direction.at("X").get<float>(), direction.at("Y").get<float>(), direction.at("Z").get<float>()};
-            myLight.ambient = {ambient.at("X").get<float>(), ambient.at("Y").get<float>(), ambient.at("Z").get<float>()};
-            myLight.diffuse = {diffuse.at("X").get<float>(), diffuse.at("Y").get<float>(), diffuse.at("Z").get<float>()};
-            myLight.specular = {specular.at("X").get<float>(), specular.at("Y").get<float>(), specular.at("Z").get<float>()};
-            myLight.typeoflight = componentData.at("typeOfLight").get<Rendering::TYPE_LIGHT>();
-            myLight.constant = componentData.at("constant").get<float>();
-            myLight.linear = componentData.at("linear").get<float>();
-            myLight.quadratic = componentData.at("quadratic").get<float>();
-            if (myLight.typeoflight == Rendering::Spot)
-            {
-                myLight.cutoff = componentData.at("cutoff").get<float>();
-                myLight.outerCutoff = componentData.at("outerCutoff").get<float>();
-            }
-
-            coordinator.AddComponent<LightComponent>(entityId, myLight);
-
-        }
-
-        template<>
-        void Load<DataComponent>(EntityID entityId, const json &componentData)
-        {
-            auto &coordinator = Coordinator::GetInstance();
-            coordinator.AddComponent<DataComponent>(entityId, componentData.at("name").get<std::string>());
-        }
-
-        template<>
-        void Load<AnimatorComponent>(EntityID entityId, const json& componentData)
-        {
-            auto& coordinator = Coordinator::GetInstance();
-            auto* resourceMan = ResourceManager::Instance();
-            
-            AnimatorComponent animatorComp;
-
-            if (componentData.contains("model"))
-                animatorComp.model = resourceMan->GetOrLoadModel(componentData.at("model").get<std::string>());
-
-            if (!componentData.contains("names"))
-            {
-                coordinator.AddComponent<AnimatorComponent>(entityId, animatorComp);
-                return;
-            }
-
-            json names = componentData.at("names");
-            json animationPath = componentData.at("animations");
-            
-            // load name and animation
-            for (int i = 0; i < names.size(); i++)
-            {
-                animatorComp.SetNewAnimation(names[i].at("name").get<std::string>(), animationPath[i].at("animation").get<std::string>());
-            }
-
-            coordinator.AddComponent<AnimatorComponent>(entityId, animatorComp );
-        }
-
-
-    }; // namespace Serializable
-}; // namespace BwatEngine
-
-#endif
+        return ret;
+    }
+
+    template<>
+    json SerializeComponent<DataComponent>(const DataComponent& data)
+    {
+        json ret;
+
+        ret["Type"] = "data";
+        ret["Data"]["name"] = data.name;
+
+        return ret;
+    }
+
+    template<typename T>
+    void SaveComponent(EntityID entityId, json& js)
+    {
+        auto &coordinator = Coordinator::GetInstance();
+        if (coordinator.HaveComponent<T>(entityId))
+            js += SerializeComponent<T>(coordinator.GetComponent<T>(entityId));
+    }
+}; // namespace BwatEngine::Serialization
+
+#endif //ENGINE_SERIALIZECOMPONENT_HPP

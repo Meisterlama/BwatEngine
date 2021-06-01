@@ -285,7 +285,7 @@ bool FileDialog::SceneLoad(FileDialog::FileInfoStruct file)
 {
     if (file.ext == ".bwat")
     {
-        BwatEngine::Serializer::LoadScene(file.filePath.c_str());
+        BwatEngine::Serialization::LoadScene(file.filePath.c_str());
         return true;
     }
     else

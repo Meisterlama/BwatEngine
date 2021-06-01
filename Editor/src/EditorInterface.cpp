@@ -52,11 +52,11 @@ EditorInterface::EditorInterface(BwatEngine::Engine* _engine)
 
     if (currentScene != "")
     {
-        BwatEngine::Serializer::LoadScene(currentScene.c_str());
+        BwatEngine::Serialization::LoadScene(currentScene.c_str());
     }
     else
     {
-        BwatEngine::Serializer::LoadScene("SampleScene.bwat");
+        BwatEngine::Serialization::LoadScene("SampleScene.bwat");
     }
 }
 
@@ -112,7 +112,9 @@ void EditorInterface::HandleEditorShortcuts()
     {
         if (InputHandler::GetKeyboardDown(KEY_D))
         {
-            SetEditedEntity(coordinator.DuplicateEntity(editedEntity));
+            using namespace BwatEngine;
+            EntityID duplicatedEntity = Serialization::LoadEntity(Serialization::SaveEntity(GetEditedEntity()));
+            SetEditedEntity(duplicatedEntity);
         }
     }
     else
@@ -369,7 +371,7 @@ void EditorInterface::ToolbarUI()
     {
         if (!engine->isPlaying)
         {
-            BwatEngine::Serializer::SaveScene("temp.txt");
+            BwatEngine::Serialization::SaveScene("temp.txt");
             engine->isPlaying = true;
             playImage = BwatEngine::ResourceManager::Instance()->GetOrLoadTexture("Assets/image/pause.png",Rendering::Texture::Type::E_DIFFUSE)->id;
             ImGui::GetStyle().Colors[ImGuiCol_WindowBg] = ImVec4(235.f / 255.f, 69.f / 255.f, 17.f / 255.f, 1.f);
@@ -379,7 +381,7 @@ void EditorInterface::ToolbarUI()
         else
         {
             engine->isPlaying = false;
-            BwatEngine::Serializer::LoadScene("temp.txt");
+            BwatEngine::Serialization::LoadScene("temp.txt");
             playImage = BwatEngine::ResourceManager::Instance()->GetOrLoadTexture("Assets/image/play.png",Rendering::Texture::Type::E_DIFFUSE)->id;
             ImGui::GetStyle().Colors[ImGuiCol_WindowBg] = ImVec4(60.f  / 255.f, 60.f  / 255.f, 60.f  / 255.f, 1.f);
         }
