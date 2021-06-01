@@ -8,7 +8,7 @@ using namespace BwatEngine;
 
 Collider::Collider(Collider::ShapeType shapeType)
 {
-    material = Physic::GetPhysics()->createMaterial(0, 0, 0);
+    material = Physic::GetPhysics()->createMaterial(0.5f, 0.5f, 0.05f);
     SetShape(shapeType);
 }
 
@@ -82,7 +82,17 @@ void Collider::SetBoxExtent(Math::Vec3f halfExtents)
     shape->setGeometry(physx::PxBoxGeometry{ ToPxVec3(halfExtents) });
 }
 
+Math::Vec3f Collider::GetBoxExtent() const
+{
+    return ToBwatVec3(shape->getGeometry().box().halfExtents);
+}
+
 void Collider::SetSphereRadius(float radius)
 {
     shape->setGeometry(physx::PxSphereGeometry{radius});
+}
+
+float Collider::GetSphereRadius() const
+{
+    return shape->getGeometry().sphere().radius;
 }

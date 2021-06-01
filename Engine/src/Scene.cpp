@@ -20,7 +20,6 @@
 #include "ECS/Systems/SoundSystem.hpp"
 #include "ECS/Systems/ScriptSystem.hpp"
 #include "ECS/Systems/PostProcessSystem.hpp"
-#include "ECS/Systems/ColliderDrawSystem.hpp"
 
 #include "ResourceManager/ResourceManager.hpp"
 #include "Serialization/Serialization.hpp"
@@ -74,8 +73,4 @@ Scene::Scene(Window& window)
     // =================================== POST PROCESS =================================== //
     coordinator.RegisterSystem<PostProcessSystem>(window.GetWidth(), window.GetHeight());
     coordinator.SetSystemConfig<PostProcessSystem>(SystemConfig{SystemConfig::ManualUpdate});
-
-    coordinator.RegisterSystem<ColliderDrawSystem>();
-    coordinator.SetSystemSignature<ColliderDrawSystem, TransformComponent, ColliderComponent>();
-    coordinator.SetSystemConfig<ColliderDrawSystem>(SystemConfig{SystemConfig::ManualUpdate});
 }

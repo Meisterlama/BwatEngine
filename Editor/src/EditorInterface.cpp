@@ -23,6 +23,7 @@
 #include "ECS/Systems/ColliderDrawSystem.hpp"
 #include "ECS/Coordinator.hpp"
 #include "ECS/Components/TransformComponent.hpp"
+#include "ECS/Components/ColliderComponent.hpp"
 
 #include "Inputs/InputHandler.hpp"
 #include "json.hpp"
@@ -36,6 +37,7 @@ EditorInterface::EditorInterface(BwatEngine::Engine* _engine)
     : gameViewFramebuffer(_engine->GetWindow().GetWidth(), _engine->GetWindow().GetHeight())
     , sceneViewFramebuffer(_engine->GetWindow().GetWidth(), _engine->GetWindow().GetHeight())
 {
+    using namespace BwatEngine;
     engine = _engine;
     widgets.clear();
     widgets.shrink_to_fit();
@@ -51,13 +53,19 @@ EditorInterface::EditorInterface(BwatEngine::Engine* _engine)
 
     LoadData("editor.conf");
 
+    auto& coordinator = Coordinator::GetInstance();
+
+    coordinator.RegisterSystem<ColliderDrawSystem>();
+    coordinator.SetSystemSignature<ColliderDrawSystem, TransformComponent, ColliderComponent>();
+    coordinator.SetSystemConfig<ColliderDrawSystem>(SystemConfig{SystemConfig::ManualUpdate});
+
     if (currentScene != "")
     {
-        BwatEngine::Serializer::LoadScene(currentScene.c_str());
+        Serializer::LoadScene(currentScene.c_str());
     }
     else
     {
-        BwatEngine::Serializer::LoadScene("SampleScene.bwat");
+        Serializer::LoadScene("SampleScene.bwat");
     }
 }
 

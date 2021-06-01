@@ -37,8 +37,8 @@ namespace BwatEngine
         }
 		physx::PxShape* GetShape() const { return shape; }
         physx::PxMaterial* GetMaterial() const { return material; }
-        bool GetIsTrigger() { return isTrigger; }
-        ShapeType GetShapeType() { return shapeType; }
+        bool GetIsTrigger() const { return isTrigger; }
+        ShapeType GetShapeType() const { return shapeType; }
         static const char* GetShapeTypeName(ShapeType _shapeType);
         void SetFriction(float friction);
         void SetIsTrigger(bool _isTrigger);
@@ -47,7 +47,8 @@ namespace BwatEngine
         void SetBoxExtent(Math::Vec3f halfExtents);
         void SetSphereRadius(float radius);
 
-        void SetScale(Math::Vec3f scale);
+        Math::Vec3f GetBoxExtent() const;
+        float GetSphereRadius() const;
     };
 }
 
