@@ -12,8 +12,7 @@
 #include "WidgetProperties.hpp"
 #include "WidgetLog.hpp"
 #include "WidgetPostProcess.hpp"
-#include "WidgetSavePicker.hpp"
-#include "WidgetLoadPicker.hpp"
+#include "WidgetLoadSave.hpp"
 
 #include "imgui_internal.h"
 #include "Serialization/Serialization.hpp"
@@ -50,13 +49,9 @@ EditorInterface::EditorInterface(BwatEngine::Engine* _engine)
 
     LoadData("editor.conf");
 
-    if (currentScene != "")
+    if (!currentScene.empty())
     {
         BwatEngine::Serialization::LoadScene(currentScene.c_str());
-    }
-    else
-    {
-        BwatEngine::Serialization::LoadScene("SampleScene.bwat");
     }
 }
 
@@ -167,9 +162,11 @@ void EditorInterface::Initialise()
     widgets.emplace_back(std::make_unique<WidgetLog>(this)); // 5 = Log
     widgets.emplace_back(std::make_unique<WidgetShader>(this)); // 6 = Shader
     widgets.emplace_back(std::make_unique<WidgetPostProcess>(this)); // 7 = PostProcess
-    widgets.emplace_back(std::make_unique<WidgetSavePicker>(this)); // 8 = Save
-    widgets.emplace_back(std::make_unique<WidgetLoadPicker>(this)); // 9 = Load
 
+    {
+        widgets.emplace_back(std::make_unique<WidgetLoadSave>(this)); // 9 = Load
+        widgetLoadSave = static_cast<WidgetLoadSave*>(widgets.back().get());
+    }
     {
         widgets.emplace_back(std::make_unique<WidgetProperties>(this)); // Properties always last
         widgetProperties = static_cast<WidgetProperties*>(widgets.back().get());
@@ -418,5 +415,5 @@ void EditorInterface::LoadData(const char* path)
     file >> js;
 
 
-    currentScene = js.at("current scene").get<std::string>().c_str();
+    currentScene = js.at("current scene").get<std::string>();
 }

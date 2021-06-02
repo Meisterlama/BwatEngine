@@ -9,6 +9,7 @@ namespace BwatEngine::Serialization {
 
     void SaveScene(const char* path)
     {
+        LogInfo("[Serial] Saving scene at path: %s", path);
         std::ofstream file(path);
 
         json js;
@@ -25,11 +26,12 @@ namespace BwatEngine::Serialization {
 
     void LoadScene(const char* path)
     {
+        LogInfo("[Serial] Loading scene at path: %s", path);
         std::ifstream file(path);
 
         if (!file)
         {
-            LogError("No File at path :%s", path);
+            LogError("[Serial] No File at path :%s", path);
             return;
         }
 
@@ -110,7 +112,7 @@ namespace BwatEngine::Serialization {
 
         if (!file)
         {
-            LogError("No File at path :%s", path);
+            LogError("[Serial] No File at path :%s", path);
             return 0;
         }
 

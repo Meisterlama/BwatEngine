@@ -9,6 +9,11 @@
 #include "Audio/Sound.hpp"
 #include "ECS/Components/ScriptComponent.hpp"
 
+#include <filesystem>
+#include <set>
+
+namespace fs = std::filesystem;
+
 
 namespace BwatEngine
 {
@@ -31,36 +36,36 @@ namespace BwatEngine
 
         /* All the load resources to call and stock on the good map */
 
-        Rendering::Model* LoadModel(std::string path);
+        Rendering::Model* LoadModel(fs::path path);
 
-        Rendering::Texture *LoadTexture(std::string path);
+        Rendering::Texture *LoadTexture(fs::path path);
 
-        Audio::AudioData* LoadAudio(std::string path);
+        Audio::AudioData* LoadAudio(fs::path path);
 
-        std::string* LoadScript(std::string path);
+        std::string* LoadScript(fs::path path);
 
 
         /* ************************************************************************* */
 
         /* get the resources with the type */
 
-        Rendering::Model* GetOrLoadModel(std::string path);
+        Rendering::Model* GetOrLoadModel(fs::path path);
 
-        Rendering::Texture* GetOrLoadTexture(std::string path, Rendering::Texture::Type type = Rendering::Texture::Type::E_DIFFUSE);
+        Rendering::Texture* GetOrLoadTexture(fs::path path, Rendering::Texture::Type type = Rendering::Texture::Type::E_DIFFUSE);
 
-        Audio::AudioData* GetOrLoadAudio(std::string path);
+        Audio::AudioData* GetOrLoadAudio(fs::path path);
 
-        std::string* GetOrLoadScript(std::string path);
+        std::string* GetOrLoadScript(fs::path path);
 
         /* ************************************************************************* */
 
-        std::vector<std::string>& GetModelList();
+        std::set<fs::path>& GetModelList();
 
-        std::vector<std::string>& GetTextList();
+        std::set<fs::path>& GetTextList();
 
-        std::vector<std::string>& GetAudioList();
+        std::set<fs::path>& GetAudioList();
 
-        std::vector<std::string>& GetScriptList();
+        std::set<fs::path>& GetScriptList();
 
     private:
 
@@ -81,19 +86,19 @@ namespace BwatEngine
         std::unordered_map<std::string, std::unique_ptr<std::string>> scripts;
 
         /* ************************************************************************* */
-        std::vector<std::string> modelsKey;
+        std::set<fs::path> modelsKey;
         void UpdateModelsKey();
-        std::vector<std::string> texturesKey;
+        std::set<fs::path> texturesKey;
         void UpdateTexturesKey();
-        std::vector<std::string> audioKey;
+        std::set<fs::path> audioKey;
         void UpdateAudioKey();
-        std::vector<std::string> scriptKey;
+        std::set<fs::path> scriptKey;
         void UpdateScriptKey();
 
-        Rendering::Texture* GetTexture(std::string path);
-        Rendering::Model* GetModel(std::string path);
-        Audio::AudioData* GetAudio(std::string path);
-        std::string* GetScript(std::string path);
+        Rendering::Texture* GetTexture(fs::path path);
+        Rendering::Model* GetModel(fs::path path);
+        Audio::AudioData* GetAudio(fs::path path);
+        std::string* GetScript(fs::path path);
 
 
     };
