@@ -5,7 +5,7 @@ using namespace Rendering;
 ShadowMapping::ShadowMapping(int width, int  height) : width(width), height(height)
 {
 
-    shader = { "Assets/Shaders/shadowmapping.vs", "Assets/Shaders/shadowmapping.fs" };
+    shader = { "EngineAssets/Shaders/shadowmapping.vs", "EngineAssets/Shaders/shadowmapping.fs" };
 
     glGenFramebuffers(1, &depthMapFbo);
 

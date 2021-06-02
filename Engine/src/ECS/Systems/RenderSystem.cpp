@@ -12,7 +12,7 @@ using namespace BwatEngine;
 
 RenderSystem::RenderSystem(int width, int height) : displayWidth(width), displayHeight(height)
 {
-    shader = { "Assets/Shaders/colors.vs", "Assets/Shaders/multilight.fs" };
+    shader = { "EngineAssets/Shaders/colors.vs", "EngineAssets/Shaders/multilight.fs" };
 
     cubeMap.faces = {
         "Assets/cubemap/left.png",

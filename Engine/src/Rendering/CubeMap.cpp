@@ -61,7 +61,7 @@ void CubeMap::Init()
     glEnableVertexAttribArray(0);
     glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 3 * sizeof(float), (void*)0);
 
-    shader = { "Assets/Shaders/cubeMap.vs", "Assets/Shaders/cubeMap.fs" };
+    shader = { "EngineAssets/Shaders/cubeMap.vs", "EngineAssets/Shaders/cubeMap.fs" };
 }
 
 void CubeMap::LoadCubeMap()

@@ -15,7 +15,7 @@ PostProcessSystem::PostProcessSystem(int width, int height)
 	blur.SetEnabled(false);
 	gammaCor.SetEnabled(true);
 
-	shaderPP = { "Assets/Shaders/PostProcess/postProcess.vs", "Assets/Shaders/PostProcess/basicPP.fs" };
+	shaderPP = { "EngineAssets/Shaders/PostProcess/postProcess.vs", "EngineAssets/Shaders/PostProcess/basicPP.fs" };
 }
 
 void PostProcessSystem::Begin()
