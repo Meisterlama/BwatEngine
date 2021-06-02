@@ -2,6 +2,14 @@
 
 namespace BwatEngine
 {
+    json SerializeVector2f(const Math::Vec2f &vector)
+    {
+        json ret;
+        ret["X"] = vector.X;
+        ret["Y"] = vector.Y;
+        return ret;
+    }
+
     json SerializeVector3f(const Math::Vec3f &vector)
     {
         json ret;
@@ -31,6 +39,14 @@ namespace BwatEngine
         return ret;
     }
 
+    Math::Vec2f DeserializeVector2f(const json &js)
+    {
+        return Math::Vec2f {
+            js["X"].get<float>(),
+            js["Y"].get<float>(),
+        };
+    }
+
     Math::Vec3f DeserializeVector3f(const json &js)
     {
         return Math::Vec3f {
@@ -49,7 +65,6 @@ namespace BwatEngine
                 js["W"].get<float>(),
         };
     }
-
     Math::Quatf DeserializeQuatf(const json &js)
     {
         return Math::Quatf {

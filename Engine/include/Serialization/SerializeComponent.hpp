@@ -76,6 +76,9 @@ namespace BwatEngine::Serialization
 
         return ret;
     }
+#define SERIALIZE_TEXTURE(texture)                    \
+    if (material.texture)                             \
+        materialJs[#texture] = material.texture->path
 
     template<>
     json SerializeComponent<RenderableComponent>(const RenderableComponent& renderable)
@@ -90,12 +93,21 @@ namespace BwatEngine::Serialization
 
             Rendering::Material& material = *(renderable.materials[i]);
 
-            materialJs["diffuse"] = (material.diffuse) ? material.diffuse->path : "";
-            materialJs["specular"] = (material.specular) ? material.specular->path : "";
-            materialJs["normal"] = (material.normal) ? material.normal->path : "";
+            materialJs["isTextured"] = material.isTextured;
 
-            materialJs["isColor"] = material.isColor;
-            materialJs["color"] = SerializeVector4f(material.color);
+            SERIALIZE_TEXTURE(albedoMap);
+            SERIALIZE_TEXTURE(normal);
+            SERIALIZE_TEXTURE(metallicMap);
+            SERIALIZE_TEXTURE(roughnessMap);
+            SERIALIZE_TEXTURE(aoMap);
+
+            materialJs["albedo"] = SerializeVector3f(material.albedo);
+            materialJs["metallic"] = material.metallic;
+            materialJs["roughness"] = material.roughness;
+            materialJs["ao"] = material.ao;
+
+            materialJs["isTilling"] = material.isTilling;
+            materialJs["tile"] = SerializeVector2f(material.tile);
 
             ret["Data"]["materials"].push_back(materialJs);
         }
@@ -104,6 +116,7 @@ namespace BwatEngine::Serialization
 
         return ret;
     }
+#undef SERIALIZE_TEXTURE
 
     template<>
     json SerializeComponent<ColliderComponent>(const ColliderComponent& collider)

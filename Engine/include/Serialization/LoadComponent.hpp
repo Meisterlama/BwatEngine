@@ -47,6 +47,10 @@ namespace BwatEngine::Serialization
         rigidBody.SetVelocity(DeserializeVector3f(componentData["velocity"]));
     }
 
+#define DESERIALIZE_TEXTURE(texture)                                      \
+    if (material.contains(#texture))                                  \
+        newMaterial->texture = resMan->GetOrLoadTexture(material[#texture])
+
     template<>
     void Load<RenderableComponent>(EntityID entityId, const json &componentData)
     {
@@ -65,23 +69,28 @@ namespace BwatEngine::Serialization
             {
                 auto newMaterial = new Rendering::Material;
 
-                if (material.contains("diffuse"))
-                    newMaterial->diffuse = resMan->GetOrLoadTexture(material["diffuse"]);
+                newMaterial->isTextured = material["isTextured"];
 
-                if (material.contains("specular"))
-                    newMaterial->specular = resMan->GetOrLoadTexture(material["specular"]);
+                DESERIALIZE_TEXTURE(albedoMap);
+                DESERIALIZE_TEXTURE(normal);
+                DESERIALIZE_TEXTURE(metallicMap);
+                DESERIALIZE_TEXTURE(roughnessMap);
+                DESERIALIZE_TEXTURE(aoMap);
 
-                if (material.contains("normal"))
-                    newMaterial->normal = resMan->GetOrLoadTexture(material["normal"]);
+                newMaterial->albedo = DeserializeVector3f(material["albedo"]);
+                newMaterial->metallic = material["metallic"];
+                newMaterial->roughness = material["roughness"];
+                newMaterial->ao = material["ao"];
 
-                newMaterial->isColor = material["isColor"];
-                newMaterial->color = DeserializeVector4f(material["color"]);
+                newMaterial->isTilling = material["isTilling"];
+                newMaterial->tile = DeserializeVector2f(material["tile"]);
 
                 renderable.materials.push_back(newMaterial);
             }
         }
-
     }
+
+#undef DESERIALIZE_TEXTURE
 
     template<>
     void Load<ColliderComponent>(EntityID entityId, const json &componentData)
