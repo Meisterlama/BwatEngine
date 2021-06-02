@@ -22,6 +22,7 @@ namespace BwatEngine
 }
 
 class WidgetProperties;
+class WidgetLoadSave;
 
 class  EditorInterface
 {
@@ -46,13 +47,14 @@ public:
 
     BwatEngine::Engine* engine = nullptr;
     WidgetProperties* widgetProperties = nullptr;
+    WidgetLoadSave* widgetLoadSave = nullptr;
     static ImGuizmo::MODE guizmoMode;
     static ImGuizmo::OPERATION guizmoOperation;
     Rendering::FrameBufferObject gameViewFramebuffer;
     Rendering::FrameBufferObject sceneViewFramebuffer;
     void ApplyStyle() const;
 
-    std::string currentScene = "";
+    fs::path currentScene;
 
 
     BwatEngine::CameraComponent camera;

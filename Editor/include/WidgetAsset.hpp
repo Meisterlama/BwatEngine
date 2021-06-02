@@ -9,7 +9,7 @@ class WidgetAsset : public Widget
 public:
     WidgetAsset(EditorInterface* editor);
 
-    FileDialog assetDirectory;
+    FileDialog fileDialog;
 
     void TickVisible() override;
 };

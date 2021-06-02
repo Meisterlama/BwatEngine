@@ -81,8 +81,4 @@ Scene::Scene(Window& window)
     coordinator.RegisterSystem<AnimationSystem>();
     coordinator.SetSystemSignature<AnimationSystem, RenderableComponent, AnimatorComponent>();
     coordinator.SetSystemConfig<AnimationSystem>(SystemConfig{ SystemConfig::AlwaysUpdate });
-    
-
-    Serializer::LoadScene("sampleScene.bwat");
-
 }

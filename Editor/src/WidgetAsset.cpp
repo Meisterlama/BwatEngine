@@ -6,12 +6,39 @@ WidgetAsset::WidgetAsset(EditorInterface *editor) : Widget(editor)
 {
     title = "Assets";
     flags |= ImGuiWindowFlags_NoScrollbar;
-
-    assetDirectory.OpenDialog("","Assets");
-    assetDirectory.isAssetWidget = true;
+    fileDialog.allowMultipleSelection = true;
 }
 
 void WidgetAsset::TickVisible()
 {
-    assetDirectory.ShowList();
+    fileDialog.DrawFileList();
+
+    if(fileDialog.BeginFileDialogHeader())
+    {
+        if(ImGui::Button("Load Selected Assets"))
+        {
+            for (auto& path : fileDialog.GetPathSelection())
+            {
+                if (is_directory(path))
+                    continue;
+
+                fs::path ext = path.extension();
+                fs::path relPath = fileDialog.GetRelativePath(path);
+
+                if (ext == ".obj" || ext == ".fbx")
+                {
+                    BwatEngine::ResourceManager::Instance()->LoadModel(relPath);
+                }
+                else if (ext == ".png" || ext == ".jpg")
+                {
+                    BwatEngine::ResourceManager::Instance()->GetOrLoadTexture(relPath);
+                }
+                else if (ext == ".wav")
+                {
+                    BwatEngine::ResourceManager::Instance()->LoadAudio(relPath);
+                }
+            }
+        }
+    }
+    fileDialog.EndFileDialogHeader();
 }
