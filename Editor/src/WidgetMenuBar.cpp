@@ -1,4 +1,5 @@
 #include "WidgetMenuBar.hpp"
+#include "WidgetLoadSave.hpp"
 #include "EditorInterface.hpp"
 #include "Engine.hpp"
 #include "Serialization/Serialization.hpp"
@@ -71,15 +72,16 @@ void WidgetMenuBar::MenuFile()
         enabled = true;
     if (ImGui::MenuItem("Save Scene", 0, false, enabled))
     {
-        BwatEngine::Serializer::SaveScene(editor->currentScene.c_str());
+        BwatEngine::Serialization::SaveScene(editor->currentScene.c_str());
     }
     if (ImGui::MenuItem("Save as..."))
     {
-        editor->GetWidgetList().at(8)->SetVisible(true);
+        editor->widgetLoadSave->Open(true);
     }
     if (ImGui::MenuItem("Load Scene"))
     {
-        editor->GetWidgetList().at(9)->SetVisible(true);
+        editor->widgetLoadSave->Open(false);
+
     }
 
     ImGui::Separator();

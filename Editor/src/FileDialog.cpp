@@ -1,220 +1,112 @@
 #include "FileDialog.hpp"
+
+#include <utility>
 #include "imgui.h"
+#include "imgui_stdlib.h"
 #include "ResourceManager/ResourceManager.hpp"
-#include "Serialization/Serialization.hpp"
+#include "Inputs/InputHandler.hpp"
 
-inline std::vector<std::string> SplitStringToVector(const std::string& text, char delimiter, bool pushEmpty)
+void FileDialog::OpenDirectory(fs::path directory)
 {
-    std::vector<std::string> arr;
-    if (!text.empty())
-    {
-        std::string::size_type start = 0;
-        std::string::size_type end = text.find(delimiter, start);
-        while (end != std::string::npos)
-        {
-            std::string token = text.substr(start, end - start);
-            if (!token.empty() || (token.empty() && pushEmpty))
-                arr.push_back(token);
-            start = end + 1;
-            end = text.find(delimiter, start);
-        }
-        std::string token = text.substr(start);
-        if (!token.empty() || (token.empty() && pushEmpty))
-            arr.push_back(token);
-    }
-    return arr;
-}
-
-FileDialog::FileDialog()
-{
-    showDialog = false;
-}
-
-void FileDialog::OpenDialog(const char *aFilters, const std::filesystem::path& aFilePathName)
-{
-    if (showDialog)
+    if (!is_directory(directory))
         return;
+    currentPath = std::move(directory);
+    currentPathStr = absolute(currentPath).string();
+    selectedPaths.clear();
+}
+void FileDialog::OpenParentDirectory()
+{
+    currentPath = absolute(currentPath).parent_path();
+    currentPathStr = absolute(currentPath).string();
+    selectedPaths.clear();
+}
 
-    if (!aFilePathName.empty())
+void FileDialog::SelectPath(fs::path path)
+{
+    ClearPathSelection();
+    selectedPaths.insert(path);
+}
+
+void FileDialog::AddSelectedPath(fs::path path)
+{
+    if (allowMultipleSelection)
     {
-        dlgPath = aFilePathName;
-        dlgDefaultFileName = aFilePathName.filename();
-        dlgDefaultEx = aFilePathName.extension();
+        selectedPaths.insert(path);
     }
     else
     {
-        dlgPath = ".";
-        dlgDefaultFileName = " ";
-        dlgDefaultEx.clear();
+        SelectPath(path);
     }
-
-    ParseFilters(aFilters);
-    SetSelectedFilterWithExt(dlgDefaultEx.string());
-    SetPath(dlgPath.string());
 }
 
-void FileDialog::ParseFilters(const char *aFilters)
+void FileDialog::ClearPathSelection()
 {
-    fileList.clear();
+    selectedPaths.clear();
+}
 
-    if (aFilters)
-        dlgFilters = aFilters;
-    else
-        dlgFilters.clear();
+const std::set<fs::path> &FileDialog::GetPathSelection()
+{
+    return selectedPaths;
+}
 
-    if (!dlgFilters.empty())
+std::set<fs::path> FileDialog::GetDirectoryEntries()
+{
+    return directoryFiles;
+}
+
+void FileDialog::ScanDirectory()
+{
+    directoryFiles.clear();
+
+    if (!exists(currentPath))
     {
-        bool currentFilterFound = false;
+        ImGui::Text("This directory doesn't exist");
+        return;
+    }
 
-        size_t nan = std::string::npos;
-        size_t p = 0, lp = 0;
+    for (auto &pathIter : fs::directory_iterator(currentPath))
+    {
+        if (!CheckFilters(pathIter.path()))
+            continue;
+        directoryFiles.insert(pathIter.path());
+    }
+}
 
-        while((p = dlgFilters.find_first_of("{,", p)) != nan)
+#define FILE_ICON(icon_path)                                                                        \
+ImGui::Image(reinterpret_cast<ImTextureID>(resMan.GetOrLoadTexture(icon_path)->id), ImVec2(20,20)); \
+ImGui::SameLine();
+
+
+void FileDialog::DrawFileList()
+{
+    using namespace BwatEngine;
+    ResourceManager &resMan = *ResourceManager::Instance();
+    ScanDirectory();
+
+
+    if (BeginFileDialogHeader())
+    {
+        if (ImGui::Button("^"))
         {
-            FilterInfoStruct infos;
-
-            if (dlgFilters[p] == '{')
-            {
-                infos.filter = dlgFilters.substr(lp, p - lp);
-                p++;
-                lp = dlgFilters.find('}', p);
-
-                if (lp != nan)
-                {
-                    std::string fs = dlgFilters.substr(p, lp - p);
-                    auto arr = SplitStringToVector(fs, ',', false);
-
-                    for (auto a : arr)
-                    {
-                        infos.collectionFilters.emplace(a);
-                    }
-                }
-                p = lp + 1;
-            }
-            else
-            {
-                infos.filter = dlgFilters.substr(lp, p - lp);
-                p++;
-            }
-
-            if (!currentFilterFound && selectedFilter.filter == infos.filter)
-            {
-                currentFilterFound = true;
-                selectedFilter = infos;
-            }
-
-            lp = p;
-
-            if (!infos.Empty())
-                filterList.emplace_back(infos);
+            OpenParentDirectory();
         }
-
-        std::string token = dlgFilters.substr(lp);
-
-        if (!token.empty())
+        ImGui::SameLine();
+        if (ImGui::InputText("##Current path", &currentPathStr, ImGuiInputTextFlags_EnterReturnsTrue))
         {
-            FilterInfoStruct infos;
-            infos.filter = token;
-            filterList.emplace_back(infos);
+            OpenDirectory(currentPathStr);
         }
-
-        if (!currentFilterFound)
-            if (!filterList.empty())
-                selectedFilter = *filterList.begin();
+        ImGui::SameLine();
+        ImGui::InputText("##filter", &filter);
     }
-}
+    EndFileDialogHeader();
 
-void FileDialog::SetSelectedFilterWithExt(const std::string &aFilter)
-{
-    if (!filterList.empty())
+    ImGui::BeginChild("##FILE_LIST");
+
+    for (auto &path : directoryFiles)
     {
-        if (!aFilter.empty())
+        if (is_directory(path))
         {
-            for (const auto& infos : filterList)
-            {
-                if (aFilter == infos.filter)
-                {
-                    selectedFilter = infos;
-                }
-                else
-                {
-                    for (const auto& filter : infos.collectionFilters)
-                    {
-                        if (aFilter == filter)
-                        {
-                            selectedFilter = infos;
-                        }
-                    }
-                }
-            }
-        }
-
-        if (selectedFilter.Empty())
-            selectedFilter = *filterList.begin();
-    }
-}
-
-void FileDialog::SetPath(const std::string &aPath)
-{
-    currentPath = aPath;
-    fileList.clear();
-    if (dlgFilters.empty())
-        dlgDefaultFileName = ".";
-    ScanDir(currentPath.string());
-}
-
-void FileDialog::ScanDir(const std::string &aPath)
-{
-
-    std::filesystem::path path = aPath;
-
-    if (!aPath.empty())
-    {
-        fileList.clear();
-
-        for (auto& p: std::filesystem::directory_iterator(aPath))
-        {
-
-            FileInfoStruct infos;
-
-            infos.filePath = p.path().string();
-            infos.fileName = p.path().filename().string();
-
-            if (infos.fileName != ".")
-            {
-                infos.ext = p.path().extension().string();
-
-                if (!dlgFilters.empty())
-                {
-                    if (!selectedFilter.Empty() &&
-                        (!selectedFilter.FilterExist(infos.ext) && selectedFilter.filter != ".*"))
-                    {
-                        continue;
-                    }
-                }
-            }
-
-            fileList.push_back(infos);
-        }
-    }
-}
-
-void FileDialog::ShowList()
-{
-    std::filesystem::path dir = currentPath;
-    if (ImGui::Button("Back"))
-    {
-        OpenDialog("", dir.parent_path());
-    }
-
-    bool selected = false;
-
-    for (int i = 0; i < fileList.size(); i++)
-    {
-        ImGui::PushID(fileList[i].fileName.c_str());
-        if (fileList[i].fileName == loadFile.fileName)
-        {
-            selected = true;
+            FILE_ICON("Assets/image/folder.png")
         }
         else
             selected = false;
@@ -229,66 +121,65 @@ void FileDialog::ShowList()
         ImGui::SameLine();
 
         if(ImGui::Selectable(fileList[i].fileName.c_str(), selected))
+
         {
-            if (fileList[i].ext == "")
+            FILE_ICON("Assets/image/file.png")
+        }
+        if (ImGui::Selectable(path.filename().c_str(), selectedPaths.find(path) != selectedPaths.cend()))
+        {
+            if (InputHandler::GetKeyboard(KEY_LEFT_SHIFT) && !is_directory(path))
             {
-                OpenDialog("", fileList[i].filePath);
+                AddSelectedPath(path);
             }
             else
             {
-                LoadOnResources(fileList[i]);
+                SelectPath(path);
             }
         }
-
-        if (isAssetWidget)
+        if (ImGui::IsItemHovered() && ImGui::IsMouseDoubleClicked(0))
         {
-            if (ImGui::BeginPopupContextItem("LoadResourceContextMenu"))
-            {
-                if (ImGui::MenuItem("Load Resources"))
-                {
-                    LoadOnResources(fileList[i]);
-                    LoadResources(fileList[i]);
-                }
-                ImGui::EndPopup();
-            }
+            OpenDirectory(path);
         }
-        ImGui::PopID();
     }
+    ImGui::EndChild();
 }
-
-void FileDialog::LoadOnResources(FileInfoStruct file)
+FileDialog::FileDialog()
 {
-    loadFile = file;
+    OpenDirectory(fs::current_path());
 }
-
-void FileDialog::LoadResources(FileDialog::FileInfoStruct file)
+void FileDialog::SetFilter(fs::path _filter)
 {
-    if (file.ext == ".obj" || file.ext == ".fbx")
-    {
-        BwatEngine::ResourceManager::Instance()->LoadModel(file.filePath);
-    }
-    else if (file.ext == ".png" || file.ext == ".jpg")
-    {
-        BwatEngine::ResourceManager::Instance()->GetOrLoadTexture(file.filePath);
-    }
-    else if (file.ext == ".wav")
-    {
-        BwatEngine::ResourceManager::Instance()->LoadAudio(file.filePath);
-    }
-    else
-    {
-        LogError("[EDITOR] Cannot load unsupported file format.");
-    }
+    filter = std::move(_filter);
 }
-
-bool FileDialog::SceneLoad(FileDialog::FileInfoStruct file)
+bool FileDialog::CheckFilters(fs::path path)
 {
-    if (file.ext == ".bwat")
-    {
-        BwatEngine::Serializer::LoadScene(file.filePath.c_str());
+    if (is_directory(path))
         return true;
-    }
-    else
-        return false;
+    if (filter.empty())
+        return true;
+    if (path.stem().string() == filter)
+        return true;
+    if (path.extension().string() == filter)
+        return true;
+    return false;
 }
-
+bool FileDialog::BeginFileDialogHeader()
+{
+    return ImGui::BeginChild("##FILEDIALOG_HEADER", ImVec2(0, 60));
+}
+void FileDialog::EndFileDialogHeader()
+{
+    ImGui::EndChild();
+}
+fs::path FileDialog::GetCurrentPath()
+{
+    return currentPath;
+}
+fs::path FileDialog::GetWorkingPath()
+{
+    return fs::current_path();
+}
+fs::path FileDialog::GetRelativePath(fs::path path)
+{
+    return fs::relative(path, GetWorkingPath());
+}

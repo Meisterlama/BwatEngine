@@ -13,9 +13,9 @@ namespace Rendering
 
         Animator(Animation* Animation = nullptr);
 
-        void Animator::UpdateAnimation(float dt);
-        void Animator::PlayAnimation(Animation* pAnimation);
-        void Animator::CalculateBoneTransform(const AssimpNodeData* node, Math::Mat4f parentTransform);
+        void UpdateAnimation(float dt);
+        void PlayAnimation(Animation* pAnimation);
+        void CalculateBoneTransform(const AssimpNodeData* node, Math::Mat4f parentTransform);
 
         const std::vector<Math::Mat4f>& GetFinalBoneMatrices() { return finalBoneMatrices; };
         void ClearAnimation();

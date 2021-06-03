@@ -5,55 +5,44 @@
 #include <set>
 #include <vector>
 
+namespace fs = std::filesystem;
+
 class FileDialog
 {
 public:
-    struct FileInfoStruct
-    {
-        std::string filePath = "";
-        std::string fileName = "";
-        std::string ext = "";
-    };
-
     FileDialog();
+    void OpenDirectory(fs::path directory);
+    void OpenParentDirectory();
+    void ScanDirectory();
 
-    void OpenDialog(const char* aFilters, const std::filesystem::path& aFilePathName);
-    void ShowList();
-    bool SceneLoad(FileInfoStruct file);
+    void SelectPath(fs::path path);
+    void AddSelectedPath(fs::path path);
+    void ClearPathSelection();
 
-    FileInfoStruct loadFile;
-    std::filesystem::path currentPath;
-    bool isAssetWidget = false;
+    void SetFilter(fs::path filter);
+    fs::path GetCurrentPath();
+    fs::path GetWorkingPath();
+    fs::path GetRelativePath(fs::path path);
 
+    void DrawFileList();
+
+    bool BeginFileDialogHeader();
+    void EndFileDialogHeader();
+
+    const std::set<fs::path>& GetPathSelection();
+    std::set<fs::path> GetDirectoryEntries();
+
+    bool allowMultipleSelection = false;
 private:
-    struct FilterInfoStruct
-    {
-        std::string filter;
-        std::set<std::string> collectionFilters;
-        void Clear() { filter.clear(); collectionFilters.clear(); }
-        bool Empty() const { return filter.empty() && collectionFilters.empty(); }
-        bool FilterExist(const std::string& aFilter) { return filter == aFilter || collectionFilters.find(aFilter) != collectionFilters.end(); }
-    };
 
-    std::vector<FileInfoStruct> fileList;
-    std::vector<FileInfoStruct> filteredFileList;
-    std::set<std::string> selectedFileNames;
-    std::string name;
-    bool showDialog = false;
-    std::vector<FilterInfoStruct> filterList;
-    FilterInfoStruct selectedFilter;
-    std::string dlgFilters{};
-    std::filesystem::path dlgPath;
-    std::filesystem::path dlgDefaultFileName;
-    std::filesystem::path dlgDefaultEx;
+    bool CheckFilters(fs::path path);
 
-protected:
-    void ParseFilters(const char* aFilters);
-    void SetSelectedFilterWithExt(const std::string& aFilter);
-    void SetPath(const std::string& aPath);
-    void ScanDir(const std::string& aPath);
-    void LoadOnResources(FileInfoStruct file);
+    std::set<fs::path> selectedPaths;
+    fs::path currentPath;
+    std::string currentPathStr;
+    std::set<fs::path> directoryFiles;
 
-    void LoadResources(FileInfoStruct file);
+    std::string filter;
+
 };
 #endif //BWATENGINE_FILEDIALOG_H

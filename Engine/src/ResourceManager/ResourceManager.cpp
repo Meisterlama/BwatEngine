@@ -13,28 +13,28 @@ namespace BwatEngine
         return instance;
     }
 
-    Rendering::Model* ResourceManager::LoadModel(std::string path)
+    Rendering::Model* ResourceManager::LoadModel(fs::path path)
     {
         auto it = models.emplace(path, std::make_unique<Rendering::Model>(path));
         dirtyModels = true;
         return it.first->second.get();
     }
 
-    Rendering::Texture * ResourceManager::LoadTexture(std::string path)
+    Rendering::Texture * ResourceManager::LoadTexture(fs::path path)
     {
         auto it = textures.emplace(path, std::make_unique<Rendering::Texture>(path));
         dirtyTextures = true;
         return it.first->second.get();
     }
 
-    Audio::AudioData *ResourceManager::LoadAudio(std::string path)
+    Audio::AudioData *ResourceManager::LoadAudio(fs::path path)
     {
         auto it = audio.emplace(path, std::make_unique<Audio::AudioData>(path));
         dirtyAudio = true;
         return it.first->second.get();
     }
 
-    std::string* ResourceManager::LoadScript(std::string path)
+    std::string* ResourceManager::LoadScript(fs::path path)
     {
 
         std::ifstream file (path, std::ios::binary | std::ios::ate);
@@ -57,52 +57,60 @@ namespace BwatEngine
         return it.first->second.get();
     }
 
-    Rendering::Model* ResourceManager::GetOrLoadModel(std::string path)
+    Rendering::Model* ResourceManager::GetOrLoadModel(fs::path path)
     {
+        if (path.empty())
+            return nullptr;
         Rendering::Model* res = ResourceManager::Instance()->GetModel(path);
         return (res != nullptr) ? res : LoadModel(path);
     }
 
-    Rendering::Texture* ResourceManager::GetOrLoadTexture(std::string path, Rendering::Texture::Type type)
+    Rendering::Texture* ResourceManager::GetOrLoadTexture(fs::path path, Rendering::Texture::Type type)
     {
+        if (path.empty())
+            return nullptr;
         Rendering::Texture* res = ResourceManager::Instance()->GetTexture(path);
         return (res != nullptr) ? res : LoadTexture(path);
     }
 
-    Audio::AudioData *ResourceManager::GetOrLoadAudio(std::string path)
+    Audio::AudioData *ResourceManager::GetOrLoadAudio(fs::path path)
     {
+        if (path.empty())
+            return nullptr;
         Audio::AudioData* res = ResourceManager::Instance()->GetAudio(path);
         return (res != nullptr) ? res : LoadAudio(path);
     }
 
-    std::string* ResourceManager::GetOrLoadScript(std::string path)
+    std::string* ResourceManager::GetOrLoadScript(fs::path path)
     {
+        if (path.empty())
+            return nullptr;
         std::string* res = ResourceManager::Instance()->GetScript(path);
         return (res != nullptr) ? res : LoadScript(path);
     }
 
-    std::vector<std::string>& ResourceManager::GetModelList()
+    std::set<fs::path>& ResourceManager::GetModelList()
     {
         if(dirtyModels)
             UpdateModelsKey();
         return modelsKey;
     }
 
-    std::vector<std::string>& ResourceManager::GetTextList()
+    std::set<fs::path>& ResourceManager::GetTextList()
     {
         if (dirtyTextures)
             UpdateTexturesKey();
         return texturesKey;
     }
 
-    std::vector<std::string> &ResourceManager::GetAudioList()
+    std::set<fs::path> &ResourceManager::GetAudioList()
     {
         if (dirtyAudio)
             UpdateAudioKey();
         return audioKey;
     }
 
-    std::vector<std::string>& ResourceManager::GetScriptList()
+    std::set<fs::path>& ResourceManager::GetScriptList()
     {
         if (dirtyScript)
             UpdateScriptKey();
@@ -114,7 +122,7 @@ namespace BwatEngine
         modelsKey.clear();
         for (auto &it : models)
         {
-            modelsKey.push_back(it.first);
+            modelsKey.insert(it.first);
         }
         dirtyModels = false;
     }
@@ -124,7 +132,7 @@ namespace BwatEngine
         texturesKey.clear();
         for (auto &it : textures)
         {
-            texturesKey.push_back(it.first);
+            texturesKey.insert(it.first);
         }
         dirtyTextures = false;
     }
@@ -134,7 +142,7 @@ namespace BwatEngine
         audioKey.clear();
         for (auto &it : audio)
         {
-            audioKey.push_back(it.first);
+            audioKey.insert(it.first);
         }
 
         dirtyAudio = false;
@@ -145,13 +153,13 @@ namespace BwatEngine
         scriptKey.clear();
         for(auto &it : scripts)
         {
-            scriptKey.push_back(it.first);
+            scriptKey.insert(it.first);
         }
 
         dirtyScript = false;
     }
 
-    Rendering::Texture* ResourceManager::GetTexture(std::string path)
+    Rendering::Texture* ResourceManager::GetTexture(fs::path path)
     {
         auto it = textures.find(path);
         if (it != textures.cend())
@@ -160,7 +168,7 @@ namespace BwatEngine
         return nullptr;
     }
 
-    Rendering::Model* ResourceManager::GetModel(std::string path)
+    Rendering::Model* ResourceManager::GetModel(fs::path path)
     {
         auto it = models.find(path);
         if (it != models.cend())
@@ -169,7 +177,7 @@ namespace BwatEngine
         return nullptr;
     }
 
-    Audio::AudioData *ResourceManager::GetAudio(std::string path)
+    Audio::AudioData *ResourceManager::GetAudio(fs::path path)
     {
         auto it = audio.find(path);
         if (it != audio.cend())
@@ -178,7 +186,7 @@ namespace BwatEngine
         return nullptr;
     }
 
-    std::string* ResourceManager::GetScript(std::string path)
+    std::string* ResourceManager::GetScript(fs::path path)
     {
         auto it = scripts.find(path);
         if (it != scripts.cend())
