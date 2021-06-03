@@ -23,6 +23,7 @@ namespace BwatEngine
 
 class WidgetProperties;
 class WidgetLoadSave;
+class WidgetPrefab;
 
 class  EditorInterface
 {
@@ -48,6 +49,7 @@ public:
     BwatEngine::Engine* engine = nullptr;
     WidgetProperties* widgetProperties = nullptr;
     WidgetLoadSave* widgetLoadSave = nullptr;
+    WidgetPrefab* widgetPrefab = nullptr;
     static ImGuizmo::MODE guizmoMode;
     static ImGuizmo::OPERATION guizmoOperation;
     Rendering::FrameBufferObject gameViewFramebuffer;

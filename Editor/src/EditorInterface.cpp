@@ -13,8 +13,10 @@
 #include "WidgetLog.hpp"
 #include "WidgetPostProcess.hpp"
 #include "WidgetLoadSave.hpp"
+#include "WidgetPrefab.hpp"
 
 #include "imgui_internal.h"
+#define SERIALIZATION_IMPLEMENTATION
 #include "Serialization/Serialization.hpp"
 #include "Time.hpp"
 #include "Engine.hpp"
@@ -59,6 +61,7 @@ EditorInterface::EditorInterface(BwatEngine::Engine* _engine)
 
 void EditorInterface::Close()
 {
+    std::remove("EngineAssets/temp.bwat");
     ImGui_ImplGlfw_Shutdown();
     ImGui_ImplOpenGL3_Shutdown();
     ImGui::DestroyContext();
@@ -168,6 +171,10 @@ void EditorInterface::Initialise()
     {
         widgets.emplace_back(std::make_unique<WidgetLoadSave>(this)); // 9 = Load
         widgetLoadSave = static_cast<WidgetLoadSave*>(widgets.back().get());
+    }
+    {
+        widgets.emplace_back(std::make_unique<WidgetPrefab>(this)); // 9 = Load
+        widgetPrefab = static_cast<WidgetPrefab*>(widgets.back().get());
     }
     {
         widgets.emplace_back(std::make_unique<WidgetProperties>(this)); // Properties always last
@@ -370,7 +377,7 @@ void EditorInterface::ToolbarUI()
     {
         if (!engine->isPlaying)
         {
-            BwatEngine::Serialization::SaveScene("temp.txt");
+            BwatEngine::Serialization::SaveScene("EngineAssets/temp.bwat");
             engine->isPlaying = true;
             playImage = BwatEngine::ResourceManager::Instance()->GetOrLoadTexture("Assets/image/pause.png",Rendering::Texture::Type::E_DIFFUSE)->id;
             ImGui::GetStyle().Colors[ImGuiCol_WindowBg] = ImVec4(235.f / 255.f, 69.f / 255.f, 17.f / 255.f, 1.f);
@@ -380,7 +387,7 @@ void EditorInterface::ToolbarUI()
         else
         {
             engine->isPlaying = false;
-            BwatEngine::Serialization::LoadScene("temp.txt");
+            BwatEngine::Serialization::LoadScene("EngineAssets/temp.bwat");
             playImage = BwatEngine::ResourceManager::Instance()->GetOrLoadTexture("Assets/image/play.png",Rendering::Texture::Type::E_DIFFUSE)->id;
             ImGui::GetStyle().Colors[ImGuiCol_WindowBg] = ImVec4(60.f  / 255.f, 60.f  / 255.f, 60.f  / 255.f, 1.f);
         }

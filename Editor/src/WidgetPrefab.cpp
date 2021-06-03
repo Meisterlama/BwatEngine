@@ -1,19 +1,19 @@
-#include "WidgetLoadSave.hpp"
+#include "WidgetPrefab.hpp"
 #include "Serialization/Serialization.hpp"
 #include "EditorInterface.hpp"
 #include "imgui_stdlib.h"
 #include "Math/Common.hpp"
 
-WidgetLoadSave::WidgetLoadSave(EditorInterface *editor) : Widget(editor)
+WidgetPrefab::WidgetPrefab(EditorInterface *editor) : Widget(editor)
 {
-    title = "Scene Serialization";
+    title = "Prefab Handler";
     flags |= ImGuiWindowFlags_NoScrollbar;
 
-    fileDialog.SetFilter(".bwat");
+    fileDialog.SetFilter(".prefabwat");
     SetVisible(false);
 }
 
-void WidgetLoadSave::TickVisible()
+void WidgetPrefab::TickVisible()
 {
     fileDialog.DrawFileList();
 
@@ -21,12 +21,12 @@ void WidgetLoadSave::TickVisible()
     {
         if (saving)
         {
-            buttonText = "Save Scene";
+            buttonText = "Save Prefab";
             textReadOnly = false;
         }
         else
         {
-            buttonText = "Load Scene";
+            buttonText = "Load Prefab";
             textReadOnly = true;
         }
 
@@ -49,12 +49,11 @@ void WidgetLoadSave::TickVisible()
             fs::path filePath = (fileDialog.GetCurrentPath() / fileName);
             if (saving)
             {
-                BwatEngine::Serialization::SaveScene(filePath.c_str());
+                BwatEngine::Serialization::SavePrefab((selectedEntity != 0) ? selectedEntity : editor->GetEditedEntity(), filePath);
             }
             else
             {
-                BwatEngine::Serialization::LoadScene(filePath.c_str());
-                editor->currentScene = filePath;
+                editor->SetEditedEntity(BwatEngine::Serialization::LoadPrefab(filePath));
             }
 
             isVisible = false;
@@ -62,10 +61,11 @@ void WidgetLoadSave::TickVisible()
     }
     fileDialog.EndFileDialogHeader();
 }
-void WidgetLoadSave::Open(bool _saving)
+void WidgetPrefab::Open(bool _saving, EntityID _selectedEntity)
 {
     saving = _saving;
-    fileDialog.SetFilter(".bwat");
+    fileDialog.SetFilter(".prefabwat");
     isVisible = true;
+    selectedEntity = _selectedEntity;
 }
 

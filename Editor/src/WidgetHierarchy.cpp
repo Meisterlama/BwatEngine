@@ -7,6 +7,7 @@
 #include "imgui_internal.h"
 #include "ECS/Coordinator.hpp"
 #include "Serialization/Serialization.hpp"
+#include "WidgetPrefab.hpp"
 
 WidgetHierarchy::WidgetHierarchy(EditorInterface *editor) : Widget(editor)
 {
@@ -57,7 +58,7 @@ void WidgetHierarchy::ShowEntity(BwatEngine::EntityID entity)
         if (ImGui::MenuItem("Save Prefab"))
         {
             using namespace BwatEngine;
-            Serialization::SavePrefab(editor->GetEditedEntity(), "Assets/camera.prefabwat");
+            editor->widgetPrefab->Open(true, entity);
         }
         ImGui::EndPopup();
     }
@@ -89,9 +90,7 @@ void WidgetHierarchy::TickVisible()
         }
         if (ImGui::MenuItem("Load Prefab"))
         {
-            using namespace BwatEngine;
-            EntityID prefab = Serialization::LoadPrefab("Assets/camera.prefabwat");
-            editor->SetEditedEntity(prefab);
+            editor->widgetPrefab->Open(false);
         }
         ImGui::EndPopup();
     }
