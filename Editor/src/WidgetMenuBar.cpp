@@ -99,6 +99,10 @@ void WidgetMenuBar::MenuOption()
         {
             editor->ApplyStyle();
         }
+        if (ImGui::MenuItem("Bwat Smooth"))
+        {
+            editor->ApplyStyle(false);
+        }
         ImGui::EndMenu();
     }
 }

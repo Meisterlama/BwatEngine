@@ -50,7 +50,7 @@ public:
     static ImGuizmo::OPERATION guizmoOperation;
     Rendering::FrameBufferObject gameViewFramebuffer;
     Rendering::FrameBufferObject sceneViewFramebuffer;
-    void ApplyStyle() const;
+    void ApplyStyle(bool isBasic = true) const;
 
     std::string currentScene = "";
 
@@ -59,8 +59,8 @@ public:
     BwatEngine::TransformComponent cameraTransform;
     BwatEngine::Math::Vec3f rotation{};
 
-
     bool cursorLocked = false;
+
 private:
     void BeginWindow();
 
@@ -69,7 +69,8 @@ private:
     std::vector<std::unique_ptr<Widget>> widgets;
     bool initialised = false;
     bool editorBegun = false;
-    const float toolBarSize = 45.f;
+    const float toolBarSize = 50.f;
+    ImFont* font = nullptr;
 
     void HandleEditorShortcuts();
 };
