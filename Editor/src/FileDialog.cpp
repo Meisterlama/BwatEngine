@@ -220,11 +220,11 @@ void FileDialog::ShowList()
             selected = false;
 
         if (fileList[i].ext == "")
-            ImGui::Image(reinterpret_cast<ImTextureID>(BwatEngine::ResourceManager::Instance()->GetOrLoadTexture("Assets/image/folder.png",Rendering::Texture::Type::E_DIFFUSE)->id), ImVec2(20, 20));
+            ImGui::Image(reinterpret_cast<ImTextureID>(BwatEngine::ResourceManager::Instance()->GetOrLoadTexture("EngineAssets/Images/folder.png",Rendering::Texture::Type::E_DIFFUSE)->id), ImVec2(20, 20));
         else if (fileList[i].ext == ".jpg" || fileList[i].ext == ".png")
-            ImGui::Image(reinterpret_cast<ImTextureID>(BwatEngine::ResourceManager::Instance()->GetOrLoadTexture("Assets/image/imageFile.png",Rendering::Texture::Type::E_DIFFUSE)->id), ImVec2(20, 20));
+            ImGui::Image(reinterpret_cast<ImTextureID>(BwatEngine::ResourceManager::Instance()->GetOrLoadTexture("EngineAssets/Images/imageFile.png",Rendering::Texture::Type::E_DIFFUSE)->id), ImVec2(20, 20));
         else
-            ImGui::Image(reinterpret_cast<ImTextureID>(BwatEngine::ResourceManager::Instance()->GetOrLoadTexture("Assets/image/file.png",Rendering::Texture::Type::E_DIFFUSE)->id), ImVec2(20, 20));
+            ImGui::Image(reinterpret_cast<ImTextureID>(BwatEngine::ResourceManager::Instance()->GetOrLoadTexture("EngineAssets/Images/file.png",Rendering::Texture::Type::E_DIFFUSE)->id), ImVec2(20, 20));
 
         ImGui::SameLine();
 

@@ -31,6 +31,15 @@ void WidgetMenuBar::TickAlways()
             MenuOption();
             ImGui::EndMenu();
         }
+
+        ImGui::SameLine(ImGui::GetWindowWidth() - 35);
+        
+        if (ImGui::ImageButton(reinterpret_cast<ImTextureID>(BwatEngine::ResourceManager::Instance()->GetOrLoadTexture("EngineAssets/Images/light.png")->id), ImVec2(15, 15)))
+        {
+            isClassicTheme = !isClassicTheme;
+            editor->ApplyStyle(isClassicTheme);
+        }
+
         ImGui::EndMainMenuBar();
     }
 }
