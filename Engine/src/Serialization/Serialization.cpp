@@ -7,45 +7,28 @@
 
 namespace BwatEngine::Serialization {
 
-    void SaveScene(const char* path)
+    void SaveScene(fs::path path)
     {
-        LogInfo("[Serial] Saving scene at path: %s", path);
+        LogInfo("[Serial] Saving scene at path: %s", path.c_str());
         std::ofstream file(path);
 
-        json js;
-        Coordinator &coordinator = Coordinator::GetInstance();
-        auto entities = coordinator.GetEntitiesList();
-
-        for (auto entity: entities)
-        {
-            js["Entity"].push_back(SaveEntity(entity));
-        }
-
-        file << js.dump(2) << std::endl;
+        file << SerializeScene().dump(2) << std::endl;
     }
 
-    void LoadScene(const char* path)
+    void LoadScene(fs::path path)
     {
-        LogInfo("[Serial] Loading scene at path: %s", path);
+        LogInfo("[Serial] Loading scene at path: %s", path.c_str());
         std::ifstream file(path);
 
         if (!file)
         {
-            LogError("[Serial] No File at path :%s", path);
+            LogError("[Serial] No File at path :%s", path.c_str());
             return;
         }
 
         json js;
         file >> js;
-
-        Coordinator &coordinator = Coordinator::GetInstance();
-        coordinator.DestroyAllEntities();
-        json& entities = js["Entity"];
-
-        for (auto &entity : entities)
-        {
-            LoadEntity(entity);
-        }
+        DeserializeScene(js);
     }
 
     json SaveEntity(EntityID entityID)
@@ -99,14 +82,14 @@ namespace BwatEngine::Serialization {
         return newEntity;
     }
 
-    void SavePrefab(EntityID entityID, const char *path)
+    void SavePrefab(EntityID entityID, fs::path path)
     {
         std::ofstream file(path);
 
         file << SaveEntity(entityID).dump(2);
     }
 
-    EntityID LoadPrefab(const char *path)
+    EntityID LoadPrefab(fs::path path)
     {
         std::ifstream file(path);
 
@@ -120,5 +103,29 @@ namespace BwatEngine::Serialization {
         file >> js;
 
         return LoadEntity(js);
+    }
+    json SerializeScene()
+    {
+        json js;
+        Coordinator &coordinator = Coordinator::GetInstance();
+        auto entities = coordinator.GetEntitiesList();
+
+        for (auto entity: entities)
+        {
+            js["Entity"].push_back(SaveEntity(entity));
+        }
+
+        return std::move(js);
+    }
+    void DeserializeScene(json sceneData)
+    {
+        Coordinator &coordinator = Coordinator::GetInstance();
+        coordinator.DestroyAllEntities();
+        json& entities = sceneData["Entity"];
+
+        for (auto &entity : entities)
+        {
+            LoadEntity(entity);
+        }
     }
 }

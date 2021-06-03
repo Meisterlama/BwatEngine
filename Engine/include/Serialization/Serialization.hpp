@@ -4,18 +4,24 @@
 #include "json.hpp"
 #include "ECS/ECS.hpp"
 
+#include "Serialization/SerializeComponent.hpp"
+#include "Serialization/LoadComponent.hpp"
+
 namespace BwatEngine::Serialization
 {
     using json = nlohmann::json;
 
-    void SaveScene(const char* path);
-    void LoadScene(const char* path);
+    void SaveScene(fs::path path);
+    void LoadScene(fs::path path);
+
+    json SerializeScene();
+    void DeserializeScene(json sceneData);
 
     json SaveEntity(EntityID entityID);
     EntityID LoadEntity(json entityData);
 
-    void SavePrefab(EntityID entityID, const char* path);
-    EntityID LoadPrefab(const char* path);
+    void SavePrefab(EntityID entityID, fs::path path);
+    EntityID LoadPrefab(fs::path path);
 };
 
 #endif //ENGINE_SERIALIZATION_HPP
