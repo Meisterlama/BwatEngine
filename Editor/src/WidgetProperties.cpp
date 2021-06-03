@@ -74,7 +74,7 @@ void CreateSelectedBox(Rendering::Texture*& component,int index, std::string nam
 
         for (auto &text : textList)
         {
-            std::string path = text;
+            std::string path = text.string();
             bool selected = (name == path);
 
             if (ImGui::Selectable(path.c_str(), selected))
@@ -108,7 +108,7 @@ void WidgetProperties::ShowComponent<BwatEngine::RenderableComponent>(BwatEngine
 
             for(auto &model : meshList)
             {
-                std::string path = model;
+                std::string path = model.string();
                 bool selected = (modelName == path);
                 if(ImGui::Selectable(path.c_str(), selected))
                 {
@@ -238,7 +238,7 @@ void WidgetProperties::ShowComponent<BwatEngine::AudioSourceComponent>(BwatEngin
 
         for(auto &audio : audioList)
         {
-            std::string path = audio;
+            std::string path = audio.string();
             bool selected = (audioSourcePath == path);
             if(ImGui::Selectable(path.c_str(), selected))
             {
@@ -523,11 +523,11 @@ void WidgetProperties::ShowComponent<BwatEngine::AnimatorComponent>(BwatEngine::
 
         for (auto& text : textList)
         {
-            std::string path = text;
+            std::string path = text.string();
             bool selected = (namemodel == path);
 
             if (ImGui::Selectable(path.c_str(), selected))
-                namemodel = text;
+                namemodel = text.string();
 
             if (selected)
                 ImGui::SetItemDefaultFocus();

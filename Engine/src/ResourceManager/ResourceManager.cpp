@@ -15,21 +15,21 @@ namespace BwatEngine
 
     Rendering::Model* ResourceManager::LoadModel(fs::path path)
     {
-        auto it = models.emplace(path, std::make_unique<Rendering::Model>(path));
+        auto it = models.emplace(path.string(), std::make_unique<Rendering::Model>(path.string()));
         dirtyModels = true;
         return it.first->second.get();
     }
 
     Rendering::Texture * ResourceManager::LoadTexture(fs::path path)
     {
-        auto it = textures.emplace(path, std::make_unique<Rendering::Texture>(path));
+        auto it = textures.emplace(path.string(), std::make_unique<Rendering::Texture>(path.string()));
         dirtyTextures = true;
         return it.first->second.get();
     }
 
     Audio::AudioData *ResourceManager::LoadAudio(fs::path path)
     {
-        auto it = audio.emplace(path, std::make_unique<Audio::AudioData>(path));
+        auto it = audio.emplace(path.string(), std::make_unique<Audio::AudioData>(path.string()));
         dirtyAudio = true;
         return it.first->second.get();
     }
@@ -48,7 +48,7 @@ namespace BwatEngine
         std::streamsize size = file.tellg();
         file.seekg(0, std::ios::beg);
 
-        auto it = scripts.emplace(path, std::make_unique<std::string>(size, '\0'));
+        auto it = scripts.emplace(path.string(), std::make_unique<std::string>(size, '\0'));
         std::string& strData  = *it.first->second;
         file.read(strData.data(), size);
         file.close();
@@ -161,7 +161,7 @@ namespace BwatEngine
 
     Rendering::Texture* ResourceManager::GetTexture(fs::path path)
     {
-        auto it = textures.find(path);
+        auto it = textures.find(path.string());
         if (it != textures.cend())
             return it->second.get();
 
@@ -170,7 +170,7 @@ namespace BwatEngine
 
     Rendering::Model* ResourceManager::GetModel(fs::path path)
     {
-        auto it = models.find(path);
+        auto it = models.find(path.string());
         if (it != models.cend())
             return it->second.get();
 
@@ -179,7 +179,7 @@ namespace BwatEngine
 
     Audio::AudioData *ResourceManager::GetAudio(fs::path path)
     {
-        auto it = audio.find(path);
+        auto it = audio.find(path.string());
         if (it != audio.cend())
             return it->second.get();
 
@@ -188,7 +188,7 @@ namespace BwatEngine
 
     std::string* ResourceManager::GetScript(fs::path path)
     {
-        auto it = scripts.find(path);
+        auto it = scripts.find(path.string());
         if (it != scripts.cend())
             return it->second.get();
 

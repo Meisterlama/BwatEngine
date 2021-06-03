@@ -52,7 +52,7 @@ EditorInterface::EditorInterface(BwatEngine::Engine* _engine)
 
     if (!currentScene.empty())
     {
-        BwatEngine::Serialization::LoadScene(currentScene.c_str());
+        BwatEngine::Serialization::LoadScene(currentScene.string().c_str());
     }
 
     camera.near = 0.0001f;
@@ -410,7 +410,7 @@ void EditorInterface::ToolbarUI()
         {
             engine->isPlaying = false;
           
-            BwatEngine::Serializer::LoadScene("temp.txt");
+            BwatEngine::Serialization::LoadScene("temp.txt");
             playImage = BwatEngine::ResourceManager::Instance()->GetOrLoadTexture("EngineAssets/Images/play.png",Rendering::Texture::Type::E_DIFFUSE)->id;
 
             ImGui::GetStyle().Colors[ImGuiCol_WindowBg] = ImVec4(60.f  / 255.f, 60.f  / 255.f, 60.f  / 255.f, 1.f);
@@ -425,7 +425,7 @@ void EditorInterface::SaveData(const char* path)
     std::ofstream file(path);
 
     json js;
-    std::string data = currentScene;
+    std::string data = currentScene.string();
 
     js =json
         {
