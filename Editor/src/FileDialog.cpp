@@ -106,13 +106,16 @@ void FileDialog::DrawFileList()
     {
         if (is_directory(path))
         {
-            FILE_ICON("Assets/image/folder.png")
+            FILE_ICON("EngineAssets/Images/folder.png")
         }
         else
         {
-            FILE_ICON("Assets/image/file.png")
+            FILE_ICON("EngineAssets/Images/file.png")
         }
-        if (ImGui::Selectable(path.filename().c_str(), selectedPaths.find(path) != selectedPaths.cend()))
+      
+        ImGui::SameLine();
+
+        if (ImGui::Selectable(path.filename().string().c_str(), selectedPaths.find(path) != selectedPaths.cend()))
         {
             if (InputHandler::GetKeyboard(KEY_LEFT_SHIFT) && !is_directory(path))
             {
@@ -130,14 +133,17 @@ void FileDialog::DrawFileList()
     }
     ImGui::EndChild();
 }
+
 FileDialog::FileDialog()
 {
     OpenDirectory(fs::current_path());
 }
+
 void FileDialog::SetFilter(fs::path _filter)
 {
-    filter = std::move(_filter);
+    filter = _filter.string();
 }
+
 bool FileDialog::CheckFilters(fs::path path)
 {
     if (is_directory(path))
@@ -154,18 +160,22 @@ bool FileDialog::BeginFileDialogHeader()
 {
     return ImGui::BeginChild("##FILEDIALOG_HEADER", ImVec2(0, 60));
 }
+
 void FileDialog::EndFileDialogHeader()
 {
     ImGui::EndChild();
 }
+
 fs::path FileDialog::GetCurrentPath()
 {
     return currentPath;
 }
+
 fs::path FileDialog::GetWorkingPath()
 {
     return fs::current_path();
 }
+
 fs::path FileDialog::GetRelativePath(fs::path path)
 {
     return fs::relative(path, GetWorkingPath());

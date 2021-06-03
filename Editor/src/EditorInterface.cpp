@@ -12,6 +12,7 @@
 #include "WidgetProperties.hpp"
 #include "WidgetLog.hpp"
 #include "WidgetPostProcess.hpp"
+#include "WidgetOption.hpp"
 #include "WidgetLoadSave.hpp"
 #include "WidgetPrefab.hpp"
 
@@ -53,7 +54,7 @@ EditorInterface::EditorInterface(BwatEngine::Engine* _engine)
 
     if (!currentScene.empty())
     {
-        BwatEngine::Serialization::LoadScene(currentScene.c_str());
+        BwatEngine::Serialization::LoadScene(currentScene.string().c_str());
     }
 
     camera.near = 0.0001f;
@@ -84,6 +85,10 @@ void EditorInterface::OnTick()
     ImGui_ImplGlfw_NewFrame();
     ImGui::NewFrame();
 
+    // pushfont to font 
+
+    ImGui::PushFont(font);
+
     if (!engine->isPlaying && !cursorLocked)
     {
         HandleEditorShortcuts();
@@ -96,6 +101,8 @@ void EditorInterface::OnTick()
     {
         widget->Tick();
     }
+
+    ImGui::PopFont();
 
     ImGui::End();
 
@@ -156,6 +163,10 @@ void EditorInterface::HandleEditorShortcuts()
 
 void EditorInterface::Initialise()
 {
+    ImGuiIO& io = ImGui::GetIO();
+    font = io.Fonts->AddFontFromFileTTF("EngineAssets/zrnic.ttf", 16.f);
+    io.Fonts->Build();
+
     ApplyStyle();
 
     //Push widget here
@@ -167,6 +178,8 @@ void EditorInterface::Initialise()
     widgets.emplace_back(std::make_unique<WidgetLog>(this)); // 5 = Log
     widgets.emplace_back(std::make_unique<WidgetShader>(this)); // 6 = Shader
     widgets.emplace_back(std::make_unique<WidgetPostProcess>(this)); // 7 = PostProcess
+    widgets.emplace_back(std::make_unique<WidgetOption>(this)); // 8 = Options
+
 
     {
         widgets.emplace_back(std::make_unique<WidgetLoadSave>(this)); // 9 = Load
@@ -182,16 +195,30 @@ void EditorInterface::Initialise()
     }
 }
 
-void EditorInterface::ApplyStyle() const
+void EditorInterface::ApplyStyle(bool isBasic) const
 {
     // Color settings
-    const auto color_text                   = ImVec4(1.f, 1.f, 1.f, 1.f);
+    const auto color_text                   = ImVec4(0.1f, 0.1f, 0.1f, 1.f);
     const auto color_text_disabled          = ImVec4(color_text.x, color_text.y, color_text.z, 0.5f);
-    const auto color_interactive            = ImVec4(176.f  / 255.f, 46.f  / 255.f, 12.f  / 255.f, 1.f);
-    const auto color_interactive_hovered    = ImVec4(235.f / 255.f, 69.f / 255.f, 17.f / 255.f, 1.f);
-    const auto color_background             = ImVec4(60.f  / 255.f, 60.f  / 255.f, 60.f  / 255.f, 1.f);
-    const auto color_background_content     = ImVec4(201.f  / 255.f, 70.f  / 255.f, 40.f  / 255.f, 1.f);
+    const auto color_interactive_hovered    = ImVec4(0.714f , 0.714f, 0.714f, 1.f);
+    const auto color_background             = ImVec4(0.355f, 0.355f, 0.355f, 1.f);
+    const auto color_background_content     = ImVec4(0.726f, 0.726f, 0.726f, 1.f);
     const auto color_shadow                 = ImVec4(0.f, 0.f, 0.f, 0.5f);
+    const auto colorBarActive               = ImVec4(1.f, 1.f, 1.f, 1.f);
+    const auto sel                          = ImVec4(1.f, 0.f, 0.f, 1.f);
+
+
+    ImVec4 color_interactive = ImVec4(1, 0.847f, 0, 1);
+    ImVec4 blue = ImVec4(0.26f, 0.59f, 0.98f, 0.80f);
+
+    if (!isBasic)
+    {
+        blue = color_interactive;
+        color_interactive = ImVec4(0.26f, 0.59f, 0.98f, 0.80f);
+    }
+
+    const auto colorTab                     = ImVec4(1, 0.847f, 0, 1);
+
 
     // Colors
     ImVec4* colors                          = ImGui::GetStyle().Colors;
@@ -199,15 +226,15 @@ void EditorInterface::ApplyStyle() const
     colors[ImGuiCol_TextDisabled]           = color_text_disabled;
     colors[ImGuiCol_WindowBg]               = color_background;             // Background of normal windows
     colors[ImGuiCol_ChildBg]                = color_background;             // Background of child windows
-    colors[ImGuiCol_PopupBg]                = color_background;             // Background of popups, menus, tooltips windows
+    colors[ImGuiCol_PopupBg]                = color_background_content;             // Background of popups, menus, tooltips windows
     colors[ImGuiCol_Border]                 = color_interactive;
     colors[ImGuiCol_BorderShadow]           = color_shadow;
     colors[ImGuiCol_FrameBg]                = color_background_content;     // Background of checkbox, radio button, plot, slider, text input
     colors[ImGuiCol_FrameBgHovered]         = color_interactive;
     colors[ImGuiCol_FrameBgActive]          = color_interactive_hovered;
     colors[ImGuiCol_TitleBg]                = color_background_content;
-    colors[ImGuiCol_TitleBgActive]          = color_interactive;
-    colors[ImGuiCol_TitleBgCollapsed]       = color_background;
+    colors[ImGuiCol_TitleBgActive]          = colorBarActive;
+    colors[ImGuiCol_TitleBgCollapsed]       = sel;
     colors[ImGuiCol_MenuBarBg]              = color_background_content;
     colors[ImGuiCol_ScrollbarBg]            = color_background_content;
     colors[ImGuiCol_ScrollbarGrab]          = color_interactive;
@@ -217,10 +244,10 @@ void EditorInterface::ApplyStyle() const
     colors[ImGuiCol_SliderGrab]             = color_interactive;
     colors[ImGuiCol_SliderGrabActive]       = color_interactive_hovered;
     colors[ImGuiCol_Button]                 = color_interactive;
-    colors[ImGuiCol_ButtonHovered]          = color_interactive_hovered;
+    colors[ImGuiCol_ButtonHovered]          = blue;
     colors[ImGuiCol_ButtonActive]           = color_interactive_hovered;
     colors[ImGuiCol_Header]                 = color_interactive;            // Header* colors are used for CollapsingHeader, TreeNode, Selectable, MenuItem
-    colors[ImGuiCol_HeaderHovered]          = color_interactive_hovered;
+    colors[ImGuiCol_HeaderHovered]          = blue;
     colors[ImGuiCol_HeaderActive]           = color_interactive_hovered;
     colors[ImGuiCol_Separator]              = color_interactive;
     colors[ImGuiCol_SeparatorHovered]       = color_interactive_hovered;
@@ -229,8 +256,8 @@ void EditorInterface::ApplyStyle() const
     colors[ImGuiCol_ResizeGripHovered]      = color_interactive_hovered;
     colors[ImGuiCol_ResizeGripActive]       = color_interactive_hovered;
     colors[ImGuiCol_Tab]                    = color_interactive;
-    colors[ImGuiCol_TabHovered]             = color_interactive_hovered;
-    colors[ImGuiCol_TabActive]              = color_interactive_hovered;
+    colors[ImGuiCol_TabHovered]             = blue;
+    colors[ImGuiCol_TabActive]              = blue;
     colors[ImGuiCol_TabUnfocused]           = color_interactive;
     colors[ImGuiCol_TabUnfocusedActive]     = color_interactive;            // Might be called active, but it's active only because it's it's the only tab available, the user didn't really activate it
     colors[ImGuiCol_DockingPreview]         = color_interactive_hovered;    // Preview overlay color when about to docking something
@@ -247,9 +274,7 @@ void EditorInterface::ApplyStyle() const
     colors[ImGuiCol_ModalWindowDimBg]       = color_background;             // Darken/colorize entire screen behind a modal window, when one is active
 
     // Spatial settings
-    const auto font_size    = 24.0f;
-    const auto font_scale   = 0.7f;
-    const auto roundness    = 2.0f;
+    const auto roundness    = 4.0f;
 
     // Spatial
     ImGuiStyle& style               = ImGui::GetStyle();
@@ -265,6 +290,7 @@ void EditorInterface::ApplyStyle() const
     style.GrabRounding              = roundness;
     style.ScrollbarRounding         = roundness;
     style.Alpha                     = 1.0f;
+
 }
 
 void EditorInterface::BeginWindow()
@@ -321,6 +347,7 @@ void EditorInterface::SetEditedEntity(BwatEngine::EntityID entity)
     editedEntity = entity;
     widgetProperties->Inspect(editedEntity);
 }
+
 void EditorInterface::ToolbarUI()
 {
     ImGuiViewport* viewport = ImGui::GetMainViewport();
@@ -336,24 +363,25 @@ void EditorInterface::ToolbarUI()
                                     | ImGuiWindowFlags_NoScrollbar
                                     | ImGuiWindowFlags_NoSavedSettings
     ;
-    ImGui::PushStyleVar(ImGuiStyleVar_WindowBorderSize, 0);
+    ImGui::PushStyleVar(ImGuiStyleVar_WindowBorderSize, 1);
     ImGui::Begin("TOOLBAR", NULL, window_flags);
     ImGui::PopStyleVar();
 
-    if (ImGui::ImageButton(reinterpret_cast<ImTextureID>(BwatEngine::ResourceManager::Instance()->GetOrLoadTexture("Assets/image/trans.png",Rendering::Texture::Type::E_DIFFUSE)->id), ImVec2(25.f, 25.f)))
+    if (ImGui::ImageButton(reinterpret_cast<ImTextureID>(BwatEngine::ResourceManager::Instance()->GetOrLoadTexture("EngineAssets/Images/trans.png",Rendering::Texture::Type::E_DIFFUSE)->id), ImVec2(25.f, 25.f)))
     {
         guizmoOperation = ImGuizmo::OPERATION::TRANSLATE;
     }
     ImGui::SameLine();
-    if (ImGui::ImageButton(reinterpret_cast<ImTextureID>(BwatEngine::ResourceManager::Instance()->GetOrLoadTexture("Assets/image/rotate.png",Rendering::Texture::Type::E_DIFFUSE)->id), ImVec2(25.f, 25.f)))
+    if (ImGui::ImageButton(reinterpret_cast<ImTextureID>(BwatEngine::ResourceManager::Instance()->GetOrLoadTexture("EngineAssets/Images/rotate.png",Rendering::Texture::Type::E_DIFFUSE)->id), ImVec2(25.f, 25.f)))
     {
         guizmoOperation = ImGuizmo::OPERATION::ROTATE;
     }
     ImGui::SameLine();
-    if (ImGui::ImageButton(reinterpret_cast<ImTextureID>(BwatEngine::ResourceManager::Instance()->GetOrLoadTexture("Assets/image/scale.png",Rendering::Texture::Type::E_DIFFUSE)->id), ImVec2(25.f, 25.f)))
+    if (ImGui::ImageButton(reinterpret_cast<ImTextureID>(BwatEngine::ResourceManager::Instance()->GetOrLoadTexture("EngineAssets/Images/scale.png",Rendering::Texture::Type::E_DIFFUSE)->id), ImVec2(25.f, 25.f)))
     {
         guizmoOperation = ImGuizmo::OPERATION::SCALE;
     }
+
     ImGui::SameLine();
     ImGui::Text("Pos X:%.3f Y:%.3f Z:%.3f\nRot X:%.3f Y:%.3f Z:%.3f",
                 cameraTransform.position.X, cameraTransform.position.Y, cameraTransform.position.Z,
@@ -361,12 +389,13 @@ void EditorInterface::ToolbarUI()
 
     ImGui::SameLine();
     ImGui::SetCursorPosX(ImGui::GetWindowWidth() - 125);
-    if (ImGui::ImageButton(reinterpret_cast<ImTextureID>(BwatEngine::ResourceManager::Instance()->GetOrLoadTexture("Assets/image/world.png",Rendering::Texture::Type::E_DIFFUSE)->id), ImVec2(25.f, 25.f)))
+
+    if (ImGui::ImageButton(reinterpret_cast<ImTextureID>(BwatEngine::ResourceManager::Instance()->GetOrLoadTexture("EngineAssets/Images/world.png",Rendering::Texture::Type::E_DIFFUSE)->id), ImVec2(25.f, 25.f)))
     {
         guizmoMode = ImGuizmo::MODE::WORLD;
     }
     ImGui::SameLine();
-    if (ImGui::ImageButton(reinterpret_cast<ImTextureID>(BwatEngine::ResourceManager::Instance()->GetOrLoadTexture("Assets/image/local.png",Rendering::Texture::Type::E_DIFFUSE)->id), ImVec2(25.f, 25.f)))
+    if (ImGui::ImageButton(reinterpret_cast<ImTextureID>(BwatEngine::ResourceManager::Instance()->GetOrLoadTexture("EngineAssets/Images/local.png",Rendering::Texture::Type::E_DIFFUSE)->id), ImVec2(25.f, 25.f)))
     {
         guizmoMode = ImGuizmo::MODE::LOCAL;
     }
@@ -379,7 +408,7 @@ void EditorInterface::ToolbarUI()
         {
             BwatEngine::Serialization::SaveScene("EngineAssets/temp.bwat");
             engine->isPlaying = true;
-            playImage = BwatEngine::ResourceManager::Instance()->GetOrLoadTexture("Assets/image/pause.png",Rendering::Texture::Type::E_DIFFUSE)->id;
+            playImage = BwatEngine::ResourceManager::Instance()->GetOrLoadTexture("EngineAssets/Images/pause.png",Rendering::Texture::Type::E_DIFFUSE)->id;
             ImGui::GetStyle().Colors[ImGuiCol_WindowBg] = ImVec4(235.f / 255.f, 69.f / 255.f, 17.f / 255.f, 1.f);
 
             SetEditedEntity(0);
@@ -388,7 +417,7 @@ void EditorInterface::ToolbarUI()
         {
             engine->isPlaying = false;
             BwatEngine::Serialization::LoadScene("EngineAssets/temp.bwat");
-            playImage = BwatEngine::ResourceManager::Instance()->GetOrLoadTexture("Assets/image/play.png",Rendering::Texture::Type::E_DIFFUSE)->id;
+            playImage = BwatEngine::ResourceManager::Instance()->GetOrLoadTexture("EngineAssets/Images/play.png",Rendering::Texture::Type::E_DIFFUSE)->id;
             ImGui::GetStyle().Colors[ImGuiCol_WindowBg] = ImVec4(60.f  / 255.f, 60.f  / 255.f, 60.f  / 255.f, 1.f);
         }
     }
@@ -401,7 +430,7 @@ void EditorInterface::SaveData(const char* path)
     std::ofstream file(path);
 
     json js;
-    std::string data = currentScene;
+    std::string data = currentScene.string();
 
     js =json
         {
