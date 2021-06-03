@@ -52,7 +52,7 @@ public:
     static ImGuizmo::OPERATION guizmoOperation;
     Rendering::FrameBufferObject gameViewFramebuffer;
     Rendering::FrameBufferObject sceneViewFramebuffer;
-    void ApplyStyle() const;
+    void ApplyStyle(bool isBasic = true) const;
 
     fs::path currentScene;
 
@@ -61,17 +61,18 @@ public:
     BwatEngine::TransformComponent cameraTransform;
     BwatEngine::Math::Vec3f rotation{};
 
-
     bool cursorLocked = false;
+
 private:
     void BeginWindow();
 
-    GLuint playImage = BwatEngine::ResourceManager::Instance()->GetOrLoadTexture("Assets/image/play.png",Rendering::Texture::Type::E_DIFFUSE)->id;
+    GLuint playImage = BwatEngine::ResourceManager::Instance()->GetOrLoadTexture("EngineAssets/Images/play.png",Rendering::Texture::Type::E_DIFFUSE)->id;
     BwatEngine::EntityID editedEntity = 0;
     std::vector<std::unique_ptr<Widget>> widgets;
     bool initialised = false;
     bool editorBegun = false;
-    const float toolBarSize = 45.f;
+    const float toolBarSize = 50.f;
+    ImFont* font = nullptr;
 
     void HandleEditorShortcuts();
 };

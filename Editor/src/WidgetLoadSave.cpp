@@ -34,7 +34,7 @@ void WidgetLoadSave::TickVisible()
             if (is_directory(path))
                 continue;
 
-            fileName = path.filename();
+            fileName = path.filename().string();
         }
 
         if (ImGui::InputText("FileName", &fileName, (textReadOnly) ? ImGuiInputTextFlags_ReadOnly : 0))
@@ -48,11 +48,11 @@ void WidgetLoadSave::TickVisible()
             fs::path filePath = (fileDialog.GetCurrentPath() / fileName);
             if (saving)
             {
-                BwatEngine::Serialization::SaveScene(filePath.c_str());
+                BwatEngine::Serialization::SaveScene(filePath.string().c_str());
             }
             else
             {
-                BwatEngine::Serialization::LoadScene(filePath.c_str());
+                BwatEngine::Serialization::LoadScene(filePath.string().c_str());
                 editor->currentScene = filePath;
             }
 
