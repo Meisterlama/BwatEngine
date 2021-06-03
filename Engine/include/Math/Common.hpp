@@ -11,6 +11,11 @@ namespace BwatEngine::Math
 
 #pragma region Declarations
 
+
+
+    [[nodiscard]] ML_FUNC_DECL float Max(float x, float y);
+    [[nodiscard]] ML_FUNC_DECL float Min(float x, float y);
+
     [[nodiscard]] ML_FUNC_DECL float ToRads(float x);
 
     [[nodiscard]] ML_FUNC_DECL float ToDegs(float x);
@@ -57,6 +62,16 @@ namespace BwatEngine::Math
 
 #ifdef BMATH_IMPLEMENTATION
 #pragma region Definitions
+
+    [[nodiscard]] ML_FUNC_DECL float Max(float x, float y)
+    {
+        return (x > y) ? x : y;
+    }
+
+    [[nodiscard]] ML_FUNC_DECL float Min(float x, float y)
+    {
+        return (x > y) ? y : x;
+    }
 
     [[nodiscard]] ML_FUNC_DECL float ToRads(float x)
     {

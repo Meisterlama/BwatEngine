@@ -15,8 +15,11 @@
 
 #include <Rendering/Model.hpp>
 #include "WidgetProperties.hpp"
+#include "Inputs/InputHandler.hpp"
 
 #include "imgui_stdlib.h"
+
+#include "Serialization/Serialization.hpp"
 
 WidgetProperties::WidgetProperties(EditorInterface *editor) : Widget(editor)
 {
@@ -412,6 +415,19 @@ bool WidgetProperties::ShowComponentMenuItem(BwatEngine::EntityID entity)
                 {
                     coordinator.RemoveComponent<T>(currentEntity);
                     componentDeleted = true;
+                }
+                if(ImGui::MenuItem("Copy Component"))
+                {
+                    copiedComponent.clear();
+                    BwatEngine::Serialization::SaveComponent<T>(currentEntity, copiedComponent);
+                    BwatEngine::InputHandler::SetClipboard(copiedComponent.dump(2));
+                }
+                // TODO: Fix crash when pasting a type of component on another
+                if (ImGui::MenuItem("Paste Component", nullptr, false, !copiedComponent.empty()))
+                {
+                    coordinator.RemoveComponent<T>(currentEntity);
+                    componentDeleted = true;
+                    BwatEngine::Serialization::Load<T>(currentEntity, copiedComponent[0]["Data"]);
                 }
                 ImGui::EndPopup();
             }

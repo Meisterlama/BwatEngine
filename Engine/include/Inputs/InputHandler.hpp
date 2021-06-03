@@ -2,8 +2,10 @@
 #define ENGINE_INPUTS_INPUT_HANDLER_HPP
 
 #include <unordered_map>
+#include <string>
 #include "InputEnums.hpp"
 #include "Math/Vector/Vectors.hpp"
+
 namespace BwatEngine
 {
     struct InputState
@@ -64,6 +66,9 @@ namespace BwatEngine
         //TODO: Disabling cursor while it is outside of the window causes delta mouse to freak out 3 frames after
         static void SetMouseStatus(MouseStatus status);
         static MouseStatus GetMouseStatus();
+
+        static void SetClipboard(std::string text);
+        static std::string GetClipboard();
     };
 }
 
