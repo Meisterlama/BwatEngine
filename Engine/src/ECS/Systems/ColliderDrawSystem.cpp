@@ -9,7 +9,7 @@ namespace BwatEngine
 {
     ColliderDrawSystem::ColliderDrawSystem()
     {
-        shader = {"Assets/Shaders/wireframe.vs", "Assets/Shaders/wireframe.fs"};
+        shader = {"EngineAssets/Shaders/wireframe.vs", "EngineAssets/Shaders/wireframe.fs"};
         signature.set(Coordinator::GetInstance().GetComponentType<CameraComponent>());
         cube = std::move(CreateCube());
         sphere = std::move(CreateSphere(5, 5));
