@@ -30,10 +30,10 @@ namespace BwatEngine
 	    Collider(ShapeType shapeType = CUBE);
 		~Collider()
         {
-		    if(material)
-		        material->release();
-		    if (shape)
-		        shape->release();
+//		    if(material && material->isReleasable())
+//		        material->release();
+//		    if (shape && shape->isReleasable())
+//		        shape->release();
         }
 		physx::PxShape* GetShape() const { return shape; }
         physx::PxMaterial* GetMaterial() const { return material; }

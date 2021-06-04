@@ -66,7 +66,7 @@ EditorInterface::EditorInterface(BwatEngine::Engine* _engine)
         BwatEngine::Serialization::LoadScene(currentScene.string().c_str());
     }
 
-    camera.near = 0.0001f;
+    camera.near = 0.001f;
 }
 
 void EditorInterface::Close()
@@ -417,7 +417,7 @@ void EditorInterface::ToolbarUI()
     {
         if (!engine->isPlaying)
         {
-            BwatEngine::Serialization::SaveScene("EngineAssets/temp.bwat");
+            tempSave = Serialization::SerializeScene();
             engine->isPlaying = true;
             playImage = BwatEngine::ResourceManager::Instance()->GetOrLoadTexture("EngineAssets/Images/pause.png",Rendering::Texture::Type::E_DIFFUSE)->id;
             ImGui::GetStyle().Colors[ImGuiCol_WindowBg] = ImVec4(235.f / 255.f, 69.f / 255.f, 17.f / 255.f, 1.f);
@@ -427,7 +427,8 @@ void EditorInterface::ToolbarUI()
         else
         {
             engine->isPlaying = false;
-            BwatEngine::Serialization::LoadScene("EngineAssets/temp.bwat");
+            Serialization::DeserializeScene(tempSave);
+            tempSave.clear();
             playImage = BwatEngine::ResourceManager::Instance()->GetOrLoadTexture("EngineAssets/Images/play.png",Rendering::Texture::Type::E_DIFFUSE)->id;
             ImGui::GetStyle().Colors[ImGuiCol_WindowBg] = ImVec4(60.f  / 255.f, 60.f  / 255.f, 60.f  / 255.f, 1.f);
         }

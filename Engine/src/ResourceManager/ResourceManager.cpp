@@ -41,7 +41,7 @@ namespace BwatEngine
 
         if(!file.is_open())
         {
-            LogError("file cannot be open at path : %s", path.c_str());
+            LogError("file cannot be open at path : %s", path.string().c_str());
             return nullptr;
         }
 

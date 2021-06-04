@@ -1,5 +1,6 @@
 #include "ECS/Coordinator.hpp"
 #include "Physic/RigidBody.hpp"
+#include "ECS/Systems/PhysicsSystem.hpp"
 
 using namespace BwatEngine;
 
@@ -15,13 +16,14 @@ RigidBody::RigidBody(const Math::Transform& transform, bool isStatic) : oldTrans
 		rigidBody = Physic::GetPhysics()->createRigidDynamic(ToPxTransform(transform));
 		rigidBody->userData = this;
 	}
+    shouldRegister = true;
 }
 
 RigidBody::~RigidBody()
 {
-	if (isStatic)
+	if (isStatic && staticActor && staticActor->isReleasable())
 		staticActor->release();
-	else
+	else if (rigidBody && rigidBody->isReleasable())
 		rigidBody->release();
 }
 
@@ -97,14 +99,14 @@ void RigidBody::SetMass(const float mass)
 		rigidBody->setMass(mass);
 }
 
-void RigidBody::AddActor(physx::PxScene* scene)
+void RigidBody::AddActor(PhysicScene* scene)
 {
 	if (isStatic)
-		scene->addActor(*staticActor);
+		scene->GetPhysicScene()->addActor(*staticActor);
 	else
-		scene->addActor(*rigidBody);
+		scene->GetPhysicScene()->addActor(*rigidBody);
 
-	shouldRegister = false;
+    shouldRegister = false;
 }
 
 bool RigidBody::CompareOldTransform(const Math::Transform& trans)

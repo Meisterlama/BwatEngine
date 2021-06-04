@@ -101,6 +101,21 @@ namespace BwatEngine::Serialization
 
         ret["Type"] = "collider";
 
+        ret["Data"]["shapeType"] = collider.GetShapeType();
+
+        json shapeData;
+
+        switch (collider.GetShapeType())
+        {
+            case Collider::CUBE:
+                shapeData["halfExtents"] = SerializeVector3f(collider.GetBoxExtent());
+                break;
+            case Collider::SPHERE:
+                shapeData["radius"] = collider.GetSphereRadius();
+                break;
+        }
+
+        ret["Data"]["shapeData"] = shapeData;
         //TODO: Update when collider branch merged
         return ret;
     }
