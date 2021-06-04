@@ -38,7 +38,6 @@ void Engine::Update()
 
     renderSystem->UpdateShadow();
 
-
     GLint targetFramebuffer;
     glGetIntegerv(GL_DRAW_FRAMEBUFFER_BINDING, &targetFramebuffer);
 
@@ -61,6 +60,5 @@ void Engine::Update()
 Engine::~Engine()
 {
     Coordinator::GetInstance().ClearInstance();
-    std::remove("temp.txt");
 }
 

@@ -28,26 +28,26 @@ namespace BwatEngine::Math
             };
 
             ML_FUNC_DECL Quaternion(T x = 0)
-                : W(x), X(x), Y(x), Z(x)
+                    : W(x), X(x), Y(x), Z(x)
             {}
 
             ML_FUNC_DECL Quaternion(T w, T x, T y, T z)
-                : W(w), X(x), Y(y), Z(z)
+                    : W(w), X(x), Y(y), Z(z)
             {}
 
             /**
              * Create a Quaternion with each component equals to the vector's one
              * @remark The vector's constructor is (X, Y, Z, W) while the quaternion's one is (W,X,Y,Z)
              */
-            ML_FUNC_DECL Quaternion(Vector4<T> vec)
-                : W(vec.W), X(vec.X), Y(vec.Y), Z(vec.Z)
+            ML_FUNC_DECL Quaternion(Vector4 <T> vec)
+                    : W(vec.W), X(vec.X), Y(vec.Y), Z(vec.Z)
             {}
 
             /**
              * Create a Quaternion with the rotation represented by \p vec
              * @param vec Euler angle rotation (in radians)
              */
-            ML_FUNC_DECL Quaternion(Vector3<T> vec)
+            ML_FUNC_DECL Quaternion(Vector3 <T> vec)
             {
                 T cx = Cos(vec.X / 2);
                 T cy = Cos(vec.Y / 2);
@@ -78,9 +78,10 @@ namespace BwatEngine::Math
              * @param axis Axis of the rotation
              * @param angle Angle of the rotation (in radians)
              */
-            ML_FUNC_DECL Quaternion(Vector3<T> axis, T angle)
+            ML_FUNC_DECL Quaternion(Vector3 <T> axis, T angle)
             {
-                if (axis.Amplitude() == 0.0f) {
+                if (axis.Amplitude() == 0.0f)
+                {
                     *this = Quaternion{0};
                     return;
                 }
@@ -181,15 +182,16 @@ namespace BwatEngine::Math
             /**
              * @return A vector containing the euler angles corresponding to the Quaternion
              */
-            [[nodiscard]] ML_FUNC_DECL Vector3<T> GetEulerAngles();
+            [[nodiscard]] ML_FUNC_DECL Vector3 <T> GetEulerAngles();
 
-            [[nodiscard]] static ML_FUNC_DECL Quaternion<T> LookAt(Vector3<T> origin, Vector3<T> target, Vector3<T> upDir);
+            [[nodiscard]] static ML_FUNC_DECL Quaternion<T>
+            LookAt(Vector3 <T> origin, Vector3 <T> target, Vector3 <T> upDir);
 
             /**
              * @param vec Euler angles of the rotation (in radians)
              * @return The given vector \p vec composed with the rotation given by the Quaternion
              */
-            [[nodiscard]] ML_FUNC_DECL Vector3<T> Rotate(Vector3<T> vec);
+            [[nodiscard]] ML_FUNC_DECL Vector3 <T> Rotate(Vector3 <T> vec);
 
             [[nodiscard]] ML_FUNC_DECL bool Equals(const Quaternion &rhs) const;
 
@@ -239,22 +241,27 @@ namespace BwatEngine::Math
     }
     typedef Internal::Quaternion<float> Quatf;
     typedef Internal::Quaternion<double> Quatd;
+
+    template<typename T>
+    [[nodiscard]] ML_FUNC_DECL BwatEngine::Math::Internal::Quaternion<T>
+    operator-(BwatEngine::Math::Internal::Quaternion<T> quat);
+
+    template<typename T>
+    [[nodiscard]] ML_FUNC_DECL BwatEngine::Math::Internal::Quaternion<T>
+    operator*(const float &scalar, BwatEngine::Math::Internal::Quaternion<T> rhs);
+
+    template<typename T>
+    [[nodiscard]] ML_FUNC_DECL BwatEngine::Math::Internal::Quaternion<T>
+    Lerp(BwatEngine::Math::Internal::Quaternion<T> begin, BwatEngine::Math::Internal::Quaternion<T> end, float ratio);
+
+    template<typename T>
+    [[nodiscard]] ML_FUNC_DECL BwatEngine::Math::Internal::Quaternion<T>
+    NLerp(BwatEngine::Math::Internal::Quaternion<T> begin, BwatEngine::Math::Internal::Quaternion<T> end, float ratio);
+
+    template<typename T>
+    [[nodiscard]] ML_FUNC_DECL BwatEngine::Math::Internal::Quaternion<T>
+    SLerp(BwatEngine::Math::Internal::Quaternion<T> begin, BwatEngine::Math::Internal::Quaternion<T> end, float ratio);
 }
-    template<typename T>
-    [[nodiscard]] ML_FUNC_DECL BwatEngine::Math::Internal::Quaternion<T> operator-(BwatEngine::Math::Internal::Quaternion<T> quat);
-
-    template<typename T>
-    [[nodiscard]] ML_FUNC_DECL BwatEngine::Math::Internal::Quaternion<T> operator*(const float &scalar, BwatEngine::Math::Internal::Quaternion<T> rhs);
-
-    template<typename T>
-    [[nodiscard]] ML_FUNC_DECL BwatEngine::Math::Internal::Quaternion<T> Lerp(BwatEngine::Math::Internal::Quaternion<T> begin, BwatEngine::Math::Internal::Quaternion<T> end, float ratio);
-
-    template<typename T>
-    [[nodiscard]] ML_FUNC_DECL BwatEngine::Math::Internal::Quaternion<T> NLerp(BwatEngine::Math::Internal::Quaternion<T> begin, BwatEngine::Math::Internal::Quaternion<T> end, float ratio);
-
-    template<typename T>
-    [[nodiscard]] ML_FUNC_DECL BwatEngine::Math::Internal::Quaternion<T> SLerp(BwatEngine::Math::Internal::Quaternion<T> begin, BwatEngine::Math::Internal::Quaternion<T> end, float ratio);
-
 #pragma endregion
 
 #pragma region Definitions
@@ -649,10 +656,10 @@ namespace BwatEngine::Math
 
         if (Abs(sinHalfTheta) < 0.001)
             return Internal::Quaternion<T>{
-                    begin.X * 0.5 + end.X * 0.5,
-                    begin.Y * 0.5 + end.Y * 0.5,
-                    begin.Z * 0.5 + end.Z * 0.5,
-                    begin.W * 0.5 + end.W * 0.5};
+                    begin.X * (T)0.5 + end.X * (T)0.5,
+                    begin.Y * (T)0.5 + end.Y * (T)0.5,
+                    begin.Z * (T)0.5 + end.Z * (T)0.5,
+                    begin.W * (T)0.5 + end.W * (T)0.5};
         float ratioA = Sin((1 - ratio) * halfTheta) / sinHalfTheta;
         float ratioB = Sin(ratio * halfTheta) / sinHalfTheta;
 

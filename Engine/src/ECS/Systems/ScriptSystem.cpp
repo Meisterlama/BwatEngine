@@ -2,6 +2,7 @@
 #include "ECS/Components/ScriptComponent.hpp"
 #include "ECS/Coordinator.hpp"
 #include "Scripting/modules.hpp"
+#include "Time.hpp"
 
 using namespace BwatEngine;
 
@@ -71,6 +72,7 @@ void ScriptSystem::Update()
         }
 
         lua["entity"] = entity;
+        lua["deltaTime"] = Time::deltaTime;
 
         auto startFunction = lua["Start"];
         auto updateFunction = lua["Update"];

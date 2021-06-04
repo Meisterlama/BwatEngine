@@ -158,5 +158,15 @@ namespace BwatEngine
     {
         return inputHandler->mouseStatus;
     }
+    void InputHandler::SetClipboard(std::string text)
+    {
+        auto* window = GetInstance()->window;
+        glfwSetClipboardString(window, text.c_str());
+    }
+    std::string InputHandler::GetClipboard()
+    {
+        auto* window = GetInstance()->window;
+        return glfwGetClipboardString(window);
+    }
 }
 

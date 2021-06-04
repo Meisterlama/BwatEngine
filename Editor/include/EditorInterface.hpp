@@ -22,6 +22,8 @@ namespace BwatEngine
 }
 
 class WidgetProperties;
+class WidgetLoadSave;
+class WidgetPrefab;
 
 class  EditorInterface
 {
@@ -46,30 +48,33 @@ public:
 
     BwatEngine::Engine* engine = nullptr;
     WidgetProperties* widgetProperties = nullptr;
+    WidgetLoadSave* widgetLoadSave = nullptr;
+    WidgetPrefab* widgetPrefab = nullptr;
     static ImGuizmo::MODE guizmoMode;
     static ImGuizmo::OPERATION guizmoOperation;
     Rendering::FrameBufferObject gameViewFramebuffer;
     Rendering::FrameBufferObject sceneViewFramebuffer;
-    void ApplyStyle() const;
+    void ApplyStyle(bool isBasic = true) const;
 
-    std::string currentScene = "";
+    fs::path currentScene;
 
 
     BwatEngine::CameraComponent camera;
     BwatEngine::TransformComponent cameraTransform;
     BwatEngine::Math::Vec3f rotation{};
 
-
     bool cursorLocked = false;
+
 private:
     void BeginWindow();
 
-    GLuint playImage = BwatEngine::ResourceManager::Instance()->GetOrLoadTexture("Assets/image/play.png",Rendering::Texture::Type::E_DIFFUSE)->id;
+    GLuint playImage = BwatEngine::ResourceManager::Instance()->GetOrLoadTexture("EngineAssets/Images/play.png",Rendering::Texture::Type::E_DIFFUSE)->id;
     BwatEngine::EntityID editedEntity = 0;
     std::vector<std::unique_ptr<Widget>> widgets;
     bool initialised = false;
     bool editorBegun = false;
-    const float toolBarSize = 45.f;
+    const float toolBarSize = 50.f;
+    ImFont* font = nullptr;
 
     void HandleEditorShortcuts();
 };

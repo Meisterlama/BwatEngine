@@ -8,6 +8,7 @@
 #include <ECS/Components/LightComponent.hpp>
 #include <ECS/Components/DataComponent.hpp>
 #include <ECS/Components/ScriptComponent.hpp>
+#include <ECS/Components/AnimatorComponent.hpp>
 
 #include "ResourceManager/ResourceManager.hpp"
 #include "ECS/Coordinator.hpp"
@@ -15,8 +16,11 @@
 #include <Rendering/Model.hpp>
 #include "WidgetProperties.hpp"
 #include "Physic/PhysicCast.hpp"
+#include "Inputs/InputHandler.hpp"
 
 #include "imgui_stdlib.h"
+
+#include "Serialization/Serialization.hpp"
 
 WidgetProperties::WidgetProperties(EditorInterface *editor) : Widget(editor)
 {
@@ -74,7 +78,7 @@ void CreateSelectedBox(Rendering::Texture*& component,int index, std::string nam
 
         for (auto &text : textList)
         {
-            std::string path = text;
+            std::string path = text.string();
             bool selected = (name == path);
 
             if (ImGui::Selectable(path.c_str(), selected))
@@ -108,7 +112,7 @@ void WidgetProperties::ShowComponent<BwatEngine::RenderableComponent>(BwatEngine
 
             for(auto &model : meshList)
             {
-                std::string path = model;
+                std::string path = model.string();
                 bool selected = (modelName == path);
                 if(ImGui::Selectable(path.c_str(), selected))
                 {
@@ -165,12 +169,12 @@ void WidgetProperties::ShowComponent<BwatEngine::RenderableComponent>(BwatEngine
 
             }
 
-            bool isColored = component.materials[i]->isColor;
-            update |= ImGui::Checkbox("Color", &isColored);
+            bool isColored = component.materials[i]->isTilling;
+            update |= ImGui::Checkbox("Tilling", &isColored);
 
-            if (component.materials[i]->isColor)
+            if (component.materials[i]->isTilling)
             {
-                ImGui::ColorEdit4("Color", component.materials[i]->color.values);
+                ImGui::DragFloat2("Tiles", component.materials[i]->tile.values);
             }
 
             TextCenter("Shadow Option");
@@ -181,7 +185,7 @@ void WidgetProperties::ShowComponent<BwatEngine::RenderableComponent>(BwatEngine
             if (update)
             {
                 component.materials[i]->isTextured = isTextured;
-                component.materials[i]->isColor = isColored;
+                component.materials[i]->isTilling = isColored;
                 component.castShadow = castShadow;
             }
 
@@ -238,7 +242,7 @@ void WidgetProperties::ShowComponent<BwatEngine::AudioSourceComponent>(BwatEngin
 
         for(auto &audio : audioList)
         {
-            std::string path = audio;
+            std::string path = audio.string();
             bool selected = (audioSourcePath == path);
             if(ImGui::Selectable(path.c_str(), selected))
             {
@@ -390,6 +394,8 @@ void WidgetProperties::TickVisible()
                 hasComponentAvailable |= AddComponentMenuItem<LightComponent>(currentEntity);
                 hasComponentAvailable |= AddComponentMenuItem<DataComponent>(currentEntity);
                 hasComponentAvailable |= AddComponentMenuItem<ScriptComponent>(currentEntity);
+                hasComponentAvailable |= AddComponentMenuItem<AnimatorComponent>(currentEntity);
+
                 ImGui::EndMenu();
             }
 
@@ -406,6 +412,7 @@ void WidgetProperties::TickVisible()
     ShowComponentMenuItem<CameraComponent>(currentEntity);
     ShowComponentMenuItem<PlayerComponent>(currentEntity);
     ShowComponentMenuItem<LightComponent>(currentEntity);
+    ShowComponentMenuItem<AnimatorComponent>(currentEntity);
     ShowComponentMenuItem<ScriptComponent>(currentEntity);
 }
 
@@ -460,6 +467,19 @@ bool WidgetProperties::ShowComponentMenuItem(BwatEngine::EntityID entity)
                     coordinator.RemoveComponent<T>(currentEntity);
                     componentDeleted = true;
                 }
+                if(ImGui::MenuItem("Copy Component"))
+                {
+                    copiedComponent.clear();
+                    BwatEngine::Serialization::SaveComponent<T>(currentEntity, copiedComponent);
+                    BwatEngine::InputHandler::SetClipboard(copiedComponent.dump(2));
+                }
+                // TODO: Fix crash when pasting a type of component on another
+                if (ImGui::MenuItem("Paste Component", nullptr, false, !copiedComponent.empty()))
+                {
+                    coordinator.RemoveComponent<T>(currentEntity);
+                    componentDeleted = true;
+                    BwatEngine::Serialization::Load<T>(currentEntity, copiedComponent[0]["Data"]);
+                }
                 ImGui::EndPopup();
             }
             if (!componentDeleted)
@@ -482,6 +502,7 @@ void WidgetProperties::ShowComponent<BwatEngine::LightComponent>(BwatEngine::Lig
         BwatEngine::Math::Vec3f ambient = component.ambient;
         BwatEngine::Math::Vec3f specular = component.specular;
         BwatEngine::Math::Vec3f diffuse = component.diffuse;
+        float intensity = component.intensity;
 
         const char* items[] = { "Directional", "Point", "Spot", };
 
@@ -506,6 +527,7 @@ void WidgetProperties::ShowComponent<BwatEngine::LightComponent>(BwatEngine::Lig
         update |= ImGui::ColorEdit3("Specular", specular.values, ImGuiColorEditFlags_Float);
         update |= ImGui::ColorEdit3("Diffuse", diffuse.values, ImGuiColorEditFlags_Float);
 
+        update |= ImGui::DragFloat("Intensity", &intensity, 0.1f, 0.0f);
 
         float constant = component.constant;
         float linear = component.linear;
@@ -538,6 +560,8 @@ void WidgetProperties::ShowComponent<BwatEngine::LightComponent>(BwatEngine::Lig
             component.specular = specular;
             component.diffuse = diffuse;
 
+            component.intensity = intensity;
+
             // Point Light 
             component.constant     = constant;
             component.linear       = linear;
@@ -548,4 +572,79 @@ void WidgetProperties::ShowComponent<BwatEngine::LightComponent>(BwatEngine::Lig
             component.outerCutoff  = outerCutOff;
 
         }
+}
+
+template<>
+void WidgetProperties::ShowComponent<BwatEngine::AnimatorComponent>(BwatEngine::AnimatorComponent& component)
+{
+    static std::string saveName;
+
+    ImGui::InputText("Animation Name", &saveName);
+
+    static std::string namemodel;
+
+
+    if (ImGui::BeginCombo("Animation", namemodel.c_str()))
+    {
+        auto textList = BwatEngine::ResourceManager::Instance()->GetModelList();
+
+        for (auto& text : textList)
+        {
+            std::string path = text.string();
+            bool selected = (namemodel == path);
+
+            if (ImGui::Selectable(path.c_str(), selected))
+                namemodel = text.string();
+
+            if (selected)
+                ImGui::SetItemDefaultFocus();
+        }
+
+        ImGui::EndCombo();
+    }
+
+    bool checkButton = !saveName.empty() && !namemodel.empty();
+
+    if (checkButton && ImGui::Button("Add Animation"))
+    {
+        component.SetNewAnimation(saveName, namemodel);
+    }
+
+    for (int i = 0; i < component.names.size(); i++)
+    {
+        ImGui::Text("Animation name : %s" , component.names[i].c_str());
+        
+        std::string playText = "Play##" + component.names[i];
+
+        if (ImGui::Button(playText.c_str()))
+            component.PlayAnimation(component.names[i]);
+        
+        ImGui::SameLine();
+        
+        std::string deleteText = "Delete##" + component.names[i];
+
+        if (ImGui::Button(deleteText.c_str()))
+            component.DeleteAnimation(component.names[i]);
+    }
+
+    if (component.names.size() > 0)
+    {
+        if (ImGui::Button("Pause Animation"))
+        component.isValid = false;
+
+        ImGui::SameLine();
+
+        if (ImGui::Button("Continue Animation"))
+            component.isValid = true;
+    }
+    bool update = false;
+    float speedAnim = component.speedAnimation;
+
+    update |= ImGui::DragFloat("Speed Animation", &speedAnim, 1.0f, 0.0f);
+
+    if (update)
+    {
+        component.speedAnimation = speedAnim;
+    }
+
 }

@@ -31,19 +31,20 @@ namespace BwatEngine::Math
              * @param x Values of all members
              */
             ML_FUNC_DECL Vector2(T x = 0)
-                : X(x), Y(x)
+                    : X(x), Y(x)
             {}
 
             ML_FUNC_DECL Vector2(T x, T y)
-                : X(x), Y(y)
+                    : X(x), Y(y)
             {}
 
             ML_FUNC_DECL Vector2(const Vector2 &vec) = default;
+
             ML_FUNC_DECL Vector2(Vector2 &&vec) noexcept = default;
 
             template<typename U>
             ML_FUNC_DECL Vector2(const Vector2<U> &vec)
-                : X(static_cast<T>(vec.X)), Y(static_cast<T>(vec.Y))
+                    : X(static_cast<T>(vec.X)), Y(static_cast<T>(vec.Y))
             {}
 
             ~Vector2() = default;
@@ -105,6 +106,7 @@ namespace BwatEngine::Math
             [[nodiscard]] ML_FUNC_DECL Vector2 GetSafeNormalized() const;
 
             [[nodiscard]] ML_FUNC_DECL bool Equals(const Vector2 &rhs) const;
+
             [[nodiscard]] ML_FUNC_DECL bool IsZero() const;
 
             ML_FUNC_DECL Vector2 &operator=(const Vector2 &other);
@@ -114,22 +116,31 @@ namespace BwatEngine::Math
             [[nodiscard]] ML_FUNC_DECL bool operator!=(const Vector2 &rhs) const;
 
             [[nodiscard]] ML_FUNC_DECL const T &operator[](int idx) const;
+
             [[nodiscard]] ML_FUNC_DECL T &operator[](int idx);
 
             ML_FUNC_DECL Vector2 &Add(const Vector2 &vec);
+
             [[nodiscard]] ML_FUNC_DECL Vector2 operator+(const Vector2 &rhs) const;
+
             ML_FUNC_DECL Vector2 &operator+=(const Vector2 &vec);
+
             ML_FUNC_DECL Vector2 &operator++();
 
             ML_FUNC_DECL Vector2 &Sub(const Vector2 &vec);
+
             [[nodiscard]] ML_FUNC_DECL Vector2 operator-(const Vector2 &rhs) const;
+
             ML_FUNC_DECL Vector2 &operator-=(const Vector2 &vec);
+
             ML_FUNC_DECL Vector2 &operator--();
 
             [[nodiscard]] ML_FUNC_DECL Vector2 operator*(const float &scalar) const;
+
             ML_FUNC_DECL Vector2 &operator*=(const float &scalar);
 
             [[nodiscard]] ML_FUNC_DECL Vector2 operator/(const float &scalar) const;
+
             ML_FUNC_DECL Vector2 &operator/=(const float &scalar);
 
         };
@@ -142,19 +153,20 @@ namespace BwatEngine::Math
     typedef Internal::Vector2<signed int> Vec2i;
 
     typedef Internal::Vector2<unsigned int> Vec2u;
+
+    template<typename T>
+    [[nodiscard]] ML_FUNC_DECL BwatEngine::Math::Internal::Vector2<T>
+    operator-(BwatEngine::Math::Internal::Vector2<T> vec);
+
+    template<typename T>
+    [[nodiscard]] ML_FUNC_DECL BwatEngine::Math::Internal::Vector2<T> operator*(const float &scalar,
+                                                                                BwatEngine::Math::Internal::Vector2<T> rhs);
+
+    template<typename T>
+    [[nodiscard]] ML_FUNC_DECL BwatEngine::Math::Internal::Vector2<T> Lerp(BwatEngine::Math::Internal::Vector2<T> begin,
+                                                                           BwatEngine::Math::Internal::Vector2<T> end,
+                                                                           float ratio);
 }
-template<typename T>
-[[nodiscard]] ML_FUNC_DECL BwatEngine::Math::Internal::Vector2<T> operator-(BwatEngine::Math::Internal::Vector2<T> vec);
-
-template<typename T>
-[[nodiscard]] ML_FUNC_DECL BwatEngine::Math::Internal::Vector2<T>operator*(const float &scalar,
-                                                                           BwatEngine::Math::Internal::Vector2<T> rhs);
-
-template<typename T>
-[[nodiscard]] ML_FUNC_DECL BwatEngine::Math::Internal::Vector2<T> Lerp(BwatEngine::Math::Internal::Vector2<T> begin,
-                                                                       BwatEngine::Math::Internal::Vector2<T> end,
-                                                                       float ratio);
-
 #pragma endregion
 
 #pragma region Definitions

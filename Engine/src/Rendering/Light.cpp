@@ -18,6 +18,7 @@ void Light::ApplyOnShader(Shader* shader , const std::string& i) const
     shader->SetVec3("light[" + i + "].ambient", ambient.X, ambient.Y, ambient.Z);
     shader->SetVec3("light[" + i + "].diffuse", diffuse.X, diffuse.Y, diffuse.Z);
     shader->SetVec3("light[" + i + "].specular", specular.X, specular.Y, specular.Z);
+    shader->SetFloat("light[" + i + "].intensity", intensity);
 
     if (typeoflight == TYPE_LIGHT::Point || typeoflight == TYPE_LIGHT::Spot)
     {

@@ -34,7 +34,7 @@ namespace BwatEngine
         {
             if(entityToIndexMap.find(entity) != entityToIndexMap.end())
             {
-                LogError("Component added to same entity more than once.");
+                LogError("[ECS] Component added to same entity more than once.");
                 return;
             }
             size_t newIndex = size;
@@ -51,7 +51,7 @@ namespace BwatEngine
         {
             if(entityToIndexMap.find(entity) != entityToIndexMap.end())
             {
-                LogError("Component added to same entity more than once.");
+                LogError("[ECS] Component added to same entity more than once.");
                 return;
             }            size_t newIndex = size;
             entityToIndexMap[entity] = newIndex;
@@ -67,7 +67,7 @@ namespace BwatEngine
         {
             if(entityToIndexMap.find(entity) != entityToIndexMap.end())
             {
-                LogError("Component added to same entity more than once.");
+                LogError("[ECS] Component added to same entity more than once.");
                 return;
             }            size_t newIndex = size;
             entityToIndexMap[entity] = newIndex;
@@ -83,7 +83,7 @@ namespace BwatEngine
         {
             if(entityToIndexMap.find(entity) == entityToIndexMap.end())
             {
-                LogError("Removing non-existent component.");
+                LogError("[ECS] Removing non-existent component.");
                 return;
             }
 
@@ -107,7 +107,7 @@ namespace BwatEngine
             if(entityToIndexMap.find(entity) == entityToIndexMap.end())
             {
                 // TODO: Better assertion
-                LogFatal("Retrieving non-existent component.");
+                LogFatal("[ECS] Retrieving non-existent component.");
                 throw std::runtime_error("ECS Crashed");
             }
             return componentArray[entityToIndexMap[entity]];

@@ -6,6 +6,8 @@
 #include "ECS/Components/DataComponent.hpp"
 #include "imgui_internal.h"
 #include "ECS/Coordinator.hpp"
+#include "Serialization/Serialization.hpp"
+#include "WidgetPrefab.hpp"
 
 WidgetHierarchy::WidgetHierarchy(EditorInterface *editor) : Widget(editor)
 {
@@ -49,7 +51,14 @@ void WidgetHierarchy::ShowEntity(BwatEngine::EntityID entity)
         }
         if (ImGui::MenuItem("Duplicate entity"))
         {
-            editor->SetEditedEntity(coordinator.DuplicateEntity(entity));
+            using namespace BwatEngine;
+            EntityID duplicatedEntity = Serialization::LoadEntity(Serialization::SaveEntity(editor->GetEditedEntity()));
+            editor->SetEditedEntity(duplicatedEntity);
+        }
+        if (ImGui::MenuItem("Save Prefab"))
+        {
+            using namespace BwatEngine;
+            editor->widgetPrefab->Open(true, entity);
         }
         ImGui::EndPopup();
     }
@@ -78,6 +87,10 @@ void WidgetHierarchy::TickVisible()
         if (ImGui::MenuItem("Create entity"))
         {
             coordinator.CreateEntity();
+        }
+        if (ImGui::MenuItem("Load Prefab"))
+        {
+            editor->widgetPrefab->Open(false);
         }
         ImGui::EndPopup();
     }

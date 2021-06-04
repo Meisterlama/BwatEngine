@@ -70,7 +70,8 @@ REGISTER_FUNC(utype, uclass, GetSafeNormalized);\
     REGISTER_FUNC(utype, uclass, Invert);                     \
     REGISTER_FUNC(utype, uclass, GetInverted);                     \
     REGISTER_FUNC(utype, uclass, GetEulerAngles);                     \
-    REGISTER_FUNC(utype, uclass, Rotate);                     \
+    REGISTER_FUNC(utype, uclass, Rotate);                           \
+    REGISTER_FUNC(utype, uclass, LookAt);                                   \
     utype["X"] = &Math::uclass::X;                                  \
     utype["Y"] = &Math::uclass::Y;                                  \
     utype["Z"] = &Math::uclass::Z;                                  \
