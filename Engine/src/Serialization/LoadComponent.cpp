@@ -47,8 +47,8 @@ namespace BwatEngine::Serialization
     }
 
 #define DESERIALIZE_TEXTURE(texture)                                      \
-    if (material.contains(#texture))                                  \
-        newMaterial->texture = resMan->GetOrLoadTexture(material[#texture])
+    if (material.contains(#texture))                                      \
+        newMaterial->texture = resMan->GetOrLoadTexture(material[#texture].get<std::string>())
 
     template<>
     void Load<RenderableComponent>(EntityID entityId, const json &componentData)
@@ -60,7 +60,7 @@ namespace BwatEngine::Serialization
         auto &renderable = coordinator.GetComponent<RenderableComponent>(entityId);
 
         if (componentData.contains("model"))
-            renderable.model = resMan->GetOrLoadModel(componentData["model"]);
+            renderable.model = resMan->GetOrLoadModel(componentData["model"].get<std::string>());
 
         if (componentData.contains("materials"))
         {
@@ -117,7 +117,7 @@ namespace BwatEngine::Serialization
         coordinator.AddComponent<AudioSourceComponent>(entityId);
         auto &audioComponent = coordinator.GetComponent<AudioSourceComponent>(entityId);
 
-        audioComponent.source.audioData = resourceManager.GetOrLoadAudio(componentData["path"]);
+        audioComponent.source.audioData = resourceManager.GetOrLoadAudio(componentData["path"].get<std::string>());
         audioComponent.source.Refresh();
         audioComponent.source.SetGain(componentData["gain"]);
         audioComponent.source.SetPitch(componentData["pitch"]);

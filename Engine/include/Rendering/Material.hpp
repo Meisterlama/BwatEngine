@@ -12,11 +12,11 @@ namespace Rendering
 
 	struct Material
 	{
-		Material(const aiMaterial& from);
+		Material(const char* basePath, const aiMaterial& from);
 		Material() {}
 
 
-		bool isTextured = false;
+		bool isTextured = true;
 
 		Texture* albedoMap = nullptr;
 		Texture* normal = nullptr;

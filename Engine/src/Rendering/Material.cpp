@@ -5,24 +5,37 @@
 
 using namespace Rendering;
 
-Material::Material(const aiMaterial& from)
+Material::Material(const char* basePath, const aiMaterial& from)
 {
+    std::string basePathStr = basePath;
     {
         aiString path;
         if (from.GetTexture(aiTextureType_NORMALS, 0, &path) == aiReturn_SUCCESS)
-            normal = BwatEngine::ResourceManager::Instance()->GetOrLoadTexture(path.C_Str());
+            normal = BwatEngine::ResourceManager::Instance()->GetOrLoadTexture(basePathStr + path.C_Str());
     }
 
     {
         aiString path;
-        if (from.GetTexture(aiTextureType_BASE_COLOR, 0, &path) == aiReturn_SUCCESS)
-            albedoMap = BwatEngine::ResourceManager::Instance()->GetOrLoadTexture(path.C_Str());
+        if (from.GetTexture(aiTextureType_DIFFUSE, 0, &path) == aiReturn_SUCCESS)
+            albedoMap = BwatEngine::ResourceManager::Instance()->GetOrLoadTexture(basePathStr + path.C_Str());
     }
 
     {
         aiString path;
         if (from.GetTexture(aiTextureType_AMBIENT_OCCLUSION, 0, &path) == aiReturn_SUCCESS)
-            aoMap = BwatEngine::ResourceManager::Instance()->GetOrLoadTexture(path.C_Str());
+            aoMap = BwatEngine::ResourceManager::Instance()->GetOrLoadTexture(basePathStr + path.C_Str());
+    }
+
+    {
+        aiString path;
+        if (from.GetTexture(aiTextureType_METALNESS, 0, &path) == aiReturn_SUCCESS)
+            metallicMap = BwatEngine::ResourceManager::Instance()->GetOrLoadTexture(basePathStr + path.C_Str());
+    }
+
+    {
+        aiString path;
+        if (from.GetTexture(aiTextureType_DIFFUSE_ROUGHNESS, 0, &path) == aiReturn_SUCCESS)
+            roughnessMap = BwatEngine::ResourceManager::Instance()->GetOrLoadTexture(basePathStr + path.C_Str());
     }
  
 }

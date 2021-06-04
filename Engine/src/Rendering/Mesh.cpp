@@ -8,8 +8,8 @@
 
 using namespace Rendering;
 
-Mesh::Mesh(std::vector<Vertex> mVertices, std::vector<unsigned int> mIndices, Material material)
-    : vertices(mVertices), indices(mIndices), defaultMaterial(material)
+Mesh::Mesh(std::vector<Vertex> mVertices, std::vector<unsigned int> mIndices, Material material, int indexMat)
+    : vertices(mVertices), indices(mIndices), defaultMaterial(material), indexMaterial(indexMat)
 {
     glGenVertexArrays(1, &VAO);
     glGenBuffers(1, &VBO);

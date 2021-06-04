@@ -129,7 +129,7 @@ void RenderSystem::RenderEntitiesAndLights(const CameraComponent& camera, const 
         if( renderableComponent.materials.size() > 0)
             renderableComponent.materials[0]->ApplyToShader(shader);
         
-        renderableComponent.model->Draw(&renderableComponent.materials);
+        renderableComponent.model->Draw(shader ,&renderableComponent.materials);
     }
 
     
@@ -235,7 +235,7 @@ void RenderSystem::UpdateShadow()
         auto& entityTransform = coordinator.GetComponent<TransformComponent>(entity);
 
         shadowMap.shader.SetMat4("model", Math::Mat4f::CreateTRSMat(entityTransform.position, entityTransform.rotation, entityTransform.scale));
-        renderableComponent.model->Draw(&renderableComponent.materials);
+        renderableComponent.model->Draw(shadowMap.shader,&renderableComponent.materials);
     }
 
     glBindFramebuffer(GL_FRAMEBUFFER, previousFramebuffer);

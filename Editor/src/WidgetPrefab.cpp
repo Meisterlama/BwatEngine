@@ -35,7 +35,7 @@ void WidgetPrefab::TickVisible()
             if (is_directory(path))
                 continue;
 
-            fileName = path.filename();
+            fileName = path.filename().string();
         }
 
         if (ImGui::InputText("FileName", &fileName, (textReadOnly) ? ImGuiInputTextFlags_ReadOnly : 0))
