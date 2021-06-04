@@ -15,6 +15,7 @@
 
 #include <Rendering/Model.hpp>
 #include "WidgetProperties.hpp"
+#include "Physic/PhysicCast.hpp"
 #include "Inputs/InputHandler.hpp"
 
 #include "imgui_stdlib.h"
@@ -304,13 +305,63 @@ template<>
 void WidgetProperties::ShowComponent<BwatEngine::ColliderComponent>(BwatEngine::ColliderComponent &component)
 {
     bool shouldUpdate = false;
-    bool isTrigger = component.collider->GetIsTrigger();
+    bool isTrigger = component.GetIsTrigger();
 
     shouldUpdate |= ImGui::Checkbox("Is Trigger", &isTrigger);
 
+    if(ImGui::BeginCombo("##Collider", BwatEngine::ColliderComponent::GetShapeTypeName(component.GetShapeType())))
+    {
+        for(int i = 0; i < BwatEngine::ColliderComponent::ShapeType::SIZE; i++)
+        {
+            bool selected = (component.GetShapeType() == i);
+            if(ImGui::Selectable(BwatEngine::ColliderComponent::GetShapeTypeName(
+                    static_cast<BwatEngine::Collider::ShapeType>(i)), selected))
+            {
+                component.SetShape(static_cast<BwatEngine::Collider::ShapeType>(i));
+            }
+            if(selected)
+                ImGui::SetItemDefaultFocus();
+        }
+        ImGui::EndCombo();
+    }
+
+    PxShape* shape = component.GetShape();
+
+    switch (component.GetShapeType())
+    {
+        case BwatEngine::Collider::CUBE:
+        {
+            PxBoxGeometry boxGeometry;
+            shape->getBoxGeometry(boxGeometry);
+            BwatEngine::Math::Vec3f boxExtents = BwatEngine::ToBwatVec3(boxGeometry.halfExtents);
+            if(ImGui::DragFloat3("Box Extent", boxExtents.values, 0.1f, 0.0f))
+            {
+                component.SetBoxExtent(boxExtents);
+            }
+            break;
+        }
+        case BwatEngine::Collider::SPHERE:
+        {
+            PxSphereGeometry sphereGeometry;
+            shape->getSphereGeometry(sphereGeometry);
+            float radius = sphereGeometry.radius;
+            if (ImGui::DragFloat("Radius", &radius, 0.1f, 0.0f))
+            {
+                component.SetSphereRadius(radius);
+            }
+            break;
+        }
+        case BwatEngine::Collider::PLANE:
+        {
+            PxPlaneGeometry planeGeometry;
+            shape->getPlaneGeometry(planeGeometry);
+            break;
+        }
+    }
+
     if (shouldUpdate)
     {
-        component.collider->SetIsTrigger(isTrigger);
+        component.SetIsTrigger(isTrigger);
     }
 }
 template<>

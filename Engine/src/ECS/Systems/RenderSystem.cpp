@@ -6,6 +6,7 @@
 
 #include "Time.hpp"
 #include "Rendering/Light.hpp"
+#include "Rendering/Primitives.hpp"
 #include "Scene.hpp"
 
 using namespace BwatEngine;

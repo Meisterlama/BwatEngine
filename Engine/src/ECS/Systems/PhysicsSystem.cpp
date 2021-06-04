@@ -14,17 +14,11 @@ void PhysicsSystem::Update()
     {
         auto& rigidBody = Coordinator::GetInstance().GetComponent<RigidBodyComponent>(entity);
         auto& transform = Coordinator::GetInstance().GetComponent<TransformComponent>(entity);
-        auto& collider = Coordinator::GetInstance().GetComponent<ColliderComponent>(entity).collider;
+        auto& collider = Coordinator::GetInstance().GetComponent<ColliderComponent>(entity);
 
         if (rigidBody.ShouldRegister())
         {
-            if(!collider)
-            {
-                BoxCollider* boxCollider = new BoxCollider{ 1 };
-                collider = boxCollider;
-            }
-
-            rigidBody.AttachCollider(*collider);
+            rigidBody.AttachCollider(collider);
             rigidBody.AddActor(ptrPhysicScene->GetPhysicScene());
         }
 
