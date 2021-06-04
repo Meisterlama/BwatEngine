@@ -10,6 +10,7 @@
 
 namespace BwatEngine 
 {
+    class PhysicScene;
 	class RigidBody
 	{
 	private :
@@ -31,7 +32,7 @@ namespace BwatEngine
 		void AddForce(const Math::Vec3f& vec);
 		void SetTransform(const Math::Transform& trans);
 		void SetMass(const float mass);
-		void AddActor(physx::PxScene* scene);
+		void AddActor(PhysicScene* scene);
 
 		bool CompareOldTransform(const Math::Transform& trans);
 		bool GetIsStatic() const { return isStatic; }

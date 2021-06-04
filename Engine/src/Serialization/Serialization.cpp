@@ -61,7 +61,7 @@ namespace BwatEngine::Serialization {
                 Serialization::Load<TransformComponent>(newEntity, componentData);
             else if (componentId == "camera")
                 Serialization::Load<CameraComponent>(newEntity, componentData);
-            else if (componentId == "rigidBody")
+            else if (componentId == "rigidbody")
                 Serialization::Load<RigidBodyComponent>(newEntity, componentData);
             else if (componentId == "renderable")
                 Serialization::Load<RenderableComponent>(newEntity, componentData);

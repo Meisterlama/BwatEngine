@@ -44,11 +44,12 @@ namespace BwatEngine::Serialization
         rigidBody.SetStatic(componentData["static"]);
         rigidBody.SetMass(componentData["mass"]);
         rigidBody.SetVelocity(DeserializeVector3f(componentData["velocity"]));
+
     }
 
 #define DESERIALIZE_TEXTURE(texture)                                      \
     if (material.contains(#texture))                                  \
-        newMaterial->texture = resMan->GetOrLoadTexture(material[#texture])
+        newMaterial->texture = resMan->GetOrLoadTexture(material[#texture].get<std::string>())
 
     template<>
     void Load<RenderableComponent>(EntityID entityId, const json &componentData)
@@ -60,7 +61,7 @@ namespace BwatEngine::Serialization
         auto &renderable = coordinator.GetComponent<RenderableComponent>(entityId);
 
         if (componentData.contains("model"))
-            renderable.model = resMan->GetOrLoadModel(componentData["model"]);
+            renderable.model = resMan->GetOrLoadModel(componentData["model"].get<std::string>());
 
         if (componentData.contains("materials"))
         {
@@ -97,8 +98,19 @@ namespace BwatEngine::Serialization
         auto &coordinator = Coordinator::GetInstance();
 
         coordinator.AddComponent<ColliderComponent>(entityId);
+        auto &collider = coordinator.GetComponent<ColliderComponent>(entityId);
 
-        //TODO: Update when collider branch merged
+        collider.SetShape(componentData["shapeType"]);
+        switch (collider.GetShapeType())
+        {
+
+            case Collider::CUBE:
+                collider.SetBoxExtent(DeserializeVector3f(componentData["shapeData"]["halfExtents"]));
+                break;
+            case Collider::SPHERE:
+                collider.SetSphereRadius(componentData["shapeData"]["radius"]);
+                break;
+        }
     }
 
     template<>
@@ -117,7 +129,7 @@ namespace BwatEngine::Serialization
         coordinator.AddComponent<AudioSourceComponent>(entityId);
         auto &audioComponent = coordinator.GetComponent<AudioSourceComponent>(entityId);
 
-        audioComponent.source.audioData = resourceManager.GetOrLoadAudio(componentData["path"]);
+        audioComponent.source.audioData = resourceManager.GetOrLoadAudio(componentData["path"].get<std::string>());
         audioComponent.source.Refresh();
         audioComponent.source.SetGain(componentData["gain"]);
         audioComponent.source.SetPitch(componentData["pitch"]);

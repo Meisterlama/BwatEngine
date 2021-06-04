@@ -19,7 +19,7 @@ void PhysicsSystem::Update()
         if (rigidBody.ShouldRegister())
         {
             rigidBody.AttachCollider(collider);
-            rigidBody.AddActor(ptrPhysicScene->GetPhysicScene());
+            rigidBody.AddActor(ptrPhysicScene);
         }
 
         if (rigidBody.CompareOldTransform(transform))
@@ -35,4 +35,9 @@ void PhysicsSystem::Update()
 
     ptrPhysicScene->GetPhysicScene()->simulate(Time::deltaTime);
     ptrPhysicScene->GetPhysicScene()->fetchResults(true);
+}
+
+PhysicScene *PhysicsSystem::GetPhysicScene()
+{
+    return ptrPhysicScene;
 };
