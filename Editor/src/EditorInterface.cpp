@@ -66,7 +66,7 @@ EditorInterface::EditorInterface(BwatEngine::Engine* _engine)
         BwatEngine::Serialization::LoadScene(currentScene.string().c_str());
     }
 
-    camera.near = 0.001f;
+    camera.near = 0.01f;
 }
 
 void EditorInterface::Close()

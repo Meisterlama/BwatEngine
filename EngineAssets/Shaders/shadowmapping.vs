@@ -1,11 +1,13 @@
 #version 330 core
 layout (location = 0) in vec3 aPos;
 
+layout (location = 2) in vec2 aTexCoord;
 layout (location = 3) in ivec4 boneIds; 
 layout (location = 4) in vec4 weights;
 
 
 out vec3 FragPos; 
+out vec2 TexCoords;
 
 uniform mat4 lightSpaceMatrix;
 uniform mat4 model;
@@ -18,6 +20,8 @@ uniform mat4 finalBonesMatrices[MAX_BONES];
 
 void main()
 {
+	TexCoords =  aTexCoord;
+
     if (skinned)
 	{
 		vec4 totalPosition = vec4(0.0f);

@@ -48,7 +48,7 @@ namespace BwatEngine::Serialization
     }
 
 #define DESERIALIZE_TEXTURE(texture)                                      \
-    if (material.contains(#texture))                                  \
+    if (material.contains(#texture))                                      \
         newMaterial->texture = resMan->GetOrLoadTexture(material[#texture].get<std::string>())
 
     template<>

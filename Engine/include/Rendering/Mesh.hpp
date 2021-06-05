@@ -40,9 +40,10 @@ namespace Rendering
         std::vector<Vertex> vertices;
         std::vector<unsigned int> indices;
         Material defaultMaterial;
+        int indexMaterial;
     
         // Constructor 
-        Mesh(std::vector<Vertex> vertices, std::vector<unsigned int> indices, Material defaultMaterial);
+        Mesh(std::vector<Vertex> vertices, std::vector<unsigned int> indices, Material defaultMaterial , int indexMat = -1);
         Mesh(const Mesh& mesh) = delete;
         ~Mesh();
 

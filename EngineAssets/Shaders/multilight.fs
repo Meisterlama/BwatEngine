@@ -76,7 +76,7 @@ vec3 CalcSpotLight(Light light, vec3 normal, vec3 fragPos, vec3 viewDir,vec3 F0)
 
 // === shadow 
 
-uniform float biasValue = 0.001;
+uniform float biasValue = 0.0002;
 
 float ShadowCalculation(vec4 fragPosLightSpace, vec3 lightpos, vec3 norm);
 
@@ -93,6 +93,10 @@ vec3 getNormalFromMap();
 
 void main()
 {    
+    
+    if (texture(material.albedoMap, TexCoords).a < 0.8)
+        discard;
+
     if(material.isTextured)
     {
         albedoG    = pow(texture(material.albedoMap, TexCoords).rgb, vec3(2.2));
@@ -145,7 +149,7 @@ void main()
 
     vec3 color = mix(result, envcolor.rgb, envMix);
 
-    FragColor = vec4(color,1.0);
+    FragColor = vec4(color,texture(material.albedoMap, TexCoords).a);
 }
 
 
@@ -286,7 +290,7 @@ float ShadowCalculation(vec4 fragPosLightSpace, vec3 lightdir, vec3 norm)
             shadow += currentDepth - bias  > pcfDepth ? 1.0 : 0.0;        
         }    
     }
-    shadow /= 9.0;
+    shadow /= 15.0;
     
     // keep the shadow at 0.0 when outside the far_plane region of the light's frustum.
     if(projCoords.z > 1.0)

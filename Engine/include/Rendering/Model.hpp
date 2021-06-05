@@ -31,14 +31,13 @@ namespace Rendering
 
 		//Data
 		std::vector<std::unique_ptr<Mesh>> meshes;
-		std::string directory{};
 
 		std::map<std::string, BoneInfo> boneInfoMap; 
 		int boneCounter = 0;
 
-		void LoadModel(const std::string path);
-		void ProcessNode(aiNode* node, const aiScene* scene);
-		void ProcessMesh(aiMesh* mesh, const aiScene* scene);
+		void LoadModel(const std::string& path);
+		void ProcessNode(const std::string& basePath, aiNode* node, const aiScene* scene);
+		void ProcessMesh(const std::string& basePath, aiMesh* mesh, const aiScene* scene);
 		//bones
 		void SetVertexBoneDataToDefault(Vertex& vertex);
 		void ExtractBoneWeightForVertices(std::vector<Vertex>& vertices, aiMesh* mesh, const aiScene* scene);
@@ -48,11 +47,12 @@ namespace Rendering
 	    std::string modelPath;
 
         Model() = default;
-        Model(const std::string path);
+        Model(const std::string& path);
 
 		void AddMesh(std::vector<Vertex> vertices, std::vector<unsigned int> indices,Material material);
 		std::vector<Material*> GetDefaultMaterials() const;
-		void Draw(std::vector<Material*>* materials = nullptr);
+		void Draw(Shader& shader, std::vector<Material*>* materials = nullptr);
+
     void DrawWireFrame(std::vector<Material *> *materials = nullptr);
     
 		std::map<std::string, BoneInfo>& GetBoneInfoMap() { return boneInfoMap; };
