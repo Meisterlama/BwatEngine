@@ -60,6 +60,7 @@ void RenderSystem::Update()
 void RenderSystem::RenderCubeMap(const CameraComponent& camera, const TransformComponent& cameraTransform)
 {
     glDepthMask(GL_FALSE);
+
     cubeMap.shader.Use();
     cubeMap.shader.SetMat4("view", Math::Mat4f::CreateTRSMat(Math::Vec3f(0, 0, 0), cameraTransform.rotation, cameraTransform.scale).Invert());
     cubeMap.shader.SetMat4("projection", camera.GetProjectionMatrix());
@@ -74,7 +75,6 @@ void RenderSystem::RenderCubeMap(const CameraComponent& camera, const TransformC
     }
 
     glDepthMask(GL_TRUE);
-
 }
 
 void RenderSystem::RenderEntitiesAndLights(const CameraComponent& camera, const TransformComponent& cameraTransform)
@@ -95,12 +95,18 @@ void RenderSystem::RenderEntitiesAndLights(const CameraComponent& camera, const 
     shader.SetMat4("lightSpaceMatrix", lightSpaceMatrix);
     
     shader.SetTextureCubemap("envMap", 20, cubeMap.id);
-
     
     for (unsigned int i = 0; i < lights.size(); i++)
     {
         std::string index = std::to_string(i);
         auto& light = coordinator.GetComponent<LightComponent>(lights[i]);
+        
+        if (coordinator.HaveComponent<TransformComponent>(lights[i]))
+        {
+            auto& transform = coordinator.GetComponent<TransformComponent>(lights[i]);
+            light.position = transform.position ;
+        }
+
         light.ApplyOnShader(&shader, index);
     }
     
@@ -131,7 +137,6 @@ void RenderSystem::RenderEntitiesAndLights(const CameraComponent& camera, const 
         
         renderableComponent.model->Draw(shader ,&renderableComponent.materials);
     }
-
     
 }
 
@@ -171,7 +176,6 @@ void RenderSystem::UpdateShadow()
     auto& coordinator = Coordinator::GetInstance();
     auto& cameraTransform = coordinator.GetComponent<TransformComponent>(cameraID);
 
-    glCullFace(GL_FRONT);
 
     GLint previousFramebuffer;
     glGetIntegerv(GL_DRAW_FRAMEBUFFER_BINDING, &previousFramebuffer);
@@ -183,7 +187,8 @@ void RenderSystem::UpdateShadow()
 
     glClearColor(1.0f, 1.0f, 1.0f, 1.0f);
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-
+    glCullFace(GL_FRONT);
+  
     Math::Mat4f lightProjection, lightView;
     float near_plane = -100.f, far_plane = 1000.f;
     lightProjection = Math::Mat4f::CreateOrtho(-200.0f, 200.0f, -200.0f, 200.0f, near_plane, far_plane);

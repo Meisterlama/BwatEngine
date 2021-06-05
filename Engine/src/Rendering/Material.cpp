@@ -43,6 +43,9 @@ Material::Material(const char* basePath, const aiMaterial& from)
 void Material::Bind()
 {
 
+    glEnable(GL_BLEND);
+    glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+
     glActiveTexture(GL_TEXTURE0);
     if (normal)
         normal->Use();
