@@ -50,8 +50,6 @@ void Engine::Update()
     if (postProcessSystem->isPostProcess)
         postProcessSystem->Begin();
 
-    if (renderUISystem->isRenderUI)
-        renderUISystem->Begin();
 
     renderSystem->Update();
 
@@ -63,7 +61,10 @@ void Engine::Update()
 
     if (renderUISystem->isRenderUI)
     {
-        glBindFramebuffer(GL_FRAMEBUFFER, targetFramebuffer);
+        EntityID camID = renderSystem->GetCameraID();
+        CameraComponent& mainCam = coordinator.GetComponent<CameraComponent>(camID);
+        TransformComponent& camTransform = coordinator.GetComponent<TransformComponent>(camID);
+        renderUISystem->SetCamMatrix(mainCam, camTransform);
         renderUISystem->Update();
     }
 

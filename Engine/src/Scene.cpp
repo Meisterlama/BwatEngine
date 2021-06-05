@@ -75,7 +75,7 @@ Scene::Scene(Window& window)
     coordinator.RegisterSystem<PostProcessSystem>(window.GetWidth(), window.GetHeight());
     coordinator.SetSystemConfig<PostProcessSystem>(SystemConfig{SystemConfig::ManualUpdate});
 
-    coordinator.RegisterSystem<RenderUISystem>(window.GetWidth(), window.GetHeight());
+    coordinator.RegisterSystem<RenderUISystem>();
     coordinator.SetSystemConfig<RenderUISystem>(SystemConfig{SystemConfig::ManualUpdate});
 
     Serializer::LoadScene("sampleScene.bwat");

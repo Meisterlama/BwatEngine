@@ -7,6 +7,8 @@
 
 #include "Rendering/RenderUI.hpp"
 #include "Rendering/FrameBuffer.hpp"
+#include "Ecs/Components/CameraComponent.hpp"
+#include "Ecs/Components/TransformComponent.hpp."
 
 
 namespace BwatEngine
@@ -15,19 +17,27 @@ namespace BwatEngine
     class RenderUISystem : public System
     {
     private:
-        Rendering::Quad quad;
-        Rendering::Render2d render;
-        Rendering::FrameBufferObject framebuffer;
 
-        Rendering::Texture* text;
+        Rendering::Render2d render;
+        Math::Mat4f view;
+        Math::Mat4f proj;
+
+
 
     public:
 
         bool isRenderUI = true;
-        RenderUISystem(int width, int height);
+        RenderUISystem();
 
         virtual void Update() override;
-        void Begin();
+        void SetCamMatrix(CameraComponent& camComp, TransformComponent & camTransform);
+
+        Rendering::Image2D* CreateImage(const char* textPath);
+        void SetImagePos(Math::Vec2f pos);
+        void SetImageScale(Math::Vec2f scale);
+        void SetImageRotation(float rotation);
+        void SetIsActive(bool isActive);
+
     };
 }
 
