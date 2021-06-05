@@ -1,4 +1,5 @@
 #include "Serialization/SerializeComponent.hpp"
+#include "Serialization/Utils.hpp"
 
 namespace BwatEngine::Serialization
 {
@@ -54,7 +55,7 @@ namespace BwatEngine::Serialization
     }
 #define SERIALIZE_TEXTURE(texture)                    \
     if (material.texture)                             \
-        materialJs[#texture] = material.texture->path
+        materialJs[#texture] = ToGenericPath(material.texture->path)
 
     template<>
     json SerializeComponent<RenderableComponent>(const RenderableComponent &renderable)
@@ -88,7 +89,7 @@ namespace BwatEngine::Serialization
             ret["Data"]["materials"].push_back(materialJs);
         }
 
-        ret["Data"]["model"] = (renderable.model) ? renderable.model->modelPath : "";
+        ret["Data"]["model"] = (renderable.model) ? ToGenericPath(renderable.model->modelPath) : "";
 
         return ret;
     }
@@ -116,7 +117,6 @@ namespace BwatEngine::Serialization
         }
 
         ret["Data"]["shapeData"] = shapeData;
-        //TODO: Update when collider branch merged
         return ret;
     }
 
@@ -126,7 +126,7 @@ namespace BwatEngine::Serialization
         json ret;
 
         ret["Type"] = "script";
-        ret["Data"]["path"] = script.scriptPath;
+        ret["Data"]["path"] = ToGenericPath(script.scriptPath);
 
         return ret;
     }
@@ -137,7 +137,7 @@ namespace BwatEngine::Serialization
         json ret;
 
         ret["Type"] = "audio";
-        ret["Data"]["path"] = (audio.source.audioData) ? audio.source.audioData->path : "";
+        ret["Data"]["path"] = (audio.source.audioData) ? ToGenericPath(audio.source.audioData->path) : "";
         ret["Data"]["gain"] = audio.source.GetGain();
         ret["Data"]["pitch"] = audio.source.GetPitch();
         ret["Data"]["looping"] = audio.source.GetLooping();

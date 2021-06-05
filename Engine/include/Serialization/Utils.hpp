@@ -5,7 +5,7 @@
 #include "Math/Math.hpp"
 
 
-namespace BwatEngine
+namespace BwatEngine::Serialization
 {
     using json = nlohmann::json;
 
@@ -21,6 +21,8 @@ namespace BwatEngine
      Math::Vec3f DeserializeVector3f(const json& js);
      Math::Vec4f DeserializeVector4f(const json& js);
      Math::Quatf DeserializeQuatf(const json& js);
+
+    std::string ToGenericPath(std::string path);
 }
 
 #endif //ENGINE_SERIALIZATION_UTILS_HPP
