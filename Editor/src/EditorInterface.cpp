@@ -22,8 +22,10 @@
 #include "Time.hpp"
 #include "Engine.hpp"
 #include "ECS/Systems/RenderSystem.hpp"
+#include "ECS/Systems/ColliderDrawSystem.hpp"
 #include "ECS/Coordinator.hpp"
 #include "ECS/Components/TransformComponent.hpp"
+#include "ECS/Components/ColliderComponent.hpp"
 
 #include "Inputs/InputHandler.hpp"
 #include "json.hpp"
@@ -37,6 +39,7 @@ EditorInterface::EditorInterface(BwatEngine::Engine* _engine)
     : gameViewFramebuffer(_engine->GetWindow().GetWidth(), _engine->GetWindow().GetHeight())
     , sceneViewFramebuffer(_engine->GetWindow().GetWidth(), _engine->GetWindow().GetHeight())
 {
+    using namespace BwatEngine;
     engine = _engine;
     widgets.clear();
     widgets.shrink_to_fit();
@@ -51,6 +54,12 @@ EditorInterface::EditorInterface(BwatEngine::Engine* _engine)
     ImGui_ImplOpenGL3_Init("#version 330");
 
     LoadData("editor.conf");
+
+    auto& coordinator = Coordinator::GetInstance();
+
+    coordinator.RegisterSystem<ColliderDrawSystem>();
+    coordinator.SetSystemSignature<ColliderDrawSystem, TransformComponent, ColliderComponent>();
+    coordinator.SetSystemConfig<ColliderDrawSystem>(SystemConfig{SystemConfig::ManualUpdate});
 
     if (!currentScene.empty())
     {
@@ -73,12 +82,14 @@ void EditorInterface::OnTick()
     auto& coordinator = BwatEngine::Coordinator::GetInstance();
 
     auto renderSystem = coordinator.GetSystem<BwatEngine::RenderSystem>();
+    auto colliderDrawSystem = coordinator.GetSystem<BwatEngine::ColliderDrawSystem>();
 
     // Render game in editor framebuffer
     GLint previousFramebuffer = gameViewFramebuffer.Bind();
     engine->Update();
     sceneViewFramebuffer.Bind();
     renderSystem->RenderWithCamera(camera, cameraTransform);
+    colliderDrawSystem->DrawWithCamera(camera, cameraTransform);
     glBindFramebuffer(GL_FRAMEBUFFER, previousFramebuffer);
 
     ImGui_ImplOpenGL3_NewFrame();
@@ -406,7 +417,7 @@ void EditorInterface::ToolbarUI()
     {
         if (!engine->isPlaying)
         {
-            BwatEngine::Serialization::SaveScene("EngineAssets/temp.bwat");
+            tempSave = Serialization::SerializeScene();
             engine->isPlaying = true;
             playImage = BwatEngine::ResourceManager::Instance()->GetOrLoadTexture("EngineAssets/Images/pause.png",Rendering::Texture::Type::E_DIFFUSE)->id;
             ImGui::GetStyle().Colors[ImGuiCol_WindowBg] = ImVec4(235.f / 255.f, 69.f / 255.f, 17.f / 255.f, 1.f);
@@ -416,7 +427,8 @@ void EditorInterface::ToolbarUI()
         else
         {
             engine->isPlaying = false;
-            BwatEngine::Serialization::LoadScene("EngineAssets/temp.bwat");
+            Serialization::DeserializeScene(tempSave);
+            tempSave.clear();
             playImage = BwatEngine::ResourceManager::Instance()->GetOrLoadTexture("EngineAssets/Images/play.png",Rendering::Texture::Type::E_DIFFUSE)->id;
             ImGui::GetStyle().Colors[ImGuiCol_WindowBg] = ImVec4(60.f  / 255.f, 60.f  / 255.f, 60.f  / 255.f, 1.f);
         }

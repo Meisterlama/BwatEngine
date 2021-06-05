@@ -44,6 +44,7 @@ namespace BwatEngine::Serialization
         rigidBody.SetStatic(componentData["static"]);
         rigidBody.SetMass(componentData["mass"]);
         rigidBody.SetVelocity(DeserializeVector3f(componentData["velocity"]));
+
     }
 
 #define DESERIALIZE_TEXTURE(texture)                                      \
@@ -97,8 +98,19 @@ namespace BwatEngine::Serialization
         auto &coordinator = Coordinator::GetInstance();
 
         coordinator.AddComponent<ColliderComponent>(entityId);
+        auto &collider = coordinator.GetComponent<ColliderComponent>(entityId);
 
-        //TODO: Update when collider branch merged
+        collider.SetShape(componentData["shapeType"]);
+        switch (collider.GetShapeType())
+        {
+
+            case Collider::CUBE:
+                collider.SetBoxExtent(DeserializeVector3f(componentData["shapeData"]["halfExtents"]));
+                break;
+            case Collider::SPHERE:
+                collider.SetSphereRadius(componentData["shapeData"]["radius"]);
+                break;
+        }
     }
 
     template<>

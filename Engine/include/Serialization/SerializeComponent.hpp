@@ -17,8 +17,6 @@
 
 #include "Serialization/Utils.hpp"
 
-
-
 using json = nlohmann::json;
 
 namespace BwatEngine::Serialization

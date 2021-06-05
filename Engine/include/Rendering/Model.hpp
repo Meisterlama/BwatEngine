@@ -53,6 +53,8 @@ namespace Rendering
 		std::vector<Material*> GetDefaultMaterials() const;
 		void Draw(Shader& shader, std::vector<Material*>* materials = nullptr);
 
+    void DrawWireFrame(std::vector<Material *> *materials = nullptr);
+    
 		std::map<std::string, BoneInfo>& GetBoneInfoMap() { return boneInfoMap; };
 		int& GetBoneCount() { return boneCounter; };
 	};

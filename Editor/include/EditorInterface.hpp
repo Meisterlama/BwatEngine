@@ -14,6 +14,8 @@
 #include "ECS/Components/CameraComponent.hpp"
 #include "ECS/Components/TransformComponent.hpp"
 
+#include "Serialization/Serialization.hpp"
+
 
 
 namespace BwatEngine
@@ -57,7 +59,7 @@ public:
     void ApplyStyle(bool isBasic = true) const;
 
     fs::path currentScene;
-
+    json tempSave;
 
     BwatEngine::CameraComponent camera;
     BwatEngine::TransformComponent cameraTransform;

@@ -14,6 +14,8 @@ namespace BwatEngine
 
         PhysicsSystem(PhysicScene* physicScene) : ptrPhysicScene(physicScene) {};
         virtual void Update() override;
+
+        PhysicScene* GetPhysicScene();
     private:
 
         PhysicScene* ptrPhysicScene = nullptr;

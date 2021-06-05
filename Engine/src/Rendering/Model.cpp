@@ -126,6 +126,15 @@ void Model::Draw(Shader& shader, std::vector<Material*>* materials)
     }
 }
 
+void Model::DrawWireFrame(std::vector<Material*>* materials)
+{
+    for (unsigned int i = 0; i < meshes.size(); i++)
+    {
+        meshes[i]->DrawWireFrame();
+
+    }
+}
+
 std::vector<Material*> Model::GetDefaultMaterials() const
 {
     std::vector<Material*> materials;

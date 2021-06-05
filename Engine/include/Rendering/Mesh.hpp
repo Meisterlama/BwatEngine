@@ -48,6 +48,7 @@ namespace Rendering
         ~Mesh();
 
         void Draw();
-    
+
+        void DrawWireFrame();
     };
 }
