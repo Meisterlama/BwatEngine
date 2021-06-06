@@ -1,6 +1,9 @@
 #include "Serialization/Utils.hpp"
+#include <filesystem>
 
-namespace BwatEngine
+namespace fs = std::filesystem;
+
+namespace BwatEngine::Serialization
 {
     json SerializeVector2f(const Math::Vec2f &vector)
     {
@@ -73,5 +76,10 @@ namespace BwatEngine
                 js["Y"].get<float>(),
                 js["Z"].get<float>(),
         };
+    }
+
+    std::string ToGenericPath(std::string path)
+    {
+        return fs::path(path).generic_string();
     }
 }

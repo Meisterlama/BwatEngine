@@ -70,7 +70,7 @@ Scene::Scene(Window& window)
 
     // =================================== SOUND =================================== //
     coordinator.RegisterSystem<SoundSystem>();
-    coordinator.SetSystemSignature<SoundSystem, AudioSourceComponent>();
+    coordinator.SetSystemSignature<SoundSystem, AudioSourceComponent, TransformComponent>();
     coordinator.SetSystemConfig<SoundSystem>(SystemConfig{SystemConfig::GameUpdate});
 
     // =================================== POST PROCESS =================================== //

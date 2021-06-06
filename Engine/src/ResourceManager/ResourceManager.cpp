@@ -61,6 +61,8 @@ namespace BwatEngine
     {
         if (path.empty())
             return nullptr;
+        path.make_preferred();
+
         Rendering::Model* res = ResourceManager::Instance()->GetModel(path);
         return (res != nullptr) ? res : LoadModel(path);
     }
@@ -69,6 +71,8 @@ namespace BwatEngine
     {
         if (path.empty())
             return nullptr;
+        path.make_preferred();
+
         Rendering::Texture* res = ResourceManager::Instance()->GetTexture(path);
         return (res != nullptr) ? res : LoadTexture(path);
     }
@@ -77,6 +81,8 @@ namespace BwatEngine
     {
         if (path.empty())
             return nullptr;
+        path.make_preferred();
+
         Audio::AudioData* res = ResourceManager::Instance()->GetAudio(path);
         return (res != nullptr) ? res : LoadAudio(path);
     }
@@ -85,6 +91,8 @@ namespace BwatEngine
     {
         if (path.empty())
             return nullptr;
+        path.make_preferred();
+
         std::string* res = ResourceManager::Instance()->GetScript(path);
         return (res != nullptr) ? res : LoadScript(path);
     }

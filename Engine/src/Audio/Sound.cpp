@@ -69,6 +69,7 @@ namespace BwatEngine::Audio
     bool CheckALErrors()
     {
         ALenum error = alGetError();
+
         if (error != AL_NO_ERROR)
         {
             switch (error)
