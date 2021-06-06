@@ -71,8 +71,9 @@ void RenderSystem::RenderCubeMap(const CameraComponent& camera, const TransformC
         cubeMap.BindAndDrawCubeMaDdsp();
     else
     {
-        glBindTexture(GL_TEXTURE_CUBE_MAP, cubeMap.id);
-        glDrawArrays(GL_TRIANGLES, 0, 36);
+        cubeMap.BindCubeMap();
+        //glBindTexture(GL_TEXTURE_CUBE_MAP, cubeMap.id);
+        //glDrawArrays(GL_TRIANGLES, 0, 36);
     }
 
     glDepthMask(GL_TRUE);

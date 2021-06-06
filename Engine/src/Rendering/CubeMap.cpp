@@ -66,8 +66,12 @@ void CubeMap::Init()
 
 void CubeMap::LoadCubeMap()
 {
-    Init();
+    
+     Init();
 
+    if(glIsTexture(id))
+        glDeleteTextures(1, &id);
+    
     glGenTextures(1, &id);
     glBindTexture(GL_TEXTURE_CUBE_MAP, id);
 
@@ -77,8 +81,18 @@ void CubeMap::LoadCubeMap()
         stbi_set_flip_vertically_on_load(false);
         // 3 for RGB
         unsigned char* data = stbi_load(faces[i].c_str(), &width, &height, &nrChannels, 3);
+
         if (data)
         {
+            GLenum format;
+
+            if (nrChannels == 1)
+                format = GL_RED;
+            else if (nrChannels == 3)
+                format = GL_RGB;
+            else if (nrChannels == 4)
+                format = GL_RGBA;
+
             glTexImage2D(GL_TEXTURE_CUBE_MAP_POSITIVE_X + i,
                 0, GL_RGB, width, height, 0, GL_RGB, GL_UNSIGNED_BYTE, data
             );
@@ -98,6 +112,7 @@ void CubeMap::LoadCubeMap()
 
 void CubeMap::BindCubeMap()
 {
+    // id why bien on o or 20
     glBindTexture(GL_TEXTURE_CUBE_MAP, id);
     glDrawArrays(GL_TRIANGLES, 0, 36);
 }

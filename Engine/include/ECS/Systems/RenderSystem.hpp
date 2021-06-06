@@ -20,8 +20,6 @@ namespace BwatEngine
     class RenderSystem : public System
     {
         Rendering::Shader shader;
-
-        Rendering::CubeMap cubeMap;
         Rendering::ShadowMapping shadowMap;
 
         EntityID cameraID = 0;
@@ -32,6 +30,8 @@ namespace BwatEngine
         int displayWidth;
         int displayHeight;
 
+        Rendering::CubeMap cubeMap;
+        
         Math::Vec3f clearColor = { 0.0f, 0.0f, 0.0f };
         Math::Mat4f  lightSpaceMatrix;
 
