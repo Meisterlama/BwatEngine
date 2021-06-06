@@ -125,7 +125,7 @@ namespace BwatEngine::Serialization
     {
         auto &coordinator = Coordinator::GetInstance();
         coordinator.AddComponent<ScriptComponent>(entityId, componentData["path"]);
-        ResourceManager::Instance()->GetOrLoadScript(componentData["path"]);
+        ResourceManager::Instance()->GetOrLoadScript(componentData["path"].get<std::string>());
     }
 
     template<>
