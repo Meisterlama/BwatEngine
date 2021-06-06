@@ -264,6 +264,9 @@ void WidgetProperties::ShowComponent<BwatEngine::AudioSourceComponent>(BwatEngin
 
     if (ImGui::Button("Play"))
         component.source.Play();
+    ImGui::SameLine();
+    if (ImGui::Button("Stop"))
+        component.source.Stop();
 }
 
 template<>
