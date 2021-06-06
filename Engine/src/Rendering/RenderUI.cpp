@@ -9,8 +9,19 @@ using namespace BwatEngine::Math;
 
 void Image2D::SetImagePos(const BwatEngine::Math::Vec2f& pos)
 {
+    if (pos.X > 600)
+        position.X = 600;
+    else if( pos.X < -600)
+        position.X = -600;
+    else
     position.X = pos.X;
-    position.Y = pos.Y;
+
+    if (pos.Y > 360)
+        position.Y = 360;
+    else if( pos.Y < -360)
+        position.Y = -360;
+    else
+        position.Y = pos.Y;
 }
 
 void Image2D::SetImageScale(const BwatEngine::Math::Vec2f& value)
