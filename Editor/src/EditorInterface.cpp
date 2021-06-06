@@ -175,7 +175,7 @@ void EditorInterface::HandleEditorShortcuts()
 void EditorInterface::Initialise()
 {
     ImGuiIO& io = ImGui::GetIO();
-    font = io.Fonts->AddFontFromFileTTF("EngineAssets/zrnic.ttf", 16.f);
+    font = io.Fonts->AddFontFromFileTTF("EngineAssets/Oxanium-Regular.ttf", 16.f);
     io.Fonts->Build();
 
     ApplyStyle();
@@ -206,29 +206,32 @@ void EditorInterface::Initialise()
     }
 }
 
+ImVec4 BwatVec4toImVec4(BwatEngine::Math::Vec4f vec)
+{
+    ImVec4 vecteur = ImVec4(vec.X, vec.Y, vec.Z, vec.W);
+    return vecteur;
+}
+
 void EditorInterface::ApplyStyle(bool isBasic) const
 {
     // Color settings
-    const auto color_text                   = ImVec4(0.1f, 0.1f, 0.1f, 1.f);
-    const auto color_text_disabled          = ImVec4(color_text.x, color_text.y, color_text.z, 0.5f);
-    const auto color_interactive_hovered    = ImVec4(0.714f , 0.714f, 0.714f, 1.f);
-    const auto color_background             = ImVec4(0.355f, 0.355f, 0.355f, 1.f);
-    const auto color_background_content     = ImVec4(0.726f, 0.726f, 0.726f, 1.f);
-    const auto color_shadow                 = ImVec4(0.f, 0.f, 0.f, 0.5f);
-    const auto colorBarActive               = ImVec4(1.f, 1.f, 1.f, 1.f);
-    const auto sel                          = ImVec4(1.f, 0.f, 0.f, 1.f);
-
-
-    ImVec4 color_interactive = ImVec4(1, 0.847f, 0, 1);
-    ImVec4 blue = ImVec4(0.26f, 0.59f, 0.98f, 0.80f);
+    ImVec4 color_text                   = BwatVec4toImVec4(style.colorText);
+    ImVec4 color_text_disabled          = BwatVec4toImVec4(style.colorText);
+    ImVec4 color_interactive_hovered    = BwatVec4toImVec4(style.colorInteractiveHovered);
+    ImVec4 color_background             = BwatVec4toImVec4(style.colorBackground);
+    ImVec4 color_background_content     = BwatVec4toImVec4(style.colorBackgroundContent);
+    ImVec4 colorBarActive               = BwatVec4toImVec4(style.colorTabActive);
+    ImVec4 color_interactive            = BwatVec4toImVec4(style.colorInteractive);
+    ImVec4 gold                         = BwatVec4toImVec4(style.colorGoldInteractive);
+    ImVec4 goldActive                   = BwatVec4toImVec4(style.colorGoldActive);
+    ImVec4 titlebg                      = BwatVec4toImVec4(style.colortitlebg);
 
     if (!isBasic)
     {
-        blue = color_interactive;
+        gold = color_interactive;
         color_interactive = ImVec4(0.26f, 0.59f, 0.98f, 0.80f);
     }
 
-    const auto colorTab                     = ImVec4(1, 0.847f, 0, 1);
 
 
     // Colors
@@ -239,26 +242,26 @@ void EditorInterface::ApplyStyle(bool isBasic) const
     colors[ImGuiCol_ChildBg]                = color_background;             // Background of child windows
     colors[ImGuiCol_PopupBg]                = color_background_content;             // Background of popups, menus, tooltips windows
     colors[ImGuiCol_Border]                 = color_interactive;
-    colors[ImGuiCol_BorderShadow]           = color_shadow;
+    colors[ImGuiCol_BorderShadow]           = color_text;
     colors[ImGuiCol_FrameBg]                = color_background_content;     // Background of checkbox, radio button, plot, slider, text input
     colors[ImGuiCol_FrameBgHovered]         = color_interactive;
     colors[ImGuiCol_FrameBgActive]          = color_interactive_hovered;
-    colors[ImGuiCol_TitleBg]                = color_background_content;
+    colors[ImGuiCol_TitleBg]                = titlebg;
     colors[ImGuiCol_TitleBgActive]          = colorBarActive;
-    colors[ImGuiCol_TitleBgCollapsed]       = sel;
+    colors[ImGuiCol_TitleBgCollapsed]       = color_text;
     colors[ImGuiCol_MenuBarBg]              = color_background_content;
     colors[ImGuiCol_ScrollbarBg]            = color_background_content;
     colors[ImGuiCol_ScrollbarGrab]          = color_interactive;
     colors[ImGuiCol_ScrollbarGrabHovered]   = color_interactive_hovered;
     colors[ImGuiCol_ScrollbarGrabActive]    = color_interactive_hovered;
     colors[ImGuiCol_CheckMark]              = color_text;
-    colors[ImGuiCol_SliderGrab]             = color_interactive;
-    colors[ImGuiCol_SliderGrabActive]       = color_interactive_hovered;
+    colors[ImGuiCol_SliderGrab]             = colorBarActive;
+    colors[ImGuiCol_SliderGrabActive]       = colorBarActive;
     colors[ImGuiCol_Button]                 = color_interactive;
-    colors[ImGuiCol_ButtonHovered]          = blue;
+    colors[ImGuiCol_ButtonHovered]          = gold;
     colors[ImGuiCol_ButtonActive]           = color_interactive_hovered;
     colors[ImGuiCol_Header]                 = color_interactive;            // Header* colors are used for CollapsingHeader, TreeNode, Selectable, MenuItem
-    colors[ImGuiCol_HeaderHovered]          = blue;
+    colors[ImGuiCol_HeaderHovered]          = gold;
     colors[ImGuiCol_HeaderActive]           = color_interactive_hovered;
     colors[ImGuiCol_Separator]              = color_interactive;
     colors[ImGuiCol_SeparatorHovered]       = color_interactive_hovered;
@@ -267,8 +270,8 @@ void EditorInterface::ApplyStyle(bool isBasic) const
     colors[ImGuiCol_ResizeGripHovered]      = color_interactive_hovered;
     colors[ImGuiCol_ResizeGripActive]       = color_interactive_hovered;
     colors[ImGuiCol_Tab]                    = color_interactive;
-    colors[ImGuiCol_TabHovered]             = blue;
-    colors[ImGuiCol_TabActive]              = blue;
+    colors[ImGuiCol_TabHovered]             = gold;
+    colors[ImGuiCol_TabActive]              = goldActive;
     colors[ImGuiCol_TabUnfocused]           = color_interactive;
     colors[ImGuiCol_TabUnfocusedActive]     = color_interactive;            // Might be called active, but it's active only because it's it's the only tab available, the user didn't really activate it
     colors[ImGuiCol_DockingPreview]         = color_interactive_hovered;    // Preview overlay color when about to docking something
@@ -285,7 +288,7 @@ void EditorInterface::ApplyStyle(bool isBasic) const
     colors[ImGuiCol_ModalWindowDimBg]       = color_background;             // Darken/colorize entire screen behind a modal window, when one is active
 
     // Spatial settings
-    const auto roundness    = 4.0f;
+    const auto roundness    = style.roundness;
 
     // Spatial
     ImGuiStyle& style               = ImGui::GetStyle();
@@ -420,7 +423,7 @@ void EditorInterface::ToolbarUI()
             tempSave = Serialization::SerializeScene();
             engine->isPlaying = true;
             playImage = BwatEngine::ResourceManager::Instance()->GetOrLoadTexture("EngineAssets/Images/pause.png",Rendering::Texture::Type::E_DIFFUSE)->id;
-            ImGui::GetStyle().Colors[ImGuiCol_WindowBg] = ImVec4(235.f / 255.f, 69.f / 255.f, 17.f / 255.f, 1.f);
+            ImGui::GetStyle().Colors[ImGuiCol_WindowBg] = BwatVec4toImVec4(style.colorGoldActive);
 
             SetEditedEntity(0);
         }
@@ -430,7 +433,7 @@ void EditorInterface::ToolbarUI()
             Serialization::DeserializeScene(tempSave);
             tempSave.clear();
             playImage = BwatEngine::ResourceManager::Instance()->GetOrLoadTexture("EngineAssets/Images/play.png",Rendering::Texture::Type::E_DIFFUSE)->id;
-            ImGui::GetStyle().Colors[ImGuiCol_WindowBg] = ImVec4(60.f  / 255.f, 60.f  / 255.f, 60.f  / 255.f, 1.f);
+            ImGui::GetStyle().Colors[ImGuiCol_WindowBg] = BwatVec4toImVec4(style.colorBackground);
         }
     }
 
