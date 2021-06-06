@@ -183,4 +183,24 @@ namespace BwatEngine::Serialization
 
         return ret;
     }
+
+    template<>
+    json SerializeComponent<AnimatorComponent>(const AnimatorComponent& anim)
+    {
+        json ret;
+
+        ret["Type"] = "animator";
+
+        for (int i = 0; i < anim.names.size(); i++)
+        {
+            json animation;
+
+            animation["name"] = anim.names[i];
+            animation["path"] = anim.animations[i].path;
+
+            ret["Data"]["animations"].push_back(animation);
+        }
+
+        return ret;
+    }
 }

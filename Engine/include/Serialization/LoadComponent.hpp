@@ -48,5 +48,8 @@ namespace BwatEngine::Serialization
 
     template<>
     void Load<DataComponent>(EntityID entityId, const json &componentData);
+
+    template<>
+    void Load<AnimatorComponent>(EntityID entityId, const json& componentData);
 }
 #endif //ENGINE_LOADCOMPONENT_HPP

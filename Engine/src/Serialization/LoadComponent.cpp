@@ -170,4 +170,27 @@ namespace BwatEngine::Serialization
         auto &coordinator = Coordinator::GetInstance();
         coordinator.AddComponent<DataComponent>(entityId, componentData["name"]);
     }
+
+    template<>
+    void Load<AnimatorComponent>(EntityID entityId, const json& componentData)
+    {
+        auto& coordinator = Coordinator::GetInstance();
+
+        coordinator.AddComponent<AnimatorComponent>(entityId);
+        auto& animator = coordinator.GetComponent<AnimatorComponent>(entityId);
+
+        if (!coordinator.HaveComponent<RenderableComponent>(entityId))
+            return;
+
+        auto& rende = coordinator.GetComponent<RenderableComponent>(entityId);
+        animator.SetAnimationModel(rende.model);
+
+        if (componentData.contains("animations"))
+        {
+            for (auto animation : componentData["animations"])
+            {
+                animator.SetNewAnimation(animation["name"], animation["path"]);
+            }
+        }
+    }
 }
