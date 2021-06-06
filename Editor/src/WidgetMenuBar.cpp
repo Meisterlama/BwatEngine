@@ -68,9 +68,14 @@ void WidgetMenuBar::MenuFile()
         BwatEngine::Coordinator::GetInstance().DestroyAllEntities();
         editor->currentScene = "";
     }
+
+    std::string SaveSceneString = "Save Scene";
+
     if (editor->currentScene != "")
-        enabled = true;
-    if (ImGui::MenuItem("Save Scene", 0, false, enabled))
+    {
+        SaveSceneString += " as " + editor->currentScene.filename().string();
+    }
+    if (ImGui::MenuItem(SaveSceneString.c_str(), 0, false, !editor->currentScene.empty()))
     {
         BwatEngine::Serialization::SaveScene(editor->currentScene.string().c_str());
     }

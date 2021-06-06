@@ -76,6 +76,26 @@ namespace BwatEngine
             Coordinator::GetInstance().GetComponent<RigidBodyComponent>(entity).AddForce(force);
         }
 
+        void LockRotation(EntityID entity, bool lockX, bool lockY, bool lockZ)
+        {
+            Coordinator::GetInstance().GetComponent<RigidBodyComponent>(entity).LockRotation(lockX, lockY, lockZ);
+        }
+
+        bool GetLockX(EntityID entity)
+        {
+            Coordinator::GetInstance().GetComponent<RigidBodyComponent>(entity).GetXLockState();
+        }
+
+        bool GetLockY(EntityID entity)
+        {
+            Coordinator::GetInstance().GetComponent<RigidBodyComponent>(entity).GetYLockState();
+        }
+
+        bool GetLockZ(EntityID entity)
+        {
+            Coordinator::GetInstance().GetComponent<RigidBodyComponent>(entity).GetZLockState();
+        }
+
         #undef RIGIDBODY_SETTER_GETTER
     }
 
@@ -91,7 +111,10 @@ namespace BwatEngine
     {
         std::string GetName(EntityID entity)
         {
-            return Coordinator::GetInstance().GetComponent<DataComponent>(entity).name;
+            Coordinator& coordinator = Coordinator::GetInstance();
+            if (coordinator.HaveComponent<DataComponent>(entity))
+                return coordinator.GetComponent<DataComponent>(entity).name;
+            return "";
         }
     }
 
@@ -159,6 +182,10 @@ namespace BwatEngine
         REGISTER_FUNC(RigidBodyScripting, SetMass);
         REGISTER_FUNC(RigidBodyScripting, GetMass);
         REGISTER_FUNC(RigidBodyScripting, AddForce);
+        REGISTER_FUNC(RigidBodyScripting, LockRotation);
+        REGISTER_FUNC(RigidBodyScripting, GetLockX);
+        REGISTER_FUNC(RigidBodyScripting, GetLockY);
+        REGISTER_FUNC(RigidBodyScripting, GetLockZ);
 
         REGISTER_FUNC(DataScripting, GetName);
         return module;

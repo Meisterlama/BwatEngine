@@ -3,10 +3,16 @@
 
 namespace BwatEngine
 {
-	struct Time
+	class Time
 	{
-		static float deltaTime;
+	public:
+		static double deltaTime;
 
+		static void Update();
+		static void Reset();
+
+	private:
+	    static double lastFrame;
 	};
 
 }

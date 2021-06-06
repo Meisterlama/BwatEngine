@@ -44,7 +44,11 @@ namespace BwatEngine::Serialization
         rigidBody.SetStatic(componentData["static"]);
         rigidBody.SetMass(componentData["mass"]);
         rigidBody.SetVelocity(DeserializeVector3f(componentData["velocity"]));
+        bool lockX = (componentData.contains("lockX")) && componentData["lockX"].get<bool>();
+        bool lockY = (componentData.contains("lockY")) && componentData["lockY"].get<bool>();
+        bool lockZ = (componentData.contains("lockZ")) && componentData["lockZ"].get<bool>();
 
+        rigidBody.LockRotation(lockX, lockY, lockZ);
     }
 
 #define DESERIALIZE_TEXTURE(texture)                                      \
@@ -111,6 +115,9 @@ namespace BwatEngine::Serialization
                 collider.SetSphereRadius(componentData["shapeData"]["radius"]);
                 break;
         }
+
+        if (componentData.contains("isTrigger"))
+            collider.SetIsTrigger(componentData["isTrigger"].get<bool>());
     }
 
     template<>
@@ -118,6 +125,7 @@ namespace BwatEngine::Serialization
     {
         auto &coordinator = Coordinator::GetInstance();
         coordinator.AddComponent<ScriptComponent>(entityId, componentData["path"]);
+        ResourceManager::Instance()->GetOrLoadScript(componentData["path"]);
     }
 
     template<>
@@ -169,5 +177,12 @@ namespace BwatEngine::Serialization
     {
         auto &coordinator = Coordinator::GetInstance();
         coordinator.AddComponent<DataComponent>(entityId, componentData["name"]);
+    }
+
+    template<>
+    void Load<ListenerComponent>(EntityID entityId, const json &componentData)
+    {
+        auto &coordinator = Coordinator::GetInstance();
+        coordinator.AddComponent<ListenerComponent>(entityId);
     }
 }

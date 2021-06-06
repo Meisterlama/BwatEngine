@@ -47,6 +47,10 @@ void WidgetPrefab::TickVisible()
         if (ImGui::Button(buttonText.c_str()))
         {
             fs::path filePath = (fileDialog.GetCurrentPath() / fileName);
+            if (!filePath.has_extension())
+            {
+                filePath += ".prefabwat";
+            }
             if (saving)
             {
                 BwatEngine::Serialization::SavePrefab((selectedEntity != 0) ? selectedEntity : editor->GetEditedEntity(), filePath);

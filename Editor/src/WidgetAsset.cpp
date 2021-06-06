@@ -37,6 +37,10 @@ void WidgetAsset::TickVisible()
                 {
                     BwatEngine::ResourceManager::Instance()->LoadAudio(relPath);
                 }
+                else if (ext == ".lua")
+                {
+                    BwatEngine::ResourceManager::Instance()->LoadScript(relPath);
+                }
             }
         }
     }
