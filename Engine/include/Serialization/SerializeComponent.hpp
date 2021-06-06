@@ -46,7 +46,10 @@ namespace BwatEngine::Serialization
     template<>
     json SerializeComponent<DataComponent>(const DataComponent&);
     template<>
+    json SerializeComponent<AnimatorComponent>(const AnimatorComponent&);
+    template<>
     json SerializeComponent<ListenerComponent>(const ListenerComponent&);
+
 
     template<typename T>
     void SaveComponent(EntityID entityID, json& js)

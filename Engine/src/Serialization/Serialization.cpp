@@ -45,8 +45,9 @@ namespace BwatEngine::Serialization {
         Serialization::SaveComponent<LightComponent>(entityID, ret);
         Serialization::SaveComponent<DataComponent>(entityID, ret);
         Serialization::SaveComponent<AudioSourceComponent>(entityID, ret);
+        Serialization::SaveComponent<AnimatorComponent>(entityID, ret);
         Serialization::SaveComponent<ListenerComponent>(entityID, ret);
-//          Serialization::SaveComponent<AnimatorComponent>(entityID, ret);
+
 
         return ret;
     }
@@ -78,10 +79,11 @@ namespace BwatEngine::Serialization {
                 Serialization::Load<DataComponent>(newEntity, componentData);
             else if (componentId == "audio")
                 Serialization::Load<AudioSourceComponent>(newEntity, componentData);
+            else if (componentId == "animator")
+                Serialization::Load<AnimatorComponent>(newEntity, componentData);
             else if (componentId == "listener")
                 Serialization::Load<ListenerComponent>(newEntity, componentData);
-//               else if (componentId == "animator")
-//                   Serialization::Load<AnimatorComponent>(newEntity, componentData);
+
         }
 
         return newEntity;
