@@ -16,7 +16,6 @@ private:
     void MenuOption();
     void MenuWindow();
 
-    bool enabled = false;
     bool isClassicTheme = true;
 };
 #endif //BWATENGINE_WIDGETMENUBAR_HPP

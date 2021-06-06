@@ -8,7 +8,7 @@ using namespace BwatEngine;
 
 Collider::Collider(Collider::ShapeType shapeType)
 {
-    material = Physic::GetPhysics()->createMaterial(0.5f, 0.5f, 0.05f);
+    material = Physic::GetPhysics()->createMaterial(0.1f, 0.5f, 0.05f);
     SetShape(shapeType);
 }
 

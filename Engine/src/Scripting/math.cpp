@@ -30,7 +30,13 @@ REGISTER_FUNC(utype, uclass, GetSafeNormalized);\
     sol::constructors<Math::uclass(),                           \
                       Math::uclass(type),                       \
                       Math::uclass(type, type, type)> ctor;     \
-    auto utype = lua.new_usertype<Math::uclass>(#uclass, ctor); \
+    auto utype = lua.new_usertype<Math::uclass>(#uclass, ctor,  \
+        sol::meta_function::addition,                               \
+        &Math::uclass::operator+,                                   \
+        sol::meta_function::subtraction,                            \
+        &Math::uclass::operator-,                                       \
+        sol::meta_function::multiplication,                                \
+        &Math::uclass::operator*);                                   \
     REGISTER_VEC_COMMON_FUNC(utype, uclass);                    \
     REGISTER_FUNC(utype, uclass, CrossProduct);                 \
     utype["X"] = &Math::uclass::X;                              \
@@ -43,7 +49,13 @@ REGISTER_FUNC(utype, uclass, GetSafeNormalized);\
     sol::constructors<Math::uclass(),                           \
                       Math::uclass(type),                       \
                       Math::uclass(type, type)> ctor;           \
-    auto utype = lua.new_usertype<Math::uclass>(#uclass, ctor); \
+    auto utype = lua.new_usertype<Math::uclass>(#uclass, ctor,  \
+        sol::meta_function::addition,                               \
+        &Math::uclass::operator+,                                   \
+        sol::meta_function::subtraction,                            \
+        &Math::uclass::operator-,                                       \
+        sol::meta_function::multiplication,                                \
+        &Math::uclass::operator*);                                   \
     REGISTER_VEC_COMMON_FUNC(utype, uclass);                    \
     utype["X"] = &Math::uclass::X;                              \
     utype["Y"] = &Math::uclass::Y;                              \
@@ -55,7 +67,13 @@ REGISTER_FUNC(utype, uclass, GetSafeNormalized);\
                       Math::uclass(type),                           \
                       Math::uclass(type, type, type),               \
                       Math::uclass(type, type, type, type)> ctor;   \
-    auto utype = lua.new_usertype<Math::uclass>(#uclass, ctor);     \
+    auto utype = lua.new_usertype<Math::uclass>(#uclass, ctor,      \
+        sol::meta_function::addition,                                   \
+        &Math::uclass::operator+,                                       \
+        sol::meta_function::subtraction,                                \
+        &Math::uclass::operator-,                                       \
+        sol::meta_function::multiplication,                                \
+        &Math::uclass::Mul);                                      \
     REGISTER_FUNC(utype, uclass, Amplitude);                     \
     REGISTER_FUNC(utype, uclass, Norm);                     \
     REGISTER_FUNC(utype, uclass, DotProduct);                     \

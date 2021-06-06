@@ -4,7 +4,6 @@
 #include "ECS/Coordinator.hpp"
 #include "ECS/Components/RigidBodyComponent.hpp"
 #include "ECS/Components/CameraComponent.hpp"
-#include "ECS/Components/PlayerComponent.hpp"
 #include "ECS/Components/ColliderComponent.hpp"
 #include "ECS/Components/AudioSourceComponent.hpp"
 #include "ECS/Components/ScriptComponent.hpp"
@@ -13,6 +12,7 @@
 #include "ECS/Components/TransformComponent.hpp"
 #include "ECS/Components/RenderableComponent.hpp"
 #include "ECS/Components/AnimatorComponent.hpp"
+#include "ECS/Components/ListenerComponent.hpp"
 #include "ResourceManager/ResourceManager.hpp"
 
 #include "Serialization/Utils.hpp"
@@ -47,6 +47,9 @@ namespace BwatEngine::Serialization
     json SerializeComponent<DataComponent>(const DataComponent&);
     template<>
     json SerializeComponent<AnimatorComponent>(const AnimatorComponent&);
+    template<>
+    json SerializeComponent<ListenerComponent>(const ListenerComponent&);
+
 
     template<typename T>
     void SaveComponent(EntityID entityID, json& js)

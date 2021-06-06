@@ -22,14 +22,22 @@ void PhysicsSystem::Update()
             rigidBody.AddActor(ptrPhysicScene);
         }
 
-        if (rigidBody.CompareOldTransform(transform))
+        if (rigidBody.CompareOldPosition(transform.position))
         {
             transform.position = rigidBody.GetPosition();
+        }
+        else
+        {
+            rigidBody.SetPosition(transform.position);
+        }
+
+        if (rigidBody.CompareOldRotation(transform.rotation))
+        {
             transform.rotation = rigidBody.GetRotation();
         }
         else
         {
-            rigidBody.SetTransform(transform);
+            rigidBody.SetRotation(transform.rotation);
         }
     }
 

@@ -42,9 +42,12 @@ void WidgetHierarchy::ShowEntity(BwatEngine::EntityID entity)
 
     bool isOpen = ImGui::TreeNodeEx(entityName.c_str(), flags);
 
-    if (ImGui::BeginPopupContextItem("ShowEntityDeleteContextMenu" ))
+    std::string EntityDeleteContextMenuString = "ShowEntityDeleteContextMenu##" + std::to_string(entity);
+
+    if (ImGui::BeginPopupContextItem(EntityDeleteContextMenuString.c_str()))
     {
-        if (ImGui::MenuItem("Delete entity"))
+        std::string deleteEntityString = "Delete entity" + std::to_string(entity);
+        if (ImGui::MenuItem(deleteEntityString.c_str()))
         {
             coordinator.DestroyEntity(entity);
             editor->SetEditedEntity(0);

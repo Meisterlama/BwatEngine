@@ -6,7 +6,7 @@
 #include "ECS/Coordinator.hpp"
 #include "ECS/Components/RigidBodyComponent.hpp"
 #include "ECS/Components/CameraComponent.hpp"
-#include "ECS/Components/PlayerComponent.hpp"
+#include "ECS/Components/ListenerComponent.hpp"
 #include "ECS/Components/ColliderComponent.hpp"
 #include "ECS/Components/AudioSourceComponent.hpp"
 #include "ECS/Components/ScriptComponent.hpp"
@@ -51,5 +51,9 @@ namespace BwatEngine::Serialization
 
     template<>
     void Load<AnimatorComponent>(EntityID entityId, const json& componentData);
+  
+    template<>
+    void Load<ListenerComponent>(EntityID entityId, const json &componentData);
+
 }
 #endif //ENGINE_LOADCOMPONENT_HPP

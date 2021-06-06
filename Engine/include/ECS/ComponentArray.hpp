@@ -5,6 +5,7 @@
 #include <vector>
 #include <stdexcept>
 #include <algorithm>
+#include <cstring>
 
 namespace BwatEngine
 {
@@ -83,9 +84,11 @@ namespace BwatEngine
             size_t indexOfRemovedEntity = entityToIndexMap[entity];
             size_t indexOfLastElement = componentArray.size() - 1;
 
-            auto itLast = (componentArray.begin() + indexOfLastElement);
-            auto itRemoved = (componentArray.begin() + indexOfRemovedEntity);
-            std::swap(itLast, itRemoved);
+            auto tmp = componentArray[indexOfRemovedEntity];
+            componentArray[indexOfRemovedEntity] = componentArray[indexOfLastElement];
+            componentArray[indexOfLastElement] = tmp;
+            memset(&tmp, 0, sizeof(C));
+
             componentArray.pop_back();
 
             EntityID entityOfLastElement = indexToEntityMap[indexOfLastElement];

@@ -15,11 +15,15 @@ namespace BwatEngine
 	{
 	private :
 
-		physx::PxRigidBody* rigidBody = nullptr;
+		physx::PxRigidDynamic* rigidBody = nullptr;
 		physx::PxRigidStatic* staticActor = nullptr;
 		bool isStatic = false;
 		bool shouldRegister = true;
 		Math::Transform oldTransform{};
+
+		bool lockX = false;
+		bool lockY = false;
+		bool lockZ = false;
 
 	public :
 
@@ -31,11 +35,19 @@ namespace BwatEngine
 		void SetVelocity(const Math::Vec3f& vec);
 		void AddForce(const Math::Vec3f& vec);
 		void SetTransform(const Math::Transform& trans);
+		void SetPosition(const Math::Vec3f & position);
+		void SetRotation(const Math::Quatf & rotation);
 		void SetMass(const float mass);
 		void AddActor(PhysicScene* scene);
 
-		bool CompareOldTransform(const Math::Transform& trans);
-		bool GetIsStatic() const { return isStatic; }
+		void LockRotation(bool lockX, bool lockY, bool lockZ);
+		bool GetXLockState() const { return lockX; }
+		bool GetYLockState() const { return lockY; }
+		bool GetZLockState() const { return lockZ; }
+
+        bool CompareOldPosition(const Math::Vec3f &position) const;
+        bool CompareOldRotation(const Math::Quatf &rotation) const;
+        bool GetIsStatic() const { return isStatic; }
 		bool ShouldRegister() { return shouldRegister; }
 
 		Math::Vec3f GetPosition()const;
@@ -43,7 +55,7 @@ namespace BwatEngine
 
 		float GetMass() const;
 		Math::Vec3f GetVelocity() const;
-	};
+    };
 }
 
 #endif // !RIGIDBODY_HPP
