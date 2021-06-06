@@ -83,17 +83,17 @@ namespace BwatEngine
 
         bool GetLockX(EntityID entity)
         {
-            Coordinator::GetInstance().GetComponent<RigidBodyComponent>(entity).GetXLockState();
+            return Coordinator::GetInstance().GetComponent<RigidBodyComponent>(entity).GetXLockState();
         }
 
         bool GetLockY(EntityID entity)
         {
-            Coordinator::GetInstance().GetComponent<RigidBodyComponent>(entity).GetYLockState();
+            return Coordinator::GetInstance().GetComponent<RigidBodyComponent>(entity).GetYLockState();
         }
 
         bool GetLockZ(EntityID entity)
         {
-            Coordinator::GetInstance().GetComponent<RigidBodyComponent>(entity).GetZLockState();
+            return Coordinator::GetInstance().GetComponent<RigidBodyComponent>(entity).GetZLockState();
         }
 
         #undef RIGIDBODY_SETTER_GETTER
