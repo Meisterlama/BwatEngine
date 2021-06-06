@@ -23,7 +23,7 @@ int setLuaPath(lua_State *L, const char *path)
 ScriptSystem::ScriptSystem()
 {
     int x = 0;
-    lua.open_libraries(sol::lib::base, sol::lib::package, sol::lib::io, sol::lib::os);
+    lua.open_libraries(sol::lib::base, sol::lib::package, sol::lib::io, sol::lib::os, sol::lib::string);
 
 #define REQUIRE_MODULE(module, open_module)\
 lua.require(module,sol::c_call<decltype(&(open_module)), &(open_module)>,false);

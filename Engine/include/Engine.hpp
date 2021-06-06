@@ -27,12 +27,12 @@ namespace BwatEngine
 
 		GLFWwindow* GetGLFWwindow() { return window.handler; };
 
+		void LoadConfig();
+
 
 		bool isPlaying = false;
 
 	private:
-		float lastFrame = 0.0f;
-
 		Window window;
 		Scene scene;
 

@@ -9,7 +9,8 @@ namespace BwatEngine::Audio
 
     Source::~Source()
     {
-        alDeleteSources(1, &sourceID);
+        if(alIsSource(sourceID))
+            alDeleteSources(1, &sourceID);
         CheckALErrors();
     }
 

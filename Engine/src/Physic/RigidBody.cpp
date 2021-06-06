@@ -93,6 +93,23 @@ void RigidBody::SetTransform(const Math::Transform& trans)
 		rigidBody->setGlobalPose(ToPxTransform(trans));
 }
 
+void RigidBody::SetPosition(const Math::Vec3f &position)
+{
+    oldTransform.position = position;
+    if (isStatic)
+        staticActor->setGlobalPose(ToPxTransform(oldTransform));
+    else
+        rigidBody->setGlobalPose(ToPxTransform(oldTransform));
+}
+void RigidBody::SetRotation(const Math::Quatf &rotation)
+{
+    oldTransform.rotation = rotation;
+    if (isStatic)
+        staticActor->setGlobalPose(ToPxTransform(oldTransform));
+    else
+        rigidBody->setGlobalPose(ToPxTransform(oldTransform));
+}
+
 void RigidBody::SetMass(const float mass)
 {
 	if (!isStatic)
@@ -109,9 +126,14 @@ void RigidBody::AddActor(PhysicScene* scene)
     shouldRegister = false;
 }
 
-bool RigidBody::CompareOldTransform(const Math::Transform& trans)
+bool RigidBody::CompareOldPosition(const Math::Vec3f & position) const
 {
-	return (oldTransform.position == trans.position && oldTransform.rotation == trans.rotation);
+	return (oldTransform.position == position);
+}
+
+bool RigidBody::CompareOldRotation(const Math::Quatf & rotation) const
+{
+	return (oldTransform.rotation == rotation);
 }
 
 Math::Vec3f RigidBody::GetPosition() const
@@ -143,4 +165,23 @@ Math::Vec3f RigidBody::GetVelocity() const
 	if (!isStatic)
 		return ToBwatVec3(rigidBody->getLinearVelocity());
 	return {0.f};
+}
+void RigidBody::LockRotation(bool _lockX, bool _lockY, bool _lockZ)
+{
+    if (isStatic)
+        return;
+
+    lockX = _lockX;
+    lockY = _lockY;
+    lockZ = _lockZ;
+
+    PxRigidDynamicLockFlags lockFlags;
+    if (lockX)
+        lockFlags |= PxRigidDynamicLockFlag::eLOCK_ANGULAR_X;
+    if (lockY)
+        lockFlags |= PxRigidDynamicLockFlag::eLOCK_ANGULAR_Y;
+    if (lockZ)
+        lockFlags |= PxRigidDynamicLockFlag::eLOCK_ANGULAR_Z;
+
+    rigidBody->setRigidDynamicLockFlags(lockFlags);
 }

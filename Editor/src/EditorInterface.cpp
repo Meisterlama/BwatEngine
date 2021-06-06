@@ -442,12 +442,9 @@ void EditorInterface::SaveData(const char* path)
     std::ofstream file(path);
 
     json js;
-    std::string data = currentScene.string();
+    std::string lastScenePath = fs::relative(currentScene, fs::current_path()).string();
 
-    js =json
-        {
-            {"current scene", data}
-        };
+    js["LastScene"] = lastScenePath;
     file << js << std::endl;
 }
 
@@ -465,5 +462,6 @@ void EditorInterface::LoadData(const char* path)
     file >> js;
 
 
-    currentScene = js.at("current scene").get<std::string>();
+    if (js.contains("LastScene"))
+        currentScene = js.at("LastScene").get<std::string>();
 }

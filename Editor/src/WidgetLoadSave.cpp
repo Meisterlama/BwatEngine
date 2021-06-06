@@ -47,6 +47,11 @@ void WidgetLoadSave::TickVisible()
         if (ImGui::Button(buttonText.c_str()))
         {
             fs::path filePath = (fileDialog.GetCurrentPath() / fileName);
+
+            if (!filePath.has_extension())
+            {
+                filePath += ".bwat";
+            }
             if (saving)
             {
                 BwatEngine::Serialization::SaveScene(filePath.string().c_str());
@@ -54,9 +59,9 @@ void WidgetLoadSave::TickVisible()
             else
             {
                 BwatEngine::Serialization::LoadScene(filePath.string().c_str());
-                editor->currentScene = filePath;
             }
 
+            editor->currentScene = filePath;
             isVisible = false;
         }
     }

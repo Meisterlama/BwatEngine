@@ -158,8 +158,10 @@ void WidgetViewport::HandleCamera()
             upVec.Y,
             upVec.Z,
     };
-
-    alListenerfv(AL_POSITION, editor->cameraTransform.position.values);
-    alListenerfv(AL_ORIENTATION, orientation);
+    if (!editor->engine->isPlaying)
+    {
+        alListenerfv(AL_POSITION, editor->cameraTransform.position.values);
+        alListenerfv(AL_ORIENTATION, orientation);
+    }
 }
 

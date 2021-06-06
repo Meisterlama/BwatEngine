@@ -4,11 +4,11 @@
 #include <ECS/Components/AudioSourceComponent.hpp>
 #include <ECS/Components/ColliderComponent.hpp>
 #include <ECS/Components/CameraComponent.hpp>
-#include <ECS/Components/PlayerComponent.hpp>
 #include <ECS/Components/LightComponent.hpp>
 #include <ECS/Components/DataComponent.hpp>
 #include <ECS/Components/ScriptComponent.hpp>
 #include <ECS/Components/AnimatorComponent.hpp>
+#include <ECS/Components/ListenerComponent.hpp>
 
 #include "ResourceManager/ResourceManager.hpp"
 #include "ECS/Coordinator.hpp"
@@ -205,13 +205,24 @@ void WidgetProperties::ShowComponent<BwatEngine::RigidBodyComponent>(BwatEngine:
             float mass = component.GetMass();
             BwatEngine::Math::Vec3f velocity = component.GetVelocity();
 
+            bool lockX = component.GetXLockState();
+            bool lockY = component.GetYLockState();
+            bool lockZ = component.GetZLockState();
+
             updateNotStatic |= ImGui::DragFloat("Mass", &mass, 0.1f, 0.0f, 100.f);
             updateNotStatic |= ImGui::DragFloat3("Velocity", velocity.values, 0.1f);
+
+            updateNotStatic |= ImGui::Checkbox("Lock X", &lockX);
+            ImGui::SameLine();
+            updateNotStatic |= ImGui::Checkbox("Lock Y", &lockY);
+            ImGui::SameLine();
+            updateNotStatic |= ImGui::Checkbox("Lock Z", &lockZ);
 
             if (updateNotStatic)
             {
                 component.SetMass(mass);
                 component.SetVelocity(velocity);
+                component.LockRotation(lockX, lockY, lockZ);
             }
         }
 
@@ -293,9 +304,23 @@ template<>
 void WidgetProperties::ShowComponent<BwatEngine::ScriptComponent>(BwatEngine::ScriptComponent &component)
 {
     std::string ScriptName = component.scriptPath;
-    if (ImGui::InputText("ScriptFile", &ScriptName, ImGuiInputTextFlags_EnterReturnsTrue))
+
+    if(ImGui::BeginCombo("##Script", ScriptName.c_str()))
     {
-        component.scriptPath = ScriptName;
+        auto scriptList = BwatEngine::ResourceManager::Instance()->GetScriptList();
+
+        for(auto &script : scriptList)
+        {
+            std::string path = script.string();
+            bool selected = (ScriptName == path);
+            if(ImGui::Selectable(path.c_str(), selected))
+            {
+                component.scriptPath = path;
+            }
+            if(selected)
+                ImGui::SetItemDefaultFocus();
+        }
+        ImGui::EndCombo();
     }
     if (ImGui::Button("Reload"))
     {
@@ -339,7 +364,8 @@ void WidgetProperties::ShowComponent<BwatEngine::ColliderComponent>(BwatEngine::
             BwatEngine::Math::Vec3f boxExtents = BwatEngine::ToBwatVec3(boxGeometry.halfExtents);
             if(ImGui::DragFloat3("Box Extent", boxExtents.values, 0.1f, 0.0f))
             {
-                component.SetBoxExtent(boxExtents);
+                if (boxExtents.X != 0 && boxExtents.Y != 0 && boxExtents.Z != 0)
+                    component.SetBoxExtent(boxExtents);
             }
             break;
         }
@@ -350,7 +376,8 @@ void WidgetProperties::ShowComponent<BwatEngine::ColliderComponent>(BwatEngine::
             float radius = sphereGeometry.radius;
             if (ImGui::DragFloat("Radius", &radius, 0.1f, 0.0f))
             {
-                component.SetSphereRadius(radius);
+                if (radius != 0)
+                    component.SetSphereRadius(radius);
             }
             break;
         }
@@ -368,7 +395,7 @@ void WidgetProperties::ShowComponent<BwatEngine::ColliderComponent>(BwatEngine::
     }
 }
 template<>
-void WidgetProperties::ShowComponent<BwatEngine::PlayerComponent>(BwatEngine::PlayerComponent &component) {}
+void WidgetProperties::ShowComponent<BwatEngine::ListenerComponent>(BwatEngine::ListenerComponent &component) {}
 
 void WidgetProperties::TickVisible()
 {
@@ -387,15 +414,15 @@ void WidgetProperties::TickVisible()
             bool hasComponentAvailable = false;
             if (ImGui::BeginMenu("Add Component"))
             {
+                hasComponentAvailable |= AddComponentMenuItem<DataComponent>(currentEntity);
                 hasComponentAvailable |= AddComponentMenuItem<TransformComponent>(currentEntity);
                 hasComponentAvailable |= AddComponentMenuItem<RigidBodyComponent>(currentEntity);
                 hasComponentAvailable |= AddComponentMenuItem<RenderableComponent>(currentEntity);
                 hasComponentAvailable |= AddComponentMenuItem<AudioSourceComponent>(currentEntity);
                 hasComponentAvailable |= AddComponentMenuItem<ColliderComponent>(currentEntity);
                 hasComponentAvailable |= AddComponentMenuItem<CameraComponent>(currentEntity);
-                hasComponentAvailable |= AddComponentMenuItem<PlayerComponent>(currentEntity);
+                hasComponentAvailable |= AddComponentMenuItem<ListenerComponent>(currentEntity);
                 hasComponentAvailable |= AddComponentMenuItem<LightComponent>(currentEntity);
-                hasComponentAvailable |= AddComponentMenuItem<DataComponent>(currentEntity);
                 hasComponentAvailable |= AddComponentMenuItem<ScriptComponent>(currentEntity);
                 hasComponentAvailable |= AddComponentMenuItem<AnimatorComponent>(currentEntity);
 
@@ -413,7 +440,7 @@ void WidgetProperties::TickVisible()
     ShowComponentMenuItem<AudioSourceComponent>(currentEntity);
     ShowComponentMenuItem<ColliderComponent>(currentEntity);
     ShowComponentMenuItem<CameraComponent>(currentEntity);
-    ShowComponentMenuItem<PlayerComponent>(currentEntity);
+    ShowComponentMenuItem<ListenerComponent>(currentEntity);
     ShowComponentMenuItem<LightComponent>(currentEntity);
     ShowComponentMenuItem<AnimatorComponent>(currentEntity);
     ShowComponentMenuItem<ScriptComponent>(currentEntity);
@@ -441,9 +468,7 @@ bool WidgetProperties::AddComponentMenuItem(BwatEngine::EntityID entity)
 
     if (!coordinator.HaveComponent<T>(entity))
     {
-        //TODO: proper component name
         if (ImGui::MenuItem(coordinator.GetInternalName<T>().c_str()))
-            //TODO: proper default value for the component
             coordinator.AddComponent<T>(entity);
         return true;
     }

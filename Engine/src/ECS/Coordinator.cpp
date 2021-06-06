@@ -1,15 +1,7 @@
 #include <string>
 #include "ECS/Coordinator.hpp"
-#include "ECS/Components/TransformComponent.hpp"
 #include "ECS/Components/DataComponent.hpp"
-#include "ECS/Components/AudioSourceComponent.hpp"
-#include "ECS/Components/CameraComponent.hpp"
-#include "ECS/Components/LightComponent.hpp"
-#include "ECS/Components/PlayerComponent.hpp"
-#include "ECS/Components/RenderableComponent.hpp"
-#include "ECS/Components/ScriptComponent.hpp"
 
-#include "ResourceManager/ResourceManager.hpp"
 
 namespace BwatEngine
 {

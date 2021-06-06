@@ -50,6 +50,9 @@ namespace BwatEngine::Serialization
         ret["Data"]["static"] = rigidbody.GetIsStatic();
         ret["Data"]["mass"] = rigidbody.GetMass();
         ret["Data"]["velocity"] = SerializeVector3f(rigidbody.GetVelocity());
+        ret["Data"]["lockX"] = rigidbody.GetXLockState();
+        ret["Data"]["lockY"] = rigidbody.GetYLockState();
+        ret["Data"]["lockZ"] = rigidbody.GetZLockState();
 
         return ret;
     }
@@ -117,6 +120,7 @@ namespace BwatEngine::Serialization
         }
 
         ret["Data"]["shapeData"] = shapeData;
+        ret["Data"]["isTrigger"] = collider.GetIsTrigger();
         return ret;
     }
 
@@ -180,6 +184,16 @@ namespace BwatEngine::Serialization
 
         ret["Type"] = "data";
         ret["Data"]["name"] = data.name;
+
+        return ret;
+    }
+
+    template<>
+    json SerializeComponent<ListenerComponent>(const ListenerComponent &data)
+    {
+        json ret;
+
+        ret["Type"] = "listener";
 
         return ret;
     }
