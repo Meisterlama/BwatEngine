@@ -77,7 +77,7 @@ void Engine::LoadConfig()
 
 #ifndef BWATEDITOR
     if (js.contains("MainLevel"))
-        Serialization::LoadScene(js["MainLevel"]);
+        Serialization::LoadScene(js["MainLevel"].get<std::string>());
 #endif
 }
 

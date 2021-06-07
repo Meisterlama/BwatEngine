@@ -222,7 +222,7 @@ namespace BwatEngine::Serialization
 
         auto& component = coordinator.GetComponent<Image2DComponent>(entityId);
         component.rotation = componentData["rotation"];
-        component.texture = ResourceManager::Instance()->GetOrLoadTexture(componentData["texture"]);
+        component.texture = ResourceManager::Instance()->GetOrLoadTexture(componentData["texture"].get<std::string>());
         component.position = DeserializeVector2f(componentData["position"]);
         component.scale = DeserializeVector2f(componentData["scale"]);
         component.isActive = componentData["isActive"];
