@@ -13,6 +13,7 @@
 #include "ECS/Components/RenderableComponent.hpp"
 #include "ECS/Components/AnimatorComponent.hpp"
 #include "ECS/Components/ListenerComponent.hpp"
+#include "ECS/Components/Image2DComponent.hpp"
 #include "ResourceManager/ResourceManager.hpp"
 
 #include "Serialization/Utils.hpp"
@@ -49,6 +50,8 @@ namespace BwatEngine::Serialization
     json SerializeComponent<AnimatorComponent>(const AnimatorComponent&);
     template<>
     json SerializeComponent<ListenerComponent>(const ListenerComponent&);
+    template<>
+    json SerializeComponent<Image2DComponent>(const Image2DComponent&);
 
 
     template<typename T>

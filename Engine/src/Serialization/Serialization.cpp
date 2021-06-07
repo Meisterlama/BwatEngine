@@ -47,6 +47,7 @@ namespace BwatEngine::Serialization {
         Serialization::SaveComponent<AudioSourceComponent>(entityID, ret);
         Serialization::SaveComponent<AnimatorComponent>(entityID, ret);
         Serialization::SaveComponent<ListenerComponent>(entityID, ret);
+        Serialization::SaveComponent<Image2DComponent>(entityID, ret);
 
 
         return ret;
@@ -83,6 +84,8 @@ namespace BwatEngine::Serialization {
                 Serialization::Load<AnimatorComponent>(newEntity, componentData);
             else if (componentId == "listener")
                 Serialization::Load<ListenerComponent>(newEntity, componentData);
+            else if (componentId == "image2d")
+                Serialization::Load<Image2DComponent>(newEntity, componentData);
 
         }
 

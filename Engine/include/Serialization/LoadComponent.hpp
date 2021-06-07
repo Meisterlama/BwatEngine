@@ -15,6 +15,7 @@
 #include "ECS/Components/TransformComponent.hpp"
 #include "ECS/Components/RenderableComponent.hpp"
 #include "ECS/Components/AnimatorComponent.hpp"
+#include "ECS/Components/Image2DComponent.hpp"
 #include "ResourceManager/ResourceManager.hpp"
 
 namespace BwatEngine::Serialization
@@ -51,9 +52,12 @@ namespace BwatEngine::Serialization
 
     template<>
     void Load<AnimatorComponent>(EntityID entityId, const json& componentData);
-  
+
     template<>
     void Load<ListenerComponent>(EntityID entityId, const json &componentData);
+
+    template<>
+    void Load<Image2DComponent>(EntityID entityId, const json &componentData);
 
 }
 #endif //ENGINE_LOADCOMPONENT_HPP

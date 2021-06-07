@@ -214,4 +214,17 @@ namespace BwatEngine::Serialization
         coordinator.AddComponent<ListenerComponent>(entityId);
 
     }
+     template<>
+    void Load<Image2DComponent>(EntityID entityId, const json &componentData)
+    {
+        auto &coordinator = Coordinator::GetInstance();
+        coordinator.AddComponent<Image2DComponent>(entityId);
+
+        auto& component = coordinator.GetComponent<Image2DComponent>(entityId);
+        component.rotation = componentData["rotation"];
+        component.texture = ResourceManager::Instance()->GetOrLoadTexture(componentData["texture"]);
+        component.position = DeserializeVector2f(componentData["position"]);
+        component.scale = DeserializeVector2f(componentData["scale"]);
+        component.isActive = componentData["isActive"];
+    }
 }

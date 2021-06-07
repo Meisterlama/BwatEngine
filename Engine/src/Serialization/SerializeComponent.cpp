@@ -219,4 +219,20 @@ namespace BwatEngine::Serialization
 
         return ret;
     }
+
+    template<>
+    json SerializeComponent<Image2DComponent>(const Image2DComponent &data)
+    {
+        json ret;
+
+        ret["Type"] = "image2d";
+
+        ret["Data"]["isActive"] = data.isActive;
+        ret["Data"]["position"] = SerializeVector2f(data.position);
+        ret["Data"]["scale"]    = SerializeVector2f(data.scale);
+        ret["Data"]["texture"]  = (data.texture) ? data.texture->path : "";
+        ret["Data"]["rotation"] = data.rotation;
+
+        return ret;
+    }
 }
