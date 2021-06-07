@@ -123,24 +123,35 @@ void RenderSystem::RenderEntitiesAndLights(const CameraComponent& camera, const 
     
     for (auto entity : entities)
     {
+        auto& entityTransform = coordinator.GetComponent<TransformComponent>(entity);
+
+        Math::Vec3f entityOffset = entityTransform.position - cameraTransform.position;
+        if (entityOffset.Length() > renderDistance)
+            continue;
+
         if (coordinator.HaveComponent<AnimatorComponent>(entity))
         {
             shader.SetBool("skinned", true);
             auto& animComponent = coordinator.GetComponent< AnimatorComponent>(entity);
             auto transforms = animComponent.animator.GetFinalBoneMatrices();
             for (int i = 0; i < transforms.size(); ++i)
+            {
                 shader.SetMat4("finalBonesMatrices[" + std::to_string(i) + "]", transforms[i]);
-            
+            }
+
         }
         else
+        {
             shader.SetBool("skinned", false);
+        }
 
         auto& renderableComponent = coordinator.GetComponent<RenderableComponent>(entity);
 
         if (renderableComponent.model == nullptr)
+        {
             continue;
+        }
 
-        auto& entityTransform = coordinator.GetComponent<TransformComponent>(entity);
         shader.SetMat4("model", Math::Mat4f::CreateTRSMat(entityTransform.position, entityTransform.rotation, entityTransform.scale));
 
         if( renderableComponent.materials.size() > 0)

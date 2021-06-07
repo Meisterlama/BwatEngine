@@ -367,8 +367,14 @@ void WidgetProperties::ShowComponent<BwatEngine::ColliderComponent>(BwatEngine::
 {
     bool shouldUpdate = false;
     bool isTrigger = component.GetIsTrigger();
+    float staticFriction = component.GetStaticFriction();
+    float dynamicFriction = component.GetDynamicFriction();
+    float restitution = component.GetRestitution();
 
     shouldUpdate |= ImGui::Checkbox("Is Trigger", &isTrigger);
+    shouldUpdate |= ImGui::DragFloat("Static friction", &staticFriction, 0.1f, 0.f);
+    shouldUpdate |= ImGui::DragFloat("Dynamic friction", &dynamicFriction, 0.1f, 0.f);
+    shouldUpdate |= ImGui::DragFloat("Restitution", &restitution, 0.1f, 0.f);
 
     if(ImGui::BeginCombo("##Collider", BwatEngine::ColliderComponent::GetShapeTypeName(component.GetShapeType())))
     {
@@ -425,6 +431,9 @@ void WidgetProperties::ShowComponent<BwatEngine::ColliderComponent>(BwatEngine::
     if (shouldUpdate)
     {
         component.SetIsTrigger(isTrigger);
+        component.SetStaticFriction(staticFriction);
+        component.SetDynamicFriction(dynamicFriction);
+        component.SetRestitution(restitution);
     }
 }
 template<>

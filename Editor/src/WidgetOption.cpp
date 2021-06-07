@@ -16,7 +16,10 @@ WidgetOption::WidgetOption(EditorInterface* editor) : Widget(editor)
 
 void WidgetOption::TickVisible()
 {
+    auto& coordinator = Coordinator::GetInstance();
+    auto rendersystem = coordinator.GetSystem<RenderSystem>();
 
+    ImGui::DragFloat("RenderDistance", &rendersystem->renderDistance);
     if (ImGui::CollapsingHeader("CubeMap"))
         CubeMapEditing();
 

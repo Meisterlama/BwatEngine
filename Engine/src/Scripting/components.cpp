@@ -5,7 +5,10 @@
 #include "ECS/Components/AudioSourceComponent.hpp"
 #include "ECS/Components/CameraComponent.hpp"
 #include "ECS/Components/RigidBodyComponent.hpp"
+#include "ECS/Components/AnimatorComponent.hpp"
 #include "ECS/Components/DataComponent.hpp"
+#include "ECS/Components/Image2DComponent.hpp"
+#include "ECS/Components/ColliderComponent.hpp"
 
 namespace BwatEngine
 {
@@ -118,6 +121,40 @@ namespace BwatEngine
         }
     }
 
+    namespace AnimationScripting
+    {
+        void PlayAnimation(EntityID entity, std::string animationName)
+        {
+            Coordinator::GetInstance().GetComponent<AnimatorComponent>(entity).PlayAnimation(animationName);
+        }
+
+        void PauseAnimation(EntityID entity)
+        {
+            Coordinator::GetInstance().GetComponent<AnimatorComponent>(entity).isValid = false;
+        }
+    }
+
+    namespace UIScripting
+    {
+        void SetUIActive(EntityID entity, bool isActive)
+        {
+            Coordinator::GetInstance().GetComponent<Image2DComponent>(entity).isActive = isActive;
+        }
+    }
+
+    namespace ColliderScripting
+    {
+        void SetIsTrigger(EntityID entity, bool isTrigger)
+        {
+            Coordinator::GetInstance().GetComponent<ColliderComponent>(entity).SetIsTrigger(isTrigger);
+        }
+
+        bool GetIsTrigger(EntityID entity)
+        {
+            return Coordinator::GetInstance().GetComponent<ColliderComponent>(entity).GetIsTrigger();
+        }
+    }
+
     sol::table open_components(sol::this_state s)
     {
         sol::state_view lua(s);
@@ -188,6 +225,15 @@ namespace BwatEngine
         REGISTER_FUNC(RigidBodyScripting, GetLockZ);
 
         REGISTER_FUNC(DataScripting, GetName);
+
+        REGISTER_FUNC(AnimationScripting, PlayAnimation);
+        REGISTER_FUNC(AnimationScripting, PauseAnimation);
+
+        REGISTER_FUNC(UIScripting, SetUIActive);
+
+        REGISTER_FUNC(ColliderScripting, SetIsTrigger);
+        REGISTER_FUNC(ColliderScripting, GetIsTrigger);
+
         return module;
     }
 }

@@ -40,7 +40,14 @@ namespace BwatEngine
         bool GetIsTrigger() const { return isTrigger; }
         ShapeType GetShapeType() const { return shapeType; }
         static const char* GetShapeTypeName(ShapeType _shapeType);
-        void SetFriction(float friction);
+
+        void SetStaticFriction(float friction);
+        void SetDynamicFriction(float friction);
+        void SetRestitution(float restitution);
+        float GetStaticFriction() const;
+        float GetDynamicFriction() const;
+        float GetRestitution() const;
+
         void SetIsTrigger(bool _isTrigger);
         void SetShape(ShapeType _shapeType = CUBE);
 

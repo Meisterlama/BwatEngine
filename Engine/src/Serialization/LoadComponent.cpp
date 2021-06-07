@@ -118,6 +118,12 @@ namespace BwatEngine::Serialization
 
         if (componentData.contains("isTrigger"))
             collider.SetIsTrigger(componentData["isTrigger"].get<bool>());
+        if (componentData.contains("staticFriction"))
+            collider.SetStaticFriction(componentData["staticFriction"].get<float>());
+        if (componentData.contains("dynamicFriction"))
+            collider.SetStaticFriction(componentData["dynamicFriction"].get<float>());
+        if (componentData.contains("restitution"))
+            collider.SetStaticFriction(componentData["restitution"].get<float>());
     }
 
     template<>

@@ -121,6 +121,9 @@ namespace BwatEngine::Serialization
 
         ret["Data"]["shapeData"] = shapeData;
         ret["Data"]["isTrigger"] = collider.GetIsTrigger();
+        ret["Data"]["staticFriction"] = collider.GetStaticFriction();
+        ret["Data"]["dynamicFriction"] = collider.GetDynamicFriction();
+        ret["Data"]["restitution"] = collider.GetRestitution();
         return ret;
     }
 

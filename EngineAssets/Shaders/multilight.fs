@@ -138,14 +138,12 @@ void main()
             result += CalcPointLight(light[i], norm, FragPos, viewDir,F0);    
         //Spot
         if(light[i].typeoflight == 2)
-            result += CalcSpotLight(light[i], norm, FragPos, viewDir,F0);    
+            result += CalcSpotLight(light[i], norm, FragPos, viewDir,F0);
+
+
+        result += light[i].ambient * albedoG * intensity;
+
     }
-    
-    vec3 ambient = vec3(0.03) * albedoG * aoG;
-
-    result = ambient + result;
-
-    //result = result / (result + vec3(1.0));
 
     vec3 color = mix(result, envcolor.rgb, envMix);
 

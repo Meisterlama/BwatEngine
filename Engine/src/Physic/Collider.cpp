@@ -27,7 +27,7 @@ const char *Collider::GetShapeTypeName(Collider::ShapeType _shapeType)
     }
 }
 
-void Collider::SetFriction(float friction)
+void Collider::SetStaticFriction(float friction)
 {
 	material->setStaticFriction(friction);
 }
@@ -95,4 +95,26 @@ void Collider::SetSphereRadius(float radius)
 float Collider::GetSphereRadius() const
 {
     return shape->getGeometry().sphere().radius;
+}
+
+void Collider::SetDynamicFriction(float friction)
+{
+    material->setDynamicFriction(friction);
+}
+
+void Collider::SetRestitution(float restitution)
+{
+    material->setRestitution(restitution);
+}
+float Collider::GetStaticFriction() const
+{
+    return material->getStaticFriction();
+}
+float Collider::GetDynamicFriction() const
+{
+    return material->getDynamicFriction();
+}
+float Collider::GetRestitution() const
+{
+    return material->getRestitution();
 }

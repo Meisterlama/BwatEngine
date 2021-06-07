@@ -35,6 +35,8 @@ namespace BwatEngine
         int displayWidth;
         int displayHeight;
 
+        float renderDistance = 1000.f;
+
         Rendering::CubeMap cubeMap;
         ShadowValues shadowValues;
         
