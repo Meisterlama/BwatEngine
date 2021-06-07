@@ -53,7 +53,7 @@ void WidgetProperties::ShowComponent<BwatEngine::Image2DComponent>(BwatEngine::I
         for(auto &text : textList)
         {
             bool selected = (texturePath == text);
-            if(ImGui::Selectable(text.c_str(), selected))
+            if(ImGui::Selectable(text.string().c_str(), selected))
             {
                 component.texture = BwatEngine::ResourceManager::Instance()->GetOrLoadTexture(text, Rendering::Texture::Type::E_DIFFUSE);
             }
