@@ -71,8 +71,9 @@ void RenderSystem::RenderCubeMap(const CameraComponent& camera, const TransformC
         cubeMap.BindAndDrawCubeMaDdsp();
     else
     {
-        glBindTexture(GL_TEXTURE_CUBE_MAP, cubeMap.id);
-        glDrawArrays(GL_TRIANGLES, 0, 36);
+        cubeMap.BindCubeMap();
+        //glBindTexture(GL_TEXTURE_CUBE_MAP, cubeMap.id);
+        //glDrawArrays(GL_TRIANGLES, 0, 36);
     }
 
     glDepthMask(GL_TRUE);
@@ -96,6 +97,8 @@ void RenderSystem::RenderEntitiesAndLights(const CameraComponent& camera, const 
     shader.SetMat4("lightSpaceMatrix", lightSpaceMatrix);
     
     shader.SetTextureCubemap("envMap", 20, cubeMap.id);
+
+    shader.SetFloat("intensity", shadowValues.intensity);
     
     for (unsigned int i = 0; i < lights.size(); i++)
     {
@@ -106,6 +109,7 @@ void RenderSystem::RenderEntitiesAndLights(const CameraComponent& camera, const 
         {
             auto& transform = coordinator.GetComponent<TransformComponent>(lights[i]);
             light.position = transform.position ;
+            light.direction = transform.rotation.Rotate({ 0,0,1 });
         }
 
         light.ApplyOnShader(&shader, index);
@@ -215,8 +219,6 @@ void RenderSystem::UpdateShadow()
 
     shadowMap.shader.Use();
     shadowMap.shader.SetMat4("lightSpaceMatrix", lightSpaceMatrix);
-    
-
 
     // draw all model in deph test 
     for (auto entity : entities)

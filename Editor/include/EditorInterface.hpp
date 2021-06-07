@@ -27,6 +27,22 @@ class WidgetProperties;
 class WidgetLoadSave;
 class WidgetPrefab;
 
+struct StyleUI
+{
+    BwatEngine::Math::Vec4f colorText = {1};
+    BwatEngine::Math::Vec4f colorBackground = { 0.235f, 0.235f, 0.235f, 1.f };
+    BwatEngine::Math::Vec4f colorBackgroundContent = { 0.441f, 0.441f, 0.441f, 1.f };
+    BwatEngine::Math::Vec4f colorInteractiveHovered = { 0.714f , 0.714f, 0.714f, 1.f };
+    BwatEngine::Math::Vec4f colorTabActive = { 160 / 255.f, 160 / 255.f, 160 / 255.f, 1.f };
+    BwatEngine::Math::Vec4f colorInteractive = { 0.63f, 0.545f, 0.074f, 1 };
+    BwatEngine::Math::Vec4f colorGoldInteractive = { 92 / 255.f, 91 / 255.f, 18 / 255.f, 1.f };
+    BwatEngine::Math::Vec4f colorGoldActive = { 62 / 255.f, 61 / 255.f, 12 / 255.f, 1.f };
+    BwatEngine::Math::Vec4f colortitlebg = { 110 / 255.f, 110 / 255.f, 110 / 255.f, 1.f };
+
+    float roundness = 4.f;
+
+};
+
 class  EditorInterface
 {
 public:
@@ -66,6 +82,8 @@ public:
     BwatEngine::Math::Vec3f rotation{};
 
     bool cursorLocked = false;
+
+    StyleUI style;
 
 private:
     void BeginWindow();

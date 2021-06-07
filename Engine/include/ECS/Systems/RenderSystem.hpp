@@ -17,11 +17,14 @@
 
 namespace BwatEngine
 {
+    struct shadowValues
+    {
+        float intensity = 15.f;
+    };
+
     class RenderSystem : public System
     {
         Rendering::Shader shader;
-
-        Rendering::CubeMap cubeMap;
         Rendering::ShadowMapping shadowMap;
 
         EntityID cameraID = 0;
@@ -32,6 +35,9 @@ namespace BwatEngine
         int displayWidth;
         int displayHeight;
 
+        Rendering::CubeMap cubeMap;
+        shadowValues shadowValues;
+        
         Math::Vec3f clearColor = { 0.0f, 0.0f, 0.0f };
         Math::Mat4f  lightSpaceMatrix;
 

@@ -82,7 +82,7 @@ void CreateSelectedBox(Rendering::Texture*& component,int index, std::string nam
             bool selected = (name == path);
 
             if (ImGui::Selectable(path.c_str(), selected))
-                component = BwatEngine::ResourceManager::Instance()->GetOrLoadTexture(text, Rendering::Texture::Type::E_DIFFUSE);;
+                component = BwatEngine::ResourceManager::Instance()->GetOrLoadTexture(text);;
    
             if (selected)
                 ImGui::SetItemDefaultFocus();
