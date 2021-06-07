@@ -43,6 +43,7 @@ namespace BwatEngine
 
         RenderSystem(int Width, int Height);
         void SetCamera(EntityID _camera);
+        EntityID GetCameraID();
         virtual void Update() override;
         void RenderWithCamera(CameraComponent cameraComp, TransformComponent cameraTrans);
         void UpdateShadow();

@@ -7,6 +7,7 @@
 #include <ECS/Components/LightComponent.hpp>
 #include <ECS/Components/DataComponent.hpp>
 #include <ECS/Components/ScriptComponent.hpp>
+#include <ECS/Components/Image2DComponent.hpp>
 #include <ECS/Components/AnimatorComponent.hpp>
 #include <ECS/Components/ListenerComponent.hpp>
 
@@ -34,6 +35,38 @@ void WidgetProperties::ShowComponent<BwatEngine::DataComponent>(BwatEngine::Data
     auto& coordinator = BwatEngine::Coordinator::GetInstance();
     ImGui::Text("Entity ID: %i", coordinator.GetEntityIDFrom(component));
     ImGui::InputText("Name", &component.name);
+}
+
+template<>
+void WidgetProperties::ShowComponent<BwatEngine::Image2DComponent>(BwatEngine::Image2DComponent& component)
+{
+    std::string texturePath;
+    if (component.texture != nullptr)
+        texturePath = component.texture->path;
+    else
+        texturePath = "";
+
+    if(ImGui::BeginCombo("##Image2D", texturePath.c_str()))
+    {
+        auto textList = BwatEngine::ResourceManager::Instance()->GetTextList();
+
+        for(auto &text : textList)
+        {
+            bool selected = (texturePath == text);
+            if(ImGui::Selectable(text.c_str(), selected))
+            {
+                component.texture = BwatEngine::ResourceManager::Instance()->GetOrLoadTexture(text, Rendering::Texture::Type::E_DIFFUSE);
+            }
+            if(selected)
+                ImGui::SetItemDefaultFocus();
+        }
+        ImGui::EndCombo();
+    }
+
+    ImGui::DragFloat2("Position##Image2d", component.position.values);
+    ImGui::DragFloat2("Scale##Image2d", component.scale.values);
+    ImGui::DragFloat("Rotation##Image2d", &component.rotation);
+    ImGui::Checkbox("IsActive##Image2d", &component.isActive);
 }
 
 template<>
@@ -424,6 +457,7 @@ void WidgetProperties::TickVisible()
                 hasComponentAvailable |= AddComponentMenuItem<ListenerComponent>(currentEntity);
                 hasComponentAvailable |= AddComponentMenuItem<LightComponent>(currentEntity);
                 hasComponentAvailable |= AddComponentMenuItem<ScriptComponent>(currentEntity);
+                hasComponentAvailable |= AddComponentMenuItem<Image2DComponent>(currentEntity);
                 hasComponentAvailable |= AddComponentMenuItem<AnimatorComponent>(currentEntity);
 
                 ImGui::EndMenu();
@@ -442,6 +476,7 @@ void WidgetProperties::TickVisible()
     ShowComponentMenuItem<CameraComponent>(currentEntity);
     ShowComponentMenuItem<ListenerComponent>(currentEntity);
     ShowComponentMenuItem<LightComponent>(currentEntity);
+    ShowComponentMenuItem<Image2DComponent>(currentEntity);
     ShowComponentMenuItem<AnimatorComponent>(currentEntity);
     ShowComponentMenuItem<ScriptComponent>(currentEntity);
 }

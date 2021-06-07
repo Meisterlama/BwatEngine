@@ -38,6 +38,12 @@ void RenderSystem::SetCamera(EntityID _camera)
     cameraID = _camera;
 }
 
+EntityID RenderSystem::GetCameraID()
+{
+    CheckCameraValid();
+    return cameraID;
+}
+
 // ===================================== MAIN RENDERER ===================================== //
 
 

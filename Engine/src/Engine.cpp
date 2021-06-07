@@ -5,11 +5,13 @@
 #include "ECS/Systems/ScriptSystem.hpp"
 #include "ECS/Systems/SoundSystem.hpp"
 #include "ECS/Systems/PostProcessSystem.hpp"
+#include "ECS/Systems/RenderUISystem.hpp"
 
 #include "Serialization/Serialization.hpp"
 
 #include "Inputs/InputHandler.hpp"
 #include "Time.hpp"
+
 
 using namespace BwatEngine;
 
@@ -30,6 +32,7 @@ void Engine::Update()
     auto& coordinator = Coordinator::GetInstance();
     auto renderSystem = coordinator.GetSystem<RenderSystem>();
     auto postProcessSystem = coordinator.GetSystem<PostProcessSystem>();
+    auto renderUISystem = coordinator.GetSystem<RenderUISystem>();
 
     renderSystem->displayHeight = GetWindow().GetHeight();
     renderSystem->displayWidth = GetWindow().GetWidth();
@@ -41,8 +44,10 @@ void Engine::Update()
     GLint targetFramebuffer;
     glGetIntegerv(GL_DRAW_FRAMEBUFFER_BINDING, &targetFramebuffer);
 
+
     if (postProcessSystem->isPostProcess)
         postProcessSystem->Begin();
+
 
     renderSystem->Update();
 
@@ -53,6 +58,8 @@ void Engine::Update()
     }
 
     glDisable(GL_FRAMEBUFFER_SRGB);
+
+    renderUISystem->Update();
 
     glfwSwapBuffers(GetWindow().handler);
 }

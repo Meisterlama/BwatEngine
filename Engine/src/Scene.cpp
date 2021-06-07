@@ -8,6 +8,7 @@
 #include "ECS/Components/ColliderComponent.hpp"
 #include "ECS/Components/ScriptComponent.hpp"
 #include "ECS/Components/AudioSourceComponent.hpp"
+#include "ECS/Components/Image2DComponent.hpp"
 #include "ECS/Components/LightComponent.hpp"
 #include "ECS/Components/DataComponent.hpp"
 #include "ECS/Components/AnimatorComponent.hpp"
@@ -19,6 +20,7 @@
 #include "ECS/Systems/PostProcessSystem.hpp"
 #include "ECS/Systems/AnimationSystem.hpp"
 
+#include "ECS/Systems/RenderUISystem.hpp"
 
 using namespace BwatEngine;
 
@@ -39,6 +41,7 @@ Scene::Scene(Window& window)
     coordinator.RegisterComponent<AudioSourceComponent>();
     coordinator.RegisterComponent<LightComponent>();
     coordinator.RegisterComponent<DataComponent>();
+    coordinator.RegisterComponent<Image2DComponent>();
     coordinator.RegisterComponent<AnimatorComponent>();
     coordinator.RegisterComponent<ListenerComponent>();
 
@@ -66,6 +69,9 @@ Scene::Scene(Window& window)
     coordinator.RegisterSystem<PostProcessSystem>(window.GetWidth(), window.GetHeight());
     coordinator.SetSystemConfig<PostProcessSystem>(SystemConfig{SystemConfig::ManualUpdate});
 
+    coordinator.RegisterSystem<RenderUISystem>();
+    coordinator.SetSystemSignature<RenderUISystem, Image2DComponent>();
+    coordinator.SetSystemConfig<RenderUISystem>(SystemConfig{SystemConfig::ManualUpdate});
     // ===================================  ANIMATION  =================================== //
     coordinator.RegisterSystem<AnimationSystem>();
     coordinator.SetSystemSignature<AnimationSystem, RenderableComponent, AnimatorComponent>();
