@@ -17,7 +17,7 @@
 
 namespace BwatEngine
 {
-    struct shadowValues
+    struct ShadowValues
     {
         float intensity = 15.f;
     };
@@ -36,7 +36,7 @@ namespace BwatEngine
         int displayHeight;
 
         Rendering::CubeMap cubeMap;
-        shadowValues shadowValues;
+        ShadowValues shadowValues;
         
         Math::Vec3f clearColor = { 0.0f, 0.0f, 0.0f };
         Math::Mat4f  lightSpaceMatrix;
