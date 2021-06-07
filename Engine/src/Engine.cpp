@@ -12,9 +12,6 @@
 #include "Time.hpp"
 
 
-
-
-
 using namespace BwatEngine;
 
 //initialization
@@ -59,18 +56,9 @@ void Engine::Update()
         postProcessSystem->Apply();
     }
 
-    if (renderUISystem->isRenderUI)
-    {
-        EntityID camID = renderSystem->GetCameraID();
-        CameraComponent& mainCam = coordinator.GetComponent<CameraComponent>(camID);
-        TransformComponent& camTransform = coordinator.GetComponent<TransformComponent>(camID);
-        renderUISystem->SetCamMatrix(mainCam, camTransform);
-        renderUISystem->Update();
-    }
-
-
-
     glDisable(GL_FRAMEBUFFER_SRGB);
+
+    renderUISystem->Update();
 
     glfwSwapBuffers(GetWindow().handler);
 }

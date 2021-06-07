@@ -1,41 +1,39 @@
 #include "ECS/Systems/RenderUISystem.hpp"
+#include "ECS/Coordinator.hpp"
 #include "ResourceManager/ResourceManager.hpp"
+#include "ECS/Components/Image2DComponent.hpp"
 
 
 using namespace BwatEngine;
 
-RenderUISystem::RenderUISystem()
+RenderUISystem::RenderUISystem() : shader("EngineAssets/Shaders/UIRender.vs", "EngineAssets/Shaders/UIRender.fs")
 {
-    Rendering::Image2D* image = CreateImage("Assets/image/moteur.jpg");
-
-
-    image->SetImagePos({200,100});
-
-
-
+    view = Math::Mat4f(1.0f);
+    proj = Math::Mat4f::CreateOrtho(0.0f, 1.0f, 0.0f, 1.0f, -1.0f, 1.0f);
 }
 
 void RenderUISystem::Update()
 {
     glDisable(GL_DEPTH_TEST);
-    render.Draw(view, proj);
+
+    auto& coordinator = Coordinator::GetInstance();
+    shader.Use();
+    shader.SetMat4("view", view);
+    shader.SetMat4("projection", proj);
+
+    for (auto entity : entities)
+    {
+        auto& image = coordinator.GetComponent<Image2DComponent>(entity);
+        if (!image.isActive || !image.texture)
+            break;
+        Math::Mat4f model = Math::Mat4f::CreateTRSMat(Math::Vec3f {image.position.X / 100.f, image.position.Y / 100.f, -0.1f},
+                                          Math::Vec3f{0.f, 0.f, Math::ToRads(image.rotation)},
+                                          Math::Vec3f{image.scale.X / 100.f, image.scale.Y / 100.f, 1.f}
+        );
+
+        shader.SetMat4("model", model);
+        image.Use();
+        usedQuad.Draw();
+    }
     glEnable(GL_DEPTH_TEST);
-
-}
-
-Rendering::Image2D* RenderUISystem::CreateImage(const char* textPath)
-{
-    Rendering::Image2D* image = new Rendering::Image2D();
-    image->tex = ResourceManager::Instance()->GetOrLoadTexture(textPath);
-    image->isActive = true;
-    render.images.push_back(image);
-
-
-    return image;
-}
-void RenderUISystem::SetCamMatrix(CameraComponent &camComp, TransformComponent &camTransform)
-{
-
-    view = Math::Mat4f::CreateTRSMat({0.f, 0.f, 0.f}, {0.f, 0.f, 0.f, 1.f}, {1.f, 1.f, 1.f});
-    proj = Math::Mat4f::CreateOrtho(600.0f, -600.0f, -360.0f, 360.0f, camComp.near, camComp.far);
 }

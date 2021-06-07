@@ -11,6 +11,7 @@
 #include "ECS/Components/ColliderComponent.hpp"
 #include "ECS/Components/ScriptComponent.hpp"
 #include "ECS/Components/AudioSourceComponent.hpp"
+#include "ECS/Components/Image2DComponent.hpp"
 #include "ECS/Components/LightComponent.hpp"
 #include "ECS/Components/DataComponent.hpp"
 
@@ -46,6 +47,7 @@ Scene::Scene(Window& window)
     coordinator.RegisterComponent<AudioSourceComponent>();
     coordinator.RegisterComponent<LightComponent>();
     coordinator.RegisterComponent<DataComponent>();
+    coordinator.RegisterComponent<Image2DComponent>();
 
     coordinator.RegisterSystem<PhysicsSystem>(&scenePhysic);
     coordinator.SetSystemSignature<PhysicsSystem, RigidBodyComponent, TransformComponent, ColliderComponent>();
@@ -76,7 +78,6 @@ Scene::Scene(Window& window)
     coordinator.SetSystemConfig<PostProcessSystem>(SystemConfig{SystemConfig::ManualUpdate});
 
     coordinator.RegisterSystem<RenderUISystem>();
+    coordinator.SetSystemSignature<RenderUISystem, Image2DComponent>();
     coordinator.SetSystemConfig<RenderUISystem>(SystemConfig{SystemConfig::ManualUpdate});
-
-    Serializer::LoadScene("sampleScene.bwat");
 }
