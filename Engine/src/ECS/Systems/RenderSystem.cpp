@@ -97,6 +97,8 @@ void RenderSystem::RenderEntitiesAndLights(const CameraComponent& camera, const 
     shader.SetMat4("lightSpaceMatrix", lightSpaceMatrix);
     
     shader.SetTextureCubemap("envMap", 20, cubeMap.id);
+
+    shader.SetFloat("intensity", shadowValues.intensity);
     
     for (unsigned int i = 0; i < lights.size(); i++)
     {
@@ -107,6 +109,7 @@ void RenderSystem::RenderEntitiesAndLights(const CameraComponent& camera, const 
         {
             auto& transform = coordinator.GetComponent<TransformComponent>(lights[i]);
             light.position = transform.position ;
+            light.direction = transform.rotation.Rotate({ 0,0,1 });
         }
 
         light.ApplyOnShader(&shader, index);
@@ -216,8 +219,6 @@ void RenderSystem::UpdateShadow()
 
     shadowMap.shader.Use();
     shadowMap.shader.SetMat4("lightSpaceMatrix", lightSpaceMatrix);
-    
-
 
     // draw all model in deph test 
     for (auto entity : entities)

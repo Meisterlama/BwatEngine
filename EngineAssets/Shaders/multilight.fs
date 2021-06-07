@@ -77,7 +77,7 @@ vec3 CalcSpotLight(Light light, vec3 normal, vec3 fragPos, vec3 viewDir,vec3 F0)
 // === shadow 
 
 uniform float biasValue = 0.0002;
-
+uniform float intensity = 15.0;
 float ShadowCalculation(vec4 fragPosLightSpace, vec3 lightpos, vec3 norm);
 
 // ==== PBR Calcul
@@ -163,7 +163,6 @@ vec3 CalcDirLight(Light light, vec3 normal, vec3 viewDir,vec3 F0)
     vec3 L = normalize(-light.direction);
     vec3 H = normalize(viewDir + L);
 
-
     // Cook-Torrance BRDF
     float NDF = DistributionGGX(normal, H, roughnessG);   
     float G   = GeometrySmith(normal, viewDir, L, roughnessG);      
@@ -195,8 +194,8 @@ vec3 CalcPointLight(Light light, vec3 normal, vec3 fragPos, vec3 viewDir,vec3 F0
     vec3 L = normalize(light.position - fragPos);
     vec3 H = normalize(viewDir + L);
 
-    float distance = length(light.position - viewDir);
-    float attenuation = 1.0 / (distance * distance);
+    float distance = length(light.position - fragPos);
+    float attenuation = 1.0 /(light.constant + light.linear * distance + light.quadratic * (distance * distance));
     vec3 radiance = light.diffuse * light.intensity * attenuation;
 
     // Cook-Torrance BRDF
@@ -206,7 +205,7 @@ vec3 CalcPointLight(Light light, vec3 normal, vec3 fragPos, vec3 viewDir,vec3 F0
            
     vec3 nominator    = NDF * G * F; 
     float denominator = 4 * max(dot(normal, viewDir), 0.0) * max(dot(normal, L), 0.0) + 0.001; 
-    vec3 specular = nominator / denominator;
+    vec3 specular = nominator / max(denominator, 0.001);
         
     // kS is equal to Fresnel
     vec3 kS = F;
@@ -229,7 +228,7 @@ vec3 CalcSpotLight(Light light, vec3 normal, vec3 fragPos, vec3 viewDir, vec3 F0
 
     float distance = length(light.position - fragPos);
     float attenuation = 1.0 / (light.constant + light.linear * distance + light.quadratic * (distance * distance));    
-    vec3 radiance = light.diffuse * attenuation;
+    vec3 radiance = light.diffuse  * light.intensity * attenuation;
 
     // Cook-Torrance BRDF
     float NDF = DistributionGGX(normal, H, roughnessG);   
@@ -290,7 +289,7 @@ float ShadowCalculation(vec4 fragPosLightSpace, vec3 lightdir, vec3 norm)
             shadow += currentDepth - bias  > pcfDepth ? 1.0 : 0.0;        
         }    
     }
-    shadow /= 15.0;
+    shadow /= intensity;
     
     // keep the shadow at 0.0 when outside the far_plane region of the light's frustum.
     if(projCoords.z > 1.0)

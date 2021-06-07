@@ -14,6 +14,7 @@ public:
 
     void TickVisible() override;
     void CubeMapEditing();
+    void ShadowEditing();
 };
 
 #endif // !WIDGET_OPTION_HPP

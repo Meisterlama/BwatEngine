@@ -20,6 +20,9 @@ void WidgetOption::TickVisible()
     if (ImGui::CollapsingHeader("CubeMap"))
         CubeMapEditing();
 
+    if (ImGui::CollapsingHeader("Shadow"))
+        ShadowEditing();
+
     if (ImGui::CollapsingHeader("Style UI"))
         ImGui::ShowStyleEditor();
 }
@@ -88,4 +91,12 @@ void WidgetOption::CubeMapEditing()
     if (ImGui::Button("Reload CubeMap"))
         rendersystem->cubeMap.LoadCubeMap();
    
+}
+
+void WidgetOption::ShadowEditing()
+{
+    auto& coordinator = Coordinator::GetInstance();
+    auto rendersystem = coordinator.GetSystem<RenderSystem>();
+
+    ImGui::DragFloat("Intensity", &rendersystem->shadowValues.intensity);
 }
