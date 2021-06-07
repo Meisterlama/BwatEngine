@@ -1,100 +1,140 @@
 #include "Serialization/Serialization.hpp"
-#include "Scene.hpp"
-#include "json.hpp"
+#include "Serialization/SerializeComponent.hpp"
+#include "Serialization/LoadComponent.hpp"
+
+#include "Time.hpp"
+
 #include "ECS/Coordinator.hpp"
 #include <fstream>
-#include "ECS/Components/TransformComponent.hpp"
-#include "ECS/Components/RenderableComponent.hpp"
-#include "iomanip"
-#include "Debug/Logger.hpp"
 
-#include "Serialization/SerializeComponent.hpp"
+namespace BwatEngine::Serialization {
 
-namespace BwatEngine {
+    void SaveScene(fs::path path)
+    {
+        LogInfo("[Serial] Saving scene at path: %s", path.c_str());
+        std::ofstream file(path);
 
-    void Serializer::SaveScene(const char* path)
+        file << SerializeScene().dump(2) << std::endl;
+    }
+
+    void LoadScene(fs::path path)
+    {
+        LogInfo("[Serial] Loading scene at path: %s", path.c_str());
+        std::ifstream file(path);
+
+        if (!file)
+        {
+            LogError("[Serial] No File at path :%s", path.c_str());
+            return;
+        }
+
+        json js;
+        file >> js;
+        DeserializeScene(js);
+    }
+
+    json SaveEntity(EntityID entityID)
+    {
+        json ret;
+        Serialization::SaveComponent<TransformComponent>(entityID, ret);
+        Serialization::SaveComponent<CameraComponent>(entityID, ret);
+        Serialization::SaveComponent<RigidBodyComponent>(entityID, ret);
+        Serialization::SaveComponent<RenderableComponent>(entityID, ret);
+        Serialization::SaveComponent<ColliderComponent>(entityID, ret);
+        Serialization::SaveComponent<ScriptComponent>(entityID, ret);
+        Serialization::SaveComponent<LightComponent>(entityID, ret);
+        Serialization::SaveComponent<DataComponent>(entityID, ret);
+        Serialization::SaveComponent<AudioSourceComponent>(entityID, ret);
+        Serialization::SaveComponent<AnimatorComponent>(entityID, ret);
+        Serialization::SaveComponent<ListenerComponent>(entityID, ret);
+
+
+        return ret;
+    }
+
+    EntityID LoadEntity(json entityData)
+    {
+        Coordinator &coordinator = Coordinator::GetInstance();
+        auto newEntity =  coordinator.CreateEntity();
+
+        for (auto component : entityData)
+        {
+            auto componentId = component["Type"];
+            auto componentData = component["Data"];
+            if (componentId == "transform")
+                Serialization::Load<TransformComponent>(newEntity, componentData);
+            else if (componentId == "camera")
+                Serialization::Load<CameraComponent>(newEntity, componentData);
+            else if (componentId == "rigidbody")
+                Serialization::Load<RigidBodyComponent>(newEntity, componentData);
+            else if (componentId == "renderable")
+                Serialization::Load<RenderableComponent>(newEntity, componentData);
+            else if (componentId == "collider")
+                Serialization::Load<ColliderComponent>(newEntity, componentData);
+            else if (componentId == "script")
+                Serialization::Load<ScriptComponent>(newEntity, componentData);
+            else if (componentId == "light")
+                Serialization::Load<LightComponent>(newEntity, componentData);
+            else if (componentId == "data")
+                Serialization::Load<DataComponent>(newEntity, componentData);
+            else if (componentId == "audio")
+                Serialization::Load<AudioSourceComponent>(newEntity, componentData);
+            else if (componentId == "animator")
+                Serialization::Load<AnimatorComponent>(newEntity, componentData);
+            else if (componentId == "listener")
+                Serialization::Load<ListenerComponent>(newEntity, componentData);
+
+        }
+
+        return newEntity;
+    }
+
+    void SavePrefab(EntityID entityID, fs::path path)
     {
         std::ofstream file(path);
 
+        file << SaveEntity(entityID).dump(2);
+    }
+
+    EntityID LoadPrefab(fs::path path)
+    {
+        std::ifstream file(path);
+
+        if (!file)
+        {
+            LogError("[Serial] No File at path :%s", path);
+            return 0;
+        }
+
+        json js;
+        file >> js;
+
+        return LoadEntity(js);
+    }
+    json SerializeScene()
+    {
         json js;
         Coordinator &coordinator = Coordinator::GetInstance();
         auto entities = coordinator.GetEntitiesList();
 
-        // save Transform / rigidBody / Camera / / / / /
-        for (int i = 0; i < entities.size(); i++)
+        for (auto entity: entities)
         {
-            EntityID currentEntity = entities[i];
-            Serializable::SaveComponent<TransformComponent>(currentEntity, js["Entity"][i]);
-            Serializable::SaveComponent<CameraComponent>(currentEntity, js["Entity"][i]);
-            Serializable::SaveComponent<PlayerComponent>(currentEntity, js["Entity"][i]);
-            Serializable::SaveComponent<RigidBodyComponent>(currentEntity, js["Entity"][i]);
-            Serializable::SaveComponent<RenderableComponent>(currentEntity, js["Entity"][i]);
-            Serializable::SaveComponent<ColliderComponent>(currentEntity, js["Entity"][i]);
-            Serializable::SaveComponent<ScriptComponent>(currentEntity, js["Entity"][i]);
-            Serializable::SaveComponent<LightComponent>(currentEntity, js["Entity"][i]);
-            Serializable::SaveComponent<DataComponent>(currentEntity, js["Entity"][i]);
+            js["Entity"].push_back(SaveEntity(entity));
         }
 
-            file << std::setw(4) << js << std::endl;
+        return std::move(js);
     }
+    void DeserializeScene(json sceneData)
+    {
+        Coordinator &coordinator = Coordinator::GetInstance();
+        coordinator.DestroyAllEntities();
+        json& entities = sceneData["Entity"];
 
-        void Serializer::LoadScene(const char* path)
+        for (auto &entity : entities)
         {
-            std::ifstream file(path);
-
-            if (!file)
-            {
-                LogError("No File at path :%s", path);
-                return;
-            }
-
-            json js;
-            file >> js;
-
-            Coordinator &coordinator = Coordinator::GetInstance();
-            coordinator.DestroyAllEntities();
-            json& entities = js["Entity"];
-
-
-            for (int i = 0; i < entities.size(); i++)
-            {
-               json& entity = entities[i];
-               auto newEntity =  coordinator.CreateEntity();
-
-               for (int j = 0; j < entity.size(); j++)
-               {
-                   auto componentId = entity[j][0];
-                   auto componentData = entity[j][1];
-                   if (componentId == "transform")
-                       Serializable::Load<TransformComponent>(newEntity, componentData);
-                   else if (componentId == "camera")
-                       Serializable::Load<CameraComponent>(newEntity, componentData);
-                   else if (componentId == "player")
-                       Serializable::Load<PlayerComponent>(newEntity, componentData);
-                   else if (componentId == "rigidBody")
-                       Serializable::Load<RigidBodyComponent>(newEntity, componentData);
-                   else if (componentId == "renderable")
-                       Serializable::Load<RenderableComponent>(newEntity, componentData);
-                   else if (componentId == "collider")
-                       Serializable::Load<ColliderComponent>(newEntity, componentData);
-                   else if (componentId == "script")
-                       Serializable::Load<ScriptComponent>(newEntity, componentData);
-                   else if (componentId == "light")
-                       Serializable::Load<LightComponent>(newEntity, componentData);
-                   else if (componentId == "data")
-                       Serializable::Load<DataComponent>(newEntity, componentData);
-
-               }
-
-            }
-
+            LoadEntity(entity);
         }
-// all the component + data
 
-// rigid body save as : exist
-
-
-//
-
-
+        Time::Reset();
+    }
 }

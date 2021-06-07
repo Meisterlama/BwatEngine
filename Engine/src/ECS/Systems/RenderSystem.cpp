@@ -1,16 +1,19 @@
 #include "ECS/Coordinator.hpp"
 #include "ECS/Systems/RenderSystem.hpp"
 #include "ECS/Components/RenderableComponent.hpp"
+#include "ECS/Components/AnimatorComponent.hpp"
 #include "ECS/Components/LightComponent.hpp"
 
+#include "Time.hpp"
 #include "Rendering/Light.hpp"
+#include "Rendering/Primitives.hpp"
 #include "Scene.hpp"
 
 using namespace BwatEngine;
 
 RenderSystem::RenderSystem(int width, int height) : displayWidth(width), displayHeight(height)
 {
-    shader = { "Assets/Shaders/colors.vs", "Assets/Shaders/multilight.fs" };
+    shader = { "EngineAssets/Shaders/colors.vs", "EngineAssets/Shaders/multilight.fs" };
 
     cubeMap.faces = {
         "Assets/cubemap/left.png",
@@ -25,7 +28,9 @@ RenderSystem::RenderSystem(int width, int height) : displayWidth(width), display
 
     shader.Use();
     shader.SetInt("skybox", 0);
+
     signature.set(Coordinator::GetInstance().GetComponentType<CameraComponent>());
+    signature.set(Coordinator::GetInstance().GetComponentType<TransformComponent>());
 }
 
 void RenderSystem::SetCamera(EntityID _camera)
@@ -44,6 +49,7 @@ EntityID RenderSystem::GetCameraID()
 
 void RenderSystem::Update()
 {
+
     CheckCameraValid();
     OptionAndClear(displayWidth, displayHeight);
 
@@ -61,6 +67,7 @@ void RenderSystem::Update()
 void RenderSystem::RenderCubeMap(const CameraComponent& camera, const TransformComponent& cameraTransform)
 {
     glDepthMask(GL_FALSE);
+
     cubeMap.shader.Use();
     cubeMap.shader.SetMat4("view", Math::Mat4f::CreateTRSMat(Math::Vec3f(0, 0, 0), cameraTransform.rotation, cameraTransform.scale).Invert());
     cubeMap.shader.SetMat4("projection", camera.GetProjectionMatrix());
@@ -75,7 +82,6 @@ void RenderSystem::RenderCubeMap(const CameraComponent& camera, const TransformC
     }
 
     glDepthMask(GL_TRUE);
-
 }
 
 void RenderSystem::RenderEntitiesAndLights(const CameraComponent& camera, const TransformComponent& cameraTransform)
@@ -85,7 +91,6 @@ void RenderSystem::RenderEntitiesAndLights(const CameraComponent& camera, const 
     Signature signature;
     signature.set(coordinator.GetComponentType<LightComponent>());
     auto lights = coordinator.GetEntitiesWithSignature(signature);
-
 
     shader.Use();
     shader.SetMat4("view", Math::Mat4f::CreateTRSMat(cameraTransform.position, cameraTransform.rotation, cameraTransform.scale).Invert());
@@ -102,42 +107,44 @@ void RenderSystem::RenderEntitiesAndLights(const CameraComponent& camera, const 
     {
         std::string index = std::to_string(i);
         auto& light = coordinator.GetComponent<LightComponent>(lights[i]);
+        
+        if (coordinator.HaveComponent<TransformComponent>(lights[i]))
+        {
+            auto& transform = coordinator.GetComponent<TransformComponent>(lights[i]);
+            light.position = transform.position ;
+        }
+
         light.ApplyOnShader(&shader, index);
     }
     
     for (auto entity : entities)
     {
-        auto& entityTransform = coordinator.GetComponent<TransformComponent>(entity);
+        if (coordinator.HaveComponent<AnimatorComponent>(entity))
+        {
+            shader.SetBool("skinned", true);
+            auto& animComponent = coordinator.GetComponent< AnimatorComponent>(entity);
+            auto transforms = animComponent.animator.GetFinalBoneMatrices();
+            for (int i = 0; i < transforms.size(); ++i)
+                shader.SetMat4("finalBonesMatrices[" + std::to_string(i) + "]", transforms[i]);
+            
+        }
+        else
+            shader.SetBool("skinned", false);
+
         auto& renderableComponent = coordinator.GetComponent<RenderableComponent>(entity);
+
+        if (renderableComponent.model == nullptr)
+            continue;
+
+        auto& entityTransform = coordinator.GetComponent<TransformComponent>(entity);
         shader.SetMat4("model", Math::Mat4f::CreateTRSMat(entityTransform.position, entityTransform.rotation, entityTransform.scale));
 
-        if (renderableComponent.materials.size() > 0)
-        {
-            Rendering::Material& mat = *renderableComponent.materials[0];
-
-            shader.SetFloat("material.shininess", mat.shininess);
-            shader.SetBool("material.isColor", mat.isColor);
-            shader.SetVec4("material.color", mat.color.X, mat.color.Y, mat.color.Z, mat.color.W);
-
-
-            if (mat.diffuse != nullptr)
-
-                shader.SetInt("material.diffuse", 0);
-            if (mat.specular != nullptr)
-                shader.SetInt("material.specular", 1);
-            if (mat.normal != nullptr)
-            {
-                shader.SetInt("material.normal", 2);
-                shader.SetInt("material.isNormal", 1);
-            }
-            else
-                shader.SetInt("material.isNormal", 0);
-        }
-
-        if (renderableComponent.model != nullptr)
-            renderableComponent.model->Draw(&renderableComponent.materials);
-
+        if( renderableComponent.materials.size() > 0)
+            renderableComponent.materials[0]->ApplyToShader(shader);
+        
+        renderableComponent.model->Draw(shader ,&renderableComponent.materials);
     }
+    
 }
 
 void RenderSystem::CheckCameraValid()
@@ -166,6 +173,17 @@ void RenderSystem::OptionAndClear(int displayWidth, int displayHeight)
 
 void RenderSystem::UpdateShadow()
 {
+
+    CheckCameraValid();
+
+    if (cameraID == 0)
+        return;
+
+
+    auto& coordinator = Coordinator::GetInstance();
+    auto& cameraTransform = coordinator.GetComponent<TransformComponent>(cameraID);
+
+
     GLint previousFramebuffer;
     glGetIntegerv(GL_DRAW_FRAMEBUFFER_BINDING, &previousFramebuffer);
 
@@ -176,44 +194,66 @@ void RenderSystem::UpdateShadow()
 
     glClearColor(1.0f, 1.0f, 1.0f, 1.0f);
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-
+    glCullFace(GL_FRONT);
+  
     Math::Mat4f lightProjection, lightView;
-    float near_plane = 0.0f, far_plane = 1000.f;
-    lightProjection = Math::Mat4f::CreateOrtho(-150.0f, 150.0f, -150.0f, 150.0f, near_plane, far_plane);
-
-    auto& coordinator = Coordinator::GetInstance();
+    float near_plane = -100.f, far_plane = 1000.f;
+    lightProjection = Math::Mat4f::CreateOrtho(-200.0f, 200.0f, -200.0f, 200.0f, near_plane, far_plane);
 
     Signature signature;
     signature.set(coordinator.GetComponentType<LightComponent>());
     auto lights = coordinator.GetEntitiesWithSignature(signature);
+
 
     // Generate shadoz of the directional light
     for (unsigned int i = 0; i < lights.size(); i++)
     {
         std::string index = std::to_string(i);
         auto& light = coordinator.GetComponent<LightComponent>(lights[i]);
+
         if (light.typeoflight == Rendering::TYPE_LIGHT::Directional)
         {
-            lightView = Math::Mat4f::CreateTRSMat(light.position, Math::Vec3f{ Math::ToRads(light.direction.Y * 90),-Math::ToRads(light.direction.X * 90),Math::ToRads(light.direction.Z * 90) }, { 1 }).GetInverted();
-            lightSpaceMatrix = lightProjection * lightView;
+            Math::Quatf lightiew = Math::Quatf::LookAt(light.position + light.direction.SafeNormalize() , light.position  , {0, 1, 0 });
+            lightView = Math::Mat4f::CreateTRSMat(cameraTransform.position, lightiew, {1});
+            lightSpaceMatrix = lightProjection * lightView.GetInverted();
         }
     }
 
     shadowMap.shader.Use();
     shadowMap.shader.SetMat4("lightSpaceMatrix", lightSpaceMatrix);
     
+
+
     // draw all model in deph test 
     for (auto entity : entities)
     {
-        auto& entityTransform = coordinator.GetComponent<TransformComponent>(entity);
-        auto& renderableComponent = coordinator.GetComponent<RenderableComponent>(entity);
-        shadowMap.shader.SetMat4("model", Math::Mat4f::CreateTRSMat(entityTransform.position, entityTransform.rotation, entityTransform.scale));
+        if (coordinator.HaveComponent<AnimatorComponent>(entity))
+        {
+            shadowMap.shader.SetBool("skinned", true);
+            auto& animComponent = coordinator.GetComponent< AnimatorComponent>(entity);
+            auto transforms = animComponent.animator.GetFinalBoneMatrices();
+            for (int i = 0; i < transforms.size(); ++i)
+                shadowMap.shader.SetMat4("finalBonesMatrices[" + std::to_string(i) + "]", transforms[i]);
 
-        if (renderableComponent.model != nullptr)
-            renderableComponent.model->Draw(&renderableComponent.materials);
+        }
+        else
+            shadowMap.shader.SetBool("skinned", false);
+
+        auto& renderableComponent = coordinator.GetComponent<RenderableComponent>(entity);
+
+        if (renderableComponent.model == nullptr || !renderableComponent.castShadow)
+            continue;
+
+        auto& entityTransform = coordinator.GetComponent<TransformComponent>(entity);
+
+        shadowMap.shader.SetMat4("model", Math::Mat4f::CreateTRSMat(entityTransform.position, entityTransform.rotation, entityTransform.scale));
+        renderableComponent.model->Draw(shadowMap.shader,&renderableComponent.materials);
     }
 
     glBindFramebuffer(GL_FRAMEBUFFER, previousFramebuffer);
+
+
+    glCullFace(GL_BACK);
 
 }
 

@@ -4,6 +4,8 @@
 #include <unordered_map>
 #include <vector>
 #include <stdexcept>
+#include <algorithm>
+#include <cstring>
 
 namespace BwatEngine
 {
@@ -21,7 +23,6 @@ namespace BwatEngine
         std::vector<C> componentArray{};
         std::unordered_map<EntityID, size_t> entityToIndexMap{};
         std::unordered_map<size_t, EntityID> indexToEntityMap{};
-        size_t size{};
 
     public:
         ComponentArray()
@@ -34,62 +35,60 @@ namespace BwatEngine
         {
             if(entityToIndexMap.find(entity) != entityToIndexMap.end())
             {
-                LogError("Component added to same entity more than once.");
+                LogError("[ECS] Component added to same entity more than once.");
                 return;
             }
-            size_t newIndex = size;
+            size_t newIndex = componentArray.size();
             entityToIndexMap[entity] = newIndex;
             indexToEntityMap[newIndex] = entity;
-            if (size < componentArray.size())
-                componentArray[newIndex] = std::move(C{std::forward<Args>(args)...});
-            else
-                componentArray.emplace_back(args...);
-            size++;
+
+            componentArray.emplace_back(args...);
         }
 
         void InsertData(EntityID entity, C&& component)
         {
             if(entityToIndexMap.find(entity) != entityToIndexMap.end())
             {
-                LogError("Component added to same entity more than once.");
+                LogError("[ECS] Component added to same entity more than once.");
                 return;
-            }            size_t newIndex = size;
+            }
+            size_t newIndex = componentArray.size();
             entityToIndexMap[entity] = newIndex;
             indexToEntityMap[newIndex] = entity;
-            if (size < componentArray.size())
-                componentArray[newIndex] = component;
-            else
-                componentArray.push_back(component);
-            size++;
+
+            componentArray.push_back(component);
         }
 
         void InsertData(EntityID entity)
         {
             if(entityToIndexMap.find(entity) != entityToIndexMap.end())
             {
-                LogError("Component added to same entity more than once.");
+                LogError("[ECS] Component added to same entity more than once.");
                 return;
-            }            size_t newIndex = size;
+            }
+            size_t newIndex = componentArray.size();
             entityToIndexMap[entity] = newIndex;
             indexToEntityMap[newIndex] = entity;
-            if (size < componentArray.size())
-                componentArray[newIndex] = std::move<C>({});
-            else
-                componentArray.emplace_back();
-            size++;
+
+            componentArray.emplace_back();
         }
 
         void RemoveData(EntityID entity)
         {
             if(entityToIndexMap.find(entity) == entityToIndexMap.end())
             {
-                LogError("Removing non-existent component.");
+                LogError("[ECS] Removing non-existent component.");
                 return;
             }
 
             size_t indexOfRemovedEntity = entityToIndexMap[entity];
-            size_t indexOfLastElement = size - 1;
+            size_t indexOfLastElement = componentArray.size() - 1;
+
+            auto tmp = componentArray[indexOfRemovedEntity];
             componentArray[indexOfRemovedEntity] = componentArray[indexOfLastElement];
+            componentArray[indexOfLastElement] = tmp;
+            memset(&tmp, 0, sizeof(C));
+
             componentArray.pop_back();
 
             EntityID entityOfLastElement = indexToEntityMap[indexOfLastElement];
@@ -98,8 +97,6 @@ namespace BwatEngine
 
             entityToIndexMap.erase(entity);
             indexToEntityMap.erase(indexOfLastElement);
-
-            size--;
         }
 
         C& GetData(EntityID entity)
@@ -107,7 +104,7 @@ namespace BwatEngine
             if(entityToIndexMap.find(entity) == entityToIndexMap.end())
             {
                 // TODO: Better assertion
-                LogFatal("Retrieving non-existent component.");
+                LogFatal("[ECS] Retrieving non-existent component.");
                 throw std::runtime_error("ECS Crashed");
             }
             return componentArray[entityToIndexMap[entity]];
@@ -115,7 +112,7 @@ namespace BwatEngine
 
         EntityID GetEntityIDFrom(C& component)
         {
-            for (size_t i = 0; i < size; i++)
+            for (size_t i = 0; i < componentArray.size(); i++)
             {
                 if (&componentArray[i] == &component)
                     return indexToEntityMap[i];

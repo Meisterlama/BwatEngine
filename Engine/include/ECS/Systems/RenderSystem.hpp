@@ -13,6 +13,7 @@
 #include "Rendering/CubeMap.hpp"
 #include "Rendering/PostProcess.hpp"
 #include "Rendering/ShadowMapping.hpp"
+#include "Rendering/Animator.hpp"
 
 namespace BwatEngine
 {

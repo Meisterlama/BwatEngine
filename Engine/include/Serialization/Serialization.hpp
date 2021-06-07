@@ -1,19 +1,28 @@
 #ifndef ENGINE_SERIALIZATION_HPP
 #define ENGINE_SERIALIZATION_HPP
 
-namespace BwatEngine
+#include "json.hpp"
+#include "ECS/ECS.hpp"
+
+#include "Serialization/SerializeComponent.hpp"
+#include "Serialization/LoadComponent.hpp"
+
+namespace BwatEngine::Serialization
 {
-    class Scene;
+    using json = nlohmann::json;
 
-    // namespace ou static
-    namespace Serializer
-    {
-        void SaveScene(const char* path);
-        void LoadScene(const char* path);
-    };
+    void SaveScene(fs::path path);
+    void LoadScene(fs::path path);
 
+    json SerializeScene();
+    void DeserializeScene(json sceneData);
 
+    json SaveEntity(EntityID entityID);
+    EntityID LoadEntity(json entityData);
+
+    void SavePrefab(EntityID entityID, fs::path path);
+    EntityID LoadPrefab(fs::path path);
 };
 
-#endif
+#endif //ENGINE_SERIALIZATION_HPP
 

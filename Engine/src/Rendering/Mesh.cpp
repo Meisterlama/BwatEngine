@@ -8,8 +8,8 @@
 
 using namespace Rendering;
 
-Mesh::Mesh(std::vector<Vertex> mVertices, std::vector<unsigned int> mIndices, Material material)
-    : vertices(mVertices), indices(mIndices), defaultMaterial(material)
+Mesh::Mesh(std::vector<Vertex> mVertices, std::vector<unsigned int> mIndices, Material material, int indexMat)
+    : vertices(mVertices), indices(mIndices), defaultMaterial(material), indexMaterial(indexMat)
 {
     glGenVertexArrays(1, &VAO);
     glGenBuffers(1, &VBO);
@@ -33,6 +33,21 @@ Mesh::Mesh(std::vector<Vertex> mVertices, std::vector<unsigned int> mIndices, Ma
     glEnableVertexAttribArray(2);
     glVertexAttribPointer(2, 2, GL_FLOAT, GL_FALSE, sizeof(Vertex), (void*)offsetof(Vertex, texCoord));
 
+    glEnableVertexAttribArray(3);
+    glVertexAttribIPointer(3, 4, GL_INT, sizeof(Vertex), (void*)offsetof(Vertex, boneIDs));
+
+    glEnableVertexAttribArray(4);
+    glVertexAttribPointer(4, 4, GL_FLOAT, GL_FALSE, sizeof(Vertex), (void*)offsetof(Vertex, weights));
+    
+        /*   }
+    else
+    {
+        glDisableVertexAttribArray(3);
+        glVertexAttribI4i(3, INT_MAX, INT_MAX, INT_MAX, INT_MAX);
+        glDisableVertexAttribArray(4);
+        glVertexAttrib4f(4, 0.f, 0.f, 0.f, 0.f);
+    }*/
+
     glBindVertexArray(0);
 }
 
@@ -48,5 +63,13 @@ void Mesh::Draw()
     // draw mesh
     glBindVertexArray(VAO);
     glDrawElements(GL_TRIANGLES, indices.size(), GL_UNSIGNED_INT, 0);
+    glBindVertexArray(0);
+}
+
+void Mesh::DrawWireFrame()
+{
+    // draw mesh
+    glBindVertexArray(VAO);
+    glDrawElements(GL_LINES, indices.size(), GL_UNSIGNED_INT, 0);
     glBindVertexArray(0);
 }

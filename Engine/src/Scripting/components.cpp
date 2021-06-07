@@ -5,6 +5,7 @@
 #include "ECS/Components/AudioSourceComponent.hpp"
 #include "ECS/Components/CameraComponent.hpp"
 #include "ECS/Components/RigidBodyComponent.hpp"
+#include "ECS/Components/DataComponent.hpp"
 
 namespace BwatEngine
 {
@@ -75,6 +76,26 @@ namespace BwatEngine
             Coordinator::GetInstance().GetComponent<RigidBodyComponent>(entity).AddForce(force);
         }
 
+        void LockRotation(EntityID entity, bool lockX, bool lockY, bool lockZ)
+        {
+            Coordinator::GetInstance().GetComponent<RigidBodyComponent>(entity).LockRotation(lockX, lockY, lockZ);
+        }
+
+        bool GetLockX(EntityID entity)
+        {
+            return Coordinator::GetInstance().GetComponent<RigidBodyComponent>(entity).GetXLockState();
+        }
+
+        bool GetLockY(EntityID entity)
+        {
+            return Coordinator::GetInstance().GetComponent<RigidBodyComponent>(entity).GetYLockState();
+        }
+
+        bool GetLockZ(EntityID entity)
+        {
+            return Coordinator::GetInstance().GetComponent<RigidBodyComponent>(entity).GetZLockState();
+        }
+
         #undef RIGIDBODY_SETTER_GETTER
     }
 
@@ -83,6 +104,17 @@ namespace BwatEngine
         LightComponent& GetLight(EntityID entity)
         {
             return Coordinator::GetInstance().GetComponent<LightComponent>(entity);
+        }
+    }
+
+    namespace DataScripting
+    {
+        std::string GetName(EntityID entity)
+        {
+            Coordinator& coordinator = Coordinator::GetInstance();
+            if (coordinator.HaveComponent<DataComponent>(entity))
+                return coordinator.GetComponent<DataComponent>(entity).name;
+            return "";
         }
     }
 
@@ -150,6 +182,12 @@ namespace BwatEngine
         REGISTER_FUNC(RigidBodyScripting, SetMass);
         REGISTER_FUNC(RigidBodyScripting, GetMass);
         REGISTER_FUNC(RigidBodyScripting, AddForce);
+        REGISTER_FUNC(RigidBodyScripting, LockRotation);
+        REGISTER_FUNC(RigidBodyScripting, GetLockX);
+        REGISTER_FUNC(RigidBodyScripting, GetLockY);
+        REGISTER_FUNC(RigidBodyScripting, GetLockZ);
+
+        REGISTER_FUNC(DataScripting, GetName);
         return module;
     }
 }

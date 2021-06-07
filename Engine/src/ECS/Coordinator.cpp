@@ -2,6 +2,7 @@
 #include "ECS/Coordinator.hpp"
 #include "ECS/Components/DataComponent.hpp"
 
+
 namespace BwatEngine
 {
     Coordinator& Coordinator::GetInstance()
@@ -22,10 +23,6 @@ namespace BwatEngine
             auto entity = entityManager.CreateEntity();
             entities.push_back(entity);
             sceneMap[entity].id = entity;
-            AddComponent<DataComponent>(entity, {});
-
-            std::string entityName = "Entity_" + std::to_string(entity);
-            GetComponent<DataComponent>(entity).name = entityName;
 
             return entity;
     }
@@ -86,6 +83,21 @@ namespace BwatEngine
         }
 
         return retEntities;
+    }
+
+    EntityID Coordinator::GetEntityWithName(const std::string& name)
+    {
+        Signature signature;
+        signature.set(GetComponentType<DataComponent>());
+        for (EntityID entity : GetEntitiesWithSignature(signature))
+        {
+            std::string entityName = GetComponent<DataComponent>(entity).name;
+            if (entityName == name)
+            {
+                return entity;
+            }
+        }
+        return 0;
     }
 
     Signature Coordinator::GetEntitySignature(EntityID entity) const

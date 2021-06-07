@@ -4,6 +4,8 @@
 #include "Widget.hpp"
 #include "Math/Vector/Vector3.hpp"
 #include "ECS/ECS.hpp"
+#include "json.hpp"
+using json = nlohmann::json;
 
 class WidgetProperties : public Widget
 {
@@ -27,6 +29,7 @@ private:
     bool ShowComponentMenuItem(BwatEngine::EntityID entity);
 
     BwatEngine::EntityID currentEntity = 0;
+    json copiedComponent;
 };
 
 #endif //BWATENGINE_WIDGETPROPERTIES_H

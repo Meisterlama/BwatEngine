@@ -5,16 +5,18 @@
 #include "ECS/Coordinator.hpp"
 #include "ECS/Components/AudioSourceComponent.hpp"
 #include "ECS/Components/TransformComponent.hpp"
+#include "ECS/Components/ListenerComponent.hpp"
 
 namespace BwatEngine
 {
     class SoundSystem : public System
     {
-        Math::RNG rng;
+        Signature listenerSignature;
     public:
         SoundSystem() {
             Audio::InitOpenAL();
-            rng.ResetSeed(0);
+            listenerSignature.set(Coordinator::GetInstance().GetComponentType<ListenerComponent>());
+            listenerSignature.set(Coordinator::GetInstance().GetComponentType<TransformComponent>());
         }
 
         virtual void Update() override
@@ -24,16 +26,26 @@ namespace BwatEngine
             {
                 auto& component = coordinator.GetComponent<AudioSourceComponent>(entity);
                 auto& transform = coordinator.GetComponent<TransformComponent>(entity);
-                ALint state;
-                alGetSourcei(component.source.GetID(), AL_SOURCE_STATE, &state);
                 component.source.SetPosition(transform.position);
+            }
 
-                if (state != AL_PLAYING)
-                {
-                    component.source.SetGain(1);
-                    component.source.SetPitch(rng.RollRandomFloatInRange(0.5, 2));
-                    component.source.Play();
-                }
+            for (auto entity : coordinator.GetEntitiesWithSignature(listenerSignature))
+            {
+                auto& transform = coordinator.GetComponent<TransformComponent>(entity);
+
+                Math::Vec3f forwardVec = transform.rotation.Rotate({0, 0, 1}).Normalize();
+                Math::Vec3f upVec = transform.rotation.Rotate({0, 1,0}).Normalize();
+
+                float orientation[6] = {
+                    forwardVec.X,
+                    forwardVec.Y,
+                    forwardVec.Z,
+                    upVec.X,
+                    upVec.Y,
+                    upVec.Z,
+                };
+                alListenerfv(AL_POSITION, transform.position.values);
+                alListenerfv(AL_ORIENTATION, orientation);
             }
         }
 

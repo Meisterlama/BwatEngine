@@ -89,6 +89,8 @@ namespace BwatEngine
             inputHandler->mouse[buttonState.first].down = false;
             inputHandler->mouse[buttonState.first].up = false;
         }
+        inputHandler->scrollDelta = {0.0};
+
         glfwPollEvents();
         if (inputHandler->ignoreNextDelta)
         {
@@ -155,6 +157,16 @@ namespace BwatEngine
     MouseStatus InputHandler::GetMouseStatus()
     {
         return inputHandler->mouseStatus;
+    }
+    void InputHandler::SetClipboard(std::string text)
+    {
+        auto* window = GetInstance()->window;
+        glfwSetClipboardString(window, text.c_str());
+    }
+    std::string InputHandler::GetClipboard()
+    {
+        auto* window = GetInstance()->window;
+        return glfwGetClipboardString(window);
     }
 }
 

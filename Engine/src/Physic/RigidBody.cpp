@@ -1,4 +1,6 @@
+#include "ECS/Coordinator.hpp"
 #include "Physic/RigidBody.hpp"
+#include "ECS/Systems/PhysicsSystem.hpp"
 
 using namespace BwatEngine;
 
@@ -14,13 +16,14 @@ RigidBody::RigidBody(const Math::Transform& transform, bool isStatic) : oldTrans
 		rigidBody = Physic::GetPhysics()->createRigidDynamic(ToPxTransform(transform));
 		rigidBody->userData = this;
 	}
+    shouldRegister = true;
 }
 
 RigidBody::~RigidBody()
 {
-	if (isStatic)
+	if (isStatic && staticActor && staticActor->isReleasable())
 		staticActor->release();
-	else
+	else if (rigidBody && rigidBody->isReleasable())
 		rigidBody->release();
 }
 
@@ -90,25 +93,47 @@ void RigidBody::SetTransform(const Math::Transform& trans)
 		rigidBody->setGlobalPose(ToPxTransform(trans));
 }
 
+void RigidBody::SetPosition(const Math::Vec3f &position)
+{
+    oldTransform.position = position;
+    if (isStatic)
+        staticActor->setGlobalPose(ToPxTransform(oldTransform));
+    else
+        rigidBody->setGlobalPose(ToPxTransform(oldTransform));
+}
+void RigidBody::SetRotation(const Math::Quatf &rotation)
+{
+    oldTransform.rotation = rotation;
+    if (isStatic)
+        staticActor->setGlobalPose(ToPxTransform(oldTransform));
+    else
+        rigidBody->setGlobalPose(ToPxTransform(oldTransform));
+}
+
 void RigidBody::SetMass(const float mass)
 {
 	if (!isStatic)
 		rigidBody->setMass(mass);
 }
 
-void RigidBody::AddActor(physx::PxScene* scene)
+void RigidBody::AddActor(PhysicScene* scene)
 {
 	if (isStatic)
-		scene->addActor(*staticActor);
+		scene->GetPhysicScene()->addActor(*staticActor);
 	else
-		scene->addActor(*rigidBody);
+		scene->GetPhysicScene()->addActor(*rigidBody);
 
-	shouldRegister = false;
+    shouldRegister = false;
 }
 
-bool RigidBody::CompareOldTransform(const Math::Transform& trans)
+bool RigidBody::CompareOldPosition(const Math::Vec3f & position) const
 {
-	return (oldTransform.position == trans.position && oldTransform.rotation == trans.rotation);
+	return (oldTransform.position == position);
+}
+
+bool RigidBody::CompareOldRotation(const Math::Quatf & rotation) const
+{
+	return (oldTransform.rotation == rotation);
 }
 
 Math::Vec3f RigidBody::GetPosition() const
@@ -141,13 +166,22 @@ Math::Vec3f RigidBody::GetVelocity() const
 		return ToBwatVec3(rigidBody->getLinearVelocity());
 	return {0.f};
 }
-
-void RigidBody::OnContact(RigidBody& actor2, COLLISION_TYPE colType)
+void RigidBody::LockRotation(bool _lockX, bool _lockY, bool _lockZ)
 {
-	if (collisionFunction[colType]) collisionFunction[colType](actor2);
-}
+    if (isStatic)
+        return;
 
-void RigidBody::setContactFunc(COLLISION_TYPE colType, OnCollisionFunction&& func)
-{
-	collisionFunction[colType] = std::move(func);
+    lockX = _lockX;
+    lockY = _lockY;
+    lockZ = _lockZ;
+
+    PxRigidDynamicLockFlags lockFlags;
+    if (lockX)
+        lockFlags |= PxRigidDynamicLockFlag::eLOCK_ANGULAR_X;
+    if (lockY)
+        lockFlags |= PxRigidDynamicLockFlag::eLOCK_ANGULAR_Y;
+    if (lockZ)
+        lockFlags |= PxRigidDynamicLockFlag::eLOCK_ANGULAR_Z;
+
+    rigidBody->setRigidDynamicLockFlags(lockFlags);
 }

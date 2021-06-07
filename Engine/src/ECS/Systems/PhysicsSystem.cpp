@@ -1,11 +1,9 @@
 #include "ECS/Systems/PhysicsSystem.hpp"
 #include "Time.hpp"
-#include "Physic/PhysicCast.hpp"
 #include "ECS/Components/ColliderComponent.hpp"
 #include "ECS/Coordinator.hpp"
 #include "ECS/Components/RigidBodyComponent.hpp"
 #include "ECS/Components/TransformComponent.hpp"
-#include "Physic/PhysicScene.hpp"
 
 
 using namespace BwatEngine;
@@ -16,33 +14,38 @@ void PhysicsSystem::Update()
     {
         auto& rigidBody = Coordinator::GetInstance().GetComponent<RigidBodyComponent>(entity);
         auto& transform = Coordinator::GetInstance().GetComponent<TransformComponent>(entity);
-        auto& collider = Coordinator::GetInstance().GetComponent<ColliderComponent>(entity).collider;
+        auto& collider = Coordinator::GetInstance().GetComponent<ColliderComponent>(entity);
 
         if (rigidBody.ShouldRegister())
         {
-            if(!collider)
-            {
-                BoxCollider* boxCollider = new BoxCollider{ 1 };
-                collider = boxCollider;
-            }
-
-            rigidBody.AttachCollider(*collider);
-            rigidBody.AddActor(ptrPhysicScene->GetPhysicScene());
+            rigidBody.AttachCollider(collider);
+            rigidBody.AddActor(ptrPhysicScene);
         }
 
-        if (rigidBody.CompareOldTransform(transform))
+        if (rigidBody.CompareOldPosition(transform.position))
         {
             transform.position = rigidBody.GetPosition();
+        }
+        else
+        {
+            rigidBody.SetPosition(transform.position);
+        }
+
+        if (rigidBody.CompareOldRotation(transform.rotation))
+        {
             transform.rotation = rigidBody.GetRotation();
         }
         else
         {
-            rigidBody.SetTransform(transform);
+            rigidBody.SetRotation(transform.rotation);
         }
     }
 
     ptrPhysicScene->GetPhysicScene()->simulate(Time::deltaTime);
     ptrPhysicScene->GetPhysicScene()->fetchResults(true);
+}
 
-    ptrPhysicScene->gContactReportCallback.Flush();
+PhysicScene *PhysicsSystem::GetPhysicScene()
+{
+    return ptrPhysicScene;
 };

@@ -6,6 +6,8 @@
 #include "ECS/Components/DataComponent.hpp"
 #include "imgui_internal.h"
 #include "ECS/Coordinator.hpp"
+#include "Serialization/Serialization.hpp"
+#include "WidgetPrefab.hpp"
 
 WidgetHierarchy::WidgetHierarchy(EditorInterface *editor) : Widget(editor)
 {
@@ -17,7 +19,14 @@ void WidgetHierarchy::ShowEntity(BwatEngine::EntityID entity)
 {
     auto &coordinator = BwatEngine::Coordinator::GetInstance();
     auto &node = coordinator.GetNode(entity);
-    std::string entityName = coordinator.GetComponent<BwatEngine::DataComponent>(entity).name;
+    std::string entityName;
+    if (coordinator.HaveComponent<BwatEngine::DataComponent>(entity))
+    {
+        entityName = coordinator.GetComponent<BwatEngine::DataComponent>(entity).name;
+    }
+    else
+        entityName = "Entity_" + std::to_string(entity);
+
 
     ImGuiTreeNodeFlags flags =
             ImGuiTreeNodeFlags_SpanAvailWidth | ImGuiTreeNodeFlags_OpenOnDoubleClick | ImGuiTreeNodeFlags_OpenOnArrow;
@@ -33,11 +42,26 @@ void WidgetHierarchy::ShowEntity(BwatEngine::EntityID entity)
 
     bool isOpen = ImGui::TreeNodeEx(entityName.c_str(), flags);
 
-    if (ImGui::BeginPopupContextItem("ShowEntityDeleteContextMenu" ))
+    std::string EntityDeleteContextMenuString = "ShowEntityDeleteContextMenu##" + std::to_string(entity);
+
+    if (ImGui::BeginPopupContextItem(EntityDeleteContextMenuString.c_str()))
     {
-        if (ImGui::MenuItem("Delete entity"))
+        std::string deleteEntityString = "Delete entity" + std::to_string(entity);
+        if (ImGui::MenuItem(deleteEntityString.c_str()))
         {
-            BwatEngine::Coordinator::GetInstance().DestroyEntity(entity);
+            coordinator.DestroyEntity(entity);
+            editor->SetEditedEntity(0);
+        }
+        if (ImGui::MenuItem("Duplicate entity"))
+        {
+            using namespace BwatEngine;
+            EntityID duplicatedEntity = Serialization::LoadEntity(Serialization::SaveEntity(editor->GetEditedEntity()));
+            editor->SetEditedEntity(duplicatedEntity);
+        }
+        if (ImGui::MenuItem("Save Prefab"))
+        {
+            using namespace BwatEngine;
+            editor->widgetPrefab->Open(true, entity);
         }
         ImGui::EndPopup();
     }
@@ -66,6 +90,10 @@ void WidgetHierarchy::TickVisible()
         if (ImGui::MenuItem("Create entity"))
         {
             coordinator.CreateEntity();
+        }
+        if (ImGui::MenuItem("Load Prefab"))
+        {
+            editor->widgetPrefab->Open(false);
         }
         ImGui::EndPopup();
     }

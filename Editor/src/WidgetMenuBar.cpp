@@ -1,4 +1,5 @@
 #include "WidgetMenuBar.hpp"
+#include "WidgetLoadSave.hpp"
 #include "EditorInterface.hpp"
 #include "Engine.hpp"
 #include "Serialization/Serialization.hpp"
@@ -31,6 +32,15 @@ void WidgetMenuBar::TickAlways()
             MenuOption();
             ImGui::EndMenu();
         }
+
+        ImGui::SameLine(ImGui::GetWindowWidth() - 35);
+        
+        if (ImGui::ImageButton(reinterpret_cast<ImTextureID>(BwatEngine::ResourceManager::Instance()->GetOrLoadTexture("EngineAssets/Images/light.png")->id), ImVec2(15, 15)))
+        {
+            isClassicTheme = !isClassicTheme;
+            editor->ApplyStyle(isClassicTheme);
+        }
+
         ImGui::EndMainMenuBar();
     }
 }
@@ -56,21 +66,27 @@ void WidgetMenuBar::MenuFile()
     if (ImGui::MenuItem("New Scene"))
     {
         BwatEngine::Coordinator::GetInstance().DestroyAllEntities();
-        editor->currentScene = nullptr;
+        editor->currentScene = "";
     }
-    if (editor->currentScene != nullptr)
-        enabled = true;
-    if (ImGui::MenuItem("Save Scene", 0, false, enabled))
+
+    std::string SaveSceneString = "Save Scene";
+
+    if (editor->currentScene != "")
     {
-        BwatEngine::Serializer::SaveScene(editor->currentScene);
+        SaveSceneString += " as " + editor->currentScene.filename().string();
+    }
+    if (ImGui::MenuItem(SaveSceneString.c_str(), 0, false, !editor->currentScene.empty()))
+    {
+        BwatEngine::Serialization::SaveScene(editor->currentScene.string().c_str());
     }
     if (ImGui::MenuItem("Save as..."))
     {
-        editor->GetWidgetList().at(8)->SetVisible(true);
+        editor->widgetLoadSave->Open(true);
     }
     if (ImGui::MenuItem("Load Scene"))
     {
-        editor->GetWidgetList().at(9)->SetVisible(true);
+        editor->widgetLoadSave->Open(false);
+
     }
 
     ImGui::Separator();
@@ -98,6 +114,10 @@ void WidgetMenuBar::MenuOption()
         if (ImGui::MenuItem("Bwat"))
         {
             editor->ApplyStyle();
+        }
+        if (ImGui::MenuItem("Bwat Smooth"))
+        {
+            editor->ApplyStyle(false);
         }
         ImGui::EndMenu();
     }

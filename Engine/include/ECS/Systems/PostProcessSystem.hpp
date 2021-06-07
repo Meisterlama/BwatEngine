@@ -22,8 +22,10 @@ namespace BwatEngine
 	private:
 
 		Rendering::FrameBufferObject framebuffer;
-		Rendering::FullScreenQuad fullScreenQuad;
+		Rendering::FrameBufferObject fbo[2];
 
+		Rendering::FullScreenQuad fullScreenQuad;
+		Rendering::Shader shaderPP;
 	
 	public :
 
